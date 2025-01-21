@@ -21,7 +21,7 @@ UpdateTask::UpdateTask(MegaApi *megaApi, QString appFolder, bool isPublic, QObje
     updateTimer = NULL;
     timeoutTimer = NULL;
     this->megaApi = megaApi;
-    this->appFolder = QDir(appFolder);
+    this->appFolder.setPath(QDir(appFolder));
     this->isPublic = isPublic;
 }
 
@@ -68,7 +68,7 @@ void UpdateTask::startUpdateThread()
     appFolder.cdUp();
 #endif
 
-    updateFolder = QDir(basePath + QDir::separator() + Preferences::UPDATE_FOLDER_NAME);
+    updateFolder.setPath(QDir(basePath + QDir::separator() + Preferences::UPDATE_FOLDER_NAME));
     m_WebCtrl = new QNetworkAccessManager();
     connect(m_WebCtrl, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
     connect(m_WebCtrl, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)), this, SLOT(onProxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
@@ -392,7 +392,9 @@ bool UpdateTask::performUpdate()
 
     //Create backup folder
     QDir basePathDir(basePath);
-    backupFolder = QDir(basePathDir.absoluteFilePath(Preferences::UPDATE_BACKUP_FOLDER_NAME + QDateTime::currentDateTime().toString(QString::fromLatin1("_dd_MM_yy__hh_mm_ss"))));
+    backupFolder.setPath(QDir(basePathDir.absoluteFilePath(
+        Preferences::UPDATE_BACKUP_FOLDER_NAME +
+        QDateTime::currentDateTime().toString(QString::fromLatin1("_dd_MM_yy__hh_mm_ss")))));
     backupFolder.mkdir(QString::fromLatin1("."));
 
     for (int i = 0; i < localPaths.size(); i++)
@@ -419,8 +421,11 @@ bool UpdateTask::performUpdate()
         appFolder.rename(file, backupFolder.absoluteFilePath(file));
         if (!updateFolder.rename(file, appFolder.absoluteFilePath(file)))
         {
-            MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Error installing file: %1 in %2")
-                        .arg(file).arg(appFolder.absoluteFilePath(file)).toUtf8().constData());
+            MegaApi::log(MegaApi::LOG_LEVEL_ERROR,
+                         QString::fromUtf8("Error installing file: %1 in %2")
+                             .arg(file, appFolder.absoluteFilePath(file))
+                             .toUtf8()
+                             .constData());
             rollbackUpdate(i);
             return false;
         }

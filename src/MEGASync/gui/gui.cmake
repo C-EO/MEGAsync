@@ -345,11 +345,11 @@ if (NOT DontUseResources)
     process_resources_file("${CMAKE_CURRENT_LIST_DIR}/Resources_light.qrc")
     process_resources_file("${CMAKE_CURRENT_LIST_DIR}/Resources_dark.qrc")
 
-    qt5_add_binary_resources(Resources_common "${CMAKE_CURRENT_LIST_DIR}/Resources_common.qrc")
-    qt5_add_binary_resources(Resources_qml "${CMAKE_CURRENT_LIST_DIR}/Resources_qml.qrc")
-    qt5_add_binary_resources(Resources_light "${CMAKE_CURRENT_LIST_DIR}/Resources_light.qrc")
-    qt5_add_binary_resources(Resources_dark "${CMAKE_CURRENT_LIST_DIR}/Resources_dark.qrc")
-    qt5_add_binary_resources(qml "${CMAKE_CURRENT_LIST_DIR}/qml/qml.qrc")
+    qt6_add_binary_resources(Resources_common "${CMAKE_CURRENT_LIST_DIR}/Resources_common.qrc")
+    qt6_add_binary_resources(Resources_qml "${CMAKE_CURRENT_LIST_DIR}/Resources_qml.qrc")
+    qt6_add_binary_resources(Resources_light "${CMAKE_CURRENT_LIST_DIR}/Resources_light.qrc")
+    qt6_add_binary_resources(Resources_dark "${CMAKE_CURRENT_LIST_DIR}/Resources_dark.qrc")
+    qt6_add_binary_resources(qml "${CMAKE_CURRENT_LIST_DIR}/qml/qml.qrc")
 
     add_dependencies(MEGAsync Resources_common)
     add_dependencies(MEGAsync Resources_qml)
@@ -395,7 +395,7 @@ if (NOT APPLE)
     )
 endif()
 
-    qt5_add_translation(DESKTOP_APP_QM_FILES ${DESKTOP_APP_TS_FILES})
+    qt6_add_translation(DESKTOP_APP_QM_FILES ${DESKTOP_APP_TS_FILES})
 endif()
 
 #Review to load only the resource file per platform and not all of them

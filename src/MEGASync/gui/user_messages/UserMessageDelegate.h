@@ -11,6 +11,7 @@ class UserMessageCacheManager;
 
 class UserMessageDelegate : public QStyledItemDelegate
 {
+    Q_OBJECT
 
 public:
     UserMessageDelegate() = delete;
@@ -63,7 +64,6 @@ private:
 
     QWidget* getWidget(const QModelIndex& index) const;
     QModelIndex getEditorCurrentIndex() const;
-
 };
 
 #endif // USER_MESSAGE_DELEGATE_H

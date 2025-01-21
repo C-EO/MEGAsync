@@ -227,9 +227,8 @@ QString DateTimeFormatter::createTimeString()
         bool isPm = (time.hour() > 12);
         QString ampmText = isPm ? QString::fromUtf8("مساءً") : QString::fromUtf8("صباحًا");
         int hours = isPm ? time.hour() - 12 : time.hour();
-        return QString::fromUtf8("%1:%2%3").arg(hours)
-                                           .arg(createMinuteString(time.minute()))
-                                           .arg(ampmText);
+        return QString::fromUtf8("%1:%2%3").arg(hours).arg(createMinuteString(time.minute()),
+                                                           ampmText);
     }
     else if (lang == QLocale::English)
     {

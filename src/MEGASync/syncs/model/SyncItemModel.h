@@ -75,7 +75,7 @@ protected:
 private slots:
     // void resetModel();
     void insertSync(std::shared_ptr<SyncSettings> sync);
-    void updateSyncStats(std::shared_ptr<::mega::MegaSyncStats> stats);
+    void updateSyncStats(std::shared_ptr<mega::MegaSyncStats> stats);
     void removeSync(std::shared_ptr<SyncSettings> sync);
 
 private:
@@ -91,6 +91,8 @@ private:
 
 class SyncItemSortModel: public QSortFilterProxyModel
 {
+    Q_OBJECT
+
 public:
     explicit SyncItemSortModel(QObject* parent = nullptr);
 

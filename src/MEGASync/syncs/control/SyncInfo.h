@@ -38,7 +38,7 @@ class SyncInfo : public QObject, public mega::MegaListener
 
 signals:
     void syncStateChanged(std::shared_ptr<SyncSettings> syncSettings);
-    void syncStatsUpdated(std::shared_ptr<::mega::MegaSyncStats>);
+    void syncStatsUpdated(std::shared_ptr<mega::MegaSyncStats>);
     void syncRemoved(std::shared_ptr<SyncSettings> syncSettings);
     void syncDisabledListUpdated();
     void syncRemoteRootChanged(std::shared_ptr<SyncSettings> syncSettings);

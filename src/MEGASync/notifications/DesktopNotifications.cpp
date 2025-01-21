@@ -41,7 +41,7 @@ void copyIconsToAppFolder(QString folderPath)
     iconNames << newContactIconName << storageQuotaFullIconName << storageQuotaWarningIconName
               << failedToDownloadIconName << folderIconName << fileDownloadSucceedIconName;
 
-    for(const auto& iconName : iconNames)
+    for (const auto& iconName: std::as_const(iconNames))
     {
         QFile iconFile(iconPrefix + iconName);
         iconFile.copy(folderPath + QDir::separator() + iconName);

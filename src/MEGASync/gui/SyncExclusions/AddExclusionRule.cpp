@@ -22,10 +22,10 @@ void AddExclusionRule::appendRuleToFolders(int targetType, int wildCard, QString
     }
 
     auto splitted = ruleValue.split(QString::fromUtf8(","));
-    for (const auto& folder : mFolders)
+    for (const auto& folder: std::as_const(mFolders))
     {
         MegaIgnoreManager megaIgnoreLoader(folder, true);
-        for (auto value : splitted)
+        for (auto value: std::as_const(splitted))
         {
             value = value.trimmed();
             if (value.isEmpty())

@@ -345,7 +345,7 @@ void ExclusionRulesModel::addNewRule(int targetType, int wildCard, QString ruleV
     bool ruleAdded = false;
     int exisitingRuleIndex = -1;
     auto splitted = ruleVale.split(QString::fromUtf8(","));
-    for (auto value : splitted)
+    for (auto value: std::as_const(splitted))
     {
         value = value.trimmed();
         if(value.isEmpty())

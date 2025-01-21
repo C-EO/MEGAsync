@@ -576,7 +576,7 @@ void SetManager::handleCreateFolderResponse(MegaRequest* request, MegaError* err
     }
 
     // Copy (import) all Elements to the Cloud Drive
-    for (const auto& wrappedNode: mCurrentSet.nodeList)
+    for (const auto& wrappedNode: std::as_const(mCurrentSet.nodeList))
     {
         if (!copyNode(wrappedNode.getMegaNode(), createdNode))
         {
@@ -741,7 +741,7 @@ bool SetManager::getPreviewElementNodes()
     if (mCurrentSet.elementHandleList.isEmpty()) { return false; }
 
     // Fetch all Elements
-    for (const auto& handle : mCurrentSet.elementHandleList)
+    for (const auto& handle: std::as_const(mCurrentSet.elementHandleList))
     {
         mMegaApi->getPreviewElementNode(handle, mDelegateListener.get());
     }

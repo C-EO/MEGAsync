@@ -1083,7 +1083,10 @@ void HTTPServer::processPostRequest(QAbstractSocket *socket, HTTPRequest* reques
     }
 
     bool ok;
-    request->contentLength = contentLengthHeader[0].mid(contentLengthId.size(), contentLengthHeader[0].size() - contentLengthId.size()).toInt(&ok);
+    request->contentLength =
+        contentLengthHeader[0]
+            .midRef(contentLengthId.size(), contentLengthHeader[0].size() - contentLengthId.size())
+            .toInt(&ok);
     if (!ok || request->contentLength < content.size())
     {
         if (!ok)

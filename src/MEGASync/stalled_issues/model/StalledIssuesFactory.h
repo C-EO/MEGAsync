@@ -107,8 +107,8 @@ public:
     void finish();
 
 signals:
-    void solvingIssues(IssuesCount count);
-    void solvingIssuesFinished(IssuesCount count);
+    void solvingIssues(StalledIssuesCreator::IssuesCount count);
+    void solvingIssuesFinished(StalledIssuesCreator::IssuesCount count);
 
 protected:
     ReceivedStalledIssues mStalledIssues;

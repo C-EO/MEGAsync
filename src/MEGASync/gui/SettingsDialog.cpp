@@ -511,15 +511,14 @@ void SettingsDialog::on_bGeneral_clicked()
 void SettingsDialog::on_bClearCache_clicked()
 {
     QString syncs;
-    for (auto syncSetting: mModel->getAllSyncSettings())
+    for (const auto& syncSetting: mModel->getAllSyncSettings())
     {
         QFileInfo fi(syncSetting->getLocalFolder() + QDir::separator() +
                      QString::fromUtf8(MEGA_DEBRIS_FOLDER));
         if (fi.exists() && fi.isDir())
         {
             syncs += QString::fromUtf8("<br/><a href=\"local://#%1\">%2</a>")
-                         .arg(fi.absoluteFilePath() + QDir::separator())
-                         .arg(syncSetting->name());
+                         .arg(fi.absoluteFilePath() + QDir::separator(), syncSetting->name());
         }
     }
 
@@ -805,7 +804,7 @@ void SettingsDialog::on_cDesktopIntegration_toggled(bool checked)
     // 1. Toggle left pane sync shortcuts in the explorer
     if (checked)
     {
-        for (auto syncSetting: mModel->getAllSyncSettings())
+        for (const auto& syncSetting: mModel->getAllSyncSettings())
         {
             Platform::getInstance()->addSyncToLeftPane(syncSetting->getLocalFolder(),
                                                        syncSetting->name(),

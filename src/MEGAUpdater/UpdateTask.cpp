@@ -426,8 +426,8 @@ bool UpdateTask::downloadFile(string url, string dstPath)
     HRESULT res = URLDownloadToFileW(NULL, (LPCWSTR)wurl.data(), (LPCWSTR)wdstPath.data(), 0, NULL);
     if (res != S_OK)
     {
-       LOG(LOG_LEVEL_ERROR, "Unable to download file. Error code: %d", res);
-       return false;
+        LOG(LOG_LEVEL_ERROR, "Unable to download file. Error code: %ld", res);
+        return false;
     }
 #else
     bool success = downloadFileSynchronously(url, dstPath);

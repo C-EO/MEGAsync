@@ -7,6 +7,8 @@ class MegaUploader;
 
 class LocalOrRemoteUserMustChooseStalledIssue : public StalledIssue
 {
+    Q_OBJECT
+
 public:
     LocalOrRemoteUserMustChooseStalledIssue(const mega::MegaSyncStall *stallIssue);
     ~LocalOrRemoteUserMustChooseStalledIssue() = default;

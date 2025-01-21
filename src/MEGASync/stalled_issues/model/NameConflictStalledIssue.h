@@ -9,6 +9,8 @@
 
 class NameConflictedStalledIssue : public StalledIssue
 {
+    Q_OBJECT
+
 public:
     class ConflictedNameInfo
     {

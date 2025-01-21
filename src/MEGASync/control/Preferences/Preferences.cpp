@@ -2708,8 +2708,13 @@ bool Preferences::hasEmail(QString email)
         value = !storedEmail.compare(email);
         if (!value)
         {
-            MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Email key differs from requested email: %1. Removing the old entry: %2")
-                         .arg(email).arg(storedEmail).toUtf8().constData());
+            MegaApi::log(
+                MegaApi::LOG_LEVEL_ERROR,
+                QString::fromUtf8(
+                    "Email key differs from requested email: %1. Removing the old entry: %2")
+                    .arg(email, storedEmail)
+                    .toUtf8()
+                    .constData());
             mSettings->remove(QString::fromLatin1(""));
         }
         mSettings->endGroup();

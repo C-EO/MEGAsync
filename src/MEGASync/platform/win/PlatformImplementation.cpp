@@ -72,7 +72,7 @@ void PlatformImplementation::prepareForSync()
     (void)Preferences::instance();
 
     QProcess p;
-    p.start(QString::fromUtf8("net"), QStringList() << QString::fromUtf8("use"));
+    p.startCommand(QString::fromUtf8("net"), QStringList() << QString::fromUtf8("use"));
     p.waitForFinished(2000);
     QString output = QString::fromUtf8(p.readAllStandardOutput().constData());
     QString e = QString::fromUtf8(p.readAllStandardError().constData());
@@ -114,7 +114,9 @@ void PlatformImplementation::prepareForSync()
 
                                 QProcess p;
                                 QString command = QString::fromUtf8("net");
-                                p.start(command, QStringList() << QString::fromUtf8("use") << driveName << networkName);
+                                p.startCommand(command,
+                                               QStringList() << QString::fromUtf8("use")
+                                                             << driveName << networkName);
                                 p.waitForFinished(2000);
                                 QString output = QString::fromUtf8(p.readAllStandardOutput().constData());
                                 QString e = QString::fromUtf8(p.readAllStandardError().constData());

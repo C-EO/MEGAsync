@@ -116,48 +116,63 @@ void LinuxSignalHandler(int signum)
                 break;
             case QtDebugMsg:
                 MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Qt Debug: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_DEBUG,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
             case QtWarningMsg:
                 MegaApi::log(MegaApi::LOG_LEVEL_WARNING, QString::fromUtf8("Qt Warning: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_WARNING, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
             case QtCriticalMsg:
                 MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Qt Critical: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_ERROR,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
             case QtFatalMsg:
                 MegaApi::log(MegaApi::LOG_LEVEL_FATAL, QString::fromUtf8("Qt FATAL: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_FATAL, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_FATAL,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
-           default:
+            default:
                 MegaApi::log(MegaApi::LOG_LEVEL_MAX, QString::fromUtf8("Qt MSG: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_MAX, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_MAX,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
         }
     }

@@ -668,8 +668,8 @@ QString Utilities::getAvatarPath(QString email)
         return QString();
     }
 
-    QString avatarsPath = QString::fromUtf8("%1/avatars/%2.jpg")
-            .arg(Preferences::instance()->getDataPath()).arg(email);
+    QString avatarsPath =
+        QString::fromUtf8("%1/avatars/%2.jpg").arg(Preferences::instance()->getDataPath(), email);
     return QDir::toNativeSeparators(avatarsPath);
 }
 
@@ -962,8 +962,7 @@ QString Utilities::createSimpleUsedString(long long usedData)
 QString Utilities::createSimpleUsedOfString(long long usedData, long long totalData)
 {
     return QCoreApplication::translate("Utilities", "%1 of %2")
-        .arg(getSizeString(usedData))
-        .arg(getSizeString(totalData));
+        .arg(getSizeString(usedData), getSizeString(totalData));
 }
 
 QString Utilities::createSimpleUsedStringWithoutReplacement(long long usedData)
@@ -1021,7 +1020,7 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
     QStringList parts = substr.remove(QString::fromUtf8("\"")).split(QString::fromUtf8(","));
 
     // Trim whitespace from each part and add it to the result list
-    for (const QString& part : parts)
+    for (const QString& part: std::as_const(parts))
     {
         resultList.append(part.trimmed());
     }
@@ -1109,12 +1108,20 @@ QString Utilities::joinLogZipFiles(MegaApi *megaApi, const QDateTime *timestampS
     QDir logDir{MegaApplication::applicationDataPath().append(QString::fromUtf8("/") + LOGS_FOLDER_LEAFNAME_QSTRING)};
     if (logDir.exists())
     {
-        QString fileFormat{QDir::separator() + QString::fromUtf8("%1%2%3")
-                                                    .arg(QDateTime::currentDateTimeUtc().toString(QString::fromLatin1("yyMMdd_hhmmss")))
-                                                    .arg(megaApi->getMyUser() ? QString::fromUtf8("_") + QString::fromUtf8(std::unique_ptr<MegaUser>(megaApi->getMyUser())->getEmail()) : QString::fromUtf8(""))
-                                                    .arg(!appenHashReference.isEmpty() ? QString::fromUtf8("_") + appenHashReference : QString::fromUtf8(""))};
+        QString fileFormat{
+            QDir::separator() +
+            QString::fromUtf8("%1%2%3").arg(
+                QDateTime::currentDateTimeUtc().toString(QString::fromLatin1("yyMMdd_hhmmss")),
+                megaApi->getMyUser() ?
+                    QString::fromUtf8("_") +
+                        QString::fromUtf8(
+                            std::unique_ptr<MegaUser>(megaApi->getMyUser())->getEmail()) :
+                    QString::fromUtf8(""),
+                !appenHashReference.isEmpty() ? QString::fromUtf8("_") + appenHashReference :
+                                                QString::fromUtf8(""))};
 
-        QFileInfo joinLogsFile(logDir.absolutePath().append(fileFormat).append(QString::fromUtf8(".gz")));
+        QFileInfo joinLogsFile(
+            logDir.absolutePath().append(fileFormat).append(QString::fromUtf8(".gz")));
 #ifdef _WIN32
         FILE * pFile = nullptr;
         errno_t er = _wfopen_s(&pFile, joinLogsFile.absoluteFilePath().toStdWString().c_str(), L"a+b");
@@ -1338,7 +1345,7 @@ void Utilities::getDaysAndHoursToTimestamp(int64_t secsTimestamps, int64_t &rema
     }
 
     // Get seconcs diff between now and secsTimestamps
-    int64_t tDiff = secsTimestamps - QDateTime::currentDateTimeUtc().toMSecsSinceEpoch() / MSEC_IN_1_SEC;
+    int64_t tDiff = secsTimestamps - QDateTime::currentMSecsSinceEpoch() / MSEC_IN_1_SEC;
 
     // Compute in hours, then in days
     remainHours = tDiff / SECS_IN_1_HOUR;

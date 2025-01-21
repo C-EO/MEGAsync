@@ -5,6 +5,8 @@
 
 class StalledIssueChooseTitle : public StalledIssueActionTitle
 {
+    Q_OBJECT
+
 public:
     StalledIssueChooseTitle(QWidget *parent = nullptr);
 

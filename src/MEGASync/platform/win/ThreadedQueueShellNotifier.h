@@ -15,6 +15,8 @@
  */
 class ThreadedQueueShellNotifier : public ShellNotifierDecorator
 {
+    Q_OBJECT
+
 public:
     ThreadedQueueShellNotifier(std::shared_ptr<AbstractShellNotifier> baseNotifier);
     virtual ~ThreadedQueueShellNotifier();

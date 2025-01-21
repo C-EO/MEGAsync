@@ -70,7 +70,7 @@
 #include <QNetworkProxy>
 #include <QScreen>
 #include <QSettings>
-#include <QtConcurrent/QtConcurrent>
+#include <QtConcurrent/QTConcurrent>
 #include <QToolTip>
 #include <QTranslator>
 
@@ -200,8 +200,8 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     connect(this, SIGNAL(unblocked()), this, SLOT(onUnblocked()));
 
 #ifdef _WIN32
-    connect(this, SIGNAL(screenAdded(QScreen *)), this, SLOT(changeDisplay(QScreen *)));
-    connect(this, SIGNAL(screenRemoved(QScreen *)), this, SLOT(changeDisplay(QScreen *)));
+    connect(this, SIGNAL(screenAdded(QScreen*)), this, SLOT(changeDisplay(QScreen*)));
+    connect(this, SIGNAL(screenRemoved(QScreen*)), this, SLOT(changeDisplay(QScreen*)));
 #endif
 
     setQuitOnLastWindowClosed(false);
@@ -209,8 +209,8 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     // For some reason this doesn't work on Windows (done in stylesheet above)
     // TODO: re-try with Qt > 5.12.15
     QPalette palette = QToolTip::palette();
-    palette.setColor(QPalette::ToolTipBase, QColor("#333333"));
-    palette.setColor(QPalette::ToolTipText, QColor("#FAFAFA"));
+    palette.setColor(QPalette::ToolTipBase, QColor(0x333333));
+    palette.setColor(QPalette::ToolTipText, QColor(0xFAFAFA));
     QToolTip::setPalette(palette);
 
     appPath = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
@@ -280,8 +280,8 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     if (SHGetSpecialFolderPathW(NULL, commonPath, CSIDL_COMMON_APPDATA, FALSE))
     {
         int len = lstrlen(commonPath);
-        if (!memcmp(commonPath, (WCHAR *)appDirPath.utf16(), len * sizeof(WCHAR))
-                && appDirPath.size() > len && appDirPath[len] == QLatin1Char('\\'))
+        if (!memcmp(commonPath, (WCHAR*)appDirPath.utf16(), len * sizeof(WCHAR)) &&
+            appDirPath.size() > len && appDirPath[len] == u'\\')
         {
             isPublic = true;
 
@@ -1089,7 +1089,7 @@ void MegaApplication::start()
     {
         if (!preferences->installationTime())
         {
-            preferences->setInstallationTime(QDateTime::currentDateTime().toMSecsSinceEpoch() / 1000);
+            preferences->setInstallationTime(QDateTime::currentMSecsSinceEpoch() / 1000);
         }
 
         startUpdateTask();
@@ -2199,7 +2199,7 @@ void MegaApplication::cleanAll()
     stopUpdateTask();
     Platform::getInstance()->stopShellDispatcher();
 
-    for (auto localFolder : model->getLocalFolders(SyncInfo::AllHandledSyncTypes))
+    for (const auto& localFolder: model->getLocalFolders(SyncInfo::AllHandledSyncTypes))
     {
         Platform::getInstance()->notifyItemChange(localFolder, MegaApi::STATE_NONE);
     }
@@ -2610,9 +2610,11 @@ QList<QNetworkInterface> MegaApplication::findNewNetworkInterfaces()
         }
         else if (logger->isDebug())
         {
-            MegaApi::log(MegaApi::LOG_LEVEL_INFO, QString::fromUtf8("Ignored network interface: %1 Flags: %2")
-                         .arg(interfaceName)
-                         .arg(QString::number(flags)).toUtf8().constData());
+            MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                         QString::fromUtf8("Ignored network interface: %1 Flags: %2")
+                             .arg(interfaceName, QString::number(flags))
+                             .toUtf8()
+                             .constData());
         }
     }
     return newInterfaces;
@@ -2683,7 +2685,11 @@ bool MegaApplication::checkIpAddress(const QHostAddress& ip, const QList<QNetwor
             {
                 //New IP
                 const QString addressToLog = obfuscateIfNecessary(ip);
-                MegaApi::log(MegaApi::LOG_LEVEL_INFO, QString::fromUtf8("New IP detected (%1) for interface %2").arg(addressToLog).arg(newNetworkInterfaceName).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                             QString::fromUtf8("New IP detected (%1) for interface %2")
+                                 .arg(addressToLog, newNetworkInterfaceName)
+                                 .toUtf8()
+                                 .constData());
                 disconnect = true;
             }
         }
@@ -2787,8 +2793,8 @@ QString MegaApplication::obfuscateIpv4Address(const QHostAddress &ipAddress)
     if (addressParts.size() == 4)
     {
         auto itAddressPart = addressParts.begin()+2;
-        return QString::fromUtf8("%1.%1.%2.%3").arg(QString::fromUtf8("XXX"))
-                                               .arg(*itAddressPart++).arg(*itAddressPart);
+        return QString::fromUtf8("%1.%1.%2.%3")
+            .arg(QString::fromUtf8("XXX"), *itAddressPart++, *itAddressPart);
     }
     return QString::fromUtf8("XXX.XXX.XXX.XXX");
 }
@@ -2799,9 +2805,12 @@ QString MegaApplication::obfuscateIpv6Address(const QHostAddress &ipAddress)
     if (addressParts.size() == 8)
     {
         auto itAddressPart = addressParts.begin()+4;
-        return QString::fromUtf8("%1:%1:%1:%1:%2:%3:%4:%5").arg(QString::fromUtf8("XXXX"))
-                                                           .arg(*itAddressPart++).arg(*itAddressPart++)
-                                                           .arg(*itAddressPart++).arg(*itAddressPart);
+        return QString::fromUtf8("%1:%1:%1:%1:%2:%3:%4:%5")
+            .arg(QString::fromUtf8("XXXX"),
+                 *itAddressPart++,
+                 *itAddressPart++,
+                 *itAddressPart++,
+                 *itAddressPart);
     }
     return QString::fromUtf8("XXXX:XXXX:XXXX:XXXX:XXXX:XXXX");
 }
@@ -2864,7 +2873,8 @@ void MegaApplication::transferBatchFinished(unsigned long long appDataId, bool f
 void MegaApplication::logBatchStatus(const char* tag)
 {
 #ifdef DEBUG
-    QString logMessage = QString::fromLatin1("%1 : %2").arg(QString::fromUtf8(tag)).arg(mBlockingBatch.description());
+    QString logMessage =
+        QString::fromLatin1("%1 : %2").arg(QString::fromUtf8(tag), mBlockingBatch.description());
     MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, logMessage.toUtf8().constData());
 #else
     Q_UNUSED(tag)
@@ -3182,7 +3192,7 @@ void MegaApplication::cleanLocalCaches(bool all)
     if (all || preferences->cleanerDaysLimit())
     {
         int timeLimitDays = preferences->cleanerDaysLimitValue();
-        for (auto syncPath : model->getLocalFolders(SyncInfo::AllHandledSyncTypes))
+        for (const auto& syncPath: model->getLocalFolders(SyncInfo::AllHandledSyncTypes))
         {
             if (!syncPath.isEmpty())
             {
@@ -3823,14 +3833,23 @@ void MegaApplication::showTrayMenu(QPoint *point)
             infoDialogMenu->popup(p);
             displayedMenu = infoDialogMenu;
 
-
-            MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Poping up Info Dialog menu: p = %1, cursor = %2, dialog size hint = %3, displayedMenu = %4, menuWidthInitialPopup = %5")
-                         .arg(QString::fromUtf8("[%1,%2]").arg(p.x()).arg(p.y()))
-                         .arg(QString::fromUtf8("[%1,%2]").arg(cursorPos.x()).arg(cursorPos.y()))
-                         .arg(QString::fromUtf8("[%1,%2]").arg(infoDialogMenu->sizeHint().width()).arg(infoDialogMenu->sizeHint().height()))
-                         .arg(QString::fromUtf8("[%1,%2,%3,%4]").arg(displayedMenu->rect().x()).arg(displayedMenu->rect().y()).arg(displayedMenu->rect().width()).arg(displayedMenu->rect().height()))
-                         .arg(menuWidthInitialPopup)
-                         .toUtf8().constData());
+            MegaApi::log(
+                MegaApi::LOG_LEVEL_DEBUG,
+                QString::fromUtf8("Poping up Info Dialog menu: p = %1, cursor = %2, dialog size "
+                                  "hint = %3, displayedMenu = %4, menuWidthInitialPopup = %5")
+                    .arg(QString::fromUtf8("[%1,%2]").arg(p.x()).arg(p.y()),
+                         QString::fromUtf8("[%1,%2]").arg(cursorPos.x()).arg(cursorPos.y()),
+                         QString::fromUtf8("[%1,%2]")
+                             .arg(infoDialogMenu->sizeHint().width())
+                             .arg(infoDialogMenu->sizeHint().height()),
+                         QString::fromUtf8("[%1,%2,%3,%4]")
+                             .arg(displayedMenu->rect().x())
+                             .arg(displayedMenu->rect().y())
+                             .arg(displayedMenu->rect().width())
+                             .arg(displayedMenu->rect().height()))
+                    .arg(menuWidthInitialPopup)
+                    .toUtf8()
+                    .constData());
         }
     }
 
@@ -3847,14 +3866,24 @@ void MegaApplication::showTrayMenu(QPoint *point)
                 displayedMenu->update();
                 displayedMenu->popup(p);
 
-                MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Poping up Info Dialog workaround: p = %1, pointValue = %2, displayedMenu size hint = %3, displayedMenu = %4, menuWidthInitialPopup = %5")
-                             .arg(QString::fromUtf8("[%1,%2]").arg(p.x()).arg(p.y()))
-                             .arg(QString::fromUtf8("[%1,%2]").arg(pointValue.x()).arg(pointValue.y()))
-                             .arg(QString::fromUtf8("[%1,%2]").arg(displayedMenu->sizeHint().width()).arg(displayedMenu->sizeHint().height()))
-                             .arg(QString::fromUtf8("[%1,%2,%3,%4]").arg(displayedMenu->rect().x()).arg(displayedMenu->rect().y()).arg(displayedMenu->rect().width()).arg(displayedMenu->rect().height()))
-                             .arg(menuWidthInitialPopup)
-                             .toUtf8().constData());
-
+                MegaApi::log(
+                    MegaApi::LOG_LEVEL_DEBUG,
+                    QString::fromUtf8(
+                        "Poping up Info Dialog workaround: p = %1, pointValue = %2, displayedMenu "
+                        "size hint = %3, displayedMenu = %4, menuWidthInitialPopup = %5")
+                        .arg(QString::fromUtf8("[%1,%2]").arg(p.x()).arg(p.y()),
+                             QString::fromUtf8("[%1,%2]").arg(pointValue.x()).arg(pointValue.y()),
+                             QString::fromUtf8("[%1,%2]")
+                                 .arg(displayedMenu->sizeHint().width())
+                                 .arg(displayedMenu->sizeHint().height()),
+                             QString::fromUtf8("[%1,%2,%3,%4]")
+                                 .arg(displayedMenu->rect().x())
+                                 .arg(displayedMenu->rect().y())
+                                 .arg(displayedMenu->rect().width())
+                                 .arg(displayedMenu->rect().height()))
+                        .arg(menuWidthInitialPopup)
+                        .toUtf8()
+                        .constData());
             }
         });
     }
@@ -4541,7 +4570,7 @@ void MegaApplication::sendPeriodicStats() const
     {
         QString accountType = QString::number(preferences->logged() ? preferences->accountType() : -1);
         mStatsEventHandler->sendEvent(AppStatsEvents::EventType::DAILY_ACTIVE_USER, { accountType });
-        preferences->setLastDailyStatTime(QDateTime::currentDateTime().toMSecsSinceEpoch());
+        preferences->setLastDailyStatTime(QDateTime::currentMSecsSinceEpoch());
 
         if(Utilities::monthHasChangedSince(lastTime))
         {
