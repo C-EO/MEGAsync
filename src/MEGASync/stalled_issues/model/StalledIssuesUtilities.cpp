@@ -204,7 +204,8 @@ MegaUploader* StalledIssuesUtilities::getMegaUploader()
 }
 
 //////////////////////////////////////////////////
-QMap<QVariant, mega::MegaHandle> StalledIssuesBySyncFilter::mSyncIdCache = QMap<QVariant, mega::MegaHandle>();
+QMap<QString, mega::MegaHandle> StalledIssuesBySyncFilter::mSyncIdCache =
+    QMap<QString, mega::MegaHandle>();
 QHash<const mega::MegaSyncStall*, QSet<mega::MegaHandle>> StalledIssuesBySyncFilter::mSyncIdCacheByStall = QHash<const mega::MegaSyncStall*, QSet<mega::MegaHandle>>();
 
 void StalledIssuesBySyncFilter::resetFilter()
@@ -245,7 +246,7 @@ QSet<mega::MegaHandle> StalledIssuesBySyncFilter::getSyncIdsByStall(const mega::
 
 mega::MegaHandle StalledIssuesBySyncFilter::filterByPath(const QString& path, bool cloud)
 {
-    QVariant key;
+    QString key;
 
     //Cache in case we already checked an issue with the same path
     if(cloud)
@@ -253,7 +254,7 @@ mega::MegaHandle StalledIssuesBySyncFilter::filterByPath(const QString& path, bo
         std::unique_ptr<mega::MegaNode> remoteNode(MegaSyncApp->getMegaApi()->getNodeByPath(path.toUtf8().constData()));
         if(remoteNode)
         {
-            key = QVariant::fromValue(remoteNode->getParentHandle());
+            key = QString::number(remoteNode->getParentHandle());
 
             if(mSyncIdCache.contains(key))
             {

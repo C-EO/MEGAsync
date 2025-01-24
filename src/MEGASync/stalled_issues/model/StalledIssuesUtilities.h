@@ -99,7 +99,7 @@ private:
     static bool isBelow(mega::MegaHandle syncRootNode, mega::MegaHandle checkNode);
     static bool isBelow(const QString& syncRootPath, const QString& checkPath);
 
-    static QMap<QVariant, mega::MegaHandle> mSyncIdCache;
+    static QMap<QString, mega::MegaHandle> mSyncIdCache;
     static QHash<const mega::MegaSyncStall*, QSet<mega::MegaHandle>> mSyncIdCacheByStall;
 };
 
