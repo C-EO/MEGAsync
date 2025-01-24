@@ -183,7 +183,7 @@ void FatalEventHandler::processEvent(std::unique_ptr<mega::MegaEvent> event, Meg
     auto sdkErrorCode = QVariant::fromValue(mSdkErrorCode);
 
     // Make sure we can handle this error type, otherwise process as "Unhandled"
-    auto canConvert = sdkErrorCode.canConvert(qMetaTypeId<FatalEventHandler::FatalErrorCode>());
+    auto canConvert = sdkErrorCode.canConvert(QMetaType(FatalEventHandler::FatalErrorCode()));
     mErrorCode = canConvert ? sdkErrorCode.value<FatalEventHandler::FatalErrorCode>() :
                               FatalErrorCode::ERR_UNHANDLED;
     auto isValid =

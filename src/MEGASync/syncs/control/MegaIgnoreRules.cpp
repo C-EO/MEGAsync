@@ -73,7 +73,7 @@ MegaIgnoreNameRule::MegaIgnoreNameRule(const QString& rule, bool isCommented)
     {
         //First part -> class, target, type, strategy
         QString leftSide(ruleSplitted.at(0));
-        leftSide.remove(QRegExp(QLatin1String("^#+")));
+        leftSide.remove(QRegularExpression(QLatin1String("^#+")));
         if (!leftSide.isEmpty())
         {
             auto charCounter(0);
@@ -279,10 +279,11 @@ MegaIgnoreExtensionRule::MegaIgnoreExtensionRule(const QString& rule, bool isCom
 {
     mRuleType = RuleType::EXTENSIONRULE;
     auto extensionSplitter(mPattern.split(QLatin1String(".")));
-    QRegExp captureExtension{ QLatin1String(MegaIgnoreRule::CAPTURE_EXTENSION_REG_EX) };
-    if (captureExtension.indexIn(rule) != -1)
+    QRegularExpression captureExtension{QLatin1String(MegaIgnoreRule::CAPTURE_EXTENSION_REG_EX)};
+    auto match = captureExtension.match(rule);
+    if (match.hasMatch())
     {
-        mExtension = captureExtension.cap(1); // Capture extension
+        mExtension = match.captured(1); // Capture extension
     }
 }
 

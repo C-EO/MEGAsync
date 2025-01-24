@@ -859,9 +859,10 @@ NameConflictedStalledIssue::CloudConflictedNames::removeDuplicatedNodes()
             //The object is auto deleted when finished (as it needs to survive this issue)
             foreach(auto conflictedName, conflictedNamesGroup.conflictedNames)
             {
-                if(conflictedName->getSolvedType() ==
+                if (conflictedName->getSolvedType() ==
                         NameConflictedStalledIssue::ConflictedNameInfo::SolvedType::UNSOLVED &&
-                    conflictedName != (*(conflictedNamesGroup.conflictedNames.end() - 1)))
+                    conflictedName !=
+                        (*(std::prev(conflictedNamesGroup.conflictedNames.end(), -1))))
                 {
                     auto error = MoveToMEGABin()(conflictedName->mHandle,
                                                  QLatin1String("SyncDuplicated"),

@@ -148,14 +148,14 @@ void MultiQFileDialog::findSelectedFilesAndFoldersCount(int& fileCount, int& fol
     if(files.contains(dir))
     {
         files.removeOne(dir);
-        for (auto& file : qAsConst(files))
+        for (auto& file: std::as_const(files))
         {
             selectFile(file);
         }
         return;
     }
 
-    for (auto& file : qAsConst(files))
+    for (auto& file: std::as_const(files))
     {
         if (file != dir)
         {

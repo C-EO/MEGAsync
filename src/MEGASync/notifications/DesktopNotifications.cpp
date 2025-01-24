@@ -883,8 +883,11 @@ void DesktopNotifications::actionPressedOnDownloadFinishedTransferNotification(D
                         }
                         else
                         {
-                            QtConcurrent::run(QDesktopServices::openUrl,
-                                              QUrl::fromLocalFile(data->getLocalTargetPath()));
+                            {
+                                [[maybe_unused]] auto&& unused = QtConcurrent::run(
+                                    QDesktopServices::openUrl,
+                                    QUrl::fromLocalFile(data->getLocalTargetPath()));
+                            }
                         }
                     }
                     break;
@@ -896,7 +899,11 @@ void DesktopNotifications::actionPressedOnDownloadFinishedTransferNotification(D
                         auto localPaths = data->getLocalPaths();
                         if(!localPaths.isEmpty())
                         {
-                            QtConcurrent::run(QDesktopServices::openUrl, QUrl::fromLocalFile(localPaths.first()));
+                            {
+                                [[maybe_unused]] auto&& unused =
+                                    QtConcurrent::run(QDesktopServices::openUrl,
+                                                      QUrl::fromLocalFile(localPaths.first()));
+                            }
                         }
                     }
                     else

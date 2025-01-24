@@ -411,12 +411,7 @@ int main(int argc, char *argv[])
         logMessages.emplace_back(MegaApi::LOG_LEVEL_DEBUG,
                                  QStringLiteral("auto screen scale factor disabled because of "
                                                 "QT_AUTO_SCREEN_SCALE_FACTOR set to 0"));
-   }
-   else
-   {
-       QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-       QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-   }
+    }
 #endif
 
 #ifdef Q_OS_MACX

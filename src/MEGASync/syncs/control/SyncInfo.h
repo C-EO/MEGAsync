@@ -78,7 +78,7 @@ public:
     Q_ENUM(SyncOrigin)
 
 protected:
-    mutable QMutex syncMutex;
+    mutable QRecursiveMutex syncMutex;
 
     QMap<SyncType, QList<mega::MegaHandle>> configuredSyncs; //Tags of configured syncs
     QMap<mega::MegaHandle, std::shared_ptr<SyncSettings>> configuredSyncsMap;

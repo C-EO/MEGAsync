@@ -302,7 +302,7 @@ protected:
         emit clicked();
     }
 #ifndef __APPLE__
-    void enterEvent(QEvent*)
+    void enterEvent(QEnterEvent*)
     {
         setCursor(Qt::PointingHandCursor);
     }

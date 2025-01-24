@@ -17,7 +17,6 @@
 #include <QApplication>
 #include <QCryptographicHash>
 #include <QDateTime>
-#include <QDesktopWidget>
 #include <QDirIterator>
 #include <QImageReader>
 #include <QPixmapCache>
@@ -313,7 +312,7 @@ void Utilities::getFolderSize(QString folderPath, long long *size)
 
 qreal Utilities::getDevicePixelRatio()
 {
-    return qApp->testAttribute(Qt::AA_UseHighDpiPixmaps) ? qApp->devicePixelRatio() : 1.0;
+    return qApp->devicePixelRatio();
 }
 
 QString Utilities::getPixmapName(const QString& iconName,
@@ -1148,8 +1147,17 @@ QString Utilities::joinLogZipFiles(MegaApi *megaApi, const QDateTime *timestampS
         QFileInfoList logFiles = logDir.entryInfoList(QStringList() << QString::fromUtf8("MEGAsync.[0-9]*.log"), QDir::Files);
         int nLogFiles = logFiles.count();
 
-        std::sort(logFiles.begin(), logFiles.end(), [](const QFileInfo &v1, const QFileInfo &v2){
-            return v1.fileName().remove(QRegExp(QString::fromUtf8("[^\\d]"))).toInt() > v2.fileName().remove(QRegExp(QString::fromUtf8("[^\\d]"))).toInt();} );
+        std::sort(logFiles.begin(),
+                  logFiles.end(),
+                  [](const QFileInfo& v1, const QFileInfo& v2)
+                  {
+                      return v1.fileName()
+                                 .remove(QRegularExpression(QString::fromUtf8("[^\\d]")))
+                                 .toInt() >
+                             v2.fileName()
+                                 .remove(QRegularExpression(QString::fromUtf8("[^\\d]")))
+                                 .toInt();
+                  });
 
         foreach (QFileInfo i, logFiles)
         {

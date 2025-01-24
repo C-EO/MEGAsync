@@ -89,13 +89,13 @@ public:
         auto classType = QString::fromUtf8(AttributeClass::staticMetaObject.className());
 
         auto userRequests = mRequests.values(mapKey);
-        for(const auto& request : qAsConst(userRequests))
+        for (const auto& request: std::as_const(userRequests))
         {
             auto requestType = QString::fromUtf8(request->metaObject()->className());
             if(requestType == classType)
             {
                 QList<int> paramKeys = request->getRequestInfo().mParamInfo.keys();
-                for(const int& paramType : qAsConst(paramKeys))
+                for (const int& paramType: std::as_const(paramKeys))
                 {
                     request->requestUserAttribute(paramType);
                 }
@@ -110,7 +110,7 @@ public:
         bool forceRequest = false;
         auto unhandledRequestList = mUnhandledRequests.values(getKey(userEmail));
 
-        for(const uint64_t& change : qAsConst(unhandledRequestList))
+        for (const uint64_t& change: std::as_const(unhandledRequestList))
         {
             auto changeTypesKeys = request->getRequestInfo().mChangedTypes.keys();
             for(auto& key : changeTypesKeys)

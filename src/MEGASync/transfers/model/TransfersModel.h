@@ -11,7 +11,6 @@
 
 #include <QAbstractItemModel>
 #include <QFutureWatcher>
-#include <QLinkedList>
 #include <QReadWriteLock>
 #include <QtConcurrent/QtConcurrent>
 

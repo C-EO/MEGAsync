@@ -55,7 +55,7 @@ QString SyncTooltipCreator::createMultilinePath(const QString& path, const QStri
         if (fm.size(Qt::TextExpandTabs, currLine).width() > mMaxWidthInPixels)
         {
             multilineText += currLine;
-            currLine = currChar != path.cend() ? separator : QString();
+            currLine = currChar != *(path.cend()) ? separator : QString();
         }
     }
     return multilineText + currLine;

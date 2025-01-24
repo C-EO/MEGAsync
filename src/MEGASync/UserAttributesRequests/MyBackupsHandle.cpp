@@ -127,10 +127,8 @@ QString MyBackupsHandle::getNodeLocalizedPath(QString path) const
     QString localizedPath(path);
     if (mMyBackupsFolderHandle != mega::INVALID_HANDLE)
     {
-        localizedPath =
-            getMyBackupsLocalizedPath() + QStringRef(&path,
-                                                     mMyBackupsFolderPath.size(),
-                                                     path.size() - mMyBackupsFolderPath.size());
+        const auto remainingPath = path.mid(mMyBackupsFolderPath.size());
+        localizedPath = getMyBackupsLocalizedPath() + remainingPath;
     }
     return localizedPath;
 }

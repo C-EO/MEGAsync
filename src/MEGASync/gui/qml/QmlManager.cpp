@@ -50,8 +50,6 @@ void QmlManager::registerCommonQmlElements()
 {
     mEngine->addImportPath(QString::fromUtf8("qrc:/"));
 
-    qRegisterMetaTypeStreamOperators<QQueue<QString>>("QQueueQString");
-
     qmlRegisterUncreatableMetaObject(ApiEnums::staticMetaObject, "ApiEnums", 1, 0, "ApiEnums",
                                      QString::fromUtf8("Cannot create ApiEnums in QML"));
 

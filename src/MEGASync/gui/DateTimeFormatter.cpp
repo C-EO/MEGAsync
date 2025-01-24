@@ -72,7 +72,7 @@ QString DateTimeFormatter::createLocalizedFormatString()
     }
     else if (lang == QLocale::Chinese)
     {
-        if (mLocale.country() == QLocale::Taiwan)
+        if (mLocale.territory() == QLocale::Taiwan)
         {
             return createFormatString(QString::fromUtf8("[DAYOFWEEK] [TIME]"),
                                     QString::fromUtf8("年[MONTHNUMBER]月[DAYOFMONTH]日 [TIME]"),

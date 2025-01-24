@@ -12,9 +12,6 @@
 
 using namespace mega;
 
-#ifdef WIN32
-extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
-#endif
 const char Preferences::CLIENT_KEY[] = "FhMgXbqb";
 const QString Preferences::USER_AGENT = QString::fromUtf8("%1/%2").arg(QString::fromUtf8(VER_FILEDESCRIPTION_STR),
                                                                        QString::fromUtf8(VER_PRODUCTVERSION_STR));
@@ -397,7 +394,7 @@ void Preferences::initialize(QString dataPath)
 
 Preferences::Preferences():
     QObject(),
-    mutex(QMutex::Recursive),
+    mutex(),
     mSettings(nullptr),
     lastTransferNotification(0)
 {
@@ -1454,15 +1451,13 @@ bool Preferences::canUpdate(QString filePath)
     bool value = true;
 
 #ifdef WIN32
-    qt_ntfs_permission_lookup++; // turn checking on
+    QNtfsPermissionCheckGuard permissionGuard; // turn checking on
 #endif
+
     if (!QFileInfo(filePath).isWritable())
     {
         value = false;
     }
-#ifdef WIN32
-    qt_ntfs_permission_lookup--; // turn it off again
-#endif
 
     mutex.unlock();
 

@@ -26,7 +26,6 @@
 
 #include <QColor>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QEvent>
 #include <QFileInfo>
 #include <QHelpEvent>
@@ -62,22 +61,22 @@ void InfoDialog::pauseResumeHovered(QMouseEvent *event)
         QString tooltip(mPreferences->getGlobalPaused() ?
                             TransferManager::getResumeAllTransfersTooltip() :
                             TransferManager::getPauseAllTransfersTooltip());
-        QToolTip::showText(event->globalPos(), tooltip);
+        QToolTip::showText(event->globalPosition().toPoint(), tooltip);
     }
 }
 
 void InfoDialog::generalAreaHovered(QMouseEvent *event)
 {
-    QToolTip::showText(event->globalPos(), tr("Open Transfer Manager"));
+    QToolTip::showText(event->globalPosition().toPoint(), tr("Open Transfer Manager"));
 }
 void InfoDialog::dlAreaHovered(QMouseEvent *event)
 {
-    QToolTip::showText(event->globalPos(), tr("Open Downloads"));
+    QToolTip::showText(event->globalPosition().toPoint(), tr("Open Downloads"));
 }
 
 void InfoDialog::upAreaHovered(QMouseEvent *event)
 {
-    QToolTip::showText(event->globalPos(), tr("Open Uploads"));
+    QToolTip::showText(event->globalPosition().toPoint(), tr("Open Uploads"));
 }
 
 InfoDialog::InfoDialog(MegaApplication* app, QWidget* parent, InfoDialog* olddialog):

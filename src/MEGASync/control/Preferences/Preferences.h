@@ -602,7 +602,7 @@ public:
     static const int minSyncStateChangeProcessingIntervalMs;
 
 protected:
-    QMutex mutex;
+    QRecursiveMutex mutex;
     void login(QString account);
     void logout();
 

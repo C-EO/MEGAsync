@@ -423,7 +423,7 @@ void BackupsModel::populateDefaultDirectoryList()
         QStandardPaths::PicturesLocation};
 
     // Iterate defaultPaths to add to mBackupFolderList if the path is not empty
-    for (auto type: qAsConst(defaultPaths))
+    for (auto type: std::as_const(defaultPaths))
     {
         const auto standardPaths(QStandardPaths::standardLocations(type));
         QDir dir(QDir::cleanPath(standardPaths.first()));

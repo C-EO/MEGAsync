@@ -21,7 +21,7 @@ UpdateTask::UpdateTask(MegaApi *megaApi, QString appFolder, bool isPublic, QObje
     updateTimer = NULL;
     timeoutTimer = NULL;
     this->megaApi = megaApi;
-    this->appFolder.setPath(QDir(appFolder));
+    this->appFolder.setPath(appFolder);
     this->isPublic = isPublic;
 }
 
@@ -68,7 +68,7 @@ void UpdateTask::startUpdateThread()
     appFolder.cdUp();
 #endif
 
-    updateFolder.setPath(QDir(basePath + QDir::separator() + Preferences::UPDATE_FOLDER_NAME));
+    updateFolder.setPath(basePath + QDir::separator() + Preferences::UPDATE_FOLDER_NAME);
     m_WebCtrl = new QNetworkAccessManager();
     connect(m_WebCtrl, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
     connect(m_WebCtrl, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)), this, SLOT(onProxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
@@ -392,9 +392,9 @@ bool UpdateTask::performUpdate()
 
     //Create backup folder
     QDir basePathDir(basePath);
-    backupFolder.setPath(QDir(basePathDir.absoluteFilePath(
+    backupFolder.setPath(basePathDir.absoluteFilePath(
         Preferences::UPDATE_BACKUP_FOLDER_NAME +
-        QDateTime::currentDateTime().toString(QString::fromLatin1("_dd_MM_yy__hh_mm_ss")))));
+        QDateTime::currentDateTime().toString(QString::fromLatin1("_dd_MM_yy__hh_mm_ss"))));
     backupFolder.mkdir(QString::fromLatin1("."));
 
     for (int i = 0; i < localPaths.size(); i++)

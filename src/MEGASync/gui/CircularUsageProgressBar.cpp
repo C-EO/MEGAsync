@@ -8,7 +8,7 @@ static const QColor DEFAULT_FULL_LIGHT(0xEE7272);
 static const QColor DEFAULT_FULL_DARK(0xDB080F);
 
 static const QColor DEFAULT_BAR_BACKGROUND(0xE5E5E5);
-static const QColor DEFAULT_TEXT_COLOR(0x000000);
+static const QColor DEFAULT_TEXT_COLOR;
 
 static constexpr int MAXVALUE = 100;
 static constexpr int MINVALUE = 0;

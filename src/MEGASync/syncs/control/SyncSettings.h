@@ -4,6 +4,7 @@
 #include "megaapi.h"
 
 #include <QDataStream>
+#include <QObject>
 #include <QString>
 
 #include <memory>
