@@ -80,7 +80,7 @@
 #include <QSvgRenderer>
 #endif
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
 #include "platform/macx/PlatformImplementation.h"
 #endif
 
@@ -148,7 +148,7 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     mSyncReminderNotificationManager(nullptr),
     misSyncingStateWrongLogged(false)
 {
-#if defined Q_OS_MACX && !defined QT_DEBUG
+#if defined Q_OS_MACOS && !defined QT_DEBUG
     if (!qEnvironmentVariableIsSet("MEGA_DISABLE_RUN_MAC_RESTRICTION"))
     {
         QString path = appBundlePath();
@@ -1074,7 +1074,7 @@ void MegaApplication::start()
 
     applyProxySettings();
     Platform::getInstance()->startShellDispatcher(this);
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
     if (!preferences->isOneTimeActionDone(Preferences::ONE_TIME_ACTION_ACTIVE_FINDER_EXT))
     {
         MegaApi::log(MegaApi::LOG_LEVEL_INFO,
@@ -3038,8 +3038,10 @@ void MegaApplication::processUpgradeSecurityEvent()
     if (!outSharesStrings.isEmpty())
     {
         message.append(QLatin1String("<br><br>"));
-        message.append(tr("You are currently sharing the following folder: %1", "", outSharesStrings.size())
-                  .arg(outSharesStrings.values().join(QLatin1String(", "))));
+        message.append(tr("You are currently sharing the following folder: %1",
+                          "",
+                          static_cast<int>(outSharesStrings.size()))
+                           .arg(outSharesStrings.values().join(QLatin1String(", "))));
     }
 
     MessageDialogInfo msgInfo;
@@ -4355,7 +4357,7 @@ void MegaApplication::updateTrayIconMenu()
 {
     if (trayIcon())
     {
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MACOS)
         if (infoDialog)
         {
             trayIcon()->setContextMenu(&emptyMenu);

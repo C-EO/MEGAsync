@@ -404,7 +404,7 @@ int main(int argc, char *argv[])
 
     Platform::getInstance()->setRenderingBackend();
 
-#ifndef Q_OS_MACX
+#ifndef Q_OS_MACOS
     const QString autoScreenScaleFactor = qEnvironmentVariable("QT_AUTO_SCREEN_SCALE_FACTOR");
     if (autoScreenScaleFactor == QString::fromUtf8("0"))
     {
@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
 
     bool harfbuzzEnabled = qputenv("QT_HARFBUZZ","old");
 
@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-#ifndef Q_OS_MACX
+#ifndef Q_OS_MACOS
 #if defined(WIN32)
     ScaleFactorManager scaleFactorManager(OsType::WIN);
 #endif
