@@ -1,17 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="39px" height="19px" viewBox="0 0 39 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>win_switch_enabled_hover</title>
-    <defs>
-        <linearGradient x1="50%" y1="3.33333333%" x2="50%" y2="96.6666667%" id="linearGradient-1">
-            <stop stop-color="#000000" stop-opacity="0.0578" offset="50.0208%"></stop>
-            <stop stop-color="#000000" stop-opacity="0.1622" offset="95.4545%"></stop>
-        </linearGradient>
-    </defs>
-    <g id="Notifications" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="win_switch_enabled_hover">
-            <rect id="Rectangle" fill-opacity="0.9" fill="#005FB8" fill-rule="nonzero" x="0.5" y="0.5" width="38" height="18" rx="9"></rect>
-            <rect id="Rectangle" stroke-opacity="0.9" stroke="#005FB8" x="0.5" y="0.5" width="38" height="18" rx="9"></rect>
-            <rect id="Rectangle" stroke="url(#linearGradient-1)" fill="#FFFFFF" fill-rule="nonzero" x="22" y="2" width="15" height="15" rx="7.5"></rect>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="39" height="19" version="1.1" viewBox="0 0 39 19"><title>win_switch_enabled_hover</title><defs><linearGradient id="linearGradient-1" x1="50%" x2="50%" y1="3.333%" y2="96.667%"><stop offset="50.021%" stop-color="#000" stop-opacity=".058"/><stop offset="95.454%" stop-color="#000" stop-opacity=".162"/></linearGradient></defs><g id="Notifications" fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"><g id="win_switch_enabled_hover"><rect id="Rectangle" width="38" height="18" x=".5" y=".5" fill="#005FB8" fill-opacity=".9" fill-rule="nonzero" rx="9"/><rect id="Rectangle" width="38" height="18" x=".5" y=".5" stroke="#005FB8" stroke-opacity=".9" rx="9"/><rect id="Rectangle" width="15" height="15" x="22" y="2" fill="#FFF" fill-rule="nonzero" stroke="url(#linearGradient-1)" rx="7.5"/></g></g></svg>
