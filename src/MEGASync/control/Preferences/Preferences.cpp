@@ -2298,11 +2298,11 @@ void Preferences::setLastPublicHandle(MegaHandle handle, int type)
     mutex.unlock();
 }
 
-int Preferences::getNumUsers()
+qsizetype Preferences::getNumUsers()
 {
     mutex.lock();
     assert(!logged());
-    int value = mSettings->numChildGroups();
+    qsizetype value = mSettings->numChildGroups();
     mutex.unlock();
     return value;
 }
@@ -2742,8 +2742,8 @@ void Preferences::readFolders()
     loadedSyncsMap.clear();
 
     mSettings->beginGroup(syncsGroupByTagKey);
-    int numSyncs = mSettings->numChildGroups();
-    for (int i = 0; i < numSyncs; i++)
+    qsizetype numSyncs = mSettings->numChildGroups();
+    for (qsizetype i = 0; i < numSyncs; i++)
     {
         mSettings->beginGroup(i);
 

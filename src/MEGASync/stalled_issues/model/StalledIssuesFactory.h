@@ -18,7 +18,7 @@ public:
                mFailedAutoSolvedStalledIssues.isEmpty();
     }
 
-    int size() const
+    qsizetype size() const
     {
         return mAutoSolvedStalledIssues.size() + mActiveStalledIssues.size() +
                mFailedAutoSolvedStalledIssues.size();

@@ -16,7 +16,7 @@ class UserMessageDelegate : public QStyledItemDelegate
 public:
     UserMessageDelegate() = delete;
     UserMessageDelegate(QAbstractItemModel* proxyModel, QTreeView* view);
-    virtual ~UserMessageDelegate() = default;
+    virtual ~UserMessageDelegate();
 
 protected:
     void paint(QPainter* painter,

@@ -19,7 +19,7 @@ ExportProcessor::ExportProcessor(MegaApi* megaApi, QList<MegaHandle> handleList)
     init(megaApi, MODE_HANDLES, handleList.size());
 }
 
-void ExportProcessor::init(MegaApi *megaApi, int mode, int size)
+void ExportProcessor::init(MegaApi* megaApi, int mode, qsizetype size)
 {
     this->megaApi = megaApi;
     this->mode = mode;
@@ -31,7 +31,7 @@ void ExportProcessor::init(MegaApi *megaApi, int mode, int size)
 
 void ExportProcessor::requestLinks()
 {
-    int size = (mode == MODE_PATHS) ? fileList.size() : handleList.size();
+    qsizetype size = (mode == MODE_PATHS) ? fileList.size() : handleList.size();
     if (!size)
     {
         emit onRequestLinksFinished();

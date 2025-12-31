@@ -228,7 +228,7 @@ void MegaIgnoreNameRule::fillWildCardType(const QString& rightSidePart)
         mWildCardType = MegaIgnoreNameRule::WildCardType::WILDCARD;
         return;
     }
-    const int asteriskCount = rightSidePart.count(QLatin1String("*"));
+    const int asteriskCount = static_cast<int>(rightSidePart.count(QLatin1String("*")));
     if (asteriskCount == 0)
     {
         mWildCardType = MegaIgnoreNameRule::WildCardType::EQUAL;

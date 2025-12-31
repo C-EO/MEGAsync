@@ -504,7 +504,7 @@ bool NameConflictedStalledIssue::renameCloudNodesAutomatically(const QList<std::
                                                                QStringList& cloudItemsBeingRenamed)
 {
     auto result(true);
-    for(int index = cloudConflictedNames.size() - 1; index >= 0; --index)
+    for (int index = static_cast<int>(cloudConflictedNames.size() - 1); index >= 0; --index)
     {
         auto& cloudConflictedName = cloudConflictedNames.at(index);
 
@@ -569,7 +569,7 @@ bool NameConflictedStalledIssue::renameLocalItemsAutomatically(const QList<std::
                                                                QStringList& cloudItemsBeingRenamed)
 {
     auto result(true);
-    for(int index = localConflictedNames.size() - 1; index >= 0; --index)
+    for (int index = static_cast<int>(localConflictedNames.size() - 1); index >= 0; --index)
     {
         auto& localConflictedName = localConflictedNames.at(index);
 

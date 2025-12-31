@@ -234,7 +234,7 @@ void ButtonIconManager::changeButtonTextColor(QAbstractButton* button, double al
             || !button->property(NOT_CHANGE_TEXT_COLOR).isValid()))
     {
         QColor textColor(button->palette().color(QPalette::ColorRole::ButtonText));
-        textColor.setAlphaF(alphaValue);
+        textColor.setAlphaF(static_cast<float>(alphaValue));
         auto paletteButton = button->palette();
         paletteButton.setColor(QPalette::ButtonText, textColor);
         button->setPalette(paletteButton);

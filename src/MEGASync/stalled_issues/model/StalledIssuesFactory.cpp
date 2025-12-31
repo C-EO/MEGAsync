@@ -240,7 +240,7 @@ void StalledIssuesCreator::createIssues(const mega::MegaSyncStallMap* stallsMap,
 
         // Solve autosolvable issues
         IssuesCount solvingIssuesStats;
-        solvingIssuesStats.totalIssues = solvableIssues.size();
+        solvingIssuesStats.totalIssues = static_cast<int>(solvableIssues.size());
         solvingIssuesStats.currentIssueBeingSolved = 1;
 
         foreach(auto solvableIssueInfo, solvableIssues)

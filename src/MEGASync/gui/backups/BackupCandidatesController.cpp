@@ -746,7 +746,7 @@ void BackupCandidatesController::updateModel(
     std::shared_ptr<BackupCandidates::Data> backupCandidate)
 {
     auto row = mBackupCandidates->getBackupCandidates().indexOf(backupCandidate);
-    DataController::updateModel(row, 0, roles);
+    DataController::updateModel(static_cast<int>(row), 0, roles);
 }
 
 void BackupCandidatesController::updateModel(

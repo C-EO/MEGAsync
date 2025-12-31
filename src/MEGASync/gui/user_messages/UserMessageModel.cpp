@@ -32,7 +32,7 @@ QModelIndex UserMessageModel::parent(const QModelIndex& index) const
 
 int UserMessageModel::rowCount(const QModelIndex& parent) const
 {
-    return parent.isValid() ? 0 : mUserMessages.size();
+    return parent.isValid() ? 0 : static_cast<int>(mUserMessages.size());
 }
 
 int UserMessageModel::columnCount(const QModelIndex& parent) const
@@ -112,7 +112,7 @@ void UserMessageModel::insertAlerts(const QList<mega::MegaUserAlert*>& alerts)
         return;
     }
 
-    beginInsertRows(QModelIndex(), 0, alerts.size() - 1);
+    beginInsertRows(QModelIndex(), 0, static_cast<int>(alerts.size() - 1));
     for (auto& alert: alerts)
     {
         auto alertItem = new UserAlert(alert);
@@ -187,7 +187,7 @@ void UserMessageModel::removeAlerts(const QList<mega::MegaUserAlert*>& alerts)
     // Remove the oldest items if the list is too long
     if (static_cast<unsigned>(mUserMessages.size()) > Preferences::MAX_COMPLETED_ITEMS)
     {
-        int row = mUserMessages.size() - 1;
+        int row = static_cast<int>(mUserMessages.size() - 1);
         while (row >= 0 &&
                static_cast<unsigned>(mUserMessages.size()) > Preferences::MAX_COMPLETED_ITEMS)
         {
@@ -264,8 +264,8 @@ void UserMessageModel::insertNotifications(const QList<mega::MegaNotification*>&
     }
 
     beginInsertRows(QModelIndex(),
-                    mUserMessages.size(),
-                    mUserMessages.size() + notifications.size() - 1);
+                    static_cast<int>(mUserMessages.size()),
+                    static_cast<int>(mUserMessages.size() + notifications.size() - 1));
     for (auto& notification: notifications)
     {
         auto item = new UserNotification(notification);
@@ -294,7 +294,7 @@ void UserMessageModel::updateNotification(int row, const mega::MegaNotification*
 
 void UserMessageModel::removeNotifications(const mega::MegaNotificationList* notifications)
 {
-    for (int row = mUserMessages.size() - 1; row >= 0; --row)
+    for (int row = static_cast<int>(mUserMessages.size() - 1); row >= 0; --row)
     {
         auto item = mUserMessages.at(row);
         if (!item->isOfType(UserMessage::Type::NOTIFICATION))
@@ -397,7 +397,7 @@ void UserMessageModel::onUiUpdated()
     auto userMessage(qobject_cast<UserMessage*>(sender()));
     if (userMessage)
     {
-        int row = mUserMessages.indexOf(userMessage);
+        int row = static_cast<int>(mUserMessages.indexOf(userMessage));
         emit dataChanged(index(row, 0, QModelIndex()), index(row, 0, QModelIndex()));
     }
 }

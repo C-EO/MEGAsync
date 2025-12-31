@@ -421,7 +421,7 @@ bool MegaIgnoreManager::hasChanged() const
 
 int MegaIgnoreManager::getNameRulesCount() const
 {
-    return mNameRules.size();
+    return static_cast<int>(mNameRules.size());
 }
 
 void MegaIgnoreManager::removeRule(std::shared_ptr<MegaIgnoreRule> rule)

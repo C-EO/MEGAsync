@@ -679,8 +679,8 @@ void DesktopNotifications::sendFinishedSetDownloadNotification(const QString& se
     (void) setName;
     QString title = TransferNotificationBuilder::getDownloadFailedTitle();
     QString msg = QString::fromUtf8("");
-    int nrSuccessItems = succeededDownloadedElements.size();
-    int nrFailedItems = failedDownloadedElements.size();
+    int nrSuccessItems = static_cast<int>(succeededDownloadedElements.size());
+    int nrFailedItems = static_cast<int>(failedDownloadedElements.size());
     QStringList actions;
 
     mPreferences->setLastTransferNotificationTimestamp();

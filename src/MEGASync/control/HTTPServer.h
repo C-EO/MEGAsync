@@ -25,8 +25,8 @@ public:
     };
 
     RequestData();
-    int files;
-    int folders;
+    qsizetype files;
+    qsizetype folders;
     long long tsStart;
     long long tsEnd;
     int status;
@@ -89,7 +89,7 @@ class HTTPServer: public QTcpServer
         void resume();
 
         static void checkAndPurgeRequests();
-        static void onUploadSelectionAccepted(int files, int folders);
+        static void onUploadSelectionAccepted(qsizetype files, qsizetype folders);
         static void onUploadSelectionDiscarded();
         static void onTransferDataUpdate(mega::MegaHandle handle, int state, long long progress,
                                          long long size, long long speed, QString localPath);

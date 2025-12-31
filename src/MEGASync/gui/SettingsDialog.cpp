@@ -323,7 +323,7 @@ void SettingsDialog::loadSettings()
         QString file = it.next();
         if (file.startsWith(fullPrefix))
         {
-            int extensionIndex = file.lastIndexOf(QString::fromUtf8("."));
+            qsizetype extensionIndex = file.lastIndexOf(QString::fromUtf8("."));
             if ((extensionIndex - fullPrefix.size()) <= 0)
             {
                 continue;
@@ -344,7 +344,8 @@ void SettingsDialog::loadSettings()
         }
     }
 
-    for (int i = mLanguageCodes.size() - 1; i >= 0; i--)
+    int langs = static_cast<int>(mLanguageCodes.size());
+    for (int i = langs - 1; i >= 0; i--)
     {
         if (currentLanguage.startsWith(mLanguageCodes[i]))
         {
@@ -355,7 +356,7 @@ void SettingsDialog::loadSettings()
 
     if (currentIndex == -1)
     {
-        currentIndex = mLanguageCodes.indexOf(QString::fromUtf8("en"));
+        currentIndex = static_cast<int>(mLanguageCodes.indexOf(QString::fromUtf8("en")));
     }
 
     mUi->cLanguage->addItems(languages);

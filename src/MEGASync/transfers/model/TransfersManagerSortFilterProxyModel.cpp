@@ -208,9 +208,10 @@ void TransfersManagerSortFilterProxyModel::resetAllFilters()
     setFilters({}, {}, {});
 }
 
-int  TransfersManagerSortFilterProxyModel::getNumberOfItems(TransferData::TransferType transferType)
+qsizetype
+    TransfersManagerSortFilterProxyModel::getNumberOfItems(TransferData::TransferType transferType)
 {
-    int nb(0);
+    qsizetype nb(0);
 
     if(transferType == TransferData::TransferType::TRANSFER_UPLOAD)
     {
@@ -586,7 +587,7 @@ bool TransfersManagerSortFilterProxyModel::dropMimeData(const QMimeData *data, Q
     return false;
 }
 
-int TransfersManagerSortFilterProxyModel::getPausedTransfers() const
+qsizetype TransfersManagerSortFilterProxyModel::getPausedTransfers() const
 {
     return mPausedTransfers.size();
 }
@@ -646,12 +647,12 @@ bool TransfersManagerSortFilterProxyModel::isEmpty() const
     return mCompletedTransfers.isEmpty() && mPausedTransfers.isEmpty() && mActiveTransfers.isEmpty() && mFailedTransfers.isEmpty() && mCompletingTransfers.isEmpty();
 }
 
-int TransfersManagerSortFilterProxyModel::transfersCount() const
+qsizetype TransfersManagerSortFilterProxyModel::transfersCount() const
 {
     return mCompletedTransfers.size() + mActiveTransfers.size() + mFailedTransfers.size() + mCompletingTransfers.size();
 }
 
-int TransfersManagerSortFilterProxyModel::activeTransfers() const
+qsizetype TransfersManagerSortFilterProxyModel::activeTransfers() const
 {
     return mActiveTransfers.size();
 }

@@ -624,8 +624,9 @@ void SetManager::handleCopyNodeResponse(MegaRequest* request, MegaError* error)
 void SetManager::checkandHandleFinishedImport()
 {
     // Check if we are waiting for more Elements to import, or if we are done
-    int nrElementsToImport = mCurrentSet.elementHandleList.size();
-    int nrImportedElements = mSucceededImportElements.size() + mFailedImportElements.size() + mAlreadyExistingImportElements.size();
+    qsizetype nrElementsToImport = mCurrentSet.elementHandleList.size();
+    qsizetype nrImportedElements = mSucceededImportElements.size() + mFailedImportElements.size() +
+                                   mAlreadyExistingImportElements.size();
 
     if (nrImportedElements == nrElementsToImport)
     {
@@ -717,8 +718,8 @@ AlbumCollection SetManager::filterSet(const AlbumCollection& srcSet, const QList
     dstSet.name = srcSet.name;
     dstSet.link = srcSet.link;
 
-    const int nrElements = srcSet.elementHandleList.size();
-    for (int i = 0; i < nrElements; i++)
+    const qsizetype nrElements = srcSet.elementHandleList.size();
+    for (qsizetype i = 0; i < nrElements; i++)
     {
         MegaHandle handle = srcSet.elementHandleList[i];
         if (elementHandleList.contains(handle))

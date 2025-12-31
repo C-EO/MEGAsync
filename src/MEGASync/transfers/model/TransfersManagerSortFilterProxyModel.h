@@ -37,14 +37,14 @@ public:
                         const Utilities::FileTypes fileTypes);
         void updateFilters();
         void resetAllFilters();
-        int  getNumberOfItems(TransferData::TransferType transferType);
+        qsizetype getNumberOfItems(TransferData::TransferType transferType);
 
         TransferBaseDelegateWidget* createTransferManagerItem(QWidget *) override;
 
-        int  getPausedTransfers() const;
+        qsizetype getPausedTransfers() const;
         bool areAllPaused() const;
         bool isAnyCancellable() const;
-        int  activeTransfers() const;
+        qsizetype activeTransfers() const;
         bool areAllCancellable() const;
         bool areAllSync() const;
         bool isAnySync() const;
@@ -55,7 +55,7 @@ public:
         bool areAllFailsPermanent() const;
 
         bool isEmpty() const;
-        int  transfersCount() const;
+        qsizetype transfersCount() const;
 
         bool isModelProcessing() const;
 
@@ -96,17 +96,17 @@ protected:
         SortCriterion mSortCriterion;
         Qt::SortOrder mSortOrder;
 
-        mutable QSet<int> mDlNumber;
-        mutable QSet<int> mUlNumber;
-        mutable QSet<int> mNoSyncTransfers;
-        mutable QSet<int> mActiveTransfers;
-        mutable QSet<int> mPausedTransfers;
-        mutable QSet<int> mCompletedTransfers;
-        mutable QSet<int> mCompletingTransfers;
-        mutable QSet<int> mFailedTransfers;
-        mutable QSet<int> mPermanentFailedTransfers;
+        mutable QSet<qsizetype> mDlNumber;
+        mutable QSet<qsizetype> mUlNumber;
+        mutable QSet<qsizetype> mNoSyncTransfers;
+        mutable QSet<qsizetype> mActiveTransfers;
+        mutable QSet<qsizetype> mPausedTransfers;
+        mutable QSet<qsizetype> mCompletedTransfers;
+        mutable QSet<qsizetype> mCompletingTransfers;
+        mutable QSet<qsizetype> mFailedTransfers;
+        mutable QSet<qsizetype> mPermanentFailedTransfers;
 
-private slots:
+    private slots:
         void onRowsAboutToBeRemoved(const QModelIndex& parent, int first, int last);
         void onModelSortedFiltered();
 

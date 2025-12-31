@@ -262,8 +262,8 @@ void BugReportDialog::onDescribeBugTextChanged()
 {
     if (ui->teDescribeBug->toPlainText().length() > mMaxDescriptionLength)
     {
-        int diff = ui->teDescribeBug->toPlainText().length() -
-                   mMaxDescriptionLength; // m_maxTextEditLength - just an integer
+        qsizetype diff = ui->teDescribeBug->toPlainText().length() -
+                         mMaxDescriptionLength; // m_maxTextEditLength - just an integer
         QString newStr = ui->teDescribeBug->toPlainText();
         newStr.chop(diff);
         ui->teDescribeBug->setText(newStr);

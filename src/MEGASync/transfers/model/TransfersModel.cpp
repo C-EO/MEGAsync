@@ -27,8 +27,8 @@ static const QModelIndex DEFAULT_IDX = QModelIndex();
 
 const int MAX_TRANSFERS = 2000;
 const int CANCEL_THRESHOLD_THREAD = 100;
-const int QUICK_CANCEL_THRESHOLD = 10000;
-const int QUICK_CANCEL_MIN_THRESHOLD = 300;
+const qsizetype QUICK_CANCEL_THRESHOLD = 10000;
+const qsizetype QUICK_CANCEL_MIN_THRESHOLD = 300;
 const double QUICK_CANCEL_PERCENTAGE_THRESHOLD = 0.8;
 const int START_THRESHOLD_THREAD = 50;
 const int FAILED_THRESHOLD_THREAD = 100;
@@ -695,7 +695,7 @@ LastTransfersCount TransferThread::getLastTransfersCount()
 
 int TransfersModel::hasActiveTransfers() const
 {
-    return mActiveTransfers.size();
+    return static_cast<int>(mActiveTransfers.size());
 }
 
 void TransfersModel::setActiveTransfer(TransferTag tag)
@@ -1043,7 +1043,7 @@ int TransfersModel::rowCount(const QModelIndex& parent) const
     int rowCount (0);
     if (parent == DEFAULT_IDX)
     {
-        rowCount = mTransfers.size();
+        rowCount = static_cast<int>(mTransfers.size());
     }
     return rowCount;
 }
@@ -1092,12 +1092,18 @@ void TransfersModel::onProcessTransfers()
 
         bool asynchronousProcessed(false);
 
-        int containsTransfersToStart(mTransfersToProcess.startTransfersByTag.size());
-        int containsSyncTransfersToStart(mTransfersToProcess.startSyncTransfersByTag.size());
-        int containsTransfersToUpdate(mTransfersToProcess.updateTransfersByTag.size());
-        int containsTransfersToCancel(mTransfersToProcess.canceledTransfersByTag.size());
-        int containsFolderTransfersFailed(mTransfersToProcess.failedFolderTransfersByTag.size());
-        int containsTransfersFailed(mTransfersToProcess.failedTransfersByTag.size());
+        int containsTransfersToStart(
+            static_cast<int>(mTransfersToProcess.startTransfersByTag.size()));
+        int containsSyncTransfersToStart(
+            static_cast<int>(mTransfersToProcess.startSyncTransfersByTag.size()));
+        int containsTransfersToUpdate(
+            static_cast<int>(mTransfersToProcess.updateTransfersByTag.size()));
+        int containsTransfersToCancel(
+            static_cast<int>(mTransfersToProcess.canceledTransfersByTag.size()));
+        int containsFolderTransfersFailed(
+            static_cast<int>(mTransfersToProcess.failedFolderTransfersByTag.size()));
+        int containsTransfersFailed(
+            static_cast<int>(mTransfersToProcess.failedTransfersByTag.size()));
 
         if(containsTransfersToCancel > 0)
         {            
@@ -1399,7 +1405,7 @@ void TransfersModel::processCancelTransfers()
 
         mRowsToCancel.clear();
 
-        double cancelledPercentage(indexesToCancel.size()*1.0);
+        double cancelledPercentage(double(indexesToCancel.size()) * 1.0);
         cancelledPercentage = cancelledPercentage/rowCount();
 
         //For large amount of transfers, this is quite faster: remove all transfers and recreate the tags by row map
@@ -2637,7 +2643,7 @@ void TransfersModel::setUiBlockedMode(bool state)
     }
 }
 
-void TransfersModel::setUiBlockedModeByCounter(int transferCount)
+void TransfersModel::setUiBlockedModeByCounter(qsizetype transferCount)
 {
     if(transferCount > 0 && transferCount > PAUSE_RESUME_THRESHOLD_THREAD)
     {
@@ -2652,7 +2658,7 @@ void TransfersModel::setUiBlockedModeByCounter(int transferCount)
     }
 }
 
-void TransfersModel::updateUiBlockedByCounter(int updates)
+void TransfersModel::updateUiBlockedByCounter(qsizetype updates)
 {
     if(updates > 0 && mUiBlockedByCounter > 0)
     {

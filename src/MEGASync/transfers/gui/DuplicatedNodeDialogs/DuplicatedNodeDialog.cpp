@@ -90,7 +90,7 @@ void DuplicatedNodeDialog::setHeader(const QString& baseText, const QString& nod
 void DuplicatedNodeDialog::fillDialog()
 {
     auto conflictNumber(mConflictsBeingProcessed.size());
-    setConflictItems(conflictNumber);
+    setConflictItems(static_cast<int>(conflictNumber));
     processConflict(mConflictsBeingProcessed.first());
 }
 
@@ -134,7 +134,7 @@ void DuplicatedNodeDialog::onConflictProcessed()
         if(!mConflictsBeingProcessed.isEmpty())
         {
             cleanUi();
-            setConflictItems(mConflictsBeingProcessed.size());
+            setConflictItems(static_cast<int>(mConflictsBeingProcessed.size()));
             processConflict(mConflictsBeingProcessed.first());
         }
         else

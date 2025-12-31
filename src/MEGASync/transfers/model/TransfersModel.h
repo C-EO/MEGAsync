@@ -431,8 +431,8 @@ private:
     bool isUiBlockedModeActive() const ;
     void setUiBlockedMode(bool state);
 
-    void setUiBlockedModeByCounter(int transferCount);
-    void updateUiBlockedByCounter(int updates);
+    void setUiBlockedModeByCounter(qsizetype transferCount);
+    void updateUiBlockedByCounter(qsizetype updates);
     bool isUiBlockedByCounter() const;
     void setUiBlockedByCounterMode(bool state);
 
@@ -474,7 +474,7 @@ private:
     uint8_t mUpdateMostPriorityTransfer;
     uint8_t mUiBlockedCounter;
 
-    int mUiBlockedByCounter;
+    qsizetype mUiBlockedByCounter;
     uint8_t  mUiBlockedByCounterSafety;
 
     QHash<TransferTag, QPersistentModelIndex> mTagByOrder;

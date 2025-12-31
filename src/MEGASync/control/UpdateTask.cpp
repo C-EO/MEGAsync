@@ -351,8 +351,8 @@ bool UpdateTask::processFile(QNetworkReply *reply)
     }
 
     //Write the new file
-    int remainingSize = data.size();
-    int position = 0;
+    qsizetype remainingSize = data.size();
+    qsizetype position = 0;
     while (remainingSize)
     {
         int written = static_cast<int>(localFile.write(data.constData()+position, remainingSize));

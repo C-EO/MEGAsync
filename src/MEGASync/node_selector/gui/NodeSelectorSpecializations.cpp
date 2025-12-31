@@ -117,7 +117,8 @@ void DownloadNodeSelector::onOkButtonClicked()
     }
     else if (wrongNodes > 0)
     {
-        QString warningMsg1 = tr("%1 item selected", "", nodes.size()).arg(nodes.size());
+        QString warningMsg1 = tr("%1 item selected", "", static_cast<int>(nodes.size()))
+                                  .arg(static_cast<int>(nodes.size()));
         msgInfo.descriptionText =
             tr("%1. %2 has been removed. To reselect, close this window and try again.",
                "",
@@ -477,12 +478,12 @@ void CloudDriveNodeSelector::performMergeAction(
 
         if (type == NodeSelector::IncreaseOrDecrease::INCREASE)
         {
-            wid->increaseMovingNodes(merges.size());
+            wid->increaseMovingNodes(static_cast<int>(merges.size()));
             wid->setMergeFolderHandles(merges);
         }
         else
         {
-            wid->decreaseMovingNodes(merges.size());
+            wid->decreaseMovingNodes(static_cast<int>(merges.size()));
             wid->resetMergeFolderHandles(merges);
         }
     };
@@ -547,15 +548,19 @@ void CloudDriveNodeSelector::checkMovingItems(const QList<mega::MegaHandle>& han
         if (!tabsInfo.cloudDriveNodes.isEmpty())
         {
             type == NodeSelector::IncreaseOrDecrease::INCREASE ?
-                mCloudDriveWidget->increaseMovingNodes(tabsInfo.cloudDriveNodes.size()) :
-                mIncomingSharesWidget->decreaseMovingNodes(tabsInfo.cloudDriveNodes.size());
+                mCloudDriveWidget->increaseMovingNodes(
+                    static_cast<int>(tabsInfo.cloudDriveNodes.size())) :
+                mIncomingSharesWidget->decreaseMovingNodes(
+                    static_cast<int>(tabsInfo.cloudDriveNodes.size()));
         }
 
         if (!tabsInfo.incomingSharedNodes.isEmpty())
         {
             type == NodeSelector::IncreaseOrDecrease::INCREASE ?
-                mIncomingSharesWidget->increaseMovingNodes(tabsInfo.incomingSharedNodes.size()) :
-                mIncomingSharesWidget->decreaseMovingNodes(tabsInfo.incomingSharedNodes.size());
+                mIncomingSharesWidget->increaseMovingNodes(
+                    static_cast<int>(tabsInfo.incomingSharedNodes.size())) :
+                mIncomingSharesWidget->decreaseMovingNodes(
+                    static_cast<int>(tabsInfo.incomingSharedNodes.size()));
         }
 
         selectTabs(tabsInfo);
@@ -566,11 +571,11 @@ void CloudDriveNodeSelector::checkMovingItems(const QList<mega::MegaHandle>& han
     {
         if (type == NodeSelector::IncreaseOrDecrease::INCREASE)
         {
-            mRubbishWidget->increaseMovingNodes(handles.size());
+            mRubbishWidget->increaseMovingNodes(static_cast<int>(handles.size()));
         }
         else
         {
-            mRubbishWidget->decreaseMovingNodes(handles.size());
+            mRubbishWidget->decreaseMovingNodes(static_cast<int>(handles.size()));
         }
 
         performItemsToBeMoved(handles, type, true, false);

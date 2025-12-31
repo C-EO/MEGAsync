@@ -121,7 +121,7 @@ void HTTPServer::checkAndPurgeRequests()
     }
 }
 
-void HTTPServer::onUploadSelectionAccepted(int files, int folders)
+void HTTPServer::onUploadSelectionAccepted(qsizetype files, qsizetype folders)
 {
     for (QMultiMap<QString, RequestData*>::iterator it = webDataRequests.begin() ; it != webDataRequests.end(); it++)
     {
@@ -445,7 +445,7 @@ void HTTPServer::externalDownloadRequest(QString &response, const HTTPRequest& r
     QPointer<HTTPServer> safeServer = this;
 
     MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, "ExternalDownload command received from the webclient");
-    int start = request.data.indexOf(QString::fromUtf8("\"f\":[")) + 5;
+    qsizetype start = request.data.indexOf(QString::fromUtf8("\"f\":[")) + 5;
     if (start > 0)
     {
         QString privateAuth = Utilities::extractJSONString(request.data.mid(0, start), QString::fromUtf8("esid"));
@@ -469,7 +469,7 @@ void HTTPServer::externalDownloadRequest(QString &response, const HTTPRequest& r
         {
             QQueue<WrappedNode> downloadQueue;
 
-            int end;
+            qsizetype end;
             bool firstnode = true;
 
             while (request.data[start] == QChar::fromLatin1('{'))

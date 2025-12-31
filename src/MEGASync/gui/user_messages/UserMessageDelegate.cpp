@@ -19,6 +19,8 @@ namespace
 constexpr int UPDATE_DELAY = 50;
 }
 
+UserMessageDelegate::~UserMessageDelegate() = default;
+
 UserMessageDelegate::UserMessageDelegate(QAbstractItemModel* proxyModel, QTreeView* view):
     QStyledItemDelegate(view),
     mCacheManager(std::make_unique<UserMessageCacheManager>()),

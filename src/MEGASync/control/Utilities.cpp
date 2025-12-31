@@ -981,13 +981,13 @@ QString Utilities::createCompleteUsedString(long long usedData, long long totalD
 QString Utilities::extractJSONString(QString json, QString name)
 {
     QString pattern = name + QString::fromUtf8("\":\"");
-    int pos = json.indexOf(pattern);
+    qsizetype pos = json.indexOf(pattern);
     if (pos < 0)
     {
         return QString();
     }
 
-    int end = json.indexOf(QString::fromUtf8("\""), pos + pattern.size());
+    qsizetype end = json.indexOf(QString::fromUtf8("\""), pos + pattern.size());
     if (end < 0)
     {
         return QString();
@@ -1001,7 +1001,7 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
     QStringList resultList;
 
     QString pattern = name + QString::fromUtf8("\":[\"");
-    int startPos = json.indexOf(pattern);
+    qsizetype startPos = json.indexOf(pattern);
     if (startPos < 0)
     {
         return resultList;
@@ -1009,7 +1009,7 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
 
     startPos += pattern.size(); // Move to the beginning of the first string
 
-    int endPos = json.indexOf(QString::fromUtf8("\"]"), startPos);
+    qsizetype endPos = json.indexOf(QString::fromUtf8("\"]"), startPos);
     if (endPos < 0)
     {
         return resultList;
@@ -1030,14 +1030,14 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
 long long Utilities::extractJSONNumber(QString json, QString name)
 {
     QString pattern = name + QString::fromUtf8("\":");
-    int pos = json.indexOf(pattern);
+    qsizetype pos = json.indexOf(pattern);
     if (pos < 0)
     {
         return 0;
     }
 
-    int end = pos + pattern.size();
-    int count = 0;
+    qsizetype end = pos + pattern.size();
+    qsizetype count = 0;
     while (json[end].isDigit())
     {
         end++;
@@ -1145,7 +1145,7 @@ QString Utilities::joinLogZipFiles(MegaApi *megaApi, const QDateTime *timestampS
         gzinit(&crc, &tot, pFile);
 
         QFileInfoList logFiles = logDir.entryInfoList(QStringList() << QString::fromUtf8("MEGAsync.[0-9]*.log"), QDir::Files);
-        int nLogFiles = logFiles.count();
+        int nLogFiles = static_cast<int>(logFiles.count());
 
         std::sort(logFiles.begin(),
                   logFiles.end(),
@@ -1505,9 +1505,9 @@ QString Utilities::getNonDuplicatedLocalName(const QFileInfo &currentFile, bool 
 QPair<QString, QString> Utilities::getFilenameBasenameAndSuffix(const QString& fileName)
 {
     QMimeDatabase db;
-    int length = fileName.length();
+    qsizetype length = fileName.length();
     QList <QPair <int, QMimeType> > list;
-    for (int index = length; index > -1; index--)
+    for (qsizetype index = length; index > -1; index--)
     {
         QList<QMimeType> mimes = db.mimeTypesForFileName(fileName.section(QLatin1String(""), index, length));
         QMimeType mime = mimes.isEmpty() ? QMimeType() : mimes.last();
@@ -2124,7 +2124,7 @@ void Utilities::sleepMilliseconds(unsigned int milliseconds)
 #endif
 }
 
-int Utilities::partPer(long long part, long long total, uint ref)
+int Utilities::partPer(long double part, long double total, uint ref)
 {
     // Use maximum precision
     long double partd(part);

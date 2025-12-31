@@ -45,7 +45,7 @@ void EncryptedSettings::beginGroup(const QString &prefix)
     QSettings::beginGroup(hash(prefix));
 }
 
-void EncryptedSettings::beginGroup(int numGroup)
+void EncryptedSettings::beginGroup(qsizetype numGroup)
 {
      QSettings::beginGroup(QSettings::childGroups().at(numGroup));
 }
@@ -55,7 +55,7 @@ void EncryptedSettings::endGroup()
     QSettings::endGroup();
 }
 
-int EncryptedSettings::numChildGroups()
+qsizetype EncryptedSettings::numChildGroups()
 {
     return QSettings::childGroups().size();
 }
@@ -95,7 +95,7 @@ void EncryptedSettings::sync()
 //Simplified XOR fun
 QByteArray EncryptedSettings::XOR(const QByteArray& key, const QByteArray& data) const
 {
-    int keyLen = key.length();
+    qsizetype keyLen = key.length();
     if (!keyLen)
     {
         return data;

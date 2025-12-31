@@ -466,13 +466,13 @@ void NodeRequester::removeRootItem(std::shared_ptr<mega::MegaNode> node)
 int NodeRequester::rootIndexSize() const
 {
     QMutexLocker lock(&mDataMutex);
-    return mRootItems.size();
+    return static_cast<int>(mRootItems.size());
 }
 
 int NodeRequester::rootIndexOf(NodeSelectorModelItem* item)
 {
     QMutexLocker lock(&mDataMutex);
-    return mRootItems.indexOf(item);
+    return static_cast<int>(mRootItems.indexOf(item));
 }
 
 NodeSelectorModelItem* NodeRequester::getRootItem(int index) const
@@ -1835,7 +1835,9 @@ bool NodeSelectorModel::addNodes(QList<std::shared_ptr<mega::MegaNode>> nodes,
                     parentItem->areChildrenInitialized())
                 {
                     auto totalRows = rowCount(parent);
-                    beginInsertRows(parent, totalRows, totalRows + nodes.size() - 1);
+                    beginInsertRows(parent,
+                                    totalRows,
+                                    static_cast<int>(totalRows + nodes.size() - 1));
                     emit requestAddNodes(nodes, parent, parentItem);
                     return true;
                 }

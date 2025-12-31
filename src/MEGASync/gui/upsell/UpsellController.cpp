@@ -455,7 +455,7 @@ void UpsellController::process(mega::MegaPricing* pricing)
         reviewPlansToCheckProFlexi(plans);
     }
 
-    emit beginInsertRows(0, plans.size() - 1);
+    emit beginInsertRows(0, static_cast<int>(plans.size() - 1));
 
     mPlans->addPlans(plans);
     updatePlans();
@@ -651,7 +651,7 @@ int UpsellController::getRowForCurrentRecommended()
 
     if (it != plans.cend())
     {
-        currentRecommendedRow = plans.indexOf(*it);
+        currentRecommendedRow = static_cast<int>(plans.indexOf(*it));
     }
     return currentRecommendedRow;
 }

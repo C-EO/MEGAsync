@@ -357,7 +357,7 @@ public:
     void getLastHandleInfo(mega::MegaHandle &lastHandle, int &type, long long &timestamp);
     void setLastPublicHandle(mega::MegaHandle handle, int type);
 
-    int getNumUsers();
+    qsizetype getNumUsers();
 
     // enter user preferences and load syncs into loadedSyncsMap
     void enterUser(int i);
