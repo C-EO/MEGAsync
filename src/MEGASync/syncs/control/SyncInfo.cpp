@@ -39,7 +39,7 @@ SyncInfo *SyncInfo::instance()
 SyncInfo::SyncInfo():
     QObject(),
     preferences(Preferences::instance()),
-    syncMutex(QMutex::Recursive),
+    syncMutex(),
     delegateListener(std::make_unique<QTMegaListener>(MegaSyncApp->getMegaApi(), this))
 {
     MegaSyncApp->getMegaApi()->addListener(delegateListener.get());

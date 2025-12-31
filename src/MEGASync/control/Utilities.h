@@ -44,6 +44,13 @@ constexpr typename std::underlying_type<E>::type toInt(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
+template<typename Enum>
+quint64 toQtMetaEnumValue(Enum e)
+{
+    using UT = std::underlying_type_t<Enum>;
+    return static_cast<quint64>(static_cast<qint64>(static_cast<UT>(e)));
+}
+
 struct PlanInfo
 {
     long long gbStorage;

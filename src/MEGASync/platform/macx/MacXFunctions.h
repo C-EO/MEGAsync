@@ -1,7 +1,6 @@
 #ifndef MACXFUNCTIONS_H
 #define MACXFUNCTIONS_H
 
-#include <QMacToolBar>
 #include <QString>
 #include <QStringList>
 #include <QWidget>

@@ -1276,7 +1276,8 @@ void Preferences::recoverDeprecatedNotificationsSettings()
 QString Preferences::notificationsTypeToString(NotificationsTypes type)
 {
     QMetaEnum metaEnum = QMetaEnum::fromType<NotificationsTypes>();
-    return QString::fromUtf8(metaEnum.valueToKey(notificationsTypeUT(type)));
+    quint64 value = static_cast<quint64>(static_cast<qint64>(notificationsTypeUT(type)));
+    return QString::fromUtf8(metaEnum.valueToKey(value));
 }
 
 /************ STALLED ISSUES **********************************/

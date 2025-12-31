@@ -5,7 +5,6 @@
 #include "MultiQFileDialog.h"
 #include "TokenParserWidgetManager.h"
 
-#include <QDesktopWidget>
 #include <QScreen>
 
 using namespace mega;

@@ -730,7 +730,7 @@ void Utilities::copyRecursively(QString srcPath, QString dstPath)
         src.copy(dstPath);
 #ifndef _WIN32
        QFileInfo info(src);
-       time_t t = info.lastModified().toTime_t();
+       time_t t = info.lastModified().toSecsSinceEpoch();
        struct utimbuf times = { t, t };
        utime(dstPath.toUtf8().constData(), &times);
 #endif

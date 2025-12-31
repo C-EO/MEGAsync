@@ -527,7 +527,7 @@ int main(int argc, char *argv[])
 
     qInstallMessageHandler(messageHandler);
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
 
     auto current = QOperatingSystemVersion::current();
     MegaApi::log(MegaApi::LOG_LEVEL_INFO, QString::fromUtf8("Running on macOS version: %1.%2.%3")

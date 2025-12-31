@@ -123,8 +123,10 @@ void NodeSelectorTreeView::drawBranches(QPainter* painter,
         return;
     }
 
-    QStyleOptionViewItem opt = viewOptions();
     QSize iconSize(16, 16);
+
+    QStyleOptionViewItem opt;
+    initViewItemOption(&opt);
 
     opt.rect = rect;
     opt.rect.setHeight(iconSize.width());

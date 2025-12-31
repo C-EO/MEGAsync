@@ -64,7 +64,6 @@
 
 #include <QCheckBox>
 #include <QClipboard>
-#include <QDesktopWidget>
 #include <QFontDatabase>
 #include <QFuture>
 #include <QNetworkProxy>
@@ -114,7 +113,7 @@ void MegaApplication::loadDataPath()
                + organizationName() + QString::fromLatin1("/")
                + applicationName();
 #else
-    QStringList dataPaths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+    QStringList dataPaths = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation);
     if (dataPaths.size())
     {
         dataPath = dataPaths.at(0);
@@ -346,8 +345,6 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     connect(&transferProgressController, &BlockingStageProgressController::updateUi,
             &scanStageController, &ScanStageController::onFolderTransferUpdate);
 
-    setAttribute(Qt::AA_DisableWindowContextHelpButton);
-
     // Don't execute the "onGlobalSyncStateChangedImpl" function too often or the dialog locks up,
     // eg. queueing a folder with 1k items for upload/download
     mIntervalExecutioner =
@@ -452,8 +449,6 @@ void MegaApplication::initialize()
                                     this,
                                     "handleMEGAurl");
     QDesktopServices::setUrlHandler(SCHEME_LOCAL_URL, this, "handleLocalPath");
-
-    qRegisterMetaTypeStreamOperators<EphemeralCredentials>("EphemeralCredentials");
 
     preferences = Preferences::instance();
     connect(preferences.get(), SIGNAL(stateChanged()), this, SLOT(changeState()));
@@ -802,9 +797,9 @@ void MegaApplication::changeLanguage(QString languageCode)
                             + Preferences::TRANSLATION_PREFIX
                             + languageCode))
     {
-        translator.load(Preferences::TRANSLATION_FOLDER
-                                   + Preferences::TRANSLATION_PREFIX
-                                   + QString::fromUtf8("en"));
+        [[maybe_unused]] bool ok =
+            translator.load(Preferences::TRANSLATION_FOLDER + Preferences::TRANSLATION_PREFIX +
+                            QString::fromUtf8("en"));
         currentLanguageCode = QString::fromUtf8("en");
     }
     else

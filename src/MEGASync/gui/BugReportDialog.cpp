@@ -9,7 +9,7 @@
 #include <TransfersModel.h>
 
 #include <QCloseEvent>
-#include <QRegExp>
+#include <QRegularExpression>
 
 using namespace mega;
 

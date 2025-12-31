@@ -309,7 +309,7 @@ void CircularUsageProgressBar::setOkStateTextColor(const QString& color)
     }
 }
 
-void CircularUsageProgressBar::setFontWeigth(int weight)
+void CircularUsageProgressBar::setFontWeigth(QFont::Weight weight)
 {
     if (!mFontWeight.has_value() || mFontWeight.value() != weight)
     {
