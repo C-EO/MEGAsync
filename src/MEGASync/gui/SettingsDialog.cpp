@@ -539,7 +539,7 @@ void SettingsDialog::on_bClearCache_clicked()
     {
         if (msg->result() == QMessageBox::Yes)
         {
-            QtConcurrent::run(deleteCache);
+            QThreadPool::globalInstance()->start(deleteCache);
             mCacheSize = 0;
             onCacheSizeAvailable();
         }
@@ -579,7 +579,11 @@ void SettingsDialog::on_bClearRemoteCache_clicked()
     {
         if (msg->result() == QMessageBox::Yes)
         {
-            QtConcurrent::run(deleteRemoteCache, mMegaApi);
+            QThreadPool::globalInstance()->start(
+                [=]()
+                {
+                    deleteRemoteCache(mMegaApi);
+                });
             mRemoteCacheSize = 0;
             onCacheSizeAvailable();
         }

@@ -1589,10 +1589,11 @@ void TransfersModel::openFolder(const QFileInfo& info)
 {
     if(info.exists())
     {
-        QtConcurrent::run([this, info]
-        {
-            emit showInFolderFinished(Platform::getInstance()->showInFolder(info.filePath()));
-        });
+        QThreadPool::globalInstance()->start(
+            [this, info]
+            {
+                emit showInFolderFinished(Platform::getInstance()->showInFolder(info.filePath()));
+            });
     }
     else
     {
@@ -2238,14 +2239,15 @@ void TransfersModel::pauseTransfers(const QModelIndexList& indexes, bool pauseSt
 
         if(indexes.size() > PAUSE_RESUME_THRESHOLD_THREAD)
         {
-            QtConcurrent::run([this, indexes, pauseState]()
-            {
-                blockModelSignals(true);
-                performPauseResumeVisibleTransfers(indexes, pauseState, false);
-                blockModelSignals(false);
+            QThreadPool::globalInstance()->start(
+                [this, indexes, pauseState]()
+                {
+                    blockModelSignals(true);
+                    performPauseResumeVisibleTransfers(indexes, pauseState, false);
+                    blockModelSignals(false);
 
-                emit pauseStateChanged(mAreAllPaused);
-            });
+                    emit pauseStateChanged(mAreAllPaused);
+                });
         }
         else
         {
@@ -2298,14 +2300,15 @@ void TransfersModel::pauseResumeAllTransfers(bool state)
     //The final count can be +- 30 transfers
     if(activeTransfers > PAUSE_RESUME_THRESHOLD_THREAD)
     {
-        QtConcurrent::run([this, activeTransfers]()
-        {
-            blockModelSignals(true);
-            auto tagsUpdated = performPauseResumeAllTransfers(activeTransfers, false);
-            blockModelSignals(false);
+        QThreadPool::globalInstance()->start(
+            [this, activeTransfers]()
+            {
+                blockModelSignals(true);
+                auto tagsUpdated = performPauseResumeAllTransfers(activeTransfers, false);
+                blockModelSignals(false);
 
-            setUiBlockedModeByCounter(tagsUpdated);
-        });
+                setUiBlockedModeByCounter(tagsUpdated);
+            });
     }
     else
     {

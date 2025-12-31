@@ -88,7 +88,11 @@ void StalledIssuesUtilities::openLink(bool isCloud, const QString& path)
         auto url(getLink(isCloud, path));
         if (!url.isEmpty())
         {
-            QtConcurrent::run(QDesktopServices::openUrl, url);
+            QThreadPool::globalInstance()->start(
+                [url]
+                {
+                    QDesktopServices::openUrl(url);
+                });
         }
         else
         {
@@ -103,7 +107,8 @@ void StalledIssuesUtilities::openLink(bool isCloud, const QString& path)
         QFile file(path);
         if(file.exists())
         {
-            QtConcurrent::run([=]
+            QThreadPool::globalInstance()->start(
+                [path]
                 {
                     Platform::getInstance()->showInFolder(path);
                 });

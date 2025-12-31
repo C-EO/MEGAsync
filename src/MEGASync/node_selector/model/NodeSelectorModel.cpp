@@ -1042,9 +1042,8 @@ bool NodeSelectorModel::startProcessingNodes(const QMimeData* data,
                     }
                 }
 
-                nodesToMove.append(
-                    qMakePair<mega::MegaHandle, std::shared_ptr<mega::MegaNode>>(handle,
-                                                                                 targetNode));
+                QPair<mega::MegaHandle, std::shared_ptr<mega::MegaNode>> p{handle, targetNode};
+                nodesToMove.append(p);
             }
 
             return processNodesAndCheckConflicts(nodesToMove, sourceNode, type);
@@ -1253,7 +1252,7 @@ void NodeSelectorModel::processMergeQueue(MoveActionType type)
         emit itemsAboutToBeMerged(filteredMerges, type);
     }
 
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [this, type]()
         {
             while (!mMergeQueue.isEmpty())
@@ -1887,7 +1886,7 @@ void NodeSelectorModel::onSyncStateChanged(std::shared_ptr<SyncSettings> sync)
             if (itemStatus != item->getStatus())
             {
                 sendBlockUiSignal(true);
-                QtConcurrent::run(
+                QThreadPool::globalInstance()->start(
                     [this, item, sync]()
                     {
                         // Update its children
@@ -1946,7 +1945,7 @@ void NodeSelectorModel::deleteNodes(const QList<mega::MegaHandle>& nodeHandles, 
     emit itemsAboutToBeMoved(nodeHandles, type);
 
     // It will be unblocked when all requestFinish calls are received (check onRequestFinish)
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [this, nodeHandles, type]()
         {
             auto requestCounter(0);
@@ -2091,7 +2090,7 @@ void NodeSelectorModel::moveFileAndReplace(std::shared_ptr<mega::MegaNode> moveF
                                            std::shared_ptr<mega::MegaNode> conflictTargetFile,
                                            std::shared_ptr<mega::MegaNode> targetParentFolder)
 {
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [this, moveFile, targetParentFolder, conflictTargetFile]()
         {
             auto e = Utilities::removeRemoteFile(conflictTargetFile.get());
@@ -2112,7 +2111,7 @@ void NodeSelectorModel::copyFileAndReplace(std::shared_ptr<mega::MegaNode> copyI
                                            std::shared_ptr<mega::MegaNode> conflictTargetFile,
                                            std::shared_ptr<mega::MegaNode> targetParentFolder)
 {
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [this, copyItem, targetParentFolder, conflictTargetFile]()
         {
             auto e = Utilities::removeRemoteFile(conflictTargetFile.get());
