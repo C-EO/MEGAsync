@@ -91,7 +91,7 @@ void TransferWidgetHeaderItem::mouseReleaseEvent(QMouseEvent *event)
     QWidget::mouseReleaseEvent(event);
 }
 
-void TransferWidgetHeaderItem::enterEvent(QEnterEvent* event)
+void TransferWidgetHeaderItem::enterEvent(QEvent* event)
 {
     ui->line->show();
     QWidget::enterEvent(event);

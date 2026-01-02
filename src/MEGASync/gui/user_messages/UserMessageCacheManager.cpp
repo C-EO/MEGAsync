@@ -16,7 +16,7 @@ UserMessageCacheManager::UserMessageCacheManager()
 {
 }
 
-UserMessageWidget* UserMessageCacheManager::createOrGetWidget(int row,
+UserMessageWidget* UserMessageCacheManager::createOrGetWidget(qsizetype row,
                                                               UserMessage* data,
                                                               QWidget* parent)
 {
@@ -26,7 +26,7 @@ UserMessageWidget* UserMessageCacheManager::createOrGetWidget(int row,
     }
 
     UserMessageWidget* widget(nullptr);
-    int cacheIndex(row % mUserMessageItems.maxCost());
+    auto cacheIndex(row % mUserMessageItems.maxCost());
 
     switch (data->getType())
     {
@@ -50,7 +50,7 @@ UserMessageWidget* UserMessageCacheManager::createOrGetWidget(int row,
 }
 
 template<class Item>
-UserMessageWidget* UserMessageCacheManager::createOrGetWidget(int cacheIndex,
+UserMessageWidget* UserMessageCacheManager::createOrGetWidget(qsizetype cacheIndex,
                                                               UserMessage* data,
                                                               QWidget* parent)
 {
@@ -84,7 +84,7 @@ UserMessageWidget* UserMessageCacheManager::createOrGetWidget(int cacheIndex,
     return widget;
 }
 
-UserMessageWidget* UserMessageCacheManager::getWidgetFromCache(int cacheIndex)
+UserMessageWidget* UserMessageCacheManager::getWidgetFromCache(qsizetype cacheIndex)
 {
     UserMessageWidget* item(nullptr);
 

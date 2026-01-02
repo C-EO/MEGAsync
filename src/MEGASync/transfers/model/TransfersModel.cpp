@@ -25,7 +25,7 @@ using namespace mega;
 
 static const QModelIndex DEFAULT_IDX = QModelIndex();
 
-const int MAX_TRANSFERS = 2000;
+const qsizetype MAX_TRANSFERS = 2000;
 const int CANCEL_THRESHOLD_THREAD = 100;
 const qsizetype QUICK_CANCEL_THRESHOLD = 10000;
 const qsizetype QUICK_CANCEL_MIN_THRESHOLD = 300;
@@ -47,7 +47,7 @@ TransferThread::TransfersToProcess TransferThread::processTransfers()
    TransfersToProcess transfers;
    if(mCacheMutex.tryLock())
    {
-       int spaceForTransfers(mMaxTransfersToProcess);
+       qsizetype spaceForTransfers = mMaxTransfersToProcess;
 
        transfers.canceledTransfersByTag = extractFromCache(mTransfersToProcess.canceledTransfersByTag, spaceForTransfers);
        spaceForTransfers -= transfers.canceledTransfersByTag.size();
@@ -81,7 +81,9 @@ void TransferThread::clear()
     mLastTransfersCount.clear();
 }
 
-QList<QExplicitlySharedDataPointer<TransferData>> TransferThread::extractFromCache(QMap<int, QExplicitlySharedDataPointer<TransferData>>& dataMap, int spaceForTransfers)
+QList<QExplicitlySharedDataPointer<TransferData>>
+    TransferThread::extractFromCache(QMap<int, QExplicitlySharedDataPointer<TransferData>>& dataMap,
+                                     qsizetype spaceForTransfers)
 {
     if(!dataMap.isEmpty() && spaceForTransfers > 0)
     {

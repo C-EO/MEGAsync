@@ -183,13 +183,11 @@ void FatalEventHandler::processEvent(std::unique_ptr<mega::MegaEvent> event, Meg
     auto sdkErrorCode = QVariant::fromValue(mSdkErrorCode);
 
     // Make sure we can handle this error type, otherwise process as "Unhandled"
-    auto canConvert = sdkErrorCode.canConvert(QMetaType(FatalEventHandler::FatalErrorCode()));
+    auto canConvert = sdkErrorCode.canConvert(qMetaTypeId<FatalEventHandler::FatalErrorCode>());
     mErrorCode = canConvert ? sdkErrorCode.value<FatalEventHandler::FatalErrorCode>() :
                               FatalErrorCode::ERR_UNHANDLED;
 
-    // Convert enum to quint64 while preserving negative values (sign-extend to 64 bits)
-    // Required for QMetaEnum::valueToKey() in Qt 6.9+
-    auto isValid = QMetaEnum::fromType<FatalEventHandler::FatalErrorCode>().valueToKey(
+    bool isValid = QMetaEnum::fromType<FatalEventHandler::FatalErrorCode>().valueToKey(
                        toQtMetaEnumValue(mErrorCode)) != nullptr;
 
     if (!isValid)

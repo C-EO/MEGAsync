@@ -218,7 +218,7 @@ Qml.RoundButton {
         id: mouseArea
 
         anchors.fill: parent
-        onPressed: { mouse.accepted = false; }
+        onPressed: mouse => { mouse.accepted = false; }
         cursorShape: buttonCursorShape
     }
 

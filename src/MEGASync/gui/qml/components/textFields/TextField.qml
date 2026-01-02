@@ -210,7 +210,7 @@ FocusScope {
 
         } // Rectangle: focusBorder
 
-        Keys.onPressed: {
+        Keys.onPressed: event => {
             if(event.key === Qt.Key_Backspace) {
                 root.backPressed();
             }

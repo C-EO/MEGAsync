@@ -323,7 +323,7 @@ void SettingsDialog::loadSettings()
         QString file = it.next();
         if (file.startsWith(fullPrefix))
         {
-            qsizetype extensionIndex = file.lastIndexOf(QString::fromUtf8("."));
+            auto extensionIndex = file.lastIndexOf(QString::fromUtf8("."));
             if ((extensionIndex - fullPrefix.size()) <= 0)
             {
                 continue;
@@ -333,7 +333,7 @@ void SettingsDialog::loadSettings()
             QString languageString = Utilities::languageCodeToString(languageCode);
             if (!languageString.isEmpty())
             {
-                int i = 0;
+                auto i = 0;
                 while (i < languages.size() && (languageString > languages[i]))
                 {
                     i++;
@@ -785,7 +785,7 @@ void SettingsDialog::on_cOverlayIcons_toggled(bool checked)
 
     mPreferences->disableOverlayIcons(!checked);
 
-    const int configuredSyncCount = mModel->getNumSyncedFolders(SyncInfo::AllHandledSyncTypes);
+    const auto configuredSyncCount = mModel->getNumSyncedFolders(SyncInfo::AllHandledSyncTypes);
     if (configuredSyncCount <= 0)
         return;
 

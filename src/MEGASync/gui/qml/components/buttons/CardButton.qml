@@ -116,12 +116,12 @@ Button {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: buttonCursorShape
-        onPressed: {
+        onPressed: mouse => {
             mouse.accepted = false;
         }
     }
 
-    Keys.onReleased: (event)=> {
+    Keys.onReleased: event => {
         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
             if (checkable) {
                 checked = true;

@@ -718,8 +718,8 @@ AlbumCollection SetManager::filterSet(const AlbumCollection& srcSet, const QList
     dstSet.name = srcSet.name;
     dstSet.link = srcSet.link;
 
-    const qsizetype nrElements = srcSet.elementHandleList.size();
-    for (qsizetype i = 0; i < nrElements; i++)
+    const auto nrElements = srcSet.elementHandleList.size();
+    for (auto i = 0; i < nrElements; i++)
     {
         MegaHandle handle = srcSet.elementHandleList[i];
         if (elementHandleList.contains(handle))

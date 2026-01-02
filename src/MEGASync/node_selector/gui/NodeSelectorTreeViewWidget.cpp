@@ -1101,32 +1101,32 @@ bool NodeSelectorTreeViewWidget::onNodesUpdate(mega::MegaApi*, mega::MegaNodeLis
 
 bool NodeSelectorTreeViewWidget::shouldUpdateImmediately()
 {
-    int totalSize = static_cast<int>(mUpdatedNodes.size());
+    auto totalSize = mUpdatedNodes.size();
     if (totalSize > IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD)
     {
         return true;
     }
-    totalSize += static_cast<int>(mRemovedNodes.size());
+    totalSize += mRemovedNodes.size();
     if (totalSize > IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD)
     {
         return true;
     }
-    totalSize += static_cast<int>(mRemoveMovedNodes.size());
+    totalSize += mRemoveMovedNodes.size();
     if (totalSize > IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD)
     {
         return true;
     }
-    totalSize += static_cast<int>(mRenamedNodesByHandle.size());
+    totalSize += mRenamedNodesByHandle.size();
     if (totalSize > IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD)
     {
         return true;
     }
-    totalSize += static_cast<int>(mAddedNodesByParentHandle.size());
+    totalSize += mAddedNodesByParentHandle.size();
     if (totalSize > IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD)
     {
         return true;
     }
-    totalSize += static_cast<int>(mUpdatedButInvisibleNodes.size());
+    totalSize += mUpdatedButInvisibleNodes.size();
     if (totalSize > IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD)
     {
         return true;

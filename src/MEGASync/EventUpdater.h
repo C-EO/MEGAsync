@@ -1,7 +1,7 @@
 #ifndef EVENTUPDATER_H
 #define EVENTUPDATER_H
 
-#include <QtCore/qtypes.h>
+#include <QtCore>
 class EventUpdater
 {
 public:

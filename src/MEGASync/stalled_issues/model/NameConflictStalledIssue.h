@@ -449,9 +449,9 @@ public:
             return true;
         }
 
-        int size() const
+        qsizetype size() const
         {
-            auto counter(0);
+            qsizetype counter = 0;
             foreach(auto& conflictedName, mConflictedNames)
             {
                 counter += conflictedName.conflictedNames.size();

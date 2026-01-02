@@ -445,7 +445,7 @@ void HTTPServer::externalDownloadRequest(QString &response, const HTTPRequest& r
     QPointer<HTTPServer> safeServer = this;
 
     MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, "ExternalDownload command received from the webclient");
-    qsizetype start = request.data.indexOf(QString::fromUtf8("\"f\":[")) + 5;
+    auto start = request.data.indexOf(QString::fromUtf8("\"f\":[")) + 5;
     if (start > 0)
     {
         QString privateAuth = Utilities::extractJSONString(request.data.mid(0, start), QString::fromUtf8("esid"));
@@ -469,7 +469,7 @@ void HTTPServer::externalDownloadRequest(QString &response, const HTTPRequest& r
         {
             QQueue<WrappedNode> downloadQueue;
 
-            qsizetype end;
+            auto end(0);
             bool firstnode = true;
 
             while (request.data[start] == QChar::fromLatin1('{'))

@@ -44,12 +44,23 @@ constexpr typename std::underlying_type<E>::type toInt(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+// Convert enum to quint64 while preserving negative values (sign-extend to 64 bits)
+// Required for QMetaEnum::valueToKey() in Qt 6.9+
 template<typename Enum>
 quint64 toQtMetaEnumValue(Enum e)
 {
     using UT = std::underlying_type_t<Enum>;
     return static_cast<quint64>(static_cast<qint64>(static_cast<UT>(e)));
 }
+#else
+template<typename Enum>
+int toQtMetaEnumValue(Enum e)
+{
+    using UT = std::underlying_type_t<Enum>;
+    return static_cast<int>(static_cast<UT>(e));
+}
+#endif
 
 struct PlanInfo
 {
@@ -309,7 +320,7 @@ protected:
         emit clicked();
     }
 #ifndef __APPLE__
-    void enterEvent(QEnterEvent*)
+    void enterEvent(QEvent*)
     {
         setCursor(Qt::PointingHandCursor);
     }

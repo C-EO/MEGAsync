@@ -477,7 +477,7 @@ QUrl ServiceUrls::getUpsellPlanUrl(int proLevel, int periodInMonths) const
 {
     QUrl url;
     auto accountTypeVar = QVariant::fromValue(proLevel);
-    auto canConvert = accountTypeVar.canConvert(qMetaTypeId<Preferences::AccountType>());
+    auto canConvert = accountTypeVar.canConvert<Preferences::AccountType>();
 
     if (canConvert)
     {

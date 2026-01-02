@@ -32,7 +32,7 @@ Qml.Text {
         id: mouseArea
 
         anchors.fill: parent
-        onPressed: { mouse.accepted = handlePress; }
+        onPressed: mouse => { mouse.accepted = handlePress; }
     }
 
 }

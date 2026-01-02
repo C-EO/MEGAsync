@@ -69,7 +69,6 @@
 #include <QNetworkProxy>
 #include <QScreen>
 #include <QSettings>
-#include <QtConcurrent/QTConcurrent>
 #include <QToolTip>
 #include <QTranslator>
 

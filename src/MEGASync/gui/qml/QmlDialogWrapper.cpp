@@ -23,7 +23,7 @@ QString QMLComponent::contextName() const
     QString className(QString::fromLatin1(metaObject()->className()));
 
     // Remove namespace prefix if necessary.
-    const qsizetype index(className.lastIndexOf(NAMESPACE_SEPARATOR));
+    const auto index(className.lastIndexOf(NAMESPACE_SEPARATOR));
     if (index != -1)
     {
         // Ignore namespace separator.

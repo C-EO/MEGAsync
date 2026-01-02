@@ -1,8 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
 
 import common 1.0
 
@@ -10,7 +8,6 @@ import components.checkBoxes 1.0
 import components.texts 1.0 as Texts
 import components.images 1.0
 import components.buttons 1.0 as Buttons
-import QtQuick.Controls.Styles 1.4
 
 import WildCardEnum 1.0
 import ExclusionRulesModel 1.0

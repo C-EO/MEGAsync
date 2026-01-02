@@ -7,10 +7,10 @@
 #include <QHostInfo>
 #include <QObject>
 #include <QProgressBar>
+#include <QRegularExpression>
 #include <QScreen>
 #include <QSet>
 #include <QVariantMap>
-#include <QX11Info>
 #include <sys/statvfs.h>
 
 #ifndef QT_NO_DBUS
@@ -339,17 +339,19 @@ QString PlatformImplementation::getDefaultOpenAppByMimeType(QString mimeType)
 
     QTextStream in(&f);
     QStringList contents = in.readAll().split(QString::fromUtf8("\n"));
-    contents = contents.filter(QRegExp(QString::fromUtf8("^Exec=")));
+    contents = contents.filter(QRegularExpression(QString::fromUtf8("^Exec=")));
     if (!contents.size())
     {
         return QString();
     }
 
     QString line = contents.first();
-    QRegExp captureRegexCommand(QString::fromUtf8("^Exec=([^' ']*)"));
-    if (captureRegexCommand.indexIn(line) != -1)
+    QRegularExpression captureRegexCommand(QString::fromUtf8("^Exec=([^' ']*)"));
+    auto reMatch = captureRegexCommand.match(line);
+
+    if (reMatch.hasMatch())
     {
-        return captureRegexCommand.cap(1); // return first group from regular expression.
+        return reMatch.captured(1); // return first group from regular expression.
     }
 
     return QString();
@@ -384,68 +386,69 @@ QString PlatformImplementation::getWindowManagerName()
     static QString wmName;
     static bool cached = false;
 
+    // if (!cached)
+    // {
+    //     if (QX11Info::isPlatformX11())
+    //     {
+    //         const int maxLen = 1024;
+    //         const auto connection = QX11Info::connection();
+    //         const auto appRootWindow = static_cast<xcb_window_t>(QX11Info::appRootWindow());
+
+    // if (connection != nullptr)
+    // {
+    //     auto wmCheckAtom = getAtom(connection, "_NET_SUPPORTING_WM_CHECK");
+    //     // Get window manager
+    //     auto reply = xcb_get_property_reply(connection,
+    //                                         xcb_get_property(connection,
+    //                                                          false,
+    //                                                          appRootWindow,
+    //                                                          wmCheckAtom,
+    //                                                          XCB_ATOM_WINDOW,
+    //                                                          0,
+    //                                                          maxLen),
+    //                                         nullptr);
+
+    // if (reply && reply->format == 32 && reply->type == XCB_ATOM_WINDOW)
+    // {
+    //     // Get window manager name
+    //     const xcb_window_t windowManager =
+    //     *(static_cast<xcb_window_t*>(xcb_get_property_value(reply)));
+
+    // if (windowManager != XCB_WINDOW_NONE)
+    // {
+    //     const auto utf8StringAtom = getAtom(connection, "UTF8_STRING");
+    //     const auto wmNameAtom = getAtom(connection, "_NET_WM_NAME");
+
+    // auto wmReply = xcb_get_property_reply(connection,
+    //                                       xcb_get_property(connection,
+    //                                                        false,
+    //                                                        windowManager,
+    //                                                        wmNameAtom,
+    //                                                        utf8StringAtom,
+    //                                                        0,
+    //                                                        maxLen),
+    //                                       nullptr);
+    // if (wmReply && wmReply->format == 8 && wmReply->type == utf8StringAtom)
+    // {
+    //     wmName = QString::fromUtf8(static_cast<const char*>(xcb_get_property_value(wmReply)),
+    //                                                         xcb_get_property_value_length(wmReply));
+    // }
+    // free(wmReply);
+    // }
+    // }
+    // free(reply);
+    // cached = true;
+    // }
+    // }
+
     if (!cached)
     {
-        if (QX11Info::isPlatformX11())
-        {
-            const int maxLen = 1024;
-            const auto connection = QX11Info::connection();
-            const auto appRootWindow = static_cast<xcb_window_t>(QX11Info::appRootWindow());
-
-            if (connection != nullptr)
-            {
-                auto wmCheckAtom = getAtom(connection, "_NET_SUPPORTING_WM_CHECK");
-                // Get window manager
-                auto reply = xcb_get_property_reply(connection,
-                                                    xcb_get_property(connection,
-                                                                     false,
-                                                                     appRootWindow,
-                                                                     wmCheckAtom,
-                                                                     XCB_ATOM_WINDOW,
-                                                                     0,
-                                                                     maxLen),
-                                                    nullptr);
-
-                if (reply && reply->format == 32 && reply->type == XCB_ATOM_WINDOW)
-                {
-                    // Get window manager name
-                    const xcb_window_t windowManager = *(static_cast<xcb_window_t*>(xcb_get_property_value(reply)));
-
-                    if (windowManager != XCB_WINDOW_NONE)
-                    {
-                        const auto utf8StringAtom = getAtom(connection, "UTF8_STRING");
-                        const auto wmNameAtom = getAtom(connection, "_NET_WM_NAME");
-
-                        auto wmReply = xcb_get_property_reply(connection,
-                                                              xcb_get_property(connection,
-                                                                               false,
-                                                                               windowManager,
-                                                                               wmNameAtom,
-                                                                               utf8StringAtom,
-                                                                               0,
-                                                                               maxLen),
-                                                              nullptr);
-                        if (wmReply && wmReply->format == 8 && wmReply->type == utf8StringAtom)
-                        {
-                            wmName = QString::fromUtf8(static_cast<const char*>(xcb_get_property_value(wmReply)),
-                                                                                xcb_get_property_value_length(wmReply));
-                        }
-                        free(wmReply);
-                    }
-                }
-                free(reply);
-                cached = true;
-            }
-        }
-
-        if (!cached)
-        {
-            // The previous method failed. We are most probably on Wayland.
-            // Try to get info from environment.
-            wmName = qEnvironmentVariable("XDG_CURRENT_DESKTOP");
-            cached = !wmName.isEmpty();
-        }
+        // The previous method failed. We are most probably on Wayland.
+        // Try to get info from environment.
+        wmName = qEnvironmentVariable("XDG_CURRENT_DESKTOP");
+        cached = !wmName.isEmpty();
     }
+    //}
     return wmName;
 }
 

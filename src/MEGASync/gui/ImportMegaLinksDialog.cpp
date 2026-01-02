@@ -29,11 +29,11 @@ ImportMegaLinksDialog::ImportMegaLinksDialog(const QStringList& linkList, QWidge
 {
     ui->setupUi(this);
 
-    static const qsizetype MAX_ITEMS_DISPLAYED = 8;
-    const qsizetype nbItems(linkList.size());
+    static const auto MAX_ITEMS_DISPLAYED = 8;
+    const auto nbItems(linkList.size());
     mSelectedItems.resize(nbItems);
 
-    for (qsizetype i = 0; i < nbItems; i++)
+    for (auto i = 0; i < nbItems; i++)
     {
         // Note: QWidget parents (in this case ui->linkList) will take ownership
         ImportListWidgetItem* customItem =
@@ -46,7 +46,7 @@ ImportMegaLinksDialog::ImportMegaLinksDialog(const QStringList& linkList, QWidge
         mSelectedItems[i] = false;
     }
 
-    int extraSlots = static_cast<int>(std::min(MAX_ITEMS_DISPLAYED, nbItems) - 1);
+    auto extraSlots = static_cast<int>(std::min(MAX_ITEMS_DISPLAYED, nbItems) - 1);
     ui->linkList->setFixedHeight(ui->linkList->minimumHeight() + ui->linkList->sizeHintForRow(0) * extraSlots);
     adjustSize();
     setFixedHeight(height());

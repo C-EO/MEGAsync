@@ -286,10 +286,10 @@ void SyncInfo::reset()
     unattendedDisabledSyncs.clear();
 }
 
-int SyncInfo::getNumSyncedFolders(const QVector<SyncType>& types)
+qsizetype SyncInfo::getNumSyncedFolders(const QVector<SyncType>& types)
 {
     QMutexLocker qm(&syncMutex);
-    int value (0);
+    qsizetype value(0);
     for (auto type : types)
     {
         value += configuredSyncs[type].size();

@@ -41,7 +41,7 @@ void Link::process(QString &input) const
     Decorator::process(input);
 
     auto headerLength(headerTag.length());
-    qsizetype currentIndex(0);
+    auto currentIndex(0);
     foreach(auto link, mLinkAddresses)
     {
         currentIndex = input.indexOf(headerTag, currentIndex);

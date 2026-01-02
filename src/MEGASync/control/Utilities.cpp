@@ -981,13 +981,13 @@ QString Utilities::createCompleteUsedString(long long usedData, long long totalD
 QString Utilities::extractJSONString(QString json, QString name)
 {
     QString pattern = name + QString::fromUtf8("\":\"");
-    qsizetype pos = json.indexOf(pattern);
+    auto pos = json.indexOf(pattern);
     if (pos < 0)
     {
         return QString();
     }
 
-    qsizetype end = json.indexOf(QString::fromUtf8("\""), pos + pattern.size());
+    auto end = json.indexOf(QString::fromUtf8("\""), pos + pattern.size());
     if (end < 0)
     {
         return QString();
@@ -1001,7 +1001,7 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
     QStringList resultList;
 
     QString pattern = name + QString::fromUtf8("\":[\"");
-    qsizetype startPos = json.indexOf(pattern);
+    auto startPos = json.indexOf(pattern);
     if (startPos < 0)
     {
         return resultList;
@@ -1009,7 +1009,7 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
 
     startPos += pattern.size(); // Move to the beginning of the first string
 
-    qsizetype endPos = json.indexOf(QString::fromUtf8("\"]"), startPos);
+    auto endPos = json.indexOf(QString::fromUtf8("\"]"), startPos);
     if (endPos < 0)
     {
         return resultList;
@@ -1030,14 +1030,14 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
 long long Utilities::extractJSONNumber(QString json, QString name)
 {
     QString pattern = name + QString::fromUtf8("\":");
-    qsizetype pos = json.indexOf(pattern);
+    auto pos = json.indexOf(pattern);
     if (pos < 0)
     {
         return 0;
     }
 
-    qsizetype end = pos + pattern.size();
-    qsizetype count = 0;
+    auto end = pos + pattern.size();
+    auto count = 0;
     while (json[end].isDigit())
     {
         end++;
@@ -1505,9 +1505,9 @@ QString Utilities::getNonDuplicatedLocalName(const QFileInfo &currentFile, bool 
 QPair<QString, QString> Utilities::getFilenameBasenameAndSuffix(const QString& fileName)
 {
     QMimeDatabase db;
-    qsizetype length = fileName.length();
+    auto length = fileName.length();
     QList <QPair <int, QMimeType> > list;
-    for (qsizetype index = length; index > -1; index--)
+    for (auto index = length; index > -1; index--)
     {
         QList<QMimeType> mimes = db.mimeTypesForFileName(fileName.section(QLatin1String(""), index, length));
         QMimeType mime = mimes.isEmpty() ? QMimeType() : mimes.last();

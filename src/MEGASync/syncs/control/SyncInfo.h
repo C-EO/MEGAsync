@@ -124,9 +124,9 @@ public:
 
         bool hasSyncs();
 
-        int getNumSyncedFolders(const QVector<mega::MegaSync::SyncType>& types);
+        qsizetype getNumSyncedFolders(const QVector<mega::MegaSync::SyncType>& types);
 
-        int getNumSyncedFolders(SyncType type)
+        qsizetype getNumSyncedFolders(SyncType type)
         {
             return getNumSyncedFolders(QVector<SyncType>({type}));
         }
