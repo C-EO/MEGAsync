@@ -155,6 +155,9 @@ padding-right: -2px;
        <property name="text">
         <string/>
        </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
       </widget>
      </item>
     </layout>
@@ -194,7 +197,7 @@ padding-right: -2px;
      </property>
      <property name="styleSheet">
       <string notr="true">
-</string>
+      </string>
      </property>
      <property name="text">
       <string/>

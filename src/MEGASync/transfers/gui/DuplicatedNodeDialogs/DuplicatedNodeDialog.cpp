@@ -247,7 +247,7 @@ void DuplicatedNodeDialog::updateHeader()
         mCurrentNodeName,
         Qt::ElideMiddle,
         (ui->lDescriptionFileExists->width() - (textBoundingRect - NameBoundingRect - 1)));
-    auto boldName = QString(QLatin1String("<b>%1</b>")).arg(elidedName);
+    auto boldName = QString(QLatin1String("<b>%1</b>")).arg(elidedName.toHtmlEscaped());
 
     headerText = headerText.replace(placeholder, boldName);
 
@@ -255,7 +255,7 @@ void DuplicatedNodeDialog::updateHeader()
 
     if (elidedName != mCurrentNodeName)
     {
-        ui->lDescriptionFileExists->setToolTip(mCurrentNodeName);
+        ui->lDescriptionFileExists->setToolTip(mCurrentNodeName.toHtmlEscaped());
     }
 }
 
