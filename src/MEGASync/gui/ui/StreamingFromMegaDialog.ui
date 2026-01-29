@@ -494,6 +494,9 @@ background-color: #FFFFFF;  /*colorToken.page-background*/
                         <property name="text">
                          <string notr="true"/>
                         </property>
+                        <property name="textFormat">
+                         <enum>Qt::PlainText</enum>
+                        </property>
                        </widget>
                       </item>
                       <item>
@@ -1100,14 +1103,14 @@ background-color: #FFFFFF;  /*colorToken.page-background*/
  </widget>
  <customwidgets>
   <customwidget>
+   <class>IconLabel</class>
+   <extends>QToolButton</extends>
+   <header>TokenizableItems/IconLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>TokenizableToolButton</class>
    <extends>QToolButton</extends>
    <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
-  </customwidget>
-  <customwidget>
-   <class>IconLabel</class>
-   <extends>QToolButton</extends>
-   <header>tokenizer/TokenizableItems/IconLabel.h</header>
   </customwidget>
   <customwidget>
    <class>BannerWidget</class>
