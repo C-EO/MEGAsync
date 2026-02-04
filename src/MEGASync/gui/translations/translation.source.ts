@@ -348,19 +348,9 @@
         <translation>Backups</translation>
     </message>
     <message>
-        <source>Error adding sync</source>
-        <translatorcomment>Title of the error message displayed when there was en error while trying to add a sync. SNC-4208</translatorcomment>
-        <translation>Error adding sync</translation>
-    </message>
-    <message>
         <source>Error removing backup</source>
         <translatorcomment>Error message dialog title.SNC-4208</translatorcomment>
         <translation>Error stopping backup</translation>
-    </message>
-    <message>
-        <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
-        <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
-        <translation>Your folder “%1” can’t sync. Reason: %2</translation>
     </message>
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
@@ -368,14 +358,24 @@
         <translation>Some folders haven’t been backed up. For more information, hover over the red icon.</translation>
     </message>
     <message>
-        <source>Sync operation failed</source>
-        <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
-        <translation>Unable to sync</translation>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>Backup operation failed</translation>
     </message>
     <message>
-        <source>Your sync can&apos;t be removed. Reason: %1</source>
-        <translatorcomment>Warning message title indicating that an error happened removing a sync. the reason is given at runtime in place of the placeholder.SNC-4208</translatorcomment>
-        <translation>Your sync can’t be removed. Reason: %1</translation>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>Operation on backup &apos;%1&apos; failed. Reason: %2</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Error adding backup</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>Your backup can’t be removed. Reason: %1</translation>
     </message>
 </context>
 <context>
@@ -8586,11 +8586,6 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Error adding sync</translation>
     </message>
     <message>
-        <source>Error removing backup</source>
-        <translatorcomment>Error message dialog title.SNC-4208</translatorcomment>
-        <translation>Error stopping backup</translation>
-    </message>
-    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>Your folder “%1” can’t sync. Reason: %2</translation>
@@ -8614,6 +8609,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>Your sync can&apos;t be removed. Reason: %1</source>
         <translatorcomment>MEssage box text shown when an error occurs when removing sync.SNC-4208</translatorcomment>
         <translation>Your sync can’t be removed. Reason: %1</translation>
+    </message>
+    <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Error removing sync</translation>
     </message>
 </context>
 <context>

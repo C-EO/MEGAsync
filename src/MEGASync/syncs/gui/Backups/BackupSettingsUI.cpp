@@ -83,12 +83,12 @@ QString BackupSettingsUI::getFinishIconString() const
 
 QString BackupSettingsUI::getOperationFailTitle() const
 {
-    return tr("Sync operation failed");
+    return tr("Backup operation failed");
 }
 
 QString BackupSettingsUI::getOperationFailText(std::shared_ptr<SyncSettings> sync)
 {
-    return tr("Operation on sync '%1' failed. Reason: %2")
+    return tr("Operation on backup '%1' failed. Reason: %2")
         .arg(sync->name(),
              QCoreApplication::translate("MegaSyncError",
                                          mega::MegaSync::getMegaSyncErrorCode(sync->getError())));
@@ -96,7 +96,7 @@ QString BackupSettingsUI::getOperationFailText(std::shared_ptr<SyncSettings> syn
 
 QString BackupSettingsUI::getErrorAddingTitle() const
 {
-    return tr("Error adding sync");
+    return tr("Error adding backup");
 }
 
 QString BackupSettingsUI::getErrorRemovingTitle() const
@@ -106,7 +106,7 @@ QString BackupSettingsUI::getErrorRemovingTitle() const
 
 QString BackupSettingsUI::getErrorRemovingText(std::shared_ptr<mega::MegaError> err)
 {
-    return tr("Your sync can't be removed. Reason: %1")
+    return tr("Your backup can’t be removed. Reason: %1")
         .arg(QCoreApplication::translate("MegaError", err->getErrorString()));
 }
 
