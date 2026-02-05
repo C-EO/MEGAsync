@@ -225,8 +225,7 @@ const QString Preferences::firstWebDownloadKey      = QString::fromLatin1("first
 const QString Preferences::fatWarningShownKey       = QString::fromLatin1("fatWarningShown");
 const QString Preferences::installationTimeKey      = QString::fromLatin1("installationTime");
 const QString Preferences::accountCreationTimeKey   = QString::fromLatin1("accountCreationTime");
-const QString Preferences::hasLoggedInKey           = QString::fromLatin1("hasLoggedIn");
-const QString Preferences::useHttpsOnlyKey          = QString::fromLatin1("useHttpsOnly");
+const QString Preferences::hasLoggedInKey = QString::fromLatin1("hasLoggedIn");
 const QString Preferences::SSLcertificateExceptionKey  = QString::fromLatin1("SSLcertificateException");
 const QString Preferences::maxMemoryUsageKey        = QString::fromLatin1("maxMemoryUsage");
 const QString Preferences::maxMemoryReportTimeKey   = QString::fromLatin1("maxMemoryReportTime");
@@ -260,7 +259,6 @@ const bool Preferences::defaultStartOnStartup = true;
 const bool Preferences::defaultUpdateAutomatically = true;
 const bool Preferences::defaultCleanerDaysLimit     = true;
 
-const bool Preferences::defaultUseHttpsOnly         = true;
 const bool Preferences::defaultSSLcertificateException = false;
 const int  Preferences::defaultUploadLimitKB        = -1;
 const int  Preferences::defaultDownloadLimitKB      = 0;
@@ -1311,16 +1309,6 @@ bool Preferences::startOnStartup()
 void Preferences::setStartOnStartup(bool value)
 {
     setValueConcurrently(startOnStartupKey, value);
-}
-
-bool Preferences::usingHttpsOnly()
-{
-    return getValueConcurrent<bool>(useHttpsOnlyKey, defaultUseHttpsOnly);
-}
-
-void Preferences::setUseHttpsOnly(bool value)
-{
-    setValueConcurrently(useHttpsOnlyKey, value);
 }
 
 bool Preferences::SSLcertificateException()

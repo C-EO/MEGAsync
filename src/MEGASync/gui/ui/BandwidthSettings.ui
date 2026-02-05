@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>510</width>
-    <height>670</height>
+    <height>578</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,7 @@
   <property name="minimumSize">
    <size>
     <width>510</width>
-    <height>670</height>
+    <height>566</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -100,7 +100,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
+          <item alignment="Qt::AlignLeft">
            <widget class="QRadioButton" name="rUploadAutoLimit">
             <property name="enabled">
              <bool>true</bool>
@@ -118,19 +118,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_10">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </item>
@@ -163,7 +150,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
+          <item alignment="Qt::AlignLeft">
            <widget class="QRadioButton" name="rUploadNoLimit">
             <property name="enabled">
              <bool>true</bool>
@@ -190,19 +177,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <bool>false</bool>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_11">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </item>
@@ -349,7 +323,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item>
+          <item alignment="Qt::AlignLeft">
            <widget class="QRadioButton" name="rDownloadNoLimit">
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
@@ -361,19 +335,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_12">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </item>
@@ -673,100 +634,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        </layout>
       </widget>
      </item>
-     <item>
-      <widget class="QGroupBox" name="gUseHttps">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>104</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">margin-top: 0px;</string>
-       </property>
-       <property name="type" stdset="0">
-        <string notr="true">mega</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <property name="spacing">
-         <number>6</number>
-        </property>
-        <property name="leftMargin">
-         <number>12</number>
-        </property>
-        <property name="topMargin">
-         <number>12</number>
-        </property>
-        <property name="rightMargin">
-         <number>12</number>
-        </property>
-        <property name="bottomMargin">
-         <number>12</number>
-        </property>
-        <item>
-         <widget class="QCheckBox" name="cbUseHttps">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
-          <property name="text">
-           <string>Use HTTPS for transfers that don't start</string>
-          </property>
-          <property name="type" stdset="0">
-           <string notr="true">mega</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item>
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Maximum</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>25</width>
-              <height>2</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="lUseHttps">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Only enable this option if tranfers don't start. Under all other circumstances, using HTTP is satisfactory as MEGA already encrypts all data.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -782,7 +649,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
      </property>
     </spacer>
    </item>
-   <item>
+   <item alignment="Qt::AlignRight">
     <widget class="QWidget" name="buttonBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -806,19 +673,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item>
        <widget class="QPushButton" name="bCancel">
         <property name="sizePolicy">
@@ -898,7 +752,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
   <tabstop>lDownloadLimit</tabstop>
   <tabstop>eMaxDownloadConnections</tabstop>
   <tabstop>eMaxUploadConnections</tabstop>
-  <tabstop>cbUseHttps</tabstop>
   <tabstop>bCancel</tabstop>
   <tabstop>bUpdate</tabstop>
  </tabstops>

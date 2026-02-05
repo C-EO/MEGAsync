@@ -617,7 +617,6 @@ void MegaApplication::initialize()
     // In case the user has logout and closed the app, we set the default values
     setMaxConnections(MegaTransfer::TYPE_UPLOAD, preferences->parallelUploadConnections());
     setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, preferences->parallelDownloadConnections());
-    setUseHttpsOnly(preferences->usingHttpsOnly());
     megaApi->setDefaultFilePermissions(preferences->filePermissionsValue());
     megaApi->setDefaultFolderPermissions(preferences->folderPermissionsValue());
 
@@ -1425,7 +1424,6 @@ if (!infoDialog)
     setMaxDownloadSpeed(preferences->downloadLimitKB());
     setMaxConnections(MegaTransfer::TYPE_UPLOAD,   preferences->parallelUploadConnections());
     setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, preferences->parallelDownloadConnections());
-    setUseHttpsOnly(preferences->usingHttpsOnly());
 
     megaApi->setDefaultFilePermissions(preferences->filePermissionsValue());
     megaApi->setDefaultFolderPermissions(preferences->folderPermissionsValue());
@@ -3360,16 +3358,6 @@ void MegaApplication::setMaxConnections(int direction, int connections)
     {
         megaApi->setMaxConnections(direction, connections);
     }
-}
-
-void MegaApplication::setUseHttpsOnly(bool httpsOnly)
-{
-    if (appfinished)
-    {
-        return;
-    }
-
-    megaApi->useHttpsOnly(httpsOnly);
 }
 
 void MegaApplication::startUpdateTask()
@@ -6093,11 +6081,7 @@ void MegaApplication::manageBusinessStatus(int64_t event)
 
 void MegaApplication::onEvent(MegaApi*, MegaEvent* event)
 {
-    if (event->getType() == MegaEvent::EVENT_CHANGE_TO_HTTPS)
-    {
-        preferences->setUseHttpsOnly(true);
-    }
-    else if (event->getType() == MegaEvent::EVENT_NODES_CURRENT)
+    if (event->getType() == MegaEvent::EVENT_NODES_CURRENT)
     {
         nodescurrent = true;
     }
