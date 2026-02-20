@@ -7,6 +7,7 @@
 #include "DesktopNotifications.h"
 #include "DownloadFromMegaDialog.h"
 #include "DuplicatedNodeInfo.h"
+#include "gui/TrayIconManager.h"
 #include "HTTPServer.h"
 #include "InfoDialog.h"
 #include "LinkProcessor.h"
@@ -15,13 +16,17 @@
 #include "MegaMenuItemAction.h"
 #include "MegaSyncLogger.h"
 #include "MegaUploader.h"
+#include "MenuItemAction.h"
 #include "PasteMegaLinksDialog.h"
 #include "Preferences.h"
 #include "QTMegaListener.h"
 #include "ScanStageController.h"
 #include "SetManager.h"
 #include "SettingsDialog.h"
+#include "state_machines/DiscountPolicy.h"
+#include "state_machines/DiscountStateMachine.h"
 #include "SyncInfo.h"
+#include "SyncsMenu.h"
 #include "ThreadPool.h"
 #include "TransferManager.h"
 #include "TransferQuota.h"
@@ -83,10 +88,6 @@ enum GetUserStatsReason {
 class MegaApplication : public QApplication, public mega::MegaListener
 {
     Q_OBJECT
-
-#ifdef Q_OS_LINUX
-    void setTrayIconFromTheme(QString icon);
-#endif
 
     static void loadDataPath();
 
@@ -198,6 +199,7 @@ public:
     void updateUsedStorage(const bool sendEvent = false);
     void showUpsellDialog(UpsellPlans::ViewMode viewMode);
     static void showStalledIssuesDialog();
+    bool isOnboarding();
 
 signals:
     void startUpdaterThread();
@@ -217,6 +219,7 @@ signals:
     void requestAppState(AppState::AppStates newAppState);
     void syncsDialogClosed();
     void languageChanged();
+    void onBoardingFinishedSignal();
 
 public slots:
     void updateTrayIcon();
@@ -282,9 +285,9 @@ public slots:
     void showInfoDialog();
     void showInfoDialogNotifications();
     void triggerInstallUpdate();
-    void scanningAnimationStep();
     void clearDownloadAndPendingLinks();
     void changeState();
+    void requestUserDiscounts(bool skipChecks = false);
 
 #ifdef _WIN32
     void changeDisplay(QScreen *disp);
@@ -343,7 +346,7 @@ protected:
 
     void createInfoDialog();
 
-    QSystemTrayIcon *trayIcon;
+    QPointer<DiscountPolicy> getDiscountPolicy();
 
     QAction *guestSettingsAction;
     QAction *initialExitAction;
@@ -386,12 +389,13 @@ protected:
     MenuItemAction *settingsActionGuest;
     MenuItemAction* updateActionGuest;
 
-#ifdef __APPLE__
-    QTimer *scanningTimer;
-#endif
+    // Tray icon manager — owns QSystemTrayIcon, animation timer, icon cache
+    TrayIconManager* mTrayIconManager = nullptr;
+
+    // Convenience accessor for code that needs the raw QSystemTrayIcon*
+    QSystemTrayIcon* trayIcon() const;
 
     std::unique_ptr<QTimer> onGlobalSyncStateChangedTimer;
-    int scanningAnimationIndex;
     QPointer<SettingsDialog> mSettingsDialog;
     QPointer<InfoDialog> infoDialog;
     std::shared_ptr<Preferences> preferences;
@@ -500,6 +504,9 @@ protected:
     std::unique_ptr<mega::MegaGfxProvider> mGfxProvider;
 
     QPointer<SyncReminderNotificationManager> mSyncReminderNotificationManager;
+
+    QPointer<DiscountPolicy> mPolicy;
+    QPointer<DiscountStateMachine> mDiscountStateMachine;
 
     bool misSyncingStateWrongLogged;
 
