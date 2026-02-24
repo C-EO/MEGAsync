@@ -17,13 +17,21 @@ QString SyncTooltipCreator::createForRemote(const QString& path)
 
 QString SyncTooltipCreator::createFormattedPath(const QString& path, const QString& label)
 {
-    const QFontMetrics fm (QToolTip::font());
-    const QChar blankChar (QLatin1Char(' ')); // We can also use QChar::Tabulation
+    const QFont font = QToolTip::font();
+    const QFontMetrics fm(font);
+    const QChar blankChar = QLatin1Char(' ');
 
-    QString lineString = label + blankChar + path;
-    int currentWidth = fm.size(Qt::TextExpandTabs, lineString).width();
-    return currentWidth > mMaxWidthInPixels ? createMultilinePath(path, label, fm, blankChar)
-                                            : lineString;
+    // Normalize to NFC to avoid decomposed-combining rendering/metric issues
+    const QString normPath = path.normalized(QString::NormalizationForm_C);
+    const QString normLabel = label.normalized(QString::NormalizationForm_C);
+
+    const QString lineString = normLabel + blankChar + normPath;
+
+    const int currentWidth = fm.size(Qt::TextExpandTabs, lineString).width();
+
+    return currentWidth > mMaxWidthInPixels ?
+               createMultilinePath(normPath, normLabel, fm, blankChar) :
+               lineString;
 }
 
 QString SyncTooltipCreator::createMultilinePath(const QString& path, const QString& label, const QFontMetrics& fm, const QChar& blankChar)
