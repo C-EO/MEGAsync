@@ -104,10 +104,6 @@
         {
             "name": "icu",
             "version": "74.2#4"
-        },
-        {
-            "name": "libuv",
-            "version": "1.49.2"
         }
     ]
 }
