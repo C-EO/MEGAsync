@@ -14,21 +14,49 @@ Text {
     property bool manageClick: false
     property bool visited: false
     property bool underlineLink: false
-    property color urlColor: ColorTheme.linkPrimary
+    property color urlColor: {
+        if (!enabled)
+            return ColorTheme.notificationInfo
+        if (visited)
+            return ColorTheme.linkVisited
+        return ColorTheme.linkPrimary
+    }
     property string rawText: ""
 
     signal linkClicked
 
-    function updateLinkColor() {
-        var color = ColorTheme.linkPrimary;
-        if(!enabled) {
-            color = ColorTheme.notificationInfo;
-        }
-        else if(visited) {
-            color = ColorTheme.linkVisited;
-        }
-        root.text = root.text.replace("color:" + urlColor, "color:" + color);
-        urlColor = color;
+    function renderText() {
+        if (rawText.indexOf("[") === -1 && rawText.indexOf("<a") === -1)
+                return rawText;
+
+        let decoration = underlineLink ? "underline" : "none";
+        let copyText = rawText;
+
+        const replacements = [
+            { pattern: /\[B\]/g, replacement: "<b>" },
+            { pattern: /\[\/B\]/g, replacement: "</b>" },
+            {
+                pattern: /\[A\]/g,
+                replacement: "<a style=\"text-decoration:" + decoration
+                             + "; color:" + urlColor
+                             + ";\" href=\"" + url + "\">"
+            },
+            { pattern: /\[\/A\]/g, replacement: "</a>" },
+            { pattern: /\[BR\]/g, replacement: "<br>" },
+            { pattern: /\[\/BR\]/g, replacement: "" }
+        ];
+
+        replacements.forEach(replacement => {
+            copyText = copyText.replace(replacement.pattern, replacement.replacement);
+        });
+
+        copyText = copyText.replace(
+            RegexExpressions.linkWithHrefWithoutStyle,
+            "<a $1$2 style=\"text-decoration:" + decoration
+            + "; color:" + urlColor + ";\">"
+        );
+
+        return copyText;
     }
 
     function hasLink() {
@@ -125,41 +153,8 @@ Text {
     }
 
     color: enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
+    text: renderText()
     textFormat: Qml.Text.RichText
-
-    // We are using rawText to avoid breaking internal connections in the text property.
-    // If we assign a string directly to the RichText text property and we use the replace
-    // javascript function (we modify the text), then when the text is updated, it is not
-    // refreshed internally. We cannot assign other variable and change it here at the
-    // same time. For more info, please see SNC-3917.
-    onRawTextChanged: {
-        let decoration = root.underlineLink ? "underline" : "none";
-        let copyText = rawText;
-
-        const replacements = [
-            { pattern: /\[B\]/g, replacement: "<b>" },
-            { pattern: /\[\/B\]/g, replacement: "</b>" },
-            {
-                pattern: /\[A\]/g,
-                replacement: "<a style=\"text-decoration:" + decoration
-                             + "\" style=\"color:" + urlColor
-                             + ";\" href=\"" + url + "\">"
-            },
-            { pattern: /\[\/A\]/g, replacement: "</a>" },
-            { pattern: /\[BR\]/g, replacement: "<br>" },
-            { pattern: /\[\/BR\]/g, replacement: "" }
-        ];
-
-        replacements.forEach(replacement => {
-            copyText = copyText.replace(replacement.pattern, replacement.replacement);
-        });
-
-        copyText = copyText.replace(RegexExpressions.linkWithHrefWithoutStyle,
-                                    "<a $1$2 style=\"text-decoration:" + decoration
-                                    + "; color:" + urlColor + ";\">");
-
-        root.text = copyText;
-    }
 
     onLinkActivated: (clickedUrl) => {
         if((clickedUrl !== "" && clickedUrl !== root.defaultUrl) || manageClick) {
@@ -172,10 +167,6 @@ Text {
             visited = true;
             updateLinkColor();
         }
-    }
-
-    onEnabledChanged: {
-        updateLinkColor();
     }
 
     onActiveFocusChanged: {
