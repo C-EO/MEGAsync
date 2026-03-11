@@ -2322,7 +2322,7 @@ QString MegaApplication::getFormattedDateByCurrentLanguage(const QDateTime &date
     return DateTimeFormatter::create(currentLanguageCode, datetime, format);
 }
 
-void MegaApplication::raiseInfoDialog()
+void MegaApplication::raiseInfoDialog(bool raiseOpenedDialogs)
 {
     if (QmlDialogManager::instance()->raiseGuestDialog())
     {
@@ -2332,7 +2332,11 @@ void MegaApplication::raiseInfoDialog()
     if (infoDialog)
     {
         infoDialog->updateDialogState();
-        DialogOpener::raiseAllDialogs();
+
+        if (raiseOpenedDialogs)
+        {
+            DialogOpener::raiseAllDialogs();
+        }
 
 #ifdef __APPLE__
         Platform::getInstance()->raiseFileFolderSelectors();
@@ -2928,7 +2932,11 @@ void MegaApplication::ConnectServerSignals(HTTPServer* server)
             Qt::QueuedConnection);
     connect(server, &HTTPServer::onExternalFolderSyncRequested, this, &MegaApplication::externalFolderSync, Qt::QueuedConnection);
     connect(server, &HTTPServer::onExternalOpenTransferManagerRequested, this, &MegaApplication::externalOpenTransferManager, Qt::QueuedConnection);
-    connect(server, &HTTPServer::onExternalShowInFolderRequested, this, &MegaApplication::openFolderPath, Qt::QueuedConnection);
+    connect(server,
+            &HTTPServer::onExternalShowInFolderRequested,
+            this,
+            &MegaApplication::openFolderPathFromExternal,
+            Qt::QueuedConnection);
     connect(server, &HTTPServer::onExternalAddBackup, this, &MegaApplication::externalAddBackup, Qt::QueuedConnection);
     connect(server, &HTTPServer::onExternalDownloadSetRequested, this, &MegaApplication::processSetDownload, Qt::QueuedConnection);
 }
@@ -3631,16 +3639,22 @@ AccountStatusController* MegaApplication::getAccountStatusController()
     return mStatusController;
 }
 
-void MegaApplication::openFolderPath(QString localPath)
+void MegaApplication::openFolderPathFromExternal(QString localPath)
 {
     if (!localPath.isEmpty())
     {
-        #ifdef WIN32
+#ifdef WIN32
         if (localPath.startsWith(QString::fromUtf8("\\\\?\\")))
         {
             localPath = localPath.mid(4);
         }
-        #endif
+
+        // The explorer window is not correctly raised on Windows if we don´t raise the main dialog
+        // But only the main dialog, not the rest of opened dialog
+        auto raiseOpenedDialogs(false);
+        raiseInfoDialog(raiseOpenedDialogs);
+#endif
+
         Platform::getInstance()->showInFolder(localPath);
     }
 }
