@@ -2296,6 +2296,11 @@ In Ihrem E-Mail-Posteingang finden Sie Anweisungen zur Entsperrung Ihres Account
 <context>
     <name>InfoDialog</name>
     <message>
+        <source>%1% off %2</source>
+        <translatorcomment>Button text when there&amp;apos;s an offer available to the use.r, placeholder one is for discount percentage, and placeholder 2 is for the plan name. snc-6228</translatorcomment>
+        <translation>%1% Rabatt für %2</translation>
+    </message>
+    <message>
         <source>Add sync</source>
         <translatorcomment>Label for the &quot;Add Sync&quot; button added in the InfoDialog (Max 20 characters). SNC-5182.</translatorcomment>
         <translation>Sync hinzufügen</translation>
@@ -5384,9 +5389,14 @@ Bitte geben Sie einen anderen Namen ein.</translation>
         <translation>Objektspeicher</translation>
     </message>
     <message>
+        <source>Special offers ends in:</source>
+        <translatorcomment>Text to till the user the offer is limited.snc.6228</translatorcomment>
+        <translation>Sonderaktion endet in:</translation>
+    </message>
+    <message>
         <source>Tax may apply.</source>
         <translatorcomment>Disclaimer that promoted prices are tax exclusive .SNC-6271</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Ggf. zzgl. Steuern.</translation>
     </message>
     <message numerus="yes">
         <source>[B]%1% off[/B] for %n month</source>
@@ -9849,7 +9859,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>per month, charged yearly</source>
         <translatorcomment>Text explaining the price shown is monthly price charged yearly.SNC-5636</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Pro Monat, jährliche Abbuchung</translation>
     </message>
 </context>
 <context>
