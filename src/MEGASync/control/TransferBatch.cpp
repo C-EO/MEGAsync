@@ -8,8 +8,9 @@
 /*** TransferBatch *******/
 /*************************/
 
-TransferBatch::TransferBatch(unsigned long long appDataId)
-    : mHasFinished(false), mAppDataId(appDataId)
+TransferBatch::TransferBatch(AppDataID appDataId):
+    mHasFinished(false),
+    mAppDataId(appDataId)
 {
     mCancelToken = std::shared_ptr<mega::MegaCancelToken>(mega::MegaCancelToken::createInstance());
 }
@@ -30,7 +31,7 @@ void TransferBatch::cancel()
     mCancelToken->cancel();
 }
 
-void TransferBatch::onScanCompleted(unsigned long long appDataId)
+void TransferBatch::onScanCompleted(AppDataID appDataId)
 {
     mHasFinished = appDataId == mAppDataId;
 }
@@ -54,6 +55,11 @@ mega::MegaCancelToken* TransferBatch::getCancelTokenPtr()
 std::shared_ptr<mega::MegaCancelToken> TransferBatch::getCancelToken()
 {
     return mCancelToken;
+}
+
+AppDataID TransferBatch::getAppDataId() const
+{
+    return mAppDataId;
 }
 
 /*************************/
@@ -84,7 +90,7 @@ void BlockingBatch::cancelTransfer()
     }
 }
 
-void BlockingBatch::onScanCompleted(unsigned long long appDataId)
+void BlockingBatch::onScanCompleted(AppDataID appDataId)
 {
     if (isValid())
     {

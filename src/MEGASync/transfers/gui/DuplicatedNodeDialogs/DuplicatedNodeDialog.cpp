@@ -1,6 +1,5 @@
 #include "DuplicatedNodeDialog.h"
 
-#include "DuplicatedNodeItem.h"
 #include "EventUpdater.h"
 #include "MegaApplication.h"
 #include "ui_DuplicatedNodeDialog.h"
@@ -294,7 +293,7 @@ const QList<std::shared_ptr<DuplicatedNodeInfo> > &DuplicatedNodeDialog::getReso
 
 bool DuplicatedNodeDialog::isEmpty() const
 {
-    return mConflicts->isEmpty();
+    return mConflicts->hasNoConflicts();
 }
 
 void DuplicatedNodeDialog::show()

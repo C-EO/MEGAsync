@@ -347,7 +347,9 @@ void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
             auto node = rootItem->getNode();
             if (node)
             {
-                MegaSyncApp->runUploadActionWithTargetHandle(node->getHandle(), this);
+                MegaSyncApp->runUploadActionWithTargetHandle(node->getHandle(),
+                                                             mega::MegaApi::PITAG_TRIGGER_PICKER,
+                                                             this);
             }
             else
             {

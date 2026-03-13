@@ -1225,7 +1225,7 @@ void TransferManager::dropEvent(QDropEvent* event)
         pathsToAdd.append(file);
     }
 
-    MegaSyncApp->shellUpload(pathsToAdd);
+    MegaSyncApp->uploadWithPiTagTrigger(pathsToAdd, MegaApi::PITAG_TRIGGER_DRAG_AND_DROP);
 }
 
 void TransferManager::dragLeaveEvent(QDragLeaveEvent *event)

@@ -989,7 +989,10 @@ void NodeSelectorTreeView::dropEvent(QDropEvent* event)
             auto node = getDropNode(dropIndex);
             if (node)
             {
-                MegaSyncApp->uploadFilesToNode(urlList, node->getHandle(), dialog->getDialog());
+                MegaSyncApp->uploadFilesToNode(urlList,
+                                               node->getHandle(),
+                                               mega::MegaApi::PITAG_TRIGGER_DRAG_AND_DROP,
+                                               dialog->getDialog());
             }
             else
             {
@@ -999,6 +1002,7 @@ void NodeSelectorTreeView::dropEvent(QDropEvent* event)
                 {
                     MegaSyncApp->uploadFilesToNode(urlList,
                                                    parentNode->getHandle(),
+                                                   mega::MegaApi::PITAG_TRIGGER_DRAG_AND_DROP,
                                                    dialog->getDialog());
                 }
                 else

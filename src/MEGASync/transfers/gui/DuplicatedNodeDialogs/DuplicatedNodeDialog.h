@@ -1,12 +1,18 @@
 #ifndef DUPLICATEDNODEDIALOG_H
 #define DUPLICATEDNODEDIALOG_H
 
+#include "DuplicatedNodeInfo.h"
 #include "DuplicatedNodeItem.h"
 #include "DuplicatedUploadChecker.h"
 
 #include <QDialog>
+#include <QList>
 #include <QPointer>
+#include <QSet>
+#include <QString>
 #include <QTimer>
+
+#include <memory>
 
 namespace Ui {
 class DuplicatedNodeDialog;

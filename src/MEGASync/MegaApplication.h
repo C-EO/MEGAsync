@@ -240,7 +240,9 @@ public slots:
     void showChangeLog();
     void uploadActionClicked(AppStatsEvents::EventType event);
     void uploadActionFromWindowAfterOverQuotaCheck();
-    void runUploadActionWithTargetHandle(const mega::MegaHandle &targetFolder, QWidget *parent);
+    void runUploadActionWithTargetHandle(const mega::MegaHandle& targetFolder,
+                                         PiTagTrigger piTagTrigger,
+                                         QWidget* parent);
     void downloadActionClicked(bool skipEventSending = false);
     void downloadACtionClickedWithHandles(const QList<mega::MegaHandle>& handles);
     void streamActionClicked();
@@ -249,14 +251,18 @@ public slots:
     void processDownloads();
     void processSetDownload(const QString& publicLink, const QList<mega::MegaHandle>& elementHandleList);
     void processUploads();
-    void shellUpload(QQueue<QString> newUploadQueue);
+    void uploadWithPiTagTrigger(const QStringList& newUploadQueue, PiTagTrigger piTagTrigger);
+    void shellUpload(const QQueue<QString>& newUploadQueue);
     void shellBackup(QStringList);
     void shellSync(QString);
     void shellExport(QQueue<QString> newExportQueue);
     void shellViewOnMega(const QString& localPath, bool versions);
     void shellViewOnMegaByHandle(mega::MegaHandle handle, bool versions);
     void exportNodes(QList<mega::MegaHandle> exportList, QStringList extraLinks = QStringList());
-    void uploadFilesToNode(const QList<QUrl>& files, mega::MegaHandle targetNode, QWidget* caller);
+    void uploadFilesToNode(const QList<QUrl>& files,
+                           mega::MegaHandle targetNode,
+                           PiTagTrigger piTagTrigger,
+                           QWidget* caller);
     void externalDownload(QQueue<WrappedNode> newDownloadQueue);
     void externalLinkDownload(QString megaLink, QString auth);
     void externalFileUpload(mega::MegaHandle targetFolder);
@@ -322,7 +328,7 @@ private slots:
     void cancelScanningStage();
 
 protected slots:
-    void onUploadsCheckedAndReady(std::shared_ptr<ConflictTypes> conflicts);
+    void onUploadsCheckedAndReady(std::shared_ptr<ConflictTypes> checkedUploads);
     void onPasteMegaLinksDialogFinish(QPointer<PasteMegaLinksDialog>);
     void onDownloadFromMegaFinished(QPointer<DownloadFromMegaDialog> dialog);
     void onDownloadSetFolderDialogFinished(QPointer<DownloadFromMegaDialog> dialog);
@@ -405,9 +411,9 @@ protected:
 
     HTTPServer *httpServer;
     mega::MegaHandle fileUploadTarget;
-    mega::MegaHandle folderUploadTarget;
+    mega::MegaHandle mFolderUploadTarget;
 
-    QQueue<QString> uploadQueue;
+    QQueue<QPair<QString, PiTagTrigger>> mUploadQueue;
     QQueue<WrappedNode> downloadQueue;
     BlockingBatch mBlockingBatch;
 
@@ -426,7 +432,7 @@ protected:
     unsigned long long mMaxMemoryUsage;
     int exportOps;
     mega::QTMegaListener *delegateListener;
-    MegaUploader *uploader;
+    MegaUploader* mUploader;
     MegaDownloader *downloader;
     QTimer *periodicTasksTimer;
     QTimer *networkCheckTimer;
@@ -562,7 +568,7 @@ private:
 
     static NodeCount countFilesAndFolders(const QStringList& paths);
 
-    void processUploads(const QStringList& uploads);
+    void processUploads(const QStringList& uploads, PiTagTrigger piTagTrigger);
 
     void updateMetadata(TransferMetaData* data, const QString& filePath);
 
@@ -610,7 +616,9 @@ private:
     }
 
     void processUpgradeSecurityEvent();
-    QQueue<QString> createQueue(const QStringList& newUploads) const;
+    QQueue<QPair<QString, PiTagTrigger>>
+        createQueue(const QStringList& newUploads,
+                    PiTagTrigger piTag = mega::MegaApi::PITAG_TRIGGER_NOT_APPLICABLE) const;
 
     bool hasDefaultDownloadFolder() const;
     void showInfoDialogIfHTTPServerSender();
