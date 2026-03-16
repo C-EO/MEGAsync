@@ -102,8 +102,8 @@ QByteArray EncryptedSettings::XOR(const QByteArray& key, const QByteArray& data)
     }
 
     QByteArray result;
-    auto rotation = abs(key[keyLen / 3] * key[keyLen / 5]) % keyLen;
-    auto increment = abs(key[keyLen / 2] * key[keyLen / 7]) % keyLen;
+    const auto rotation = abs(key[keyLen / 3] * key[keyLen / 5]) % keyLen;
+    const auto increment = abs(key[keyLen / 2] * key[keyLen / 7]) % keyLen;
     for (auto i = 0, j = rotation; i < data.length(); i++, j -= increment)
     {
         if (j < 0)

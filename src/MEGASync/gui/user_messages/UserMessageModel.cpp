@@ -187,7 +187,7 @@ void UserMessageModel::removeAlerts(const QList<mega::MegaUserAlert*>& alerts)
     // Remove the oldest items if the list is too long
     if (static_cast<unsigned>(mUserMessages.size()) > Preferences::MAX_COMPLETED_ITEMS)
     {
-        int row = static_cast<int>(mUserMessages.size() - 1);
+        auto row = static_cast<int>(mUserMessages.size() - 1);
         while (row >= 0 &&
                static_cast<unsigned>(mUserMessages.size()) > Preferences::MAX_COMPLETED_ITEMS)
         {
@@ -294,7 +294,7 @@ void UserMessageModel::updateNotification(int row, const mega::MegaNotification*
 
 void UserMessageModel::removeNotifications(const mega::MegaNotificationList* notifications)
 {
-    for (int row = static_cast<int>(mUserMessages.size() - 1); row >= 0; --row)
+    for (auto row = static_cast<int>(mUserMessages.size() - 1); row >= 0; --row)
     {
         auto item = mUserMessages.at(row);
         if (!item->isOfType(UserMessage::Type::NOTIFICATION))
@@ -397,7 +397,7 @@ void UserMessageModel::onUiUpdated()
     auto userMessage(qobject_cast<UserMessage*>(sender()));
     if (userMessage)
     {
-        int row = static_cast<int>(mUserMessages.indexOf(userMessage));
+        const auto row = static_cast<int>(mUserMessages.indexOf(userMessage));
         emit dataChanged(index(row, 0, QModelIndex()), index(row, 0, QModelIndex()));
     }
 }

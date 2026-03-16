@@ -2743,8 +2743,8 @@ void Preferences::readFolders()
     loadedSyncsMap.clear();
 
     mSettings->beginGroup(syncsGroupByTagKey);
-    const qsizetype numSyncs = mSettings->numChildGroups();
-    for (qsizetype i = 0; i < numSyncs; ++i)
+    const auto numSyncs = mSettings->numChildGroups();
+    for (auto i = 0; i < numSyncs; ++i)
     {
         mSettings->beginGroup(static_cast<int>(i));
 

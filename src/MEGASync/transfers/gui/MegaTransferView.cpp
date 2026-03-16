@@ -28,30 +28,45 @@ QString MegaTransferView::clearSingleActionText()
     return (tr("Clear transfer?"));
 }
 
-//Static messages for context menu
+// Static messages for context menu
 QString MegaTransferView::pauseActionText(qsizetype count)
 {
-    return tr("Pause transfer", "", static_cast<int>(count));
+    return tr(
+        "Pause transfer",
+        "",
+        static_cast<int>(std::min(count, static_cast<qsizetype>(std::numeric_limits<int>::max()))));
 }
 
 QString MegaTransferView::resumeActionText(qsizetype count)
 {
-    return tr("Resume transfer", "", static_cast<int>(count));
+    return tr(
+        "Resume transfer",
+        "",
+        static_cast<int>(std::min(count, static_cast<qsizetype>(std::numeric_limits<int>::max()))));
 }
 
 QString MegaTransferView::cancelActionText(qsizetype count)
 {
-    return tr("Cancel transfer", "", static_cast<int>(count));
+    return tr(
+        "Cancel transfer",
+        "",
+        static_cast<int>(std::min(count, static_cast<qsizetype>(std::numeric_limits<int>::max()))));
 }
 
 QString MegaTransferView::clearActionText(qsizetype count)
 {
-    return tr("Clear transfer", "", static_cast<int>(count));
+    return tr(
+        "Clear transfer",
+        "",
+        static_cast<int>(std::min(count, static_cast<qsizetype>(std::numeric_limits<int>::max()))));
 }
 
 QString MegaTransferView::cancelAndClearActionText(qsizetype count)
 {
-    return tr("Cancel and clear transfer", "", static_cast<int>(count));
+    return tr(
+        "Cancel and clear transfer",
+        "",
+        static_cast<int>(std::min(count, static_cast<qsizetype>(std::numeric_limits<int>::max()))));
 }
 
 QMap<QMessageBox::StandardButton, QString> MegaTransferView::getCancelDialogButtons()

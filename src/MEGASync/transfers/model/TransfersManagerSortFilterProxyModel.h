@@ -37,7 +37,7 @@ public:
                         const Utilities::FileTypes fileTypes);
         void updateFilters();
         void resetAllFilters();
-        qsizetype getNumberOfItems(TransferData::TransferType transferType);
+        unsigned long long getNumberOfItems(TransferData::TransferType transferType);
 
         TransferBaseDelegateWidget* createTransferManagerItem(QWidget *) override;
 

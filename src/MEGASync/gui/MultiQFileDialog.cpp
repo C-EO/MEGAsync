@@ -141,21 +141,20 @@ void MultiQFileDialog::findSelectedFilesAndFoldersCount(int& fileCount, int& fol
 {
     QString dir (directory().absolutePath());
 
-
     // Do not select a file/folder whose name is the same as the parent
     // upon entering a directory.
     QStringList files = selectedFiles();
     if(files.contains(dir))
     {
         files.removeOne(dir);
-        for (auto& file: std::as_const(files))
+        for (const auto& file: std::as_const(files))
         {
             selectFile(file);
         }
         return;
     }
 
-    for (auto& file: std::as_const(files))
+    for (const auto& file: std::as_const(files))
     {
         if (file != dir)
         {

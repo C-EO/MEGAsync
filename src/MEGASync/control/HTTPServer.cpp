@@ -469,7 +469,7 @@ void HTTPServer::externalDownloadRequest(QString &response, const HTTPRequest& r
         {
             QQueue<WrappedNode> downloadQueue;
 
-            auto end(0);
+            auto end = 0;
             bool firstnode = true;
 
             while (request.data[start] == QChar::fromLatin1('{'))

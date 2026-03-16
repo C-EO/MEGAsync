@@ -61,13 +61,13 @@ std::shared_ptr<BackupCandidates::Data>
 
 void BackupCandidatesController::initWithDefaultDirectories()
 {
-    static QVector<QStandardPaths::StandardLocation> defaultPaths = {
+    static const QVector<QStandardPaths::StandardLocation> defaultPaths = {
         QStandardPaths::DesktopLocation,
         QStandardPaths::DocumentsLocation,
         QStandardPaths::MusicLocation,
         QStandardPaths::PicturesLocation};
 
-    for (auto type: qAsConst(defaultPaths))
+    for (const auto& type: defaultPaths)
     {
         const auto standardPaths(QStandardPaths::standardLocations(type));
         QString path(Platform::getInstance()->preparePathForSync(standardPaths.first()));

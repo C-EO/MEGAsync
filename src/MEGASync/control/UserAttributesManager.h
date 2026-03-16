@@ -83,19 +83,19 @@ public:
     template <typename AttributeClass>
     std::shared_ptr<AttributeClass> requestAttribute(const char* user_email = nullptr)
     {
-        QString userEmail = QString::fromUtf8(user_email);
-        QString mapKey = getKey(userEmail);
+        const auto userEmail = QString::fromUtf8(user_email);
+        const auto mapKey = getKey(userEmail);
 
         auto classType = QString::fromUtf8(AttributeClass::staticMetaObject.className());
 
-        auto userRequests = mRequests.values(mapKey);
-        for (const auto& request: std::as_const(userRequests))
+        const auto userRequests = mRequests.values(mapKey);
+        for (const auto& request: userRequests)
         {
             auto requestType = QString::fromUtf8(request->metaObject()->className());
             if(requestType == classType)
             {
-                QList<int> paramKeys = request->getRequestInfo().mParamInfo.keys();
-                for (const int& paramType: std::as_const(paramKeys))
+                const auto paramKeys = request->getRequestInfo().mParamInfo.keys();
+                for (const auto& paramType: paramKeys)
                 {
                     request->requestUserAttribute(paramType);
                 }
@@ -108,9 +108,9 @@ public:
         mRequests.insert(mapKey, std::static_pointer_cast<AttributeRequest>(request));
 
         bool forceRequest = false;
-        auto unhandledRequestList = mUnhandledRequests.values(getKey(userEmail));
+        const auto unhandledRequestList = mUnhandledRequests.values(getKey(userEmail));
 
-        for (const uint64_t& change: std::as_const(unhandledRequestList))
+        for (const auto& change: unhandledRequestList)
         {
             auto changeTypesKeys = request->getRequestInfo().mChangedTypes.keys();
             for(auto& key : changeTypesKeys)
@@ -119,7 +119,7 @@ public:
                 {
                     // Unhandled request: force the Attribute to fetch the remote update
                     request->forceRequestAttribute();
-                    uint64_t pendingChange = change &~ key;
+                    auto pendingChange = change & ~key;
                     mUnhandledRequests.remove(userEmail, change);
                     if(pendingChange > 0)
                     {

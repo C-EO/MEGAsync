@@ -46,7 +46,7 @@ ImportMegaLinksDialog::ImportMegaLinksDialog(const QStringList& linkList, QWidge
         mSelectedItems[i] = false;
     }
 
-    auto extraSlots = static_cast<int>(std::min(MAX_ITEMS_DISPLAYED, nbItems) - 1);
+    const auto extraSlots = static_cast<int>(std::min(MAX_ITEMS_DISPLAYED, nbItems) - 1);
     ui->linkList->setFixedHeight(ui->linkList->minimumHeight() + ui->linkList->sizeHintForRow(0) * extraSlots);
     adjustSize();
     setFixedHeight(height());

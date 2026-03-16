@@ -17,7 +17,7 @@ QString QMLWidgetComponent::contextName() const
     QString className(QString::fromLatin1(metaObject()->className()));
 
     // Remove namespace prefix if necessary.
-    auto index(className.lastIndexOf(NAMESPACE_SEPARATOR));
+    const auto index(className.lastIndexOf(NAMESPACE_SEPARATOR));
     if (index != -1)
     {
         // Ignore namespace separator.

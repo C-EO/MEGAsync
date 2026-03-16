@@ -46,7 +46,7 @@ protected:
     void resizeEvent(QResizeEvent *) override;
 
 private:
-    void setConflictItems(int count);
+    void setConflictItems(qsizetype count);
     void cleanUi();
     void fillDialog();
     void setDialogTitle(const QString& title);

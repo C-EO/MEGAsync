@@ -1,8 +1,6 @@
 #ifndef ENUMCONVERTERS_H
 #define ENUMCONVERTERS_H
 
-#include <Utilities.h>
-
 #include <QMetaEnum>
 
 template<class EnumType>

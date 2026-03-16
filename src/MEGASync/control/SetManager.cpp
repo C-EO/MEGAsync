@@ -624,9 +624,9 @@ void SetManager::handleCopyNodeResponse(MegaRequest* request, MegaError* error)
 void SetManager::checkandHandleFinishedImport()
 {
     // Check if we are waiting for more Elements to import, or if we are done
-    qsizetype nrElementsToImport = mCurrentSet.elementHandleList.size();
-    qsizetype nrImportedElements = mSucceededImportElements.size() + mFailedImportElements.size() +
-                                   mAlreadyExistingImportElements.size();
+    const auto nrElementsToImport = mCurrentSet.elementHandleList.size();
+    const auto nrImportedElements = mSucceededImportElements.size() + mFailedImportElements.size() +
+                                    mAlreadyExistingImportElements.size();
 
     if (nrImportedElements == nrElementsToImport)
     {

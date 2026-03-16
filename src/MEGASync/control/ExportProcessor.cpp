@@ -31,14 +31,14 @@ void ExportProcessor::init(MegaApi* megaApi, int mode, qsizetype size)
 
 void ExportProcessor::requestLinks()
 {
-    qsizetype size = (mode == MODE_PATHS) ? fileList.size() : handleList.size();
+    const auto size = (mode == MODE_PATHS) ? fileList.size() : handleList.size();
     if (!size)
     {
         emit onRequestLinksFinished();
         return;
     }
 
-    for (int i = 0; i < size; i++)
+    for (auto i = 0; i < size; i++)
     {
         std::unique_ptr<MegaNode> node(nullptr);
         if (mode == MODE_PATHS)

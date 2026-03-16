@@ -1094,18 +1094,13 @@ void TransfersModel::onProcessTransfers()
 
         bool asynchronousProcessed(false);
 
-        int containsTransfersToStart(
-            static_cast<int>(mTransfersToProcess.startTransfersByTag.size()));
-        int containsSyncTransfersToStart(
-            static_cast<int>(mTransfersToProcess.startSyncTransfersByTag.size()));
-        int containsTransfersToUpdate(
-            static_cast<int>(mTransfersToProcess.updateTransfersByTag.size()));
-        int containsTransfersToCancel(
-            static_cast<int>(mTransfersToProcess.canceledTransfersByTag.size()));
-        int containsFolderTransfersFailed(
-            static_cast<int>(mTransfersToProcess.failedFolderTransfersByTag.size()));
-        int containsTransfersFailed(
-            static_cast<int>(mTransfersToProcess.failedTransfersByTag.size()));
+        const auto containsTransfersToStart(mTransfersToProcess.startTransfersByTag.size());
+        const auto containsSyncTransfersToStart(mTransfersToProcess.startSyncTransfersByTag.size());
+        const auto containsTransfersToUpdate(mTransfersToProcess.updateTransfersByTag.size());
+        const auto containsTransfersToCancel(mTransfersToProcess.canceledTransfersByTag.size());
+        const auto containsFolderTransfersFailed(
+            mTransfersToProcess.failedFolderTransfersByTag.size());
+        const auto containsTransfersFailed(mTransfersToProcess.failedTransfersByTag.size());
 
         if(containsTransfersToCancel > 0)
         {            
@@ -1407,7 +1402,7 @@ void TransfersModel::processCancelTransfers()
 
         mRowsToCancel.clear();
 
-        double cancelledPercentage(double(indexesToCancel.size()) * 1.0);
+        double cancelledPercentage(indexesToCancel.size());
         cancelledPercentage = cancelledPercentage/rowCount();
 
         //For large amount of transfers, this is quite faster: remove all transfers and recreate the tags by row map

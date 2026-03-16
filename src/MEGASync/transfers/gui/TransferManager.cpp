@@ -716,12 +716,12 @@ void TransferManager::refreshSearchStats()
     {
         // Update search results number
         auto proxy (mUi->wTransfers->getProxyModel());
-        qsizetype nbDl(proxy->getNumberOfItems(TransferData::TRANSFER_DOWNLOAD));
-        qsizetype nbUl(proxy->getNumberOfItems(TransferData::TRANSFER_UPLOAD));
-        qsizetype nbAll(nbDl + nbUl);
-        mUi->wAllResults->setCounter(static_cast<unsigned long long>(nbAll));
-        mUi->wDlResults->setCounter(static_cast<unsigned long long>(nbDl));
-        mUi->wUlResults->setCounter(static_cast<unsigned long long>(nbUl));
+        const auto nbDl(proxy->getNumberOfItems(TransferData::TRANSFER_DOWNLOAD));
+        const auto nbUl(proxy->getNumberOfItems(TransferData::TRANSFER_UPLOAD));
+        const auto nbAll = nbDl + nbUl;
+        mUi->wAllResults->setCounter(nbAll);
+        mUi->wDlResults->setCounter(nbDl);
+        mUi->wUlResults->setCounter(nbUl);
 
         if(nbDl != 0 && nbUl != 0)
         {
@@ -730,8 +730,9 @@ void TransferManager::refreshSearchStats()
         }
         else
         {
-            int intNbAll = static_cast<int>(nbAll);
-            mUi->lNbResults->setText(QString(tr("%1 result found", "", intNbAll)).arg(nbAll));
+            static const unsigned long long maxInt = std::numeric_limits<int>::max();
+            const auto intNbAll = static_cast<int>(std::min(nbAll, maxInt)); // Safe cast
+            mUi->lNbResults->setText(tr("%1 result found", "", intNbAll).arg(nbAll));
             mUi->lNbResults->setVisible(true);
             mUi->searchByTextTypeSelector->setVisible(false);
         }

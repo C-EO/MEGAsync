@@ -323,7 +323,7 @@ void SettingsDialog::loadSettings()
         QString file = it.next();
         if (file.startsWith(fullPrefix))
         {
-            auto extensionIndex = file.lastIndexOf(QString::fromUtf8("."));
+            const auto extensionIndex = file.lastIndexOf(u'.');
             if ((extensionIndex - fullPrefix.size()) <= 0)
             {
                 continue;
@@ -344,7 +344,7 @@ void SettingsDialog::loadSettings()
         }
     }
 
-    int langs = static_cast<int>(mLanguageCodes.size());
+    const auto langs = static_cast<int>(mLanguageCodes.size());
     for (int i = langs - 1; i >= 0; i--)
     {
         if (currentLanguage.startsWith(mLanguageCodes[i]))
@@ -512,7 +512,8 @@ void SettingsDialog::on_bGeneral_clicked()
 void SettingsDialog::on_bClearCache_clicked()
 {
     QString syncs;
-    for (const auto& syncSetting: mModel->getAllSyncSettings())
+    const auto allSyncsSettings = mModel->getAllSyncSettings();
+    for (const auto& syncSetting: allSyncsSettings)
     {
         QFileInfo fi(syncSetting->getLocalFolder() + QDir::separator() +
                      QString::fromUtf8(MEGA_DEBRIS_FOLDER));
@@ -809,7 +810,8 @@ void SettingsDialog::on_cDesktopIntegration_toggled(bool checked)
     // 1. Toggle left pane sync shortcuts in the explorer
     if (checked)
     {
-        for (const auto& syncSetting: mModel->getAllSyncSettings())
+        const auto allSyncsSettings = mModel->getAllSyncSettings();
+        for (const auto& syncSetting: allSyncsSettings)
         {
             Platform::getInstance()->addSyncToLeftPane(syncSetting->getLocalFolder(),
                                                        syncSetting->name(),

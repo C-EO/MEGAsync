@@ -472,7 +472,7 @@ void SyncItemModel::insertSync(std::shared_ptr<SyncSettings> sync)
         {
             if ((*it) == sync)
             {
-                int pos = static_cast<int>(it - mList.cbegin());
+                const auto pos = static_cast<int>(it - mList.cbegin());
                 sendDataChanged(pos);
                 break;
             }
@@ -498,7 +498,7 @@ void SyncItemModel::updateSyncStats(std::shared_ptr<::mega::MegaSyncStats> stats
     {
         if ((*it)->backupId() == stats->getBackupId())
         {
-            int pos = static_cast<int>(it - mList.cbegin());
+            const auto pos = static_cast<int>(it - mList.cbegin());
             sendDataChanged(pos);
             break;
         }

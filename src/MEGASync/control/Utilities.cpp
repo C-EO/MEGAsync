@@ -981,13 +981,13 @@ QString Utilities::createCompleteUsedString(long long usedData, long long totalD
 QString Utilities::extractJSONString(QString json, QString name)
 {
     QString pattern = name + QString::fromUtf8("\":\"");
-    auto pos = json.indexOf(pattern);
+    const auto pos = json.indexOf(pattern);
     if (pos < 0)
     {
         return QString();
     }
 
-    auto end = json.indexOf(QString::fromUtf8("\""), pos + pattern.size());
+    const auto end = json.indexOf(QString::fromUtf8("\""), pos + pattern.size());
     if (end < 0)
     {
         return QString();
@@ -1009,17 +1009,17 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
 
     startPos += pattern.size(); // Move to the beginning of the first string
 
-    auto endPos = json.indexOf(QString::fromUtf8("\"]"), startPos);
+    const auto endPos = json.indexOf(QString::fromUtf8("\"]"), startPos);
     if (endPos < 0)
     {
         return resultList;
     }
 
-    QString substr = json.mid(startPos, endPos - startPos);
-    QStringList parts = substr.remove(QString::fromUtf8("\"")).split(QString::fromUtf8(","));
+    auto substr = json.mid(startPos, endPos - startPos);
+    const auto parts = substr.remove(QLatin1Char('"')).split(QLatin1Char(','));
 
     // Trim whitespace from each part and add it to the result list
-    for (const QString& part: std::as_const(parts))
+    for (const auto& part: parts)
     {
         resultList.append(part.trimmed());
     }
@@ -1030,7 +1030,7 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
 long long Utilities::extractJSONNumber(QString json, QString name)
 {
     QString pattern = name + QString::fromUtf8("\":");
-    auto pos = json.indexOf(pattern);
+    const auto pos = json.indexOf(pattern);
     if (pos < 0)
     {
         return 0;
@@ -1353,7 +1353,7 @@ void Utilities::getDaysAndHoursToTimestamp(int64_t secsTimestamps, int64_t &rema
     }
 
     // Get seconcs diff between now and secsTimestamps
-    int64_t tDiff = secsTimestamps - QDateTime::currentMSecsSinceEpoch() / MSEC_IN_1_SEC;
+    const auto tDiff = secsTimestamps - QDateTime::currentSecsSinceEpoch();
 
     // Compute in hours, then in days
     remainHours = tDiff / SECS_IN_1_HOUR;
@@ -1505,15 +1505,16 @@ QString Utilities::getNonDuplicatedLocalName(const QFileInfo &currentFile, bool 
 QPair<QString, QString> Utilities::getFilenameBasenameAndSuffix(const QString& fileName)
 {
     QMimeDatabase db;
-    auto length = fileName.length();
+    const auto length = fileName.length();
     QList <QPair <int, QMimeType> > list;
-    for (auto index = length; index > -1; index--)
+    for (auto index = length; index >= 0; --index)
     {
-        QList<QMimeType> mimes = db.mimeTypesForFileName(fileName.section(QLatin1String(""), index, length));
-        QMimeType mime = mimes.isEmpty() ? QMimeType() : mimes.last();
+        const auto mimes =
+            db.mimeTypesForFileName(fileName.section(QLatin1String(""), index, length));
+        const auto mime = mimes.isEmpty() ? QMimeType() : mimes.last();
         if (mime.isValid() && (list.isEmpty() || list.last().second != mime))
         {
-            list.push_back(qMakePair(index, mime));
+            list.append({index, mime});
         }
     }
 

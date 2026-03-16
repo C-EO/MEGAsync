@@ -208,21 +208,21 @@ void TransfersManagerSortFilterProxyModel::resetAllFilters()
     setFilters({}, {}, {});
 }
 
-qsizetype
+unsigned long long
     TransfersManagerSortFilterProxyModel::getNumberOfItems(TransferData::TransferType transferType)
 {
-    qsizetype nb(0);
+    qsizetype size = 0;
 
-    if(transferType == TransferData::TransferType::TRANSFER_UPLOAD)
+    if (transferType == TransferData::TransferType::TRANSFER_UPLOAD)
     {
-        nb = mUlNumber.size();
+        size = mUlNumber.size();
     }
-    else if(transferType == TransferData::TransferType::TRANSFER_DOWNLOAD)
+    else if (transferType == TransferData::TransferType::TRANSFER_DOWNLOAD)
     {
-        nb = mDlNumber.size();
+        size = mDlNumber.size();
     }
 
-    return nb;
+    return size > 0 ? static_cast<unsigned long long>(size) : 0; // Safe cast
 }
 
 void TransfersManagerSortFilterProxyModel::resetAllCounters()

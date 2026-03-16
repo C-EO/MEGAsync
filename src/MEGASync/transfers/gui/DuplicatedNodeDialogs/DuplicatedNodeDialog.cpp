@@ -65,11 +65,13 @@ void DuplicatedNodeDialog::cleanUi()
     }
 }
 
-void DuplicatedNodeDialog::setConflictItems(int count)
+void DuplicatedNodeDialog::setConflictItems(qsizetype count)
 {
     if(count > 1)
     {
-        QString checkBoxText(tr("Apply to all %1 duplicates", "", count).arg(count));
+        static const qsizetype maxInt = std::numeric_limits<int>::max();
+        const auto intCount = static_cast<int>(std::min(count, maxInt)); // Safe cast
+        const auto checkBoxText(tr("Apply to all %1 duplicates", "", intCount).arg(count));
         ui->cbApplyToAll->setText(checkBoxText);
         ui->cbApplyToAll->show();
     }
@@ -89,8 +91,8 @@ void DuplicatedNodeDialog::setHeader(const QString& baseText, const QString& nod
 
 void DuplicatedNodeDialog::fillDialog()
 {
-    auto conflictNumber(mConflictsBeingProcessed.size());
-    setConflictItems(static_cast<int>(conflictNumber));
+    const auto conflictNumber(mConflictsBeingProcessed.size());
+    setConflictItems(conflictNumber);
     processConflict(mConflictsBeingProcessed.first());
 }
 
@@ -134,7 +136,7 @@ void DuplicatedNodeDialog::onConflictProcessed()
         if(!mConflictsBeingProcessed.isEmpty())
         {
             cleanUi();
-            setConflictItems(static_cast<int>(mConflictsBeingProcessed.size()));
+            setConflictItems(mConflictsBeingProcessed.size());
             processConflict(mConflictsBeingProcessed.first());
         }
         else

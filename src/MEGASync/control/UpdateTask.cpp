@@ -353,19 +353,22 @@ bool UpdateTask::processFile(QNetworkReply *reply)
     //Write the new file
     qsizetype remainingSize = data.size();
     qsizetype position = 0;
-    while (remainingSize)
+    while (remainingSize > 0)
     {
-        int written = static_cast<int>(localFile.write(data.constData()+position, remainingSize));
+        const qsizetype written = localFile.write(data.constData() + position, remainingSize);
         if (written == -1)
         {
-            MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Error writting file: %1").arg(info.absoluteFilePath()).toUtf8().constData());
+            MegaApi::log(MegaApi::LOG_LEVEL_ERROR,
+                         QString::fromUtf8("Error writting file: %1")
+                             .arg(info.absoluteFilePath())
+                             .toUtf8()
+                             .constData());
             localFile.close();
             return false;
         }
         remainingSize -= written;
         position += written;
     }
-
 
     //Save the new file
     if (!localFile.flush())
