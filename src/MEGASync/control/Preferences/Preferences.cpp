@@ -1455,10 +1455,6 @@ bool Preferences::canUpdate(QString filePath)
 
     bool value = true;
 
-#ifdef WIN32
-    QNtfsPermissionCheckGuard permissionGuard; // turn checking on
-#endif
-
     if (!QFileInfo(filePath).isWritable())
     {
         value = false;
@@ -2747,10 +2743,10 @@ void Preferences::readFolders()
     loadedSyncsMap.clear();
 
     mSettings->beginGroup(syncsGroupByTagKey);
-    auto numSyncs = mSettings->numChildGroups();
-    for (auto i = 0; i < numSyncs; i++)
+    const qsizetype numSyncs = mSettings->numChildGroups();
+    for (qsizetype i = 0; i < numSyncs; ++i)
     {
-        mSettings->beginGroup(i);
+        mSettings->beginGroup(static_cast<int>(i));
 
         auto sc = std::make_shared<SyncSettings>(mSettings->value(configuredSyncsKey).value<QString>());
         if (sc->backupId())

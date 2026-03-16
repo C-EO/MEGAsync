@@ -42,7 +42,7 @@ interface __declspec(uuid("D782CCBA-AFB0-43F1-94DB-FDA3779EACCB")) INotification
 interface __declspec(uuid("D133CE13-3537-48BA-93A7-AFCD5D2053B4"))
 
 // Virtual functions for Windows 10+ (interface originally introduced in Windows 8)
-interface ITrayNotifyNew: public IUnknown
+ITrayNotifyNew: public IUnknown
 {
     virtual HRESULT __stdcall RegisterCallback (INotificationCB *,unsigned long *) = 0;
     virtual HRESULT __stdcall UnregisterCallback (unsigned long ) = 0;

@@ -379,7 +379,7 @@ public:
 
             if(dialog->parent())
             {
-                dialog->parentWidget()->activateWindow();
+                qApp->setActiveWindow(dialog->parentWidget());
             }
 
             dialog->deleteLater();

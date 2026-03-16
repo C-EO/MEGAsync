@@ -312,7 +312,7 @@ void Utilities::getFolderSize(QString folderPath, long long *size)
 
 qreal Utilities::getDevicePixelRatio()
 {
-    return qApp->devicePixelRatio();
+    return qApp->testAttribute(Qt::AA_UseHighDpiPixmaps) ? qApp->devicePixelRatio() : 1.0;
 }
 
 QString Utilities::getPixmapName(const QString& iconName,
@@ -2328,4 +2328,3 @@ TimeInterval& TimeInterval::operator=(const TimeInterval& other)
     useSecondPrecision = other.useSecondPrecision;
     return *this;
 }
-

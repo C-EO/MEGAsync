@@ -344,6 +344,9 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     connect(&transferProgressController, &BlockingStageProgressController::updateUi,
             &scanStageController, &ScanStageController::onFolderTransferUpdate);
 
+    // TODO Qt6: In Qt6 this is the default, so we can remove the following line
+    setAttribute(Qt::AA_DisableWindowContextHelpButton);
+
     // Don't execute the "onGlobalSyncStateChangedImpl" function too often or the dialog locks up,
     // eg. queueing a folder with 1k items for upload/download
     mIntervalExecutioner =
@@ -796,7 +799,7 @@ void MegaApplication::changeLanguage(QString languageCode)
                             + Preferences::TRANSLATION_PREFIX
                             + languageCode))
     {
-        [[maybe_unused]] bool ok =
+        [[maybe_unused]] auto ok =
             translator.load(Preferences::TRANSLATION_FOLDER + Preferences::TRANSLATION_PREFIX +
                             QString::fromUtf8("en"));
         currentLanguageCode = QString::fromUtf8("en");
@@ -2867,7 +2870,7 @@ void MegaApplication::transferBatchFinished(unsigned long long appDataId, bool f
 void MegaApplication::logBatchStatus(const char* tag)
 {
 #ifdef DEBUG
-    QString logMessage =
+    const auto logMessage =
         QString::fromLatin1("%1 : %2").arg(QString::fromUtf8(tag), mBlockingBatch.description());
     MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, logMessage.toUtf8().constData());
 #else

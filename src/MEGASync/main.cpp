@@ -242,9 +242,10 @@ void uninstall()
             preferences->unlink();
         }
 
-        for (int i = 0; i < preferences->getNumUsers(); i++)
+        const auto numUsers = preferences->getNumUsers();
+        for (auto i = 0; i < numUsers; ++i)
         {
-            preferences->enterUser(i);
+            preferences->enterUser(static_cast<int>(i));
 
             // now for the new syncs cached configurations
             auto loadedSyncs = preferences->getLoadedSyncsMap();
@@ -411,6 +412,11 @@ int main(int argc, char *argv[])
         logMessages.emplace_back(MegaApi::LOG_LEVEL_DEBUG,
                                  QStringLiteral("auto screen scale factor disabled because of "
                                                 "QT_AUTO_SCREEN_SCALE_FACTOR set to 0"));
+    }
+    else
+    {
+        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+        QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     }
 #endif
 
