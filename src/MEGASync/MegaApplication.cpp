@@ -1080,6 +1080,75 @@ void MegaApplication::start()
     }
 #endif
 
+    // Target discounts init
+
+    mDiscountPolicy = new DiscountPolicy(this);
+
+    mDiscountStateMachine = new DiscountStateMachine(mDiscountPolicy);
+
+    connect(infoDialog,
+            &InfoDialog::requestShowDiscountDialog,
+            mDiscountStateMachine,
+            &DiscountStateMachine::onDiscountButtonClicked,
+            Qt::UniqueConnection);
+
+    connect(mDiscountStateMachine,
+            &DiscountStateMachine::requestShowDialog,
+            [this]()
+            {
+                auto dialog = QMLComponent::showDialog<OfferComponent>();
+                dialog->getDialog()->wrapper()->setDiscountInfo(mDiscountPolicy->getDiscountInfo());
+
+                mDiscountPolicy->recordShown();
+
+                QObject::connect(dialog->getDialog(),
+                                 &QmlDialogWrapper<OfferComponent>::rejected,
+                                 this,
+                                 [this]()
+                                 {
+                                     mDiscountPolicy->recordDismissed();
+                                     emit mDiscountStateMachine->discountDismissed();
+                                 });
+                QObject::connect(dialog->getDialog(),
+                                 &QmlDialogWrapper<OfferComponent>::accepted,
+                                 this,
+                                 [this]()
+                                 {
+                                     mDiscountPolicy->recordAccepted();
+                                     emit mDiscountStateMachine->discountAccepted();
+                                 });
+            });
+
+    connect(mDiscountStateMachine,
+            &DiscountStateMachine::updateDiscountCampaignSignaling,
+            this,
+            &MegaApplication::updateTrayIcon);
+    connect(mDiscountStateMachine,
+            &DiscountStateMachine::requestUserDiscounts,
+            this,
+            &MegaApplication::requestUserDiscounts);
+    connect(this,
+            &MegaApplication::meaningfulInteraction,
+            mDiscountStateMachine,
+            &DiscountStateMachine::onMeaningfulInteraction);
+    connect(this,
+            &MegaApplication::enterOverquota,
+            mDiscountStateMachine,
+            &DiscountStateMachine::enterOverquota);
+    connect(this,
+            &MegaApplication::userActive,
+            mDiscountStateMachine,
+            &DiscountStateMachine::userActive);
+
+    mDiscountStateMachine->start();
+
+    updateTrayIcon();
+
+    if (AppState::instance()->getAppState() == AppState::INIT)
+    {
+        emit requestAppState(AppState::NOMINAL);
+    }
+
     //Start the initial setup wizard if needed
     if (preferences->getSession().isEmpty())
     {
@@ -1144,70 +1213,6 @@ void MegaApplication::start()
     {
         QmlDialogManager::instance()->openOnboardingDialog();
     }
-
-    updateTrayIcon();
-
-    // Target discounts init
-
-    mDiscountPolicy = new DiscountPolicy(this);
-
-    mDiscountStateMachine = new DiscountStateMachine(mDiscountPolicy);
-
-    connect(infoDialog,
-            &InfoDialog::requestShowDiscountDialog,
-            mDiscountStateMachine,
-            &DiscountStateMachine::onDiscountButtonClicked,
-            Qt::UniqueConnection);
-
-    connect(mDiscountStateMachine,
-            &DiscountStateMachine::requestShowDialog,
-            [this]()
-            {
-                auto dialog = QMLComponent::showDialog<OfferComponent>();
-                dialog->getDialog()->wrapper()->setDiscountInfo(mDiscountPolicy->getDiscountInfo());
-
-                mDiscountPolicy->recordShown();
-
-                QObject::connect(dialog->getDialog(),
-                                 &QmlDialogWrapper<OfferComponent>::rejected,
-                                 this,
-                                 [this]()
-                                 {
-                                     mDiscountPolicy->recordDismissed();
-                                     emit mDiscountStateMachine->discountDismissed();
-                                 });
-                QObject::connect(dialog->getDialog(),
-                                 &QmlDialogWrapper<OfferComponent>::accepted,
-                                 this,
-                                 [this]()
-                                 {
-                                     mDiscountPolicy->recordAccepted();
-                                     emit mDiscountStateMachine->discountAccepted();
-                                 });
-            });
-
-    connect(mDiscountStateMachine,
-            &DiscountStateMachine::updateDiscountCampaignSignaling,
-            this,
-            &MegaApplication::updateTrayIcon);
-    connect(mDiscountStateMachine,
-            &DiscountStateMachine::requestUserDiscounts,
-            this,
-            &MegaApplication::requestUserDiscounts);
-    connect(this,
-            &MegaApplication::meaningfulInteraction,
-            mDiscountStateMachine,
-            &DiscountStateMachine::onMeaningfulInteraction);
-    connect(this,
-            &MegaApplication::enterOverquota,
-            mDiscountStateMachine,
-            &DiscountStateMachine::enterOverquota);
-    connect(this,
-            &MegaApplication::userActive,
-            mDiscountStateMachine,
-            &DiscountStateMachine::userActive);
-
-    mDiscountStateMachine->start();
 }
 
 void MegaApplication::requestUserData()
@@ -1510,6 +1515,9 @@ void MegaApplication::onLogout()
                     mDiscountPolicy->deleteLater();
                     mDiscountPolicy = nullptr;
                 }
+
+                emit requestAppState(AppState::INIT);
+
                 start();
                 periodicTasks();
                 ThemeManager::instance()->init();
@@ -1802,8 +1810,13 @@ void MegaApplication::tryExitApplication(bool force)
         return;
     }
 
-    mStatsEventHandler->sendTrackedEvent(AppStatsEvents::EventType::MENU_EXIT_CLICKED,
-                                         sender(), exitAction, true);
+    if (mStatsEventHandler)
+    {
+        mStatsEventHandler->sendTrackedEvent(AppStatsEvents::EventType::MENU_EXIT_CLICKED,
+                                             sender(),
+                                             exitAction,
+                                             true);
+    }
 
     if (dontAskForExitConfirmation(force))
     {
@@ -5381,6 +5394,11 @@ void MegaApplication::trayIconActivated(QSystemTrayIcon::ActivationReason reason
     {
         return;
     }
+    if (AppState::instance()->getAppState() == AppState::INIT ||
+        AppState::instance()->getAppState() == AppState::FINISHED)
+    {
+        return;
+    }
 
     registerUserActivity();
     meaningfulInteraction();
@@ -5537,8 +5555,13 @@ void MegaApplication::openSettings(int tab)
         return;
     }
 
-    mStatsEventHandler->sendTrackedEvent(AppStatsEvents::EventType::MENU_SETTINGS_CLICKED,
-                                         sender(), settingsAction, true);
+    if (mStatsEventHandler)
+    {
+        mStatsEventHandler->sendTrackedEvent(AppStatsEvents::EventType::MENU_SETTINGS_CLICKED,
+                                             sender(),
+                                             settingsAction,
+                                             true);
+    }
 
     bool proxyOnly = AppState::instance()->getAppState() != AppState::NOMINAL;
 
@@ -5700,7 +5723,10 @@ void MegaApplication::createTrayIconMenus()
 #endif
     connect(initialExitAction, &QAction::triggered, this, &MegaApplication::tryExitApplication);
 
-    initialTrayMenu->addAction(guestSettingsAction);
+    if (AppState::instance()->getAppState() != AppState::INIT)
+    {
+        initialTrayMenu->addAction(guestSettingsAction);
+    }
     initialTrayMenu->addAction(initialExitAction);
 
 #ifdef Q_OS_LINUX
@@ -6104,8 +6130,13 @@ void MegaApplication::createGuestMenu()
 
     guestMenu->addAction(updateActionGuest);
     guestMenu->addSeparator();
-    guestMenu->addAction(settingsActionGuest);
-    guestMenu->addSeparator();
+
+    if (AppState::instance()->getAppState() != AppState::INIT)
+    {
+        guestMenu->addAction(settingsActionGuest);
+        guestMenu->addSeparator();
+    }
+
     guestMenu->addAction(exitActionGuest);
 }
 

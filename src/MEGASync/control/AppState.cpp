@@ -52,7 +52,7 @@ void AppState::setAppState(AppStates newState)
         switch (mAppState)
         {
             case AppState::RELOADING:
-            // Fallthrough
+                [[fallthrough]];
             case AppState::FATAL_ERROR:
             {
                 // We don't want to close the onboarding wizard when coming from
@@ -64,9 +64,11 @@ void AppState::setAppState(AppStates newState)
                 break;
             }
             case AppState::FATAL_ERROR_PENDING_FETCHNODES:
-            // Fallthrough
+                [[fallthrough]];
+            case AppState::INIT:
+                [[fallthrough]];
             case AppState::NOMINAL:
-            // Fallthrough
+                [[fallthrough]];
             case AppState::FINISHED:
             {
                 break;
@@ -86,7 +88,7 @@ void AppState::setAppState(AppStates newState)
 
 AppState::AppState():
     QObject{nullptr},
-    mAppState{AppState::NOMINAL}
+    mAppState{AppState::INIT}
 {
     qmlRegisterUncreatableType<AppState>(
         "AppState",
