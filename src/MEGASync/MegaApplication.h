@@ -189,7 +189,12 @@ public:
     bool isAppliedStorageOverquota() const;
     void reloadSyncsInSettings();
 
-    void raiseInfoDialog();
+    /**
+     * @brief Shows and raises the main dialog, the Info Dialog
+     * @param If along with the main dialog you want to raise the rest of opened dialog, set this
+     * param to true
+     */
+    void raiseInfoDialog(bool raiseOpenedDialogs = true);
     bool isShellNotificationProcessingOngoing();
 
     QSystemTrayIcon* getTrayIcon();
@@ -310,7 +315,7 @@ public slots:
     void onAppStateChanged(AppState::AppStates, AppState::AppStates);
 
 private slots:
-    void openFolderPath(QString path);
+    void openFolderPathFromExternal(QString path);
     void registerUserActivity();
     void PSAseen(int id);
     void onSyncModelUpdated(std::shared_ptr<SyncSettings> syncSettings);
