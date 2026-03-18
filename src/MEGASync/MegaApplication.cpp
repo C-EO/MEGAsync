@@ -4939,22 +4939,25 @@ void MegaApplication::uploadFilesToNode(const QList<QUrl>& files,
         return;
     }
 
-    // Append the list of files to the upload queue, but avoid duplicates
-    std::for_each(files.begin(),
-                  files.end(),
-                  [&](const QUrl& file)
-                  {
-                      QPair<QString, PiTagTrigger> upload(file.toLocalFile(), piTagTrigger);
-                      if (!mUploadQueue.contains(upload))
-                      {
-                          auto item(file.toLocalFile());
-                          if (item.endsWith(QDir::separator()))
-                          {
-                              item = item.left(item.lastIndexOf(QDir::separator()));
-                          }
-                          mUploadQueue.enqueue({item, piTagTrigger});
-                      }
-                  });
+    for (const auto& file: files)
+    {
+        auto newUpload = file.toLocalFile();
+        const auto noDuplicates = std::none_of(mUploadQueue.cbegin(),
+                                               mUploadQueue.cend(),
+                                               [&newUpload](const auto& upload)
+                                               {
+                                                   return upload.first == newUpload;
+                                               });
+        if (noDuplicates)
+        {
+            if (newUpload.endsWith(QDir::separator()))
+            {
+                newUpload = newUpload.left(newUpload.lastIndexOf(QDir::separator()));
+            }
+            mUploadQueue.enqueue({newUpload, piTagTrigger});
+        }
+    }
+
     processUploadQueue(targetNode, caller);
 }
 

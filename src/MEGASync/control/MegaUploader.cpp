@@ -24,16 +24,16 @@ void MegaUploader::upload(std::unique_ptr<UploadInfo> uploadInfo)
                          .arg(appDataId);
     mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_DEBUG, msg.toUtf8().constData());
 
-    auto* remoteNode = uploadInfo->mRemoteNode.get();
-    if (!remoteNode)
+    // If the node is not set, use the handle to get it.
+    if (!uploadInfo->mRemoteNode)
     {
-        remoteNode = mMegaApi->getNodeByHandle(uploadInfo->mRemoteNodeHandle);
+        uploadInfo->mRemoteNode.reset(mMegaApi->getNodeByHandle(uploadInfo->mRemoteNodeHandle));
     }
 
     startUpload(filePath,
                 uploadInfo->mNodeName,
                 appDataId,
-                remoteNode,
+                uploadInfo->mRemoteNode.get(),
                 uploadInfo->mTransferBatch ? uploadInfo->mTransferBatch->getCancelTokenPtr() :
                                              nullptr,
                 uploadInfo->mPiTagTrigger);
