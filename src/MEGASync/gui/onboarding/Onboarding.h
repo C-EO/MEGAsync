@@ -3,6 +3,10 @@
 
 #include "QmlDialogWrapper.h"
 
+#include <QPointer>
+
+class DeviceNameChecker;
+class QThread;
 class SyncsComponent;
 class Onboarding: public QMLComponent
 {
@@ -10,6 +14,7 @@ class Onboarding: public QMLComponent
 
 public:
     explicit Onboarding(QObject* parent = 0);
+    ~Onboarding() override;
     QUrl getQmlUrl() override;
 
     Q_INVOKABLE void openPreferences(int tabIndex) const;
@@ -23,7 +28,11 @@ signals:
     void deviceNameChecked(bool valid);
 
 private:
+    void stopDeviceNameCheck();
+
     std::unique_ptr<SyncsComponent> mSyncsComponent;
+    QPointer<QThread> mDeviceNameThread;
+    QPointer<DeviceNameChecker> mDeviceNameChecker;
 };
 
 #endif // ONBOARDING_H

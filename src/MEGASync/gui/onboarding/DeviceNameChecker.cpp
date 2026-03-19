@@ -6,14 +6,20 @@
 
 const static int INITIAL_PENDING_REQUEST = 2;
 
-DeviceNameChecker::DeviceNameChecker(QObject* parent, QString deviceNameCandidate):
-    QThread(parent),
+DeviceNameChecker::DeviceNameChecker(QString deviceNameCandidate, QObject* parent):
+    QObject(parent),
     mMegaApi(MegaSyncApp->getMegaApi()),
     mDeviceNameCandidate(deviceNameCandidate)
 {}
 
-void DeviceNameChecker::run()
+void DeviceNameChecker::process()
 {
+    if (mFinished)
+    {
+        emit finished();
+        return;
+    }
+
     mMyBackupsHandle = UserAttributes::MyBackupsHandle::requestMyBackupsHandle();
     mDeviceName = UserAttributes::DeviceNames::requestDeviceNames();
 
@@ -41,17 +47,18 @@ void DeviceNameChecker::run()
         connect(mMyBackupsHandle.get(),
                 &UserAttributes::MyBackupsHandle::attributeReady,
                 this,
-                &DeviceNameChecker::fetchBackupDeviceNames);
-    }
-
-    if (mPendingRequests != 0)
-    {
-        exec();
+                &DeviceNameChecker::fetchBackupDeviceNames,
+                Qt::QueuedConnection);
     }
 }
 
 void DeviceNameChecker::fetchBackupDeviceNames()
 {
+    if (mFinished)
+    {
+        return;
+    }
+
     if (mMyBackupsHandle->isAttributeReady())
     {
         auto backupHandle = mMyBackupsHandle->getMyBackupsHandle();
@@ -85,10 +92,15 @@ void DeviceNameChecker::fetchBackupDeviceNames()
 
 void DeviceNameChecker::updateReadyCondition()
 {
+    if (mFinished || mPendingRequests <= 0)
+    {
+        return;
+    }
+
     --mPendingRequests;
     if (mPendingRequests == 0)
     {
-        emit deviceNameCheck(checkDeviceName(mDeviceNameCandidate));
+        complete(checkDeviceName(mDeviceNameCandidate));
     }
 }
 
@@ -97,4 +109,33 @@ bool DeviceNameChecker::checkDeviceName(const QString& deviceName)
     return mDeviceName->getDeviceName() == deviceName ||
            (mDeviceName->getDeviceNames().key(deviceName).isEmpty() &&
             !mBackupDeviceNames.contains(deviceName));
+}
+
+void DeviceNameChecker::cancel()
+{
+    complete();
+}
+
+void DeviceNameChecker::complete(std::optional<bool> isValid)
+{
+    if (mFinished)
+    {
+        return;
+    }
+
+    mFinished = true;
+    if (mDeviceName)
+    {
+        QObject::disconnect(mDeviceName.get(), nullptr, this, nullptr);
+    }
+    if (mMyBackupsHandle)
+    {
+        QObject::disconnect(mMyBackupsHandle.get(), nullptr, this, nullptr);
+    }
+
+    if (isValid.has_value())
+    {
+        emit deviceNameCheck(*isValid);
+    }
+    emit finished();
 }
