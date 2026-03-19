@@ -1615,12 +1615,6 @@ void SettingsDialog::on_bOpenBandwidthSettings_clicked()
                                             mPreferences->parallelDownloadConnections());
                 }
 
-                if (bandwidthSettings->settingHasChanged(
-                        BandwidthSettings::SettingChanged::USE_HTTPS))
-                {
-                    mApp->setUseHttpsOnly(mPreferences->usingHttpsOnly());
-                }
-
                 updateNetworkTab();
             }
         });

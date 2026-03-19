@@ -227,8 +227,6 @@ public:
     void setProExpirityTime(long long value);
     bool startOnStartup();
     void setStartOnStartup(bool value);
-    bool usingHttpsOnly();
-    void setUseHttpsOnly(bool value);
     bool SSLcertificateException();
     void setSSLcertificateException(bool value);
     QString language();
@@ -761,7 +759,6 @@ protected:
     static const QString transferDownloadMethodKey;
     static const QString transferUploadMethodKey;
     static const QString lastCustomStreamingAppKey;
-    static const QString useHttpsOnlyKey;
     static const QString SSLcertificateExceptionKey;
     static const QString maxMemoryUsageKey;
     static const QString maxMemoryReportTimeKey;
@@ -832,7 +829,6 @@ protected:
     static const int defaultTransferUploadMethod;
     static const int defaultFolderPermissions;
     static const int defaultFilePermissions;
-    static const bool defaultUseHttpsOnly;
     static const bool defaultSSLcertificateException;
     static const int defaultAccountStatus;
     static const bool defaultNeedsFetchNodes;

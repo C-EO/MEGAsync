@@ -25,7 +25,6 @@ public:
         DOWNLOAD_LIMIT = 0x02,
         UPLOAD_CONNECTIONS = 0X04,
         DOWNLOAD_CONNECTIONS = 0x08,
-        USE_HTTPS = 0x10
     };
 
     Q_DECLARE_FLAGS(SettingsChanged, SettingChanged);
