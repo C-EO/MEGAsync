@@ -77,9 +77,7 @@
 #include <cassert>
 
 #ifdef Q_OS_LINUX
-#include <condition_variable>
 #include <QSvgRenderer>
-#include <signal.h>
 #endif
 
 #ifdef Q_OS_MACX
@@ -638,9 +636,9 @@ void MegaApplication::initialize()
 
     delegateListener = new QTMegaListener(megaApi, this);
     megaApi->addListener(delegateListener);
-    uploader = new MegaUploader(megaApi, mFolderTransferListener);
+    mUploader = new MegaUploader(megaApi, mFolderTransferListener);
     downloader = new MegaDownloader(megaApi, mFolderTransferListener);
-    connect(uploader, &MegaUploader::startingTransfers, this, &MegaApplication::startingUpload);
+    connect(mUploader, &MegaUploader::startingTransfers, this, &MegaApplication::startingUpload);
     connect(downloader, &MegaDownloader::startingTransfers,
             &scanStageController, &ScanStageController::startDelayedScanStage);
 
@@ -1613,8 +1611,8 @@ void MegaApplication::applyStorageState(int state, bool doNotAskForUserStats)
     }
 }
 
-//This function is called to upload all files in the uploadQueue field
-//to the Mega node that is passed as parameter
+// This function is called to upload all files in the mUploadQueue field
+// to the Mega node that is passed as parameter
 void MegaApplication::processUploadQueue(MegaHandle nodeHandle, QWidget* caller)
 {
     if (appfinished)
@@ -1627,62 +1625,70 @@ void MegaApplication::processUploadQueue(MegaHandle nodeHandle, QWidget* caller)
     //If the destination node doesn't exist in the current filesystem, clear the queue and show an error message
     if (!node || node->isFile())
     {
-        uploadQueue.clear();
+        mUploadQueue.clear();
         showErrorMessage(tr("Error: Invalid destination folder. The upload has been cancelled"));
         return;
     }
 
     noUploadedStarted = true;
 
-    auto conflicts = CheckDuplicatedNodes::checkUploads(uploadQueue, node);
+    auto uploads = CheckDuplicatedNodes::checkUploads(mUploadQueue, node);
 
-    if(!conflicts->isEmpty())
+    if (uploads->hasNoConflicts())
+    {
+        onUploadsCheckedAndReady(std::move(uploads));
+    }
+    else
     {
         auto checkUploadNameDialog(new DuplicatedNodeDialog(caller));
-        checkUploadNameDialog->setConflicts(conflicts);
+        checkUploadNameDialog->setConflicts(std::move(uploads));
         DialogOpener::showDialog<DuplicatedNodeDialog>(
             checkUploadNameDialog,
-            [this, checkUploadNameDialog]() {
+            [this, checkUploadNameDialog]()
+            {
                 if (checkUploadNameDialog && checkUploadNameDialog->result() == QDialog::Accepted)
                 {
                     onUploadsCheckedAndReady(checkUploadNameDialog->conflicts());
                 }
             });
     }
-    else
-    {
-        onUploadsCheckedAndReady(conflicts);
-    }
 }
 
-void MegaApplication::onUploadsCheckedAndReady(std::shared_ptr<ConflictTypes> conflicts)
+void MegaApplication::onUploadsCheckedAndReady(std::shared_ptr<ConflictTypes> checkedUploads)
 {
-        auto uploads = conflicts->mResolvedConflicts;
+    auto uploads = checkedUploads->mResolvedConflicts;
 
-        auto data = TransferMetaDataContainer::createTransferMetaData<UploadTransferMetaData>(conflicts->mTargetNode->getHandle());
-        preferences->setOverStorageDismissExecution(0);
+    auto data = TransferMetaDataContainer::createTransferMetaData<UploadTransferMetaData>(
+        checkedUploads->mTargetNode->getHandle());
 
-        auto batch = std::shared_ptr<TransferBatch>(new TransferBatch(data->getAppId()));
-        mBlockingBatch.add(batch);
+    preferences->setOverStorageDismissExecution(0);
 
-        EventUpdater updater(uploads.size(),20);
+    auto batch = std::make_shared<TransferBatch>(data->getAppId());
+    mBlockingBatch.add(batch);
 
-        auto counter = 0;
-        data->setInitialTransfers(uploads.size());
-        foreach(auto uploadInfo, uploads)
+    EventUpdater updater(uploads.size(), 20);
+
+    auto counter = 0;
+    data->setInitialTransfers(uploads.size());
+    for (const auto& uploadInfo: uploads)
+    {
+        auto upInfo = std::make_unique<MegaUploader::UploadInfo>(uploadInfo->getPiTagTrigger());
+        upInfo->mLocalPath = uploadInfo->getSourceItemPath();
+        upInfo->mNodeName = uploadInfo->getNewName();
+        upInfo->mRemoteNode = checkedUploads->mTargetNode;
+        upInfo->mTransferBatch = batch;
+
+        mUploader->upload(std::move(upInfo));
+
+        // Do not update the last items, leave Qt to do it in its natural way
+        // If you update them, the flag mProcessingUploadQueue will be false and the scanning
+        // widget will be stuck forever
+        if (uploadInfo != uploads.last())
         {
-            QString filePath = uploadInfo->getSourceItemPath();
-            uploader->upload(filePath, uploadInfo->getNewName(), conflicts->mTargetNode, data->getAppId(), batch);
-
-            //Do not update the last items, leave Qt to do it in its natural way
-            //If you update them, the flag mProcessingUploadQueue will be false and the scanning widget
-            //will be stuck forever
-            if(uploadInfo != uploads.last())
-            {
-                updater.update(counter);
-                counter++;
-            }
+            updater.update(counter);
+            counter++;
         }
+    }
 
         if (!batch->isEmpty())
         {
@@ -2216,8 +2222,8 @@ void MegaApplication::cleanAll()
     mSetManager = nullptr;
     delete httpServer;
     httpServer = nullptr;
-    delete uploader;
-    uploader = nullptr;
+    mUploader->deleteLater();
+    mUploader = nullptr;
     delete downloader;
     downloader = nullptr;
     delete delegateListener;
@@ -2997,10 +3003,10 @@ MegaApplication::NodeCount MegaApplication::countFilesAndFolders(const QStringLi
     return count;
 }
 
-void MegaApplication::processUploads(const QStringList &uploads)
+void MegaApplication::processUploads(const QStringList& uploads, PiTagTrigger piTagTrigger)
 {
-    uploadQueue.append(uploads);
-    processUploadQueue(folderUploadTarget);
+    mUploadQueue.append(createQueue(uploads, piTagTrigger));
+    processUploadQueue(mFolderUploadTarget);
 }
 
 void MegaApplication::processUpgradeSecurityEvent()
@@ -3057,12 +3063,13 @@ void MegaApplication::processUpgradeSecurityEvent()
     MessageDialogOpener::information(msgInfo);
 }
 
-QQueue<QString> MegaApplication::createQueue(const QStringList &newUploads) const
+QQueue<QPair<QString, PiTagTrigger>> MegaApplication::createQueue(const QStringList& newUploads,
+                                                                  PiTagTrigger piTag) const
 {
-    QQueue<QString> newUploadQueue;
-    foreach(QString file, newUploads)
+    QQueue<QPair<QString, PiTagTrigger>> newUploadQueue;
+    for (const auto& path: newUploads)
     {
-        newUploadQueue.append(file);
+        newUploadQueue.enqueue({path, piTag});
     }
     return newUploadQueue;
 }
@@ -4046,7 +4053,9 @@ void MegaApplication::showChangeLog()
     DialogOpener::showDialog<ChangeLogDialog>(changeLogDialog);
 }
 
-void MegaApplication::runUploadActionWithTargetHandle(const MegaHandle &targetFolder, QWidget* parent)
+void MegaApplication::runUploadActionWithTargetHandle(const MegaHandle& targetFolder,
+                                                      PiTagTrigger piTagTrigger,
+                                                      QWidget* parent)
 {
     if (appfinished)
     {
@@ -4054,21 +4063,21 @@ void MegaApplication::runUploadActionWithTargetHandle(const MegaHandle &targetFo
     }
     QString  defaultFolderPath = getDefaultUploadPath();
 
-    auto processUpload = [this, defaultFolderPath, targetFolder, parent]()
+    auto processUpload = [this, defaultFolderPath, targetFolder, piTagTrigger, parent]()
     {
         SelectorInfo info;
         info.title = QCoreApplication::translate("ShellExtension", "Upload to MEGA");
         info.defaultDir = defaultFolderPath;
         info.multiSelection = true;
         info.parent = parent;
-        info.func = [this, targetFolder, parent](QStringList files)
+        info.func = [this, targetFolder, piTagTrigger, parent](QStringList files)
         {
             if(files.size() >= 1)
             {
                 std::unique_ptr<MegaNode> folder(getMegaApi()->getNodeByHandle(targetFolder));
                 if(folder)
                 {
-                    uploadQueue.append(createQueue(files));
+                    mUploadQueue.append(createQueue(files, piTagTrigger));
                     processUploadQueue(targetFolder, parent);
                 }
                 else
@@ -4157,9 +4166,9 @@ void MegaApplication::uploadActionFromWindowAfterOverQuotaCheck()
     info.defaultDir = defaultFolderPath;
     info.multiSelection = true;
     info.parent = selectorParent;
-    info.func = [this/*, blocker*/](QStringList files)
+    info.func = [this /*, blocker*/](const QStringList& files)
     {
-        shellUpload(createQueue(files));
+        uploadWithPiTagTrigger(files, MegaApi::PITAG_TRIGGER_PICKER);
     };
 
     Platform::getInstance()->fileAndFolderSelector(info);
@@ -4393,7 +4402,7 @@ void MegaApplication::processUploads()
         return;
     }
 
-    if (!uploadQueue.size())
+    if (!mUploadQueue.size())
     {
         return;
     }
@@ -4446,13 +4455,12 @@ void MegaApplication::processUploads()
             {
                 mSettingsDialog->updateUploadFolder(); //this could be done via observer
             }
-
             processUploadQueue(nodeHandle);
         }
         //If the dialog is rejected, cancel uploads
         else
         {
-            uploadQueue.clear();
+            mUploadQueue.clear();
         }
     });
 }
@@ -4799,21 +4807,36 @@ void MegaApplication::logoutActionClicked()
     unlink();
 }
 
-//Called when the user wants to upload a list of files and/or folders from the shell
-void MegaApplication::shellUpload(QQueue<QString> newUploadQueue)
+void MegaApplication::uploadWithPiTagTrigger(const QStringList& newUploadQueue,
+                                             PiTagTrigger piTagTrigger)
 {
     if (appfinished)
     {
         return;
     }
-    //Append the list of files to the upload queue, but avoid duplicates
-    std::for_each(newUploadQueue.begin(), newUploadQueue.end(), [&](const QString &str) {
-        if (!uploadQueue.contains(str)) {
-            uploadQueue.enqueue(str);
+    // Append the list of files to the upload queue, but avoid duplicates
+    for (const auto& newUpload: newUploadQueue)
+    {
+        const auto noDuplicates = std::none_of(mUploadQueue.cbegin(),
+                                               mUploadQueue.cend(),
+                                               [&newUpload](const auto& upload)
+                                               {
+                                                   return upload.first == newUpload;
+                                               });
+        if (noDuplicates)
+        {
+            mUploadQueue.enqueue({newUpload, piTagTrigger});
         }
-    });
+    }
+
     processUploads();
     emit meaningfulInteraction();
+}
+
+// Called when the user wants to upload a list of files and/or folders from the shell
+void MegaApplication::shellUpload(const QQueue<QString>& newUploadQueue)
+{
+    uploadWithPiTagTrigger(newUploadQueue, MegaApi::PITAG_TRIGGER_EXPLORER_EXTENSION);
 }
 
 void MegaApplication::shellBackup(QStringList newBackupList)
@@ -4910,6 +4933,7 @@ void MegaApplication::externalDownload(QQueue<WrappedNode> newDownloadQueue)
 
 void MegaApplication::uploadFilesToNode(const QList<QUrl>& files,
                                         MegaHandle targetNode,
+                                        PiTagTrigger piTagTrigger,
                                         QWidget* caller)
 {
     if (appfinished)
@@ -4917,18 +4941,25 @@ void MegaApplication::uploadFilesToNode(const QList<QUrl>& files,
         return;
     }
 
-    //Append the list of files to the upload queue, but avoid duplicates
-    std::for_each(files.begin(), files.end(), [&](const QUrl &file) {
-        if (!uploadQueue.contains(file.toLocalFile()))
+    for (const auto& file: files)
+    {
+        auto newUpload = file.toLocalFile();
+        const auto noDuplicates = std::none_of(mUploadQueue.cbegin(),
+                                               mUploadQueue.cend(),
+                                               [&newUpload](const auto& upload)
+                                               {
+                                                   return upload.first == newUpload;
+                                               });
+        if (noDuplicates)
         {
-            auto item(file.toLocalFile());
-            if(item.endsWith(QDir::separator()))
+            if (newUpload.endsWith(QDir::separator()))
             {
-                item = item.left(item.lastIndexOf(QDir::separator()));
+                newUpload = newUpload.left(newUpload.lastIndexOf(QDir::separator()));
             }
-            uploadQueue.enqueue(item);
+            mUploadQueue.enqueue({newUpload, piTagTrigger});
         }
-    });
+    }
+
     processUploadQueue(targetNode, caller);
 }
 
@@ -4958,7 +4989,7 @@ void MegaApplication::externalFileUpload(MegaHandle targetFolder)
     auto processUpload = [this](QStringList selectedFiles){
         if (!selectedFiles.isEmpty())
         {
-            uploadQueue.append(createQueue(selectedFiles));
+            mUploadQueue.append(createQueue(selectedFiles, MegaApi::PITAG_TRIGGER_PICKER));
             processUploadQueue(fileUploadTarget);
 
             HTTPServer::onUploadSelectionAccepted(selectedFiles.size(), 0);
@@ -4992,7 +5023,7 @@ void MegaApplication::externalFolderUpload(MegaHandle targetFolder)
         return;
     }
 
-    folderUploadTarget = targetFolder;
+    mFolderUploadTarget = targetFolder;
 
     auto processUpload = [this](const QStringList& foldersSelected){
         if (!foldersSelected.isEmpty())
@@ -5006,7 +5037,7 @@ void MegaApplication::externalFolderUpload(MegaHandle targetFolder)
                     [this, foldersSelected, watcher]()
                     {
                         const NodeCount nodeCount = watcher->result();
-                        processUploads(foldersSelected);
+                        processUploads(foldersSelected, MegaApi::PITAG_TRIGGER_PICKER);
                         HTTPServer::onUploadSelectionAccepted(nodeCount.files, nodeCount.folders);
                         watcher->deleteLater();
                     });
@@ -5044,7 +5075,7 @@ void MegaApplication::externalFileFolderUpload(MegaHandle targetFolder)
         return;
     }
 
-    folderUploadTarget = targetFolder;
+    mFolderUploadTarget = targetFolder;
 
     auto processUpload = [this](const QStringList& foldersSelected)
     {
@@ -5059,7 +5090,7 @@ void MegaApplication::externalFileFolderUpload(MegaHandle targetFolder)
                     [this, foldersSelected, watcher]()
                     {
                         const NodeCount nodeCount = watcher->result();
-                        processUploads(foldersSelected);
+                        processUploads(foldersSelected, MegaApi::PITAG_TRIGGER_PICKER);
                         HTTPServer::onUploadSelectionAccepted(nodeCount.files, nodeCount.folders);
                         watcher->deleteLater();
                     });

@@ -1431,7 +1431,7 @@ bool NodeSelectorModel::processNodesAndCheckConflicts(
 
     auto conflicts = CheckDuplicatedNodes::checkMoves(handleAndTarget, sourceNode);
 
-    if (!conflicts->isEmpty())
+    if (!conflicts->hasNoConflicts())
     {
         if (!handleAndTarget.isEmpty())
         {

@@ -9,28 +9,31 @@
 
 #include <memory>
 
+using AppDataID = unsigned long long;
+
 class TransferBatch
 {
 public:
-    TransferBatch(unsigned long long appDataId);
+    TransferBatch(AppDataID appDataId);
     virtual ~TransferBatch() = default;
 
     bool isEmpty();
 
     virtual void cancel();
 
-    void onScanCompleted(unsigned long long appDataId);
+    void onScanCompleted(AppDataID appDataId);
 
     QString description();
 
     mega::MegaCancelToken* getCancelTokenPtr();
-
     std::shared_ptr<mega::MegaCancelToken> getCancelToken();
+
+    AppDataID getAppDataId() const;
 
 private:
     std::shared_ptr<mega::MegaCancelToken> mCancelToken;
     bool mHasFinished;
-    unsigned long long mAppDataId;
+    AppDataID mAppDataId;
 };
 
 class BlockingBatch
