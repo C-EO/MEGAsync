@@ -37,7 +37,8 @@ public:
 
     void setDelegate(QPointer<StalledIssueBaseDelegateWidget> newDelegate);
 
-    virtual QString getConflictedName(std::shared_ptr<NameConflictedStalledIssue::ConflictedNameInfo> info) const;
+    virtual QString getConflictedName(
+        const std::shared_ptr<NameConflictedStalledIssue::ConflictedNameInfo>& info) const;
 
 signals:
     void refreshUi();
@@ -93,7 +94,8 @@ protected:
         }
     }
 
-    QString getConflictedName(std::shared_ptr<NameConflictedStalledIssue::ConflictedNameInfo> info) const override
+    QString getConflictedName(
+        const std::shared_ptr<NameConflictedStalledIssue::ConflictedNameInfo>& info) const override
     {
         return mIssue->getNameConflictCloudData().getConflictedName(info);
     }

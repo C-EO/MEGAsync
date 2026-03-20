@@ -1086,7 +1086,7 @@ void MegaApplication::start()
     {
         if (!preferences->installationTime())
         {
-            preferences->setInstallationTime(QDateTime::currentMSecsSinceEpoch() / 1000);
+            preferences->setInstallationTime(QDateTime::currentSecsSinceEpoch());
         }
 
         startUpdateTask();
@@ -2196,7 +2196,8 @@ void MegaApplication::cleanAll()
     stopUpdateTask();
     Platform::getInstance()->stopShellDispatcher();
 
-    for (const auto& localFolder: model->getLocalFolders(SyncInfo::AllHandledSyncTypes))
+    const auto localSyncedFolders = model->getLocalFolders(SyncInfo::AllHandledSyncTypes);
+    for (const auto& localFolder: localSyncedFolders)
     {
         Platform::getInstance()->notifyItemChange(localFolder, MegaApi::STATE_NONE);
     }
@@ -3191,7 +3192,8 @@ void MegaApplication::cleanLocalCaches(bool all)
     if (all || preferences->cleanerDaysLimit())
     {
         int timeLimitDays = preferences->cleanerDaysLimitValue();
-        for (const auto& syncPath: model->getLocalFolders(SyncInfo::AllHandledSyncTypes))
+        const auto localSyncedFolders = model->getLocalFolders(SyncInfo::AllHandledSyncTypes);
+        for (const auto& syncPath: localSyncedFolders)
         {
             if (!syncPath.isEmpty())
             {
@@ -3598,7 +3600,8 @@ void MegaApplication::checkOperatingSystem()
 
 void MegaApplication::notifyChangeToAllFolders()
 {
-    for (const auto& localFolder: model->getLocalFolders(SyncInfo::AllHandledSyncTypes))
+    const auto localSyncedFolders = model->getLocalFolders(SyncInfo::AllHandledSyncTypes);
+    for (const auto& localFolder: localSyncedFolders)
     {
         ++mProcessingShellNotifications;
         auto stdLocalFolder = Platform::getInstance()->toLocalEncodedPath(localFolder);

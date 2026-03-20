@@ -2,6 +2,7 @@
 
 #include "FullName.h"
 #include "ParallelConnectionsValues.h"
+#include "QtMetaEnumUtils.h"
 #include "StatsEventHandler.h"
 #include "Version.h"
 
@@ -1279,12 +1280,7 @@ void Preferences::recoverDeprecatedNotificationsSettings()
 QString Preferences::notificationsTypeToString(NotificationsTypes type)
 {
     QMetaEnum metaEnum = QMetaEnum::fromType<NotificationsTypes>();
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-    quint64 value = static_cast<quint64>(static_cast<qint64>(notificationsTypeUT(type)));
-#else
-    auto value = notificationsTypeUT(type);
-#endif
-    return QString::fromUtf8(metaEnum.valueToKey(value));
+    return QString::fromUtf8(metaEnum.valueToKey(toQtMetaEnumValue(type)));
 }
 
 /************ STALLED ISSUES **********************************/
