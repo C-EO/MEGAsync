@@ -1,7 +1,7 @@
 #ifndef ENUMCONVERTERS_H
 #define ENUMCONVERTERS_H
 
-#include "Utilities.h"
+#include "QtMetaEnumUtils.h"
 
 #include <QMetaEnum>
 
