@@ -337,7 +337,7 @@ QProgressBar
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>:/sync-01.svg</normaloff>:/sync-01.svg</iconset>
+                 <normaloff>:/sync-01_small_thin_outline</normaloff>:/sync-01_small_thin_outline</iconset>
                </property>
                <property name="normal_off" stdset="0">
                 <string notr="true">icon-primary</string>
