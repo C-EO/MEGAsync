@@ -861,8 +861,7 @@ NameConflictedStalledIssue::CloudConflictedNames::removeDuplicatedNodes()
             {
                 if (conflictedName->getSolvedType() ==
                         NameConflictedStalledIssue::ConflictedNameInfo::SolvedType::UNSOLVED &&
-                    conflictedName !=
-                        (*(std::prev(conflictedNamesGroup.conflictedNames.cend(), -1))))
+                    conflictedName != *(std::prev(conflictedNamesGroup.conflictedNames.cend())))
                 {
                     auto error = MoveToMEGABin()(conflictedName->mHandle,
                                                  QLatin1String("SyncDuplicated"),

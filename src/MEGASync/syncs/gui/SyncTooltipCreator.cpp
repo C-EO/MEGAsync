@@ -52,12 +52,12 @@ QString SyncTooltipCreator::createMultilinePath(const QString& path, const QStri
 
     for (auto currChar = path.cbegin(), end = path.cend(); currChar != end; ++currChar)
     {
+        currLine += *currChar;
         if (fm.size(Qt::TextExpandTabs, currLine).width() > mMaxWidthInPixels)
         {
             multilineText += currLine;
-            currLine = separator;
+            currLine = std::next(currChar) != end ? separator : QString();
         }
-        currLine += *currChar;
     }
     return multilineText + currLine;
 }
