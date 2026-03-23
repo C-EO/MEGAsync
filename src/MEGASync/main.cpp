@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
         MegaApi::log(message.logLevel, message.message.toUtf8().constData());
     }
 
-#ifndef Q_OS_MACX
+#ifndef Q_OS_MACOS
     const QVector<QString> scaleFactorLogMessages = scaleFactorManager.getLogMessages();
     for (const QString& message: scaleFactorLogMessages)
     {
