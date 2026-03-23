@@ -5,19 +5,25 @@
 #include "megaapi.h"
 #include "MyBackupsHandle.h"
 
+#include <QObject>
 #include <QSet>
-#include <QThread>
 
-class DeviceNameChecker: public QThread
+#include <optional>
+
+class DeviceNameChecker: public QObject
 {
     Q_OBJECT
 
 public:
-    explicit DeviceNameChecker(QObject* parent, QString deviceNameCandidate);
-    void run() override;
+    explicit DeviceNameChecker(QString deviceNameCandidate, QObject* parent = nullptr);
+
+public slots:
+    void process();
+    void cancel();
 
 signals:
     void deviceNameCheck(bool isValid);
+    void finished();
 
 private:
     mega::MegaApi* mMegaApi;
@@ -26,7 +32,9 @@ private:
     QSet<QString> mBackupDeviceNames;
     int mPendingRequests = 0;
     QString mDeviceNameCandidate;
+    bool mFinished = false;
 
+    void complete(std::optional<bool> isValid = std::nullopt);
     void fetchBackupDeviceNames();
     void updateReadyCondition();
     bool checkDeviceName(const QString& deviceName);
