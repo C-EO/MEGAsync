@@ -56,6 +56,7 @@ void MegaIgnoreManager::parseIgnoresFile()
         if (ignore.open(QIODevice::ReadOnly))
         {
             QTextStream in(&ignore);
+            in.setCodec("UTF-8");
             while (!in.atEnd())
             {
                 QString line = in.readLine();
@@ -313,6 +314,7 @@ MegaIgnoreManager::ApplyChangesError MegaIgnoreManager::applyChanges(bool update
         if (ignore.open(QIODevice::WriteOnly))
         {
             QTextStream out(&ignore);
+            out.setCodec("UTF-8");
             out << rules.join(QLatin1String("\n"));
 
             ignore.close();
