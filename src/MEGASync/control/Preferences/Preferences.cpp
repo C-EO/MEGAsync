@@ -2,6 +2,7 @@
 
 #include "FullName.h"
 #include "ParallelConnectionsValues.h"
+#include "QtMetaEnumUtils.h"
 #include "StatsEventHandler.h"
 #include "Version.h"
 
@@ -397,7 +398,7 @@ void Preferences::initialize(QString dataPath)
 
 Preferences::Preferences():
     QObject(),
-    mutex(QMutex::Recursive),
+    mutex(),
     mSettings(nullptr),
     lastTransferNotification(0)
 {
@@ -1279,7 +1280,7 @@ void Preferences::recoverDeprecatedNotificationsSettings()
 QString Preferences::notificationsTypeToString(NotificationsTypes type)
 {
     QMetaEnum metaEnum = QMetaEnum::fromType<NotificationsTypes>();
-    return QString::fromUtf8(metaEnum.valueToKey(notificationsTypeUT(type)));
+    return QString::fromUtf8(metaEnum.valueToKey(toQtMetaEnumValue(type)));
 }
 
 /************ STALLED ISSUES **********************************/
@@ -2303,11 +2304,11 @@ void Preferences::setLastPublicHandle(MegaHandle handle, int type)
     mutex.unlock();
 }
 
-int Preferences::getNumUsers()
+qsizetype Preferences::getNumUsers()
 {
     mutex.lock();
     assert(!logged());
-    int value = mSettings->numChildGroups();
+    qsizetype value = mSettings->numChildGroups();
     mutex.unlock();
     return value;
 }
@@ -2708,8 +2709,13 @@ bool Preferences::hasEmail(QString email)
         value = !storedEmail.compare(email);
         if (!value)
         {
-            MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Email key differs from requested email: %1. Removing the old entry: %2")
-                         .arg(email).arg(storedEmail).toUtf8().constData());
+            MegaApi::log(
+                MegaApi::LOG_LEVEL_ERROR,
+                QString::fromUtf8(
+                    "Email key differs from requested email: %1. Removing the old entry: %2")
+                    .arg(email, storedEmail)
+                    .toUtf8()
+                    .constData());
             mSettings->remove(QString::fromLatin1(""));
         }
         mSettings->endGroup();
@@ -2742,10 +2748,10 @@ void Preferences::readFolders()
     loadedSyncsMap.clear();
 
     mSettings->beginGroup(syncsGroupByTagKey);
-    int numSyncs = mSettings->numChildGroups();
-    for (int i = 0; i < numSyncs; i++)
+    const auto numSyncs = mSettings->numChildGroups();
+    for (auto i = 0; i < numSyncs; ++i)
     {
-        mSettings->beginGroup(i);
+        mSettings->beginGroup(static_cast<int>(i));
 
         auto sc = std::make_shared<SyncSettings>(mSettings->value(configuredSyncsKey).value<QString>());
         if (sc->backupId())

@@ -16,7 +16,7 @@ public:
     qint64 readCommand(QByteArray *data);
 
     //This method is called from two different threads, but it is thread-safe
-    bool writeData(const char * data, int len);
+    bool writeData(const char* data, qsizetype len);
     void appendDataToBuffer(QByteArray data);
 
 signals:

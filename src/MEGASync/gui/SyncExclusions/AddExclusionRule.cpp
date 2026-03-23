@@ -21,11 +21,11 @@ void AddExclusionRule::appendRuleToFolders(int targetType, int wildCard, QString
         return;
     }
 
-    auto splitted = ruleValue.split(QString::fromUtf8(","));
-    for (const auto& folder : mFolders)
+    auto splitted = ruleValue.split(u',');
+    for (const auto& folder: std::as_const(mFolders))
     {
         MegaIgnoreManager megaIgnoreLoader(folder, true);
-        for (auto value : splitted)
+        for (auto& value: splitted)
         {
             value = value.trimmed();
             if (value.isEmpty())

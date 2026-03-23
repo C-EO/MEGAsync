@@ -834,21 +834,21 @@ void NodeSelectorTreeViewWidget::onDeleteClicked(const QList<mega::MegaHandle>& 
                 msgInfo.titleText =
                     tr("You are about to permanently delete %n file. Would you like to proceed?",
                        "",
-                       handles.size());
+                       static_cast<int>(handles.size()));
             }
             else if (type == Utilities::HandlesType::FOLDERS)
             {
                 msgInfo.titleText =
                     tr("You are about to permanently delete %n folder. Would you like to proceed?",
                        "",
-                       handles.size());
+                       static_cast<int>(handles.size()));
             }
             else
             {
                 msgInfo.titleText =
                     tr("You are about to permanently delete %n items. Would you like to proceed?",
                        "",
-                       handles.size());
+                       static_cast<int>(handles.size()));
             }
         }
         else
@@ -856,7 +856,7 @@ void NodeSelectorTreeViewWidget::onDeleteClicked(const QList<mega::MegaHandle>& 
             msgInfo.buttonsText.insert(QMessageBox::Yes, tr("Move"));
             msgInfo.buttonsText.insert(QMessageBox::No, tr("Don’t move"));
 
-            auto node = getNode(handles.first());
+            auto node = getNode(static_cast<mega::MegaHandle>(handles.first()));
             if (handles.size() == 1 && node)
             {
                 msgInfo.titleText =
@@ -864,7 +864,8 @@ void NodeSelectorTreeViewWidget::onDeleteClicked(const QList<mega::MegaHandle>& 
             }
             else
             {
-                msgInfo.titleText = tr("Move %n items to Rubbish bin?", "", handles.size());
+                msgInfo.titleText =
+                    tr("Move %n items to Rubbish bin?", "", static_cast<int>(handles.size()));
             }
         }
 
@@ -889,9 +890,10 @@ void NodeSelectorTreeViewWidget::onLeaveShareClicked(const QList<mega::MegaHandl
     msgInfo.defaultButton = QMessageBox::Yes;
     msgInfo.buttonsText.insert(QMessageBox::Yes, tr("Leave"));
     msgInfo.buttonsText.insert(QMessageBox::No, tr("Don’t leave"));
-    msgInfo.titleText = tr("Leave this shared folder?", "", handles.size());
-    msgInfo.descriptionText =
-        tr("If you leave the folder, you will not be able to see it again.", "", handles.size());
+    msgInfo.titleText = tr("Leave this shared folder?", "", static_cast<int>(handles.size()));
+    msgInfo.descriptionText = tr("If you leave the folder, you will not be able to see it again.",
+                                 "",
+                                 static_cast<int>(handles.size()));
     msgInfo.finishFunc = [this, handles](QPointer<MessageDialogResult> msg)
     {
         if (msg->result() == QMessageBox::Yes)
@@ -1099,7 +1101,7 @@ bool NodeSelectorTreeViewWidget::onNodesUpdate(mega::MegaApi*, mega::MegaNodeLis
 
 bool NodeSelectorTreeViewWidget::shouldUpdateImmediately()
 {
-    int totalSize = mUpdatedNodes.size();
+    auto totalSize = mUpdatedNodes.size();
     if (totalSize > IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD)
     {
         return true;
@@ -1477,7 +1479,7 @@ void NodeSelectorTreeViewWidget::processCachedNodesUpdated()
 
                 if (!mModel->addNodes(addedNodes, parentIndex))
                 {
-                    mModel->moveProcessedByNumber(addedNodes.size());
+                    mModel->moveProcessedByNumber(static_cast<int>(addedNodes.size()));
                 }
 
                 // Only for root indexes
@@ -1756,7 +1758,7 @@ void NodeSelectorTreeViewWidget::Navigation::removeFromForward(const mega::MegaH
 void NodeSelectorTreeViewWidget::Navigation::remove(const mega::MegaHandle& handle)
 {
     backwardHandles.removeAll(handle);
-    int forwardPos = forwardHandles.indexOf(handle);
+    int forwardPos = static_cast<int>(forwardHandles.indexOf(handle));
     for (int i = 0; i <= forwardPos; i++)
     {
         forwardHandles.removeFirst();

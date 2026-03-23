@@ -7,6 +7,7 @@
 #include <QHostInfo>
 #include <QObject>
 #include <QProgressBar>
+#include <QRegularExpression>
 #include <QScreen>
 #include <QSet>
 #include <QVariantMap>
@@ -339,17 +340,19 @@ QString PlatformImplementation::getDefaultOpenAppByMimeType(QString mimeType)
 
     QTextStream in(&f);
     QStringList contents = in.readAll().split(QString::fromUtf8("\n"));
-    contents = contents.filter(QRegExp(QString::fromUtf8("^Exec=")));
+    contents = contents.filter(QRegularExpression(QString::fromUtf8("^Exec=")));
     if (!contents.size())
     {
         return QString();
     }
 
     QString line = contents.first();
-    QRegExp captureRegexCommand(QString::fromUtf8("^Exec=([^' ']*)"));
-    if (captureRegexCommand.indexIn(line) != -1)
+    QRegularExpression captureRegexCommand(QString::fromUtf8("^Exec=([^' ']*)"));
+    auto reMatch = captureRegexCommand.match(line);
+
+    if (reMatch.hasMatch())
     {
-        return captureRegexCommand.cap(1); // return first group from regular expression.
+        return reMatch.captured(1); // return first group from regular expression.
     }
 
     return QString();
@@ -409,7 +412,8 @@ QString PlatformImplementation::getWindowManagerName()
                 if (reply && reply->format == 32 && reply->type == XCB_ATOM_WINDOW)
                 {
                     // Get window manager name
-                    const xcb_window_t windowManager = *(static_cast<xcb_window_t*>(xcb_get_property_value(reply)));
+                    const xcb_window_t windowManager =
+                        *(static_cast<xcb_window_t*>(xcb_get_property_value(reply)));
 
                     if (windowManager != XCB_WINDOW_NONE)
                     {
@@ -427,8 +431,9 @@ QString PlatformImplementation::getWindowManagerName()
                                                               nullptr);
                         if (wmReply && wmReply->format == 8 && wmReply->type == utf8StringAtom)
                         {
-                            wmName = QString::fromUtf8(static_cast<const char*>(xcb_get_property_value(wmReply)),
-                                                                                xcb_get_property_value_length(wmReply));
+                            wmName = QString::fromUtf8(
+                                static_cast<const char*>(xcb_get_property_value(wmReply)),
+                                xcb_get_property_value_length(wmReply));
                         }
                         free(wmReply);
                     }
@@ -437,14 +442,14 @@ QString PlatformImplementation::getWindowManagerName()
                 cached = true;
             }
         }
+    }
 
-        if (!cached)
-        {
-            // The previous method failed. We are most probably on Wayland.
-            // Try to get info from environment.
-            wmName = qEnvironmentVariable("XDG_CURRENT_DESKTOP");
-            cached = !wmName.isEmpty();
-        }
+    if (!cached)
+    {
+        // The previous method failed. We are most probably on Wayland.
+        // Try to get info from environment.
+        wmName = qEnvironmentVariable("XDG_CURRENT_DESKTOP");
+        cached = !wmName.isEmpty();
     }
     return wmName;
 }

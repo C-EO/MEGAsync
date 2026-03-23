@@ -19,6 +19,8 @@ signals:
 
 class ShellNotifierDecorator : public AbstractShellNotifier
 {
+    Q_OBJECT
+
 public:
     ShellNotifierDecorator(std::shared_ptr<AbstractShellNotifier> baseNotifier);
     virtual ~ShellNotifierDecorator() = default;
@@ -29,6 +31,8 @@ protected:
 
 class SignalShellNotifier : public AbstractShellNotifier
 {
+    Q_OBJECT
+
 public:
     SignalShellNotifier() = default;
     virtual ~SignalShellNotifier() = default;

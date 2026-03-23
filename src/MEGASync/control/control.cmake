@@ -27,6 +27,7 @@ set(DESKTOP_APP_CONTROL_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/ThreadPool.h
     ${CMAKE_CURRENT_LIST_DIR}/TransferBatch.h
     ${CMAKE_CURRENT_LIST_DIR}/TransferRemainingTime.h
+    ${CMAKE_CURRENT_LIST_DIR}/QtMetaEnumUtils.h
     ${CMAKE_CURRENT_LIST_DIR}/UpdateTask.h
     ${CMAKE_CURRENT_LIST_DIR}/UserAttributesManager.h
     ${CMAKE_CURRENT_LIST_DIR}/RequestListenerManager.h

@@ -101,47 +101,47 @@ QString PasteMegaLinksDialog::checkLink(QString link)
 
     auto urlLink = ServiceUrls::instance()->getLinkBaseUrl().toString() + QLatin1Char('/');
 
-    if (rxHeaderFolderSubfolder.indexIn(link) != -1)
+    if (rxHeaderFolderSubfolder.match(link).hasMatch())
     {
         link.truncate(FOLDER_LINK_WITH_SUBFOLDER_SIZE);
         return urlLink.append(link);
     }
-    else if (rxHeaderFolderSubfolderNew.indexIn(link) != -1)
+    else if (rxHeaderFolderSubfolderNew.match(link).hasMatch())
     {
         link.truncate(NEW_FOLDER_LINK_WITH_SUBFOLDER_SIZE);
         return urlLink.append(link);
     }
-    else if (rxHeaderFolderFile.indexIn(link) != -1)
+    else if (rxHeaderFolderFile.match(link).hasMatch())
     {
         link.truncate(FOLDER_LINK_WITH_FILE_SIZE);
         return urlLink.append(link);
     }
-    else if (rxHeaderFolderFileNew.indexIn(link) != -1)
+    else if (rxHeaderFolderFileNew.match(link).hasMatch())
     {
         link.truncate(NEW_FOLDER_LINK_WITH_FILE_SIZE);
         return urlLink.append(link);
     }
-    else if (rxHeaderFile.indexIn(link) != -1)
+    else if (rxHeaderFile.match(link).hasMatch())
     {
         link.truncate(FILE_LINK_SIZE);
         return urlLink.append(link);
     }
-    else if (rxHeaderFileNew.indexIn(link) != -1)
+    else if (rxHeaderFileNew.match(link).hasMatch())
     {
         link.truncate(NEW_FILE_LINK_SIZE);
         return urlLink.append(link);
     }
-    else if (rxHeaderFolder.indexIn(link) != -1)
+    else if (rxHeaderFolder.match(link).hasMatch())
     {
         link.truncate(FOLDER_LINK_SIZE);
         return urlLink.append(link);
     }
-    else if (rxHeaderFolderNew.indexIn(link) != -1)
+    else if (rxHeaderFolderNew.match(link).hasMatch())
     {
         link.truncate(NEW_FOLDER_LINK_SIZE);
         return urlLink.append(link);
     }
-    else if (rxHeaderCollectionNew.indexIn(link) != -1)
+    else if (rxHeaderCollectionNew.match(link).hasMatch())
     {
         link.truncate(NEW_COLLECTION_LINK_SIZE);
         return urlLink.append(link);

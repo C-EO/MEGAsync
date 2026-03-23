@@ -466,13 +466,13 @@ void NodeRequester::removeRootItem(std::shared_ptr<mega::MegaNode> node)
 int NodeRequester::rootIndexSize() const
 {
     QMutexLocker lock(&mDataMutex);
-    return mRootItems.size();
+    return static_cast<int>(mRootItems.size());
 }
 
 int NodeRequester::rootIndexOf(NodeSelectorModelItem* item)
 {
     QMutexLocker lock(&mDataMutex);
-    return mRootItems.indexOf(item);
+    return static_cast<int>(mRootItems.indexOf(item));
 }
 
 NodeSelectorModelItem* NodeRequester::getRootItem(int index) const
@@ -1042,9 +1042,8 @@ bool NodeSelectorModel::startProcessingNodes(const QMimeData* data,
                     }
                 }
 
-                nodesToMove.append(
-                    qMakePair<mega::MegaHandle, std::shared_ptr<mega::MegaNode>>(handle,
-                                                                                 targetNode));
+                QPair<mega::MegaHandle, std::shared_ptr<mega::MegaNode>> p{handle, targetNode};
+                nodesToMove.append(p);
             }
 
             return processNodesAndCheckConflicts(nodesToMove, sourceNode, type);
@@ -1253,7 +1252,7 @@ void NodeSelectorModel::processMergeQueue(MoveActionType type)
         emit itemsAboutToBeMerged(filteredMerges, type);
     }
 
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [this, type]()
         {
             while (!mMergeQueue.isEmpty())
@@ -1835,7 +1834,9 @@ bool NodeSelectorModel::addNodes(QList<std::shared_ptr<mega::MegaNode>> nodes,
                     parentItem->areChildrenInitialized())
                 {
                     auto totalRows = rowCount(parent);
-                    beginInsertRows(parent, totalRows, totalRows + nodes.size() - 1);
+                    beginInsertRows(parent,
+                                    totalRows,
+                                    static_cast<int>(totalRows + nodes.size() - 1));
                     emit requestAddNodes(nodes, parent, parentItem);
                     return true;
                 }
@@ -1885,7 +1886,7 @@ void NodeSelectorModel::onSyncStateChanged(std::shared_ptr<SyncSettings> sync)
             if (itemStatus != item->getStatus())
             {
                 sendBlockUiSignal(true);
-                QtConcurrent::run(
+                QThreadPool::globalInstance()->start(
                     [this, item, sync]()
                     {
                         // Update its children
@@ -1944,7 +1945,7 @@ void NodeSelectorModel::deleteNodes(const QList<mega::MegaHandle>& nodeHandles, 
     emit itemsAboutToBeMoved(nodeHandles, type);
 
     // It will be unblocked when all requestFinish calls are received (check onRequestFinish)
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [this, nodeHandles, type]()
         {
             auto requestCounter(0);
@@ -2089,7 +2090,7 @@ void NodeSelectorModel::moveFileAndReplace(std::shared_ptr<mega::MegaNode> moveF
                                            std::shared_ptr<mega::MegaNode> conflictTargetFile,
                                            std::shared_ptr<mega::MegaNode> targetParentFolder)
 {
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [this, moveFile, targetParentFolder, conflictTargetFile]()
         {
             auto e = Utilities::removeRemoteFile(conflictTargetFile.get());
@@ -2110,7 +2111,7 @@ void NodeSelectorModel::copyFileAndReplace(std::shared_ptr<mega::MegaNode> copyI
                                            std::shared_ptr<mega::MegaNode> conflictTargetFile,
                                            std::shared_ptr<mega::MegaNode> targetParentFolder)
 {
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [this, copyItem, targetParentFolder, conflictTargetFile]()
         {
             auto e = Utilities::removeRemoteFile(conflictTargetFile.get());

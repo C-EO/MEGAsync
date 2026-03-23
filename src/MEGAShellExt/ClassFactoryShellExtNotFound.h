@@ -1,7 +1,7 @@
 #ifndef CLASSFACTORYSHELLEXTNOTFOUND_H
 #define CLASSFACTORYSHELLEXTNOTFOUND_H
 
-#include "classfactory.h"
+#include "ClassFactory.h"
 
 class ClassFactoryShellExtNotFound :
     public ClassFactory

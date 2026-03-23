@@ -1,14 +1,14 @@
 #include "CircularUsageProgressBar.h"
 
-static const QColor DEFAULT_OK_LIGHT       ("#00BEA4");
-static const QColor DEFAULT_OK_DARK("#009985");
-static const QColor DEFAULT_WARN_LIGHT     ("#FFAF00");
-static const QColor DEFAULT_WARN_DARK      ("#F06F01");
-static const QColor DEFAULT_FULL_LIGHT("#EE7272");
-static const QColor DEFAULT_FULL_DARK("#DB080F");
+static const QColor DEFAULT_OK_LIGHT(0x00BEA4);
+static const QColor DEFAULT_OK_DARK(0x009985);
+static const QColor DEFAULT_WARN_LIGHT(0xFFAF00);
+static const QColor DEFAULT_WARN_DARK(0xF06F01);
+static const QColor DEFAULT_FULL_LIGHT(0xEE7272);
+static const QColor DEFAULT_FULL_DARK(0xDB080F);
 
-static const QColor DEFAULT_BAR_BACKGROUND("#E5E5E5");
-static const QColor DEFAULT_TEXT_COLOR     ("#000000");
+static const QColor DEFAULT_BAR_BACKGROUND(0xE5E5E5);
+static const QColor DEFAULT_TEXT_COLOR;
 
 static constexpr int MAXVALUE = 100;
 static constexpr int MINVALUE = 0;
@@ -309,7 +309,7 @@ void CircularUsageProgressBar::setOkStateTextColor(const QString& color)
     }
 }
 
-void CircularUsageProgressBar::setFontWeigth(int weight)
+void CircularUsageProgressBar::setFontWeigth(QFont::Weight weight)
 {
     if (!mFontWeight.has_value() || mFontWeight.value() != weight)
     {

@@ -16,6 +16,8 @@ public:
 
 class Link : public Decorator
 {
+    Q_OBJECT
+
 public:
    explicit Link(const QStringList& links, QObject* parent = nullptr);
    explicit Link(const QString& link, QObject* parent = nullptr);
@@ -26,6 +28,8 @@ private:
 
 class ClearLink : public Decorator
 {
+    Q_OBJECT
+
 public:
    explicit ClearLink(QObject* parent = nullptr);
    void process(QString& input) const override;
@@ -33,6 +37,8 @@ public:
 
 class Bold : public Decorator
 {
+    Q_OBJECT
+
 public:
    explicit Bold(QObject* parent = nullptr);
    void process(QString& input) const override;
@@ -40,6 +46,8 @@ public:
 
 class NewLine : public Decorator
 {
+    Q_OBJECT
+
 public:
     explicit NewLine(QObject* parent = nullptr);
     void process(QString& input) const override;
@@ -48,6 +56,8 @@ public:
 
 class RichText: public Decorator
 {
+    Q_OBJECT
+
 public:
     explicit RichText(QObject* parent = nullptr);
     explicit RichText(const QStringList& links, QObject* parent = nullptr);

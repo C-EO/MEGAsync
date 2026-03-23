@@ -26,7 +26,6 @@
 
 #include <QColor>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QEvent>
 #include <QFileInfo>
 #include <QHelpEvent>

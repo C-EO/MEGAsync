@@ -649,7 +649,7 @@ int StalledIssuesModel::rowCount(const QModelIndex& parent) const
 {
    if(!parent.isValid())
    {
-       return mStalledIssues.size();
+       return static_cast<int>(mStalledIssues.size());
    }
    else
    {
@@ -1067,7 +1067,7 @@ void StalledIssuesModel::solveListOfIssues(const SolveListInfo &info)
             // Don´t block the UI if the issue is being solve asynchronously
             if (!info.async)
             {
-                sendFixingIssuesMessage(count.currentIssueBeingSolved, totalRows);
+                sendFixingIssuesMessage(count.currentIssueBeingSolved, static_cast<int>(totalRows));
             }
 
             if (mThreadFinished)

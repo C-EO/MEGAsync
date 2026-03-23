@@ -43,7 +43,7 @@ QByteArray MacXLocalSocketPrivate::midFromBuffer(int pos, int size)
     return buf.mid(pos, size);
 }
 
-int MacXLocalSocketPrivate::bufferSize()
+qsizetype MacXLocalSocketPrivate::bufferSize()
 {
     QMutexLocker lock(&mBufferMutex);
     return buf.size();

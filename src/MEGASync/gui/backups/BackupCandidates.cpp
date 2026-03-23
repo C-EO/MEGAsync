@@ -126,12 +126,12 @@ QList<std::shared_ptr<BackupCandidates::Data>> BackupCandidates::getBackupCandid
 
 int BackupCandidates::getSize() const
 {
-    return mBackupCandidatesList.size();
+    return static_cast<int>(mBackupCandidatesList.size());
 }
 
 int BackupCandidates::getRow(std::shared_ptr<BackupCandidates::Data> candidate) const
 {
-    return mBackupCandidatesList.indexOf(candidate);
+    return static_cast<int>(mBackupCandidatesList.indexOf(candidate));
 }
 
 int BackupCandidates::getRow(const QString& folder) const

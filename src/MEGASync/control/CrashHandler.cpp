@@ -230,7 +230,7 @@ void CrashHandler::sendPendingCrashReports(QString userMessage, bool shouldSendL
     std::string UID = Preferences::instance()->crashedUserID().toStdString();
     parameters["sentry[tags][user-handle]"] = UID.empty() ? "invalid_user" : UID;
 
-    QtConcurrent::run(
+    QThreadPool::globalInstance()->start(
         [=]()
         {
             QString combinedCrashID;

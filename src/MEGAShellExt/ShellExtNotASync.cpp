@@ -1,11 +1,11 @@
 #include "ShellExtNotASync.h"
 
+#include "MEGAinterface.h"
 #include "resource.h"
-#include <strsafe.h>
 #include <Shlwapi.h>
-#include <shellapi.h>
 
-#include "MegaInterface.h"
+#include <shellapi.h>
+#include <strsafe.h>
 
 #pragma comment(lib, "shlwapi.lib")
 

@@ -133,7 +133,7 @@ bool SyncModel::hasUpdatingStatus() const
 int SyncModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return mSyncObjects.size();
+    return static_cast<int>(mSyncObjects.size());
 }
 
 int SyncModel::columnCount(const QModelIndex& parent) const

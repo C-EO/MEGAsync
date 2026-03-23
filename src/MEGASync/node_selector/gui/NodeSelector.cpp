@@ -301,13 +301,13 @@ void NodeSelector::performItemsToBeMoved(const QList<mega::MegaHandle>& handles,
         }
     }
 
-    targetOrSourceFound(mTargetWid, handles.size());
+    targetOrSourceFound(mTargetWid, static_cast<int>(handles.size()));
 
     for (auto& wid: mSourceWids)
     {
         if (wid != mTargetWid)
         {
-            targetOrSourceFound(wid, handles.size());
+            targetOrSourceFound(wid, static_cast<int>(handles.size()));
         }
     }
 }

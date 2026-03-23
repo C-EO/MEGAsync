@@ -170,7 +170,7 @@ std::shared_ptr<MegaIgnoreRule> MegaIgnoreManager::getNameRule(int index) const
 
 void MegaIgnoreManager::enableAllNameRules(bool enable)
 {
-    for(auto rule : mNameRules)
+    for (auto rule: std::as_const(mNameRules))
     {
         rule->setCommented(!enable);
     }
@@ -423,7 +423,7 @@ bool MegaIgnoreManager::hasChanged() const
 
 int MegaIgnoreManager::getNameRulesCount() const
 {
-    return mNameRules.size();
+    return static_cast<int>(mNameRules.size());
 }
 
 void MegaIgnoreManager::removeRule(std::shared_ptr<MegaIgnoreRule> rule)

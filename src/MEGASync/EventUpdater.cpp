@@ -2,13 +2,13 @@
 
 #include <QApplication>
 
-EventUpdater::EventUpdater(int _totalSize, int threshold)
-    : mTotalSize(_totalSize)
+EventUpdater::EventUpdater(qsizetype _totalSize, qsizetype threshold):
+    mTotalSize(_totalSize)
 {
     mUpdateThreshold = (mTotalSize < threshold) ? mTotalSize : threshold;
 }
 
-bool EventUpdater::update(int currentSize)
+bool EventUpdater::update(qsizetype currentSize)
 {
     if(mUpdateThreshold > 0)
     {

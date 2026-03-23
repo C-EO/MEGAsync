@@ -25,10 +25,10 @@ using namespace mega;
 
 static const QModelIndex DEFAULT_IDX = QModelIndex();
 
-const int MAX_TRANSFERS = 2000;
+const qsizetype MAX_TRANSFERS = 2000;
 const int CANCEL_THRESHOLD_THREAD = 100;
-const int QUICK_CANCEL_THRESHOLD = 10000;
-const int QUICK_CANCEL_MIN_THRESHOLD = 300;
+const qsizetype QUICK_CANCEL_THRESHOLD = 10000;
+const qsizetype QUICK_CANCEL_MIN_THRESHOLD = 300;
 const double QUICK_CANCEL_PERCENTAGE_THRESHOLD = 0.8;
 const int START_THRESHOLD_THREAD = 50;
 const int FAILED_THRESHOLD_THREAD = 100;
@@ -47,7 +47,7 @@ TransferThread::TransfersToProcess TransferThread::processTransfers()
    TransfersToProcess transfers;
    if(mCacheMutex.tryLock())
    {
-       int spaceForTransfers(mMaxTransfersToProcess);
+       qsizetype spaceForTransfers = mMaxTransfersToProcess;
 
        transfers.canceledTransfersByTag = extractFromCache(mTransfersToProcess.canceledTransfersByTag, spaceForTransfers);
        spaceForTransfers -= transfers.canceledTransfersByTag.size();
@@ -81,7 +81,9 @@ void TransferThread::clear()
     mLastTransfersCount.clear();
 }
 
-QList<QExplicitlySharedDataPointer<TransferData>> TransferThread::extractFromCache(QMap<int, QExplicitlySharedDataPointer<TransferData>>& dataMap, int spaceForTransfers)
+QList<QExplicitlySharedDataPointer<TransferData>>
+    TransferThread::extractFromCache(QMap<int, QExplicitlySharedDataPointer<TransferData>>& dataMap,
+                                     qsizetype spaceForTransfers)
 {
     if(!dataMap.isEmpty() && spaceForTransfers > 0)
     {
@@ -695,7 +697,7 @@ LastTransfersCount TransferThread::getLastTransfersCount()
 
 int TransfersModel::hasActiveTransfers() const
 {
-    return mActiveTransfers.size();
+    return static_cast<int>(mActiveTransfers.size());
 }
 
 void TransfersModel::setActiveTransfer(TransferTag tag)
@@ -1043,7 +1045,7 @@ int TransfersModel::rowCount(const QModelIndex& parent) const
     int rowCount (0);
     if (parent == DEFAULT_IDX)
     {
-        rowCount = mTransfers.size();
+        rowCount = static_cast<int>(mTransfers.size());
     }
     return rowCount;
 }
@@ -1092,12 +1094,13 @@ void TransfersModel::onProcessTransfers()
 
         bool asynchronousProcessed(false);
 
-        int containsTransfersToStart(mTransfersToProcess.startTransfersByTag.size());
-        int containsSyncTransfersToStart(mTransfersToProcess.startSyncTransfersByTag.size());
-        int containsTransfersToUpdate(mTransfersToProcess.updateTransfersByTag.size());
-        int containsTransfersToCancel(mTransfersToProcess.canceledTransfersByTag.size());
-        int containsFolderTransfersFailed(mTransfersToProcess.failedFolderTransfersByTag.size());
-        int containsTransfersFailed(mTransfersToProcess.failedTransfersByTag.size());
+        const auto containsTransfersToStart(mTransfersToProcess.startTransfersByTag.size());
+        const auto containsSyncTransfersToStart(mTransfersToProcess.startSyncTransfersByTag.size());
+        const auto containsTransfersToUpdate(mTransfersToProcess.updateTransfersByTag.size());
+        const auto containsTransfersToCancel(mTransfersToProcess.canceledTransfersByTag.size());
+        const auto containsFolderTransfersFailed(
+            mTransfersToProcess.failedFolderTransfersByTag.size());
+        const auto containsTransfersFailed(mTransfersToProcess.failedTransfersByTag.size());
 
         if(containsTransfersToCancel > 0)
         {            
@@ -1399,7 +1402,7 @@ void TransfersModel::processCancelTransfers()
 
         mRowsToCancel.clear();
 
-        double cancelledPercentage(indexesToCancel.size()*1.0);
+        double cancelledPercentage(indexesToCancel.size());
         cancelledPercentage = cancelledPercentage/rowCount();
 
         //For large amount of transfers, this is quite faster: remove all transfers and recreate the tags by row map
@@ -1583,10 +1586,11 @@ void TransfersModel::openFolder(const QFileInfo& info)
 {
     if(info.exists())
     {
-        QtConcurrent::run([this, info]
-        {
-            emit showInFolderFinished(Platform::getInstance()->showInFolder(info.filePath()));
-        });
+        QThreadPool::globalInstance()->start(
+            [this, info]
+            {
+                emit showInFolderFinished(Platform::getInstance()->showInFolder(info.filePath()));
+            });
     }
     else
     {
@@ -2232,14 +2236,15 @@ void TransfersModel::pauseTransfers(const QModelIndexList& indexes, bool pauseSt
 
         if(indexes.size() > PAUSE_RESUME_THRESHOLD_THREAD)
         {
-            QtConcurrent::run([this, indexes, pauseState]()
-            {
-                blockModelSignals(true);
-                performPauseResumeVisibleTransfers(indexes, pauseState, false);
-                blockModelSignals(false);
+            QThreadPool::globalInstance()->start(
+                [this, indexes, pauseState]()
+                {
+                    blockModelSignals(true);
+                    performPauseResumeVisibleTransfers(indexes, pauseState, false);
+                    blockModelSignals(false);
 
-                emit pauseStateChanged(mAreAllPaused);
-            });
+                    emit pauseStateChanged(mAreAllPaused);
+                });
         }
         else
         {
@@ -2292,14 +2297,15 @@ void TransfersModel::pauseResumeAllTransfers(bool state)
     //The final count can be +- 30 transfers
     if(activeTransfers > PAUSE_RESUME_THRESHOLD_THREAD)
     {
-        QtConcurrent::run([this, activeTransfers]()
-        {
-            blockModelSignals(true);
-            auto tagsUpdated = performPauseResumeAllTransfers(activeTransfers, false);
-            blockModelSignals(false);
+        QThreadPool::globalInstance()->start(
+            [this, activeTransfers]()
+            {
+                blockModelSignals(true);
+                auto tagsUpdated = performPauseResumeAllTransfers(activeTransfers, false);
+                blockModelSignals(false);
 
-            setUiBlockedModeByCounter(tagsUpdated);
-        });
+                setUiBlockedModeByCounter(tagsUpdated);
+            });
     }
     else
     {
@@ -2637,7 +2643,7 @@ void TransfersModel::setUiBlockedMode(bool state)
     }
 }
 
-void TransfersModel::setUiBlockedModeByCounter(int transferCount)
+void TransfersModel::setUiBlockedModeByCounter(qsizetype transferCount)
 {
     if(transferCount > 0 && transferCount > PAUSE_RESUME_THRESHOLD_THREAD)
     {
@@ -2652,7 +2658,7 @@ void TransfersModel::setUiBlockedModeByCounter(int transferCount)
     }
 }
 
-void TransfersModel::updateUiBlockedByCounter(int updates)
+void TransfersModel::updateUiBlockedByCounter(qsizetype updates)
 {
     if(updates > 0 && mUiBlockedByCounter > 0)
     {

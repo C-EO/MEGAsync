@@ -1,6 +1,8 @@
 #ifndef ENUMCONVERTERS_H
 #define ENUMCONVERTERS_H
 
+#include "QtMetaEnumUtils.h"
+
 #include <QMetaEnum>
 
 template<class EnumType>
@@ -13,7 +15,7 @@ public:
 
     QString getString(EnumType type)
     {
-        return QString::fromUtf8(mMetaEnum.valueToKey(static_cast<int>(type)));
+        return QString::fromUtf8(mMetaEnum.valueToKey(toQtMetaEnumValue(type)));
     }
 
     EnumType getEnum(const QString& typeAsString)

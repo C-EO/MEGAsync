@@ -72,7 +72,11 @@ struct TransferMetaDataItem
 template <class Type>
 struct TransferMetaDataItemsByState
 {
-    int size() const {return pendingTransfers.size() + completedTransfers.size() + failedTransfers.size() + cancelledTransfers.size() + nonExistFailedTransfers.size();}
+    qsizetype size() const
+    {
+        return pendingTransfers.size() + completedTransfers.size() + failedTransfers.size() +
+               cancelledTransfers.size() + nonExistFailedTransfers.size();
+    }
 
     QMap<TransferMetaDataItemId, std::shared_ptr<Type>> pendingTransfers;
     QMap<TransferMetaDataItemId, std::shared_ptr<Type>> completedTransfers;
@@ -283,7 +287,7 @@ public:
 
     virtual bool finish(mega::MegaTransfer*, mega::MegaError *);
 
-    void setInitialTransfers(int newTotalTransfers);
+    void setInitialTransfers(qsizetype newTotalTransfers);
     void setNotification(DesktopAppNotification* newNotification);
     void unlinkNotification();
 
@@ -299,18 +303,18 @@ public:
     bool allHaveFailed() const;
     bool someHaveFailed() const;
     bool isEmpty() const;
-    int getTransfersCount() const;
+    qsizetype getTransfersCount() const;
 
     //For files
-    int getPendingFiles() const;
+    qsizetype getPendingFiles() const;
     int getTotalFiles() const;
-    int getFileTransfersOK() const;
-    int getFileTransfersFailed() const;
+    qsizetype getFileTransfersOK() const;
+    qsizetype getFileTransfersFailed() const;
     void getFileTransferFailedTags(QList<std::shared_ptr<TransferMetaDataItem> > &files, QList<TransferMetaDataItemId>& folders) const;
     QList<TransferMetaDataItemId> getFileFailedTagsFromFolderTag(const TransferMetaDataItemId& folderId) const;
-    int getFileTransfersCancelled() const;
-    int getTotaTransfersCancelled() const;
-    int getNonExistentCount() const;
+    qsizetype getFileTransfersCancelled() const;
+    qsizetype getTotaTransfersCancelled() const;
+    qsizetype getNonExistentCount() const;
 
     std::shared_ptr<TransferMetaDataItem>
         getFirstTransferByState(TransferData::TransferState state) const;
@@ -327,9 +331,9 @@ public:
     void processCancelled();
 
     //For folders
-    int getTotalEmptyFolders() const;
-    int getEmptyFolderTransfersOK() const;
-    int getEmptyFolderTransfersFailed() const;
+    qsizetype getTotalEmptyFolders() const;
+    qsizetype getEmptyFolderTransfersOK() const;
+    qsizetype getEmptyFolderTransfersFailed() const;
 
     virtual bool hasBeenPreviouslyCompleted(mega::MegaTransfer* transfer) const = 0;
 
@@ -344,7 +348,7 @@ protected:
     virtual std::shared_ptr<TransferMetaData> createNonExistData() = 0;
     virtual bool isNonExistTransfer(mega::MegaTransfer* transfer) const = 0;
 
-    int mInitialTopLevelTransfers;
+    qsizetype mInitialTopLevelTransfers;
     int mInitialPendingFolderTransfersFromOtherSession;
     int mFinishedTopLevelTransfers;
     int mStartedTopLevelTransfers;
@@ -352,7 +356,9 @@ protected:
     TransferMetaDataItemsByState<TransferMetaDataItem> mFiles;
     QMap<TransferMetaDataItemId, std::shared_ptr<TransferMetaDataFolderItem>> mFolders;
     TransferMetaDataItemsByState<TransferMetaDataFolderItem> mEmptyFolders;
-    int getEmptyFolders(const QMap<TransferMetaDataItemId, std::shared_ptr<TransferMetaDataFolderItem> > &folders) const;
+    qsizetype getEmptyFolders(
+        const QMap<TransferMetaDataItemId, std::shared_ptr<TransferMetaDataFolderItem>>& folders)
+        const;
 
     int mTransferDirection;
     bool mCreateRootFolder;

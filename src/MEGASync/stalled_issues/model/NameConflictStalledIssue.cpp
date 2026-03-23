@@ -504,15 +504,15 @@ bool NameConflictedStalledIssue::renameCloudNodesAutomatically(const QList<std::
                                                                QStringList& cloudItemsBeingRenamed)
 {
     auto result(true);
-    for(int index = cloudConflictedNames.size() - 1; index >= 0; --index)
+    for (auto i = cloudConflictedNames.crbegin(), end = cloudConflictedNames.crend(); i != end; ++i)
     {
-        auto& cloudConflictedName = cloudConflictedNames.at(index);
+        auto& cloudConflictedName = *i;
 
         if(!cloudConflictedName->isSolved())
         {
             auto localConflictedName = findOtherSideItem(localConflictedNames, cloudConflictedName);
 
-            if(index == 0 && ignoreLastModifiedName)
+            if (i == std::prev(end) && ignoreLastModifiedName)
             {
                 cloudConflictedName->solveByOtherSide();
                 if(localConflictedName)
@@ -569,15 +569,15 @@ bool NameConflictedStalledIssue::renameLocalItemsAutomatically(const QList<std::
                                                                QStringList& cloudItemsBeingRenamed)
 {
     auto result(true);
-    for(int index = localConflictedNames.size() - 1; index >= 0; --index)
+    for (auto i = localConflictedNames.crbegin(), end = localConflictedNames.crend(); i != end; ++i)
     {
-        auto& localConflictedName = localConflictedNames.at(index);
+        auto& localConflictedName = *i;
 
         if(!localConflictedName->isSolved())
         {
             auto cloudConflictedName = findOtherSideItem(cloudConflictedNames, localConflictedName);
 
-            if(index == 0 && ignoreLastModifiedName)
+            if (i == std::prev(end) && ignoreLastModifiedName)
             {
                 localConflictedName->solveByOtherSide();
 
@@ -859,9 +859,9 @@ NameConflictedStalledIssue::CloudConflictedNames::removeDuplicatedNodes()
             //The object is auto deleted when finished (as it needs to survive this issue)
             foreach(auto conflictedName, conflictedNamesGroup.conflictedNames)
             {
-                if(conflictedName->getSolvedType() ==
+                if (conflictedName->getSolvedType() ==
                         NameConflictedStalledIssue::ConflictedNameInfo::SolvedType::UNSOLVED &&
-                    conflictedName != (*(conflictedNamesGroup.conflictedNames.end() - 1)))
+                    conflictedName != *(std::prev(conflictedNamesGroup.conflictedNames.cend())))
                 {
                     auto error = MoveToMEGABin()(conflictedName->mHandle,
                                                  QLatin1String("SyncDuplicated"),

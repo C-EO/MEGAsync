@@ -72,7 +72,7 @@ int WinShellDispatcherTask::dispatchPipe()
 
         if (hEvents[i] == NULL)
         {
-            printf("CreateEvent failed with %d.\n", GetLastError());
+            printf("CreateEvent failed with %lu.\n", GetLastError());
             return 0;
         }
 
@@ -93,8 +93,8 @@ int WinShellDispatcherTask::dispatchPipe()
 
         if (Pipe[i].hPipeInst == INVALID_HANDLE_VALUE)
         {
-         printf("CreateNamedPipe failed with %d.\n", GetLastError());
-         return 0;
+            printf("CreateNamedPipe failed with %lu.\n", GetLastError());
+            return 0;
         }
 
         // Call the subroutine to connect to the new client
@@ -160,7 +160,7 @@ int WinShellDispatcherTask::dispatchPipe()
             case CONNECTING_STATE:
                 if (!fSuccess)
                 {
-                    printf("Error %d.\n", GetLastError());
+                    printf("Error %lu.\n", GetLastError());
                     return 0;
                 }
                 Pipe[i].dwState = READING_STATE;
@@ -291,7 +291,7 @@ VOID DisconnectAndReconnect(DWORD i)
     // Disconnect the pipe instance.
     if (! DisconnectNamedPipe(Pipe[i].hPipeInst) )
     {
-        printf("DisconnectNamedPipe failed with %d.\n", GetLastError());
+        printf("DisconnectNamedPipe failed with %lu.\n", GetLastError());
     }
 
     // Call a subroutine to connect to the new client.
@@ -319,7 +319,7 @@ BOOL ConnectToNewClient(HANDLE hPipe, LPOVERLAPPED lpo)
     // Overlapped ConnectNamedPipe should return zero.
     if (fConnected)
     {
-        printf("ConnectNamedPipe failed with %d.\n", GetLastError());
+        printf("ConnectNamedPipe failed with %lu.\n", GetLastError());
         return 0;
     }
 
@@ -338,7 +338,7 @@ BOOL ConnectToNewClient(HANDLE hPipe, LPOVERLAPPED lpo)
     // If an error occurs during the connect operation...
     default:
     {
-        printf("ConnectNamedPipe failed with %d.\n", GetLastError());
+        printf("ConnectNamedPipe failed with %lu.\n", GetLastError());
         return 0;
     }
     }

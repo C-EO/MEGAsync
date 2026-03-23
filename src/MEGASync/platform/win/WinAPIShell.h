@@ -6,6 +6,8 @@
 
 class WindowsApiShellNotifier : public AbstractShellNotifier
 {
+    Q_OBJECT
+
 public :
     void notify(const QString& path) override
     {

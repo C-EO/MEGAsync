@@ -33,11 +33,11 @@ NodeNameSetterDialog::LineEditSelection RenameNodeDialog::lineEditSelection()
     if(isFile())
     {
         QFileInfo remoteNode(text);
-        selection.length = remoteNode.baseName().length();
+        selection.length = static_cast<int>(remoteNode.baseName().length());
     }
     else
     {
-        selection.length = text.length();
+        selection.length = static_cast<int>(text.length());
     }
 
     return selection;

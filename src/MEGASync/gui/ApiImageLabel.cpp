@@ -3,6 +3,7 @@
 #include "Utilities.h"
 
 #include <QPainter>
+#include <QRegularExpression>
 
 namespace
 {
@@ -34,7 +35,7 @@ void ApiImageLabel::setImageUrl(QString url)
     {
         QString imageName =
             QFileInfo(url).fileName().split(IMAGE_NAME_PREFIX).at(IMAGE_FILENAME_INDEX);
-        if (!imageName.contains(QRegExp(HIGH_RESOLUTION_SUFFIX_REGEXP)))
+        if (!imageName.contains(QRegularExpression(HIGH_RESOLUTION_SUFFIX_REGEXP)))
         {
             url.replace(imageName, imageName + HIGH_RESOLUTION_SUFFIX);
         }

@@ -53,6 +53,8 @@ private:
 
 class BackgroundColorDelegate: public QStyledItemDelegate
 {
+    Q_OBJECT
+
 public:
     explicit BackgroundColorDelegate(QObject* parent = nullptr);
     ~BackgroundColorDelegate() = default;
@@ -70,6 +72,8 @@ private:
 
 class MenuItemDelegate: public BackgroundColorDelegate
 {
+    Q_OBJECT
+
 public:
     explicit MenuItemDelegate(QObject* parent = nullptr);
     ~MenuItemDelegate() = default;
@@ -81,6 +85,8 @@ public:
 
 class IconMiddleDelegate: public BackgroundColorDelegate
 {
+    Q_OBJECT
+
 public:
     explicit IconMiddleDelegate(QObject* parent = nullptr);
     ~IconMiddleDelegate() = default;
@@ -97,6 +103,8 @@ public:
 
 class ElideMiddleDelegate: public BackgroundColorDelegate
 {
+    Q_OBJECT
+
 public:
     explicit ElideMiddleDelegate(QObject* parent = nullptr);
     ~ElideMiddleDelegate() = default;

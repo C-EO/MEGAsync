@@ -537,7 +537,7 @@ bool NodeSelectorModelSearch::addNodes(QList<std::shared_ptr<mega::MegaNode>> no
                                        const QModelIndex& parent)
 {
     auto totalRows = rowCount(parent);
-    beginInsertRows(QModelIndex(), totalRows, totalRows + nodes.size() - 1);
+    beginInsertRows(QModelIndex(), totalRows, static_cast<int>(totalRows + nodes.size() - 1));
     emit requestAddSearchRootItem(nodes, mAllowedTypes);
     return true;
 }

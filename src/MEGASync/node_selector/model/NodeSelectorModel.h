@@ -559,7 +559,6 @@ private:
 
 Q_DECLARE_METATYPE(std::shared_ptr<mega::MegaNodeList>)
 Q_DECLARE_METATYPE(std::shared_ptr<mega::MegaNode>)
-Q_DECLARE_METATYPE(QList<mega::MegaHandle>)
 Q_DECLARE_METATYPE(QSet<mega::MegaHandle>)
 Q_DECLARE_METATYPE(QList<std::shared_ptr<NodeSelectorMergeInfo>>)
 

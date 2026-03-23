@@ -33,11 +33,11 @@ DesktopNotifications::NotificationInfo TransferNotificationBuilder::buildNotific
         }
         else
         {
-            info.title = tr("Upload stopped", "", mData->getTransfersCount());
+            info.title = tr("Upload stopped", "", static_cast<int>(mData->getTransfersCount()));
             info.message = tr("You logged out of MEGA so your upload has stopped. You can resume "
                               "the upload after logging back in.",
                               "",
-                              mData->getTransfersCount());
+                              static_cast<int>(mData->getTransfersCount()));
         }
     }
     else if (mData->isDownload())
@@ -90,20 +90,22 @@ QString TransferNotificationBuilder::getDownloadSuccessTitle()
     return tr("Download complete");
 }
 
-QString TransferNotificationBuilder::getDownloadFailedText(int num, const QString& destPath)
+QString TransferNotificationBuilder::getDownloadFailedText(qsizetype num, const QString& destPath)
 {
-    return tr("%n item couldn’t be downloaded to %1.", "", num).arg(destPath);
+    return tr("%n item couldn’t be downloaded to %1.", "", static_cast<int>(num)).arg(destPath);
 }
 
-QString TransferNotificationBuilder::getSomeDownloadFailedText(int completed, int failed)
+QString TransferNotificationBuilder::getSomeDownloadFailedText(qsizetype completed,
+                                                               qsizetype failed)
 {
-    QString successItems = tr("%n item downloaded", "", completed);
-    return tr("%1, but %n item couldn’t be downloaded.", "", failed).arg(successItems);
+    QString successItems = tr("%n item downloaded", "", static_cast<int>(completed));
+    return tr("%1, but %n item couldn’t be downloaded.", "", static_cast<int>(failed))
+        .arg(successItems);
 }
 
-QString TransferNotificationBuilder::getDownloadSuccessText(int num, const QString& destPath)
+QString TransferNotificationBuilder::getDownloadSuccessText(qsizetype num, const QString& destPath)
 {
-    return tr("%n item downloaded to %1.", "", num).arg(destPath);
+    return tr("%n item downloaded to %1.", "", static_cast<int>(num)).arg(destPath);
 }
 
 QString TransferNotificationBuilder::getSingleDownloadFailed(const QString& fileName, const QString& destPath)
@@ -297,7 +299,7 @@ QString TransferNotificationBuilder::buildMultipleUploadMessage()
         {
             message = tr("%n item couldn’t be uploaded to %1.",
                          "",
-                         mData->getTotalFiles() + mData->getTotalEmptyFolders())
+                         static_cast<int>(mData->getTotalFiles() + mData->getTotalEmptyFolders()))
                           .arg(nodePath);
         }
     }
@@ -309,15 +311,17 @@ QString TransferNotificationBuilder::buildMultipleUploadMessage()
             auto failedItems =
                 mData->getEmptyFolderTransfersFailed() + mData->getFileTransfersFailed();
 
-            QString successItems = tr("%n item uploaded", "", completedItems);
-            message = tr("%1, but %n item couldn’t be uploaded.", "", failedItems).arg(successItems);
+            QString successItems = tr("%n item uploaded", "", static_cast<int>(completedItems));
+            message = tr("%1, but %n item couldn’t be uploaded.", "", static_cast<int>(failedItems))
+                          .arg(successItems);
         }
         else
         {
             auto nodePath = UploadTransferMetaData::getDestinationNodePathByData(mData);
             message = tr("%n item uploaded to %1.",
                          "",
-                         mData->getFileTransfersOK() + mData->getEmptyFolderTransfersOK())
+                         static_cast<int>(mData->getFileTransfersOK() +
+                                          mData->getEmptyFolderTransfersOK()))
                           .arg(nodePath);
         }
     }
@@ -343,7 +347,8 @@ QStringList TransferNotificationBuilder::buildMultipleUploadActions()
         actions << tr("Show in MEGA");
         actions << tr("Retry failed items",
                       "",
-                      mData->getFileTransfersFailed() + mData->getEmptyFolderTransfersFailed());
+                      static_cast<int>(mData->getFileTransfersFailed() +
+                                       mData->getEmptyFolderTransfersFailed()));
     }
     else
     {
@@ -367,8 +372,9 @@ QString TransferNotificationBuilder::buildMultipleDownloadMessage(const QString 
         }
         else
         {
-            message = getDownloadFailedText(mData->getTotalFiles() + mData->getTotalEmptyFolders(),
-                                            destinationPath);
+            message = getDownloadFailedText(
+                static_cast<int>(mData->getTotalFiles() + mData->getTotalEmptyFolders()),
+                destinationPath);
         }
     }
     else
@@ -415,7 +421,8 @@ QStringList TransferNotificationBuilder::buildMultipleDownloadActions(const QStr
         {
             actions << tr("Retry failed items",
                           "",
-                          mData->getFileTransfersFailed() + mData->getEmptyFolderTransfersFailed());
+                          static_cast<int>(mData->getFileTransfersFailed() +
+                                           mData->getEmptyFolderTransfersFailed()));
         }
 
     }
@@ -447,12 +454,14 @@ QString TransferNotificationBuilder::buildSingleNonExistentDataMessageDownload(c
 
 QString TransferNotificationBuilder::buildNonExistentItemsMessageUploads()
 {
-    return tr("%n item no longer exist or was renamed.", "", mData->getNonExistentCount());
+    return tr("%n item no longer exist or was renamed.",
+              "",
+              static_cast<int>(mData->getNonExistentCount()));
 }
 
 QString TransferNotificationBuilder::buildNonExistentItemsMessageDownloads()
 {
-    return tr("%n item no longer exist.", "", mData->getNonExistentCount());
+    return tr("%n item no longer exist.", "", static_cast<int>(mData->getNonExistentCount()));
 }
 
 QString TransferNotificationBuilder::buildImportedLinkError(

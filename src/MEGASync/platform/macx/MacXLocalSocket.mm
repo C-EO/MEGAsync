@@ -4,6 +4,8 @@
 #include "megaapi.h"
 #include "MacXFunctions.h"
 
+#include <limits>
+
 #import <Cocoa/Cocoa.h>
 
 using namespace mega;
@@ -89,7 +91,7 @@ qint64 MacXLocalSocket::readCommand(QByteArray *data)
     return data->size();
 }
 
-bool MacXLocalSocket::writeData(const char *data, int len)
+bool MacXLocalSocket::writeData(const char *data, qsizetype len)
 {
     if (!len)
     {
@@ -99,9 +101,20 @@ bool MacXLocalSocket::writeData(const char *data, int len)
 
     @try
     {
-        MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Sending data to shell ext: %1")
-                     .arg(QString::fromUtf8(data, len)).toUtf8().constData());
-        NSUInteger lengthSize = sizeof(unsigned char)*static_cast<unsigned long>(len);
+        if (len <= static_cast<qsizetype>(std::numeric_limits<int>::max()))
+        {
+            MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Sending data to shell ext: %1")
+                         .arg(QString::fromUtf8(data, static_cast<int>(len))).toUtf8().constData());
+        }
+        else
+        {
+            MegaApi::log(MegaApi::LOG_LEVEL_DEBUG,
+                         QString::fromUtf8("Sending %1 bytes to shell ext")
+                             .arg(static_cast<qlonglong>(len))
+                             .toUtf8()
+                             .constData());
+        }
+        NSUInteger lengthSize = sizeof(unsigned char) * static_cast<unsigned long>(len);
         [socketPrivate->extClient send:[NSData dataWithBytes:(const void *)data length: lengthSize]];
         return true;
     }

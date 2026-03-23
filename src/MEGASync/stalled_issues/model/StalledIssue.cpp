@@ -804,7 +804,7 @@ QString StalledIssue::getFileName(bool preferCloud) const
     return fileName;
 }
 
-bool StalledIssue::operator==(const StalledIssue& data)
+bool StalledIssue::operator==(const StalledIssue& data) const
 {
     bool equal(true);
 

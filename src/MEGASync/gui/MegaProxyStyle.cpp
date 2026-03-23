@@ -142,7 +142,7 @@ void MegaProxyStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyl
                 QPoint leftPoint(modOption.rect.topLeft() + QPoint(25, 0));
                 QPoint rightPoint(modOption.rect.topRight() - QPoint(25, 0));
 
-                QPen linepen("#FF654F");
+                QPen linepen(0xFF654F);
                 linepen.setCapStyle(Qt::RoundCap);
                 linepen.setWidth(8);
                 painter->setPen(linepen);

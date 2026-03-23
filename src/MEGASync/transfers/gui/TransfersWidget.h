@@ -53,7 +53,7 @@ public:
                         const TransferData::TransferStates transferStates,
                         const Utilities::FileTypes fileTypes);
     void transferFilterReset();
-    void mouseRelease(const QPoint& point);
+    void mouseRelease(const QPointF& point);
     void setCurrentTab(TM_TAB);
     TM_TAB getCurrentTab();
     void setScanningWidgetVisible(bool state);

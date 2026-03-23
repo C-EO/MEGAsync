@@ -273,12 +273,12 @@ int TransferMetaData::getTotalFiles() const
     return static_cast<int>(mFiles.size());
 }
 
-int TransferMetaData::getPendingFiles() const
+qsizetype TransferMetaData::getPendingFiles() const
 {
     return mFiles.pendingTransfers.size() + mEmptyFolders.pendingTransfers.size();
 }
 
-int TransferMetaData::getTotalEmptyFolders() const
+qsizetype TransferMetaData::getTotalEmptyFolders() const
 {
     return mEmptyFolders.size();
 }
@@ -302,12 +302,12 @@ QList<TransferMetaDataItemId> TransferMetaData::getFileFailedTagsFromFolderTag(c
     return ids;
 }
 
-int TransferMetaData::getFileTransfersOK() const
+qsizetype TransferMetaData::getFileTransfersOK() const
 {
     return mFiles.completedTransfers.size();
 }
 
-int TransferMetaData::getFileTransfersFailed() const
+qsizetype TransferMetaData::getFileTransfersFailed() const
 {
     return mFiles.failedTransfers.size() + mFiles.nonExistFailedTransfers.size();
 }
@@ -343,17 +343,17 @@ void TransferMetaData::getFileTransferFailedTags(QList<std::shared_ptr<TransferM
     }
 }
 
-int TransferMetaData::getFileTransfersCancelled() const
+qsizetype TransferMetaData::getFileTransfersCancelled() const
 {
     return mFiles.cancelledTransfers.size();
 }
 
-int TransferMetaData::getTotaTransfersCancelled() const
+qsizetype TransferMetaData::getTotaTransfersCancelled() const
 {
     return mFiles.cancelledTransfers.size() + mEmptyFolders.cancelledTransfers.size();
 }
 
-int TransferMetaData::getNonExistentCount() const
+qsizetype TransferMetaData::getNonExistentCount() const
 {
     return mFiles.nonExistFailedTransfers.size();
 }
@@ -388,19 +388,20 @@ QList<TransferMetaDataItemId> TransferMetaData::getTransferIdsByState(TransferDa
     return ids;
 }
 
-int TransferMetaData::getEmptyFolderTransfersOK() const
+qsizetype TransferMetaData::getEmptyFolderTransfersOK() const
 {
     return getEmptyFolders(mEmptyFolders.completedTransfers);
 }
 
-int TransferMetaData::getEmptyFolderTransfersFailed() const
+qsizetype TransferMetaData::getEmptyFolderTransfersFailed() const
 {
     return getEmptyFolders(mEmptyFolders.failedTransfers);
 }
 
-int TransferMetaData::getEmptyFolders(const QMap<TransferMetaDataItemId, std::shared_ptr<TransferMetaDataFolderItem>>& folders) const
+qsizetype TransferMetaData::getEmptyFolders(
+    const QMap<TransferMetaDataItemId, std::shared_ptr<TransferMetaDataFolderItem>>& folders) const
 {
-    auto counter(0);
+    qsizetype counter(0);
 
     foreach(auto& folder, folders)
     {
@@ -580,7 +581,7 @@ bool TransferMetaData::isEmpty() const
     return mFiles.size() == 0 && mEmptyFolders.size() == 0;
 }
 
-int TransferMetaData::getTransfersCount() const
+qsizetype TransferMetaData::getTransfersCount() const
 {
     if(isNonExistData())
     {
@@ -595,7 +596,7 @@ unsigned long long TransferMetaData::getAppId() const
     return mAppId;
 }
 
-void TransferMetaData::setInitialTransfers(int newInitialPendingTransfers)
+void TransferMetaData::setInitialTransfers(qsizetype newInitialPendingTransfers)
 {
     mInitialTopLevelTransfers = newInitialPendingTransfers;
 }

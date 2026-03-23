@@ -24,9 +24,8 @@ void RestoreNodeManager::onRestoreClicked(const QList<mega::MegaHandle>& handles
             {
                 auto newParent = std::shared_ptr<mega::MegaNode>(
                     MegaSyncApp->getMegaApi()->getNodeByHandle(node->getRestoreHandle()));
-                moveHandles.append(
-                    qMakePair<mega::MegaHandle, std::shared_ptr<mega::MegaNode>>(handle,
-                                                                                 newParent));
+                QPair<mega::MegaHandle, std::shared_ptr<mega::MegaNode>> p{handle, newParent};
+                moveHandles.append(p);
             }
         }
 

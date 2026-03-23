@@ -38,7 +38,7 @@ class SyncInfo : public QObject, public mega::MegaListener
 
 signals:
     void syncStateChanged(std::shared_ptr<SyncSettings> syncSettings);
-    void syncStatsUpdated(std::shared_ptr<::mega::MegaSyncStats>);
+    void syncStatsUpdated(std::shared_ptr<mega::MegaSyncStats>);
     void syncRemoved(std::shared_ptr<SyncSettings> syncSettings);
     void syncDisabledListUpdated();
     void syncRemoteRootChanged(std::shared_ptr<SyncSettings> syncSettings);
@@ -78,7 +78,7 @@ public:
     Q_ENUM(SyncOrigin)
 
 protected:
-    mutable QMutex syncMutex;
+    mutable QRecursiveMutex syncMutex;
 
     QMap<SyncType, QList<mega::MegaHandle>> configuredSyncs; //Tags of configured syncs
     QMap<mega::MegaHandle, std::shared_ptr<SyncSettings>> configuredSyncsMap;
@@ -124,9 +124,9 @@ public:
 
         bool hasSyncs();
 
-        int getNumSyncedFolders(const QVector<mega::MegaSync::SyncType>& types);
+        qsizetype getNumSyncedFolders(const QVector<mega::MegaSync::SyncType>& types);
 
-        int getNumSyncedFolders(SyncType type)
+        qsizetype getNumSyncedFolders(SyncType type)
         {
             return getNumSyncedFolders(QVector<SyncType>({type}));
         }

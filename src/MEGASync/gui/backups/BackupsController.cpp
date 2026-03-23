@@ -23,7 +23,7 @@ void BackupsController::addBackups(const BackupInfoList& backupsInfoList)
         return;
     }
     mBackupsProcessedWithError = 0;
-    mBackupsToDoSize = backupsInfoList.size();
+    mBackupsToDoSize = static_cast<int>(backupsInfoList.size());
     mBackupsToDoList = backupsInfoList;
     const auto&[fullPath, backupName] = mBackupsToDoList.first();
     addBackup(fullPath, backupName);

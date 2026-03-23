@@ -318,7 +318,9 @@ void LocalAndRemoteDifferentWidget::onLocalButtonClicked(int)
     {
         info.msgInfo.descriptionText.append(
             QString::fromUtf8("[BR]") +
-            tr("[B]Please, resume your transfers to fix the issue[/B]", "", info.selection.size()) +
+            tr("[B]Please, resume your transfers to fix the issue[/B]",
+               "",
+               static_cast<int>(info.selection.size())) +
             QString::fromUtf8("[BR]"));
     }
 
@@ -503,14 +505,14 @@ void LocalAndRemoteDifferentWidget::onKeepBothButtonClicked(int)
             info.msgInfo.descriptionText =
                 tr("The [B]remote file[/B] will have a suffix like (1) added",
                    "",
-                   info.selection.size());
+                   static_cast<int>(info.selection.size()));
         }
         else
         {
             info.msgInfo.descriptionText =
                 tr("The [B]remote folder[/B] will have a suffix like (1) added",
                    "",
-                   info.selection.size());
+                   static_cast<int>(info.selection.size()));
         }
 
         info.msgInfo.finishFunc = [info](QPointer<MessageDialogResult> msgBox)

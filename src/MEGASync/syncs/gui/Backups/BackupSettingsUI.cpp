@@ -2,7 +2,6 @@
 
 #include "BackupCandidatesComponent.h"
 #include "BackupItemModel.h"
-#include "Backups.h"
 #include "BackupsController.h"
 #include "BackupTableView.h"
 #include "CreateRemoveBackupsManager.h"

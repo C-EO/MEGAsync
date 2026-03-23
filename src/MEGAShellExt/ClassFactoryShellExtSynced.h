@@ -1,7 +1,7 @@
 #ifndef CLASSFACTORYSHELLEXTSYNCED_H
 #define CLASSFACTORYSHELLEXTSYNCED_H
 
-#include "classfactory.h"
+#include "ClassFactory.h"
 class ClassFactoryShellExtSynced :
     public ClassFactory
 {

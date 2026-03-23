@@ -49,13 +49,14 @@ QString SyncTooltipCreator::createMultilinePath(const QString& path, const QStri
     // Create multiline text
     QString multilineText;
     QString currLine (label + blankChar);
-    for (auto currChar : path)
+
+    for (auto currChar = path.cbegin(), end = path.cend(); currChar != end; ++currChar)
     {
-        currLine += currChar;
+        currLine += *currChar;
         if (fm.size(Qt::TextExpandTabs, currLine).width() > mMaxWidthInPixels)
         {
             multilineText += currLine;
-            currLine = currChar != path.cend() ? separator : QString();
+            currLine = std::next(currChar) != end ? separator : QString();
         }
     }
     return multilineText + currLine;

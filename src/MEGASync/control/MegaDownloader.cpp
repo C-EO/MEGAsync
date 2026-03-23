@@ -151,7 +151,10 @@ void MegaDownloader::onAvailableSpaceCheckFinished(bool isDownloadPossible)
                 currentPath = mQueueData.getCurrentTargetPath();
             }
 
-            download(wNode, currentPath, appData, batch ? batch->getCancelTokenPtr() : nullptr);
+            download(wNode,
+                     QFileInfo(currentPath),
+                     appData,
+                     batch ? batch->getCancelTokenPtr() : nullptr);
             updater.update(mQueueData.getDownloadQueueSize());
         }
 

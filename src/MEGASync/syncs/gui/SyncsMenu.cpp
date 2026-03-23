@@ -150,10 +150,9 @@ void SyncsMenu::refresh()
     int activeFolders (0);
 
     // Get number of <type>. Show only "Add <type>" button if no items, and whole menu otherwise.
-    const int numItems = (Preferences::instance()->logged()) ?
-                             model->getNumSyncedFolders(mType)
-                                                             : 0;
-    for (int i = 0; i < numItems; ++i)
+    const auto numItems =
+        (Preferences::instance()->logged()) ? model->getNumSyncedFolders(mType) : 0;
+    for (auto i = 0; i < numItems; ++i)
     {
         auto syncSetting = model->getSyncSetting(i, mType);
 

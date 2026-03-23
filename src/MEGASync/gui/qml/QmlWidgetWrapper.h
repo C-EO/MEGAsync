@@ -14,6 +14,8 @@
 
 class QMLWidgetComponent: public QObject
 {
+    Q_OBJECT
+
 public:
     using QObject::QObject;
     virtual ~QMLWidgetComponent() = default;

@@ -41,7 +41,7 @@ void copyIconsToAppFolder(QString folderPath)
     iconNames << newContactIconName << storageQuotaFullIconName << storageQuotaWarningIconName
               << failedToDownloadIconName << folderIconName << fileDownloadSucceedIconName;
 
-    for(const auto& iconName : iconNames)
+    for (const auto& iconName: std::as_const(iconNames))
     {
         QFile iconFile(iconPrefix + iconName);
         iconFile.copy(folderPath + QDir::separator() + iconName);
@@ -679,8 +679,8 @@ void DesktopNotifications::sendFinishedSetDownloadNotification(const QString& se
     (void) setName;
     QString title = TransferNotificationBuilder::getDownloadFailedTitle();
     QString msg = QString::fromUtf8("");
-    int nrSuccessItems = succeededDownloadedElements.size();
-    int nrFailedItems = failedDownloadedElements.size();
+    int nrSuccessItems = static_cast<int>(succeededDownloadedElements.size());
+    int nrFailedItems = static_cast<int>(failedDownloadedElements.size());
     QStringList actions;
 
     mPreferences->setLastTransferNotificationTimestamp();
@@ -883,8 +883,11 @@ void DesktopNotifications::actionPressedOnDownloadFinishedTransferNotification(D
                         }
                         else
                         {
-                            QtConcurrent::run(QDesktopServices::openUrl,
-                                              QUrl::fromLocalFile(data->getLocalTargetPath()));
+                            {
+                                [[maybe_unused]] auto&& unused = QtConcurrent::run(
+                                    QDesktopServices::openUrl,
+                                    QUrl::fromLocalFile(data->getLocalTargetPath()));
+                            }
                         }
                     }
                     break;
@@ -896,7 +899,11 @@ void DesktopNotifications::actionPressedOnDownloadFinishedTransferNotification(D
                         auto localPaths = data->getLocalPaths();
                         if(!localPaths.isEmpty())
                         {
-                            QtConcurrent::run(QDesktopServices::openUrl, QUrl::fromLocalFile(localPaths.first()));
+                            {
+                                [[maybe_unused]] auto&& unused =
+                                    QtConcurrent::run(QDesktopServices::openUrl,
+                                                      QUrl::fromLocalFile(localPaths.first()));
+                            }
                         }
                     }
                     else

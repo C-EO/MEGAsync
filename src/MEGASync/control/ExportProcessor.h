@@ -33,13 +33,13 @@ protected:
     QStringList publicLinks;
     QStringList validPublicLinks;
     int currentIndex;
-    int remainingNodes;
+    qsizetype remainingNodes;
     int importSuccess;
     int importFailed;
     int mode;
 
 private:
-    void init(mega::MegaApi* megaApi, int mode, int size);
+    void init(mega::MegaApi* megaApi, int mode, qsizetype size);
 };
 
 #endif // EXPORTPROCESSOR_H

@@ -69,11 +69,11 @@ public:
     static QString cancelAndClearSelectedWithSyncDescriptionText();
     static QString clearSelectedCompletedTransfersDescriptionText();
 
-    static QString pauseActionText(int count);
-    static QString resumeActionText(int count);
-    static QString cancelActionText(int count);
-    static QString clearActionText(int count);
-    static QString cancelAndClearActionText(int count);
+    static QString pauseActionText(qsizetype count);
+    static QString resumeActionText(qsizetype count);
+    static QString cancelActionText(qsizetype count);
+    static QString clearActionText(qsizetype count);
+    static QString cancelAndClearActionText(qsizetype count);
 
     static QString cancelSingleActionText();
     static QString clearSingleActionText();

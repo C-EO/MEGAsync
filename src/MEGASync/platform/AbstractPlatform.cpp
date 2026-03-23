@@ -5,7 +5,6 @@
 #include "MultiQFileDialog.h"
 #include "TokenParserWidgetManager.h"
 
-#include <QDesktopWidget>
 #include <QScreen>
 
 using namespace mega;
@@ -355,12 +354,14 @@ bool AbstractPlatform::loadRccResources(const QStringList& rccFiles)
 
 void AbstractPlatform::logInfoDialogCoordinates(const char *message, const QRect &screenGeometry, const QString &otherInformation)
 {
-    mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Calculating Info Dialog coordinates. %1: valid = %2, geom = %3, %4")
-                       .arg(QString::fromUtf8(message))
-                       .arg(screenGeometry.isValid())
-                       .arg(rectToString(screenGeometry))
-                       .arg(otherInformation)
-                       .toUtf8().constData());
+    mega::MegaApi::log(
+        mega::MegaApi::LOG_LEVEL_DEBUG,
+        QString::fromUtf8("Calculating Info Dialog coordinates. %1: valid = %2, geom = %3, %4")
+            .arg(QString::fromUtf8(message))
+            .arg(screenGeometry.isValid())
+            .arg(rectToString(screenGeometry), otherInformation)
+            .toUtf8()
+            .constData());
 }
 
 Preferences::SystemColorScheme AbstractPlatform::getCurrentThemeAppearance() const

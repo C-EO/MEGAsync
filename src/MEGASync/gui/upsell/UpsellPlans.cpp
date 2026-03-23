@@ -55,7 +55,7 @@ std::shared_ptr<UpsellPlans::Data> UpsellPlans::getPlan(int index) const
 
 int UpsellPlans::size() const
 {
-    return mPlans.size();
+    return static_cast<int>(mPlans.size());
 }
 
 UpsellPlans::ViewMode UpsellPlans::getViewMode() const

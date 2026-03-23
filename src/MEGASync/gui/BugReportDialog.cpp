@@ -9,7 +9,7 @@
 #include <TransfersModel.h>
 
 #include <QCloseEvent>
-#include <QRegExp>
+#include <QRegularExpression>
 
 using namespace mega;
 
@@ -262,8 +262,8 @@ void BugReportDialog::onDescribeBugTextChanged()
 {
     if (ui->teDescribeBug->toPlainText().length() > mMaxDescriptionLength)
     {
-        int diff = ui->teDescribeBug->toPlainText().length() -
-                   mMaxDescriptionLength; // m_maxTextEditLength - just an integer
+        const auto diff = ui->teDescribeBug->toPlainText().length() -
+                          mMaxDescriptionLength; // m_maxTextEditLength - just an integer
         QString newStr = ui->teDescribeBug->toPlainText();
         newStr.chop(diff);
         ui->teDescribeBug->setText(newStr);

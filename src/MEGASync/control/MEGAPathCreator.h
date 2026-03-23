@@ -11,6 +11,8 @@
 //This class is used to create complex paths in MEGA
 class MEGAPathCreator : QObject
 {
+    Q_OBJECT
+
 public:
     MEGAPathCreator() = default;
     static std::shared_ptr<mega::MegaNode> mkDir(const QString& root,

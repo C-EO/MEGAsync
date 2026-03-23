@@ -141,6 +141,7 @@ void StalledIssueActionTitle::addActionButton(const QIcon& icon,
                 QApplication::postEvent(this,
                                         new QMouseEvent(QEvent::MouseButtonPress,
                                                         QPointF(),
+                                                        QPointF(),
                                                         Qt::LeftButton,
                                                         Qt::NoButton,
                                                         Qt::KeyboardModifier::AltModifier));

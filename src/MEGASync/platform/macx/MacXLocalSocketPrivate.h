@@ -20,7 +20,7 @@ public:
     void clearBuffer();
     void removeFromBuffer(int pos, int size);
     QByteArray midFromBuffer(int pos, int size);
-    int bufferSize();
+    qsizetype bufferSize();
     QByteArray getBuffer();
 
 private:

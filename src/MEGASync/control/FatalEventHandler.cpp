@@ -186,8 +186,9 @@ void FatalEventHandler::processEvent(std::unique_ptr<mega::MegaEvent> event, Meg
     auto canConvert = sdkErrorCode.canConvert(qMetaTypeId<FatalEventHandler::FatalErrorCode>());
     mErrorCode = canConvert ? sdkErrorCode.value<FatalEventHandler::FatalErrorCode>() :
                               FatalErrorCode::ERR_UNHANDLED;
-    auto isValid =
-        QMetaEnum::fromType<FatalEventHandler::FatalErrorCode>().valueToKey(mErrorCode) != nullptr;
+
+    bool isValid = QMetaEnum::fromType<FatalEventHandler::FatalErrorCode>().valueToKey(
+                       toQtMetaEnumValue(mErrorCode)) != nullptr;
 
     if (!isValid)
     {

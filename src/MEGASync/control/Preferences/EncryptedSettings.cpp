@@ -55,7 +55,7 @@ void EncryptedSettings::endGroup()
     QSettings::endGroup();
 }
 
-int EncryptedSettings::numChildGroups()
+qsizetype EncryptedSettings::numChildGroups()
 {
     return QSettings::childGroups().size();
 }
@@ -95,16 +95,16 @@ void EncryptedSettings::sync()
 //Simplified XOR fun
 QByteArray EncryptedSettings::XOR(const QByteArray& key, const QByteArray& data) const
 {
-    int keyLen = key.length();
+    auto keyLen = key.length();
     if (!keyLen)
     {
         return data;
     }
 
     QByteArray result;
-    int rotation = abs(key[keyLen/3]*key[keyLen/5])%keyLen;
-    int increment = abs(key[keyLen/2]*key[keyLen/7])%keyLen;
-    for (int i = 0, j = rotation; i < data.length(); i++, j -= increment)
+    const auto rotation = abs(key[keyLen / 3] * key[keyLen / 5]) % keyLen;
+    const auto increment = abs(key[keyLen / 2] * key[keyLen / 7]) % keyLen;
+    for (auto i = 0, j = rotation; i < data.length(); i++, j -= increment)
     {
         if (j < 0)
         {

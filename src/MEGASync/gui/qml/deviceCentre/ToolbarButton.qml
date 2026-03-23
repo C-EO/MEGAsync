@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.15
 
 import common 1.0
 import components.buttons 1.0

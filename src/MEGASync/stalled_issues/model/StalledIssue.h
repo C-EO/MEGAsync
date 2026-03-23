@@ -312,7 +312,7 @@ public:
 
     int getPathProblem() const;
 
-    bool operator==(const StalledIssue &data);
+    bool operator==(const StalledIssue& data) const;
 
     virtual void updateIssue(const mega::MegaSyncStall* stallIssue);
 
@@ -492,7 +492,7 @@ public:
         mData.reset();
     }
 
-    bool operator==(const StalledIssueVariant& issue)
+    bool operator==(const StalledIssueVariant& issue) const
     {
         return issue.mData == this->mData;
     }
