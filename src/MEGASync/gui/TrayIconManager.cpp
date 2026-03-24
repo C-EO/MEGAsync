@@ -200,7 +200,7 @@ void TrayIconManager::onAnimationStep()
         return;
     }
 
-    mAnimationIndex = mAnimationIndex % frames.size();
+    mAnimationIndex = mAnimationIndex % static_cast<int>(frames.size());
     applyIcon(frames[mAnimationIndex]);
     ++mAnimationIndex;
 }

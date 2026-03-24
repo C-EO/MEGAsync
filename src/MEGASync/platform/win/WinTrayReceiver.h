@@ -38,11 +38,9 @@ interface __declspec(uuid("D782CCBA-AFB0-43F1-94DB-FDA3779EACCB")) INotification
 };
 
 //ItrayNotifyNew GUID (Windows 10)
-#pragma warning(suppress: 4467) //usage of ATL attributes is deprecated
-interface __declspec(uuid("D133CE13-3537-48BA-93A7-AFCD5D2053B4"))
-
+#pragma warning(suppress: 4467) // usage of ATL attributes is deprecated
 // Virtual functions for Windows 10+ (interface originally introduced in Windows 8)
-ITrayNotifyNew: public IUnknown
+interface __declspec(uuid("D133CE13-3537-48BA-93A7-AFCD5D2053B4")) ITrayNotifyNew: public IUnknown
 {
     virtual HRESULT __stdcall RegisterCallback (INotificationCB *,unsigned long *) = 0;
     virtual HRESULT __stdcall UnregisterCallback (unsigned long ) = 0;

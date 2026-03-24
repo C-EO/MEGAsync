@@ -660,7 +660,7 @@ QMenu* MegaTransferView::createContextMenu()
 
     auto proxy(qobject_cast<TransfersManagerSortFilterProxyModel*>(model()));
 
-    for (auto index : qAsConst(indexes))
+    for (auto index: std::as_const(indexes))
     {
         if(index.row() == 0)
         {
@@ -1273,7 +1273,7 @@ void MegaTransferView::getLinkClicked()
         }
     }
 
-    for (auto index : qAsConst(indexes))
+    for (auto index: std::as_const(indexes))
     {
         rows.push_back(index.row());
     }
@@ -1309,7 +1309,7 @@ void MegaTransferView::openInMEGAClicked()
         }
     }
 
-    for (auto index : qAsConst(indexes))
+    for (auto index: std::as_const(indexes))
     {
         rows.push_back(index.row());
     }
