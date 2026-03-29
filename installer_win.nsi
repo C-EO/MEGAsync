@@ -441,7 +441,7 @@ FunctionEnd
   Pop $1
   StrCmp $1 "Admin" RunElevated
   StrCmp $1 "Power" RunElevated
-  StrCmp $1 "User" RunElevated
+  StrCmp $1 "User" done
   StrCmp $1 "Guest" done
   !insertmacro ExitWithError 1 "Elevation failed. Unknown error checking account type"
   Goto done
