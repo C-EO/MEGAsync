@@ -2,19 +2,15 @@
 
 #include "AccountStatusController.h"
 #include "BackupCandidatesComponent.h"
-#include "DeviceNameChecker.h"
 #include "LoginController.h"
 #include "MegaApplication.h"
 #include "MessageDialogOpener.h"
 #include "OnboardingQmlDialog.h"
 #include "PasswordStrengthChecker.h"
 #include "SettingsDialog.h"
-#include "Syncs.h"
 #include "SyncsComponent.h"
-#include "SyncsData.h"
 
 #include <QQmlEngine>
-#include <QThread>
 
 using namespace mega;
 
@@ -37,11 +33,6 @@ Onboarding::Onboarding(QObject* parent):
     QQuickWindow::setDefaultAlphaBuffer(true);
 }
 
-Onboarding::~Onboarding()
-{
-    stopDeviceNameCheck();
-}
-
 QUrl Onboarding::getQmlUrl()
 {
     return QUrl(QString::fromUtf8("qrc:/onboard/OnboardingDialog.qml"));
@@ -50,69 +41,6 @@ QUrl Onboarding::getQmlUrl()
 void Onboarding::openPreferences(int tabIndex) const
 {
     MegaSyncApp->openSettings(tabIndex);
-}
-
-void Onboarding::checkDeviceName(const QString& name)
-{
-    stopDeviceNameCheck();
-
-    mDeviceNameThread = new QThread(this);
-    mDeviceNameChecker = new DeviceNameChecker(name);
-    mDeviceNameChecker->moveToThread(mDeviceNameThread);
-
-    QObject::connect(mDeviceNameThread,
-                     &QThread::started,
-                     mDeviceNameChecker,
-                     &DeviceNameChecker::process);
-
-    QObject::connect(mDeviceNameThread,
-                     &QThread::finished,
-                     mDeviceNameThread,
-                     &QObject::deleteLater,
-                     Qt::DirectConnection);
-
-    QObject::connect(mDeviceNameThread,
-                     &QThread::finished,
-                     mDeviceNameChecker,
-                     &QObject::deleteLater,
-                     Qt::DirectConnection);
-
-    QObject::connect(
-        mDeviceNameChecker,
-        &DeviceNameChecker::deviceNameCheck,
-        this,
-        [this](bool isValid)
-        {
-            emit deviceNameChecked(isValid);
-        },
-        Qt::QueuedConnection);
-
-    QObject::connect(mDeviceNameChecker,
-                     &DeviceNameChecker::finished,
-                     mDeviceNameThread,
-                     &QThread::quit,
-                     Qt::DirectConnection);
-
-    mDeviceNameThread->start();
-}
-
-void Onboarding::stopDeviceNameCheck()
-{
-    if (mDeviceNameChecker)
-    {
-        QMetaObject::invokeMethod(mDeviceNameChecker, "cancel", Qt::QueuedConnection);
-    }
-
-    if (!mDeviceNameThread)
-    {
-        mDeviceNameChecker = nullptr;
-        return;
-    }
-
-    mDeviceNameThread->quit();
-    mDeviceNameThread->wait();
-    mDeviceNameThread = nullptr;
-    mDeviceNameChecker = nullptr;
 }
 
 void Onboarding::showClosingButLoggingInWarningDialog() const

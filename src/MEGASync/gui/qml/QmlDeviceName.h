@@ -4,6 +4,7 @@
 #include "DeviceNames.h"
 
 #include <QObject>
+#include <QString>
 
 #include <memory>
 
@@ -17,19 +18,25 @@ public:
     explicit QmlDeviceName(QObject* parent = nullptr);
 
     Q_INVOKABLE QString getDeviceName() const;
+    Q_INVOKABLE void checkDeviceName(const QString& newName);
     Q_INVOKABLE void setDeviceName(const QString& newName);
 
 signals:
     void deviceNameChanged();
+    void deviceNameChecked(bool isValid);
     void deviceNameSetRequestCompleted();
 
 private slots:
-    void onDeviceNameSet();
+    void onDeviceNameReady();
 
 private:
+    bool isCandidateNameAvailable() const;
+
     QString mName;
+    QString mCandidateName;
+    bool mCheckDeviceNameRequested;
     bool mSetDeviceNameRequested;
-    std::shared_ptr<UserAttributes::DeviceNames> mDeviceNameRequest;
+    std::shared_ptr<UserAttributes::DeviceNames> mDeviceNamesRequest;
 };
 
 #endif // QMLDEVICENAME_H
