@@ -2125,6 +2125,11 @@ void Utilities::sleepMilliseconds(unsigned int milliseconds)
 #endif
 }
 
+int Utilities::partPer(long long part, long long total, uint ref)
+{
+    return partPer(static_cast<long double>(part), static_cast<long double>(total), ref);
+}
+
 int Utilities::partPer(long double part, long double total, uint ref)
 {
     // Use maximum precision
