@@ -12,10 +12,13 @@
 #include "ViewLoadingScene.h"
 
 #include <QAbstractItemModel>
+#include <QMetaType>
 #include <QObject>
 #include <QPointer>
 #include <QReadWriteLock>
 #include <QTimer>
+
+#include <cstddef>
 
 class LoadingSceneMessageHandler;
 class NameConflictedStalledIssue;
@@ -109,6 +112,7 @@ public:
 
 public slots:
     void onUpdateStalledISsues(UpdateType type);
+    void onStalledIssueResolved(size_t hash);
 
 signals:
     void stalledIssuesReady(ReceivedStalledIssues, UpdateType);
@@ -232,6 +236,7 @@ signals:
     void stalledIssuesChanged();
     void stalledIssuesCountChanged();
     void stalledIssuesReceived();
+    void stalledIssueResolved(size_t hash);
 
     void uiBlocked();
     void uiUnblocked();

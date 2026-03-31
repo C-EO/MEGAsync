@@ -18,6 +18,7 @@
 
 StalledIssuesReceiver::StalledIssuesReceiver(QObject* parent) : QObject(parent), mega::MegaRequestListener()
 {
+    qRegisterMetaType<size_t>("size_t");
     connect(&mIssueCreator, &StalledIssuesCreator::solvingIssues, this, &StalledIssuesReceiver::solvingIssues);
     connect(&mIssueCreator, &StalledIssuesCreator::solvingIssuesFinished, this, &StalledIssuesReceiver::solvingIssuesFinished);
 }
@@ -35,6 +36,11 @@ void StalledIssuesReceiver::onUpdateStalledISsues(UpdateType type)
         mUpdateType = type;
         MegaSyncApp->getMegaApi()->getMegaSyncStallMap(nullptr);
     }
+}
+
+void StalledIssuesReceiver::onStalledIssueResolved(size_t hash)
+{
+    mIssueCreator.rememberResolvedIssueHash(hash);
 }
 
 void StalledIssuesReceiver::onRequestFinish(mega::MegaApi*, mega::MegaRequest* request, mega::MegaError*)
@@ -119,6 +125,12 @@ StalledIssuesModel::StalledIssuesModel():
     connect(this, &StalledIssuesModel::updateStalledIssuesOnReceiver,
         mStalledIssuesReceiver, &StalledIssuesReceiver::onUpdateStalledISsues,
         Qt::QueuedConnection);
+
+    connect(this,
+            &StalledIssuesModel::stalledIssueResolved,
+            mStalledIssuesReceiver,
+            &StalledIssuesReceiver::onStalledIssueResolved,
+            Qt::QueuedConnection);
 
     connect(&mEventTimer,&QTimer::timeout, this, &StalledIssuesModel::onSendEvent);
     mEventTimer.setSingleShot(true);
@@ -1221,6 +1233,12 @@ bool StalledIssuesModel::issueSolved(const StalledIssue* issue)
 {
     if(issue && issue->isSolved() && !issue->isPotentiallySolved())
     {
+        const auto& originalStall = issue->getOriginalStall();
+        if (originalStall && issue->shouldDiscardReappearingIssuesByResolvedHash())
+        {
+            emit stalledIssueResolved(originalStall->getHash());
+        }
+
         auto issueVariant(getIssueVariantByIssue(issue));
         if(issueVariant.isValid())
         {

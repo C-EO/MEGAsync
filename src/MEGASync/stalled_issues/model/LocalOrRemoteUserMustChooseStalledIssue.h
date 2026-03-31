@@ -18,6 +18,11 @@ public:
     void setIsSolved(SolveType type) override;
     bool checkForExternalChanges() override;
 
+    bool shouldDiscardReappearingIssuesByResolvedHash() const override
+    {
+        return true;
+    }
+
     void fillIssue(const mega::MegaSyncStall *stall) override;
     void endFillingIssue() override;
 
