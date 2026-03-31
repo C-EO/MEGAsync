@@ -20,12 +20,22 @@ Rectangle {
     readonly property int tableRadius: 6
     readonly property int filesTargetIndex: 0
     readonly property int defaultContentMargin: 12
+    readonly property int typeColumnWidth: 220
+    readonly property int propertyColumnWidth: 142
+    readonly property int buttonsColumnWidth: 64
+    readonly property int minimumValueColumnWidth: 150
+    readonly property int verticalScrollBarWidth: 14
 
     property int  editRuleTarget: 0
     property int  editRuleProperty: 0
     property string  editRuleValue: ""
     property int editIndex: -1
     property int removedIndex: -1
+    readonly property int valueColumnWidth: Math.max(minimumValueColumnWidth,
+                                                     tableRect.width - typeColumnWidth
+                                                     - propertyColumnWidth
+                                                     - buttonsColumnWidth
+                                                     - verticalScrollBarWidth)
     radius: tableRadius
 
     function getConfirmationMessage(target, wildcard, value) {
@@ -95,7 +105,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.top: parent.top
             height: parent.height
-            width: 226
+            width: root.typeColumnWidth
 
             CheckBox {
                 id: enableAll
@@ -155,7 +165,7 @@ Rectangle {
             id:  propertyColumnHeaderItem
 
             height: parent.height
-            width: 142
+            width: root.propertyColumnWidth
             anchors{
                 top: parent.top
                 left: typeColumnHeaderItem.right
@@ -184,7 +194,7 @@ Rectangle {
                 left: propertyColumnHeaderItem.right
             }
             height: parent.height
-            width: 172
+            width: root.valueColumnWidth
 
             Texts.Text {
                 id: valueHeaderText
@@ -219,70 +229,35 @@ Rectangle {
         color:  "transparent"
         z:1
 
-        TableView {
+        ListView {
             id: tableView
 
-            backgroundVisible: true
-            style: TableViewStyle {
-                backgroundColor: ColorTheme.pageBackground
-                scrollBarBackground: Rectangle {
-                    implicitWidth: 14
-                    implicitHeight: parent.height
-                    color: ColorTheme.pageBackground
-                    border.color: "transparent"
-                }
-
-                // Scrollbar handle (the thumb)
-                handle: Item {
-                    implicitWidth: 14
-                    implicitHeight: 10
-
-                    Rectangle {
-                        anchors.fill: parent
-                        anchors.leftMargin: 2
-                        anchors.rightMargin: 2
-                        anchors.topMargin: 2
-                        anchors.bottomMargin: 2
-                        color: styleData.pressed ? ColorTheme.buttonPrimaryPressed
-                                                 : (styleData.hovered ? ColorTheme.buttonPrimaryHover
-                                                                      : ColorTheme.buttonPrimary)
-                        radius: 5
-                    }
-                }
-
-                decrementControl: Rectangle {
-                    visible: false
-                }
-
-                incrementControl: Rectangle {
-                    visible: false
-                }
-            }
             anchors{
                 fill: parent
             }
-            rowDelegate: Rectangle {
-                height: 32
-                width: parent.width
-                color: styleData.row % 2 === 0 ? ColorTheme.pageBackground : ColorTheme.surface1// Alternating colors
-            }
-            headerDelegate: Rectangle {
-                visible: false
-            }
             model: syncExclusionsAccess.rulesModel
             focus: true
-            TableViewColumn {
-                id: typeColumn
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            contentWidth: root.typeColumnWidth + root.propertyColumnWidth
+                          + root.valueColumnWidth + root.buttonsColumnWidth
+            delegate: Rectangle {
+                id: rowItem
 
-                role: "type"
-                title: "type"
-                width: 220
+                width: tableView.contentWidth
+                height: 32
+                color: index % 2 === 0 ? ColorTheme.pageBackground : ColorTheme.surface1
 
-                delegate:
-                    Item{
+                Item {
                     id: firstColumnItem
 
-                    anchors.fill: parent
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+                    width: root.typeColumnWidth
+
                     CheckBox {
                         id: ruleCheck
 
@@ -291,7 +266,7 @@ Rectangle {
                         anchors.left: parent.left
                         anchors.leftMargin: root.defaultContentMargin - ruleCheck.sizes.focusBorderWidth
                         manageChecked: true
-                        checked: (model)? !model.commented : false
+                        checked: model ? !model.commented : false
 
                         mouseArea.onClicked: {
                             model.commented = !model.commented;
@@ -313,27 +288,26 @@ Rectangle {
                             leftMargin: root.defaultContentMargin
                             verticalCenter: parent.verticalCenter
                         }
-                        maximumAllowedWidth: typeColumn.width - ruleCheck.width - 2*root.defaultContentMargin -8 //The 8  is the  right margin
+                        maximumAllowedWidth: firstColumnItem.width - ruleCheck.width
+                                             - 2 * root.defaultContentMargin - 8
                         backgroundColor: ColorTheme.surface2
                         radius: 4
-                        iconSource: model? Images.imagesExclusionsPath + model.iconName + '.svg': ""
-                        iconSize:  Qt.size(16, 16)
+                        iconSource: model ? Images.imagesExclusionsPath + model.iconName + ".svg" : ""
+                        iconSize: Qt.size(16, 16)
                         iconColor: ColorTheme.iconPrimary
-                        text: model? model.type : ""
+                        text: model ? model.type : ""
                     }
-
                 }
-            }
 
-            TableViewColumn {
-                id: propertyColumn
-
-                role: "property";
-                title: "property";
-                width: 142
-                delegate:
-                    Item{
+                Item {
                     id: propertyColumnItem
+
+                    anchors {
+                        left: firstColumnItem.right
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+                    width: root.propertyColumnWidth
 
                     Texts.HighlightedText{
                         id: propertyText
@@ -344,19 +318,19 @@ Rectangle {
                         }
                         backgroundColor: ColorTheme.notificationInfo
                         radius: 4
-                        text: model? model.property : ""
+                        text: model ? model.property : ""
                     }
                 }
-            }
 
-            TableViewColumn {
-                id: valueColumn
-
-                role: "value";
-                title: "value";
-                width: Math.max(150, tableView.width - typeColumn.width - propertyColumn.width - buttonsColumn.width - 14)
-                delegate: Item{
+                Item {
                     id: valueColumnItem
+
+                    anchors {
+                        left: propertyColumnItem.right
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+                    width: root.valueColumnWidth
 
                     Texts.ElidedText {
                         id: valueText
@@ -369,20 +343,22 @@ Rectangle {
                             rightMargin: 8
                         }
                         font.pixelSize: Texts.Text.Size.SMALL
-                        text: model ? model.value: ""
+                        text: model ? model.value : ""
                         color: ColorTheme.textPrimary
                         elide: Text.ElideMiddle
                         wrapMode: Text.NoWrap
                     }
                 }
-            }
 
-            TableViewColumn {
-                id: buttonsColumn
-
-                width:64
-                delegate:Item {
+                Item {
                     id: buttonsColumnItem
+
+                    anchors {
+                        left: valueColumnItem.right
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+                    width: root.buttonsColumnWidth
 
                     Buttons.SecondaryButton {
                         id: editButton
@@ -397,7 +373,7 @@ Rectangle {
                         colors.background: "transparent"
                         onClicked: {
                             editRuleProperty = model.wildcard;
-                            editIndex = model.index;
+                            editIndex = index;
                             editRuleTarget = model.targetTypeIndex;
                             editRuleValue = model.value;
                             editRuleClicked();
@@ -419,17 +395,43 @@ Rectangle {
                         colors.borderSelected: "transparent"
                         onClicked: {
                             if(!syncExclusionsAccess.askOnExclusionRemove){
-                                tableView.model.removeRow(model.index);
+                                tableView.model.removeRow(index);
                                 return;
                             }
-                            removedIndex = model.index;
+                            removedIndex = index;
 
                             let descriptionText = getConfirmationMessage(model.targetTypeIndex, model.wildcard, model.value);
                             syncExclusionsAccess.showRemoveRuleConfirmationMessageDialog(descriptionText);
                         }
                     }
                 }
-            } // buttonsColumn
+            }
+
+            ScrollBar.vertical: ScrollBar {
+                id: tableScrollBar
+
+                width: root.verticalScrollBarWidth
+                padding: 2
+                anchors {
+                    top: parent.top
+                    right: parent.right
+                    bottom: parent.bottom
+                }
+                policy: ScrollBar.AsNeeded
+
+                background: Rectangle {
+                    color: ColorTheme.pageBackground
+                    border.color: "transparent"
+                }
+
+                contentItem: Rectangle {
+                    implicitWidth: tableScrollBar.availableWidth
+                    radius: 5
+                    color: tableScrollBar.pressed ? ColorTheme.buttonPrimaryPressed
+                                                  : (tableScrollBar.hovered ? ColorTheme.buttonPrimaryHover
+                                                                            : ColorTheme.buttonPrimary)
+                }
+            }
         } // tableView
         Rectangle{
             anchors.fill: tableView
@@ -493,7 +495,7 @@ Rectangle {
         target: syncExclusionsAccess.rulesModel
 
         function onNewRuleAdded(addedRuleIndex) {
-            tableView.positionViewAtRow(addedRuleIndex, TableView.AlignCenter);
+            tableView.positionViewAtIndex(addedRuleIndex, ListView.Center);
         }
     }
 
