@@ -2,6 +2,7 @@
 ; Updated to NSIS 3.04
 
 ; Errors
+; 0 = Success installation
 ; 1 = This installer requires administrator permissions for certain features. 
 ; 2 = This is an installer for 64-bit MEGA Desktop App, but you are using a 32-bit Windows. Please, download the 32-bit MEGA Desktop App version from https://mega.io/desktop.
 ; 3 = This MEGA Desktop App installer is for Windows 10 or above
@@ -134,9 +135,10 @@ var ICONS_GROUP
 var USERNAME
 var CURRENT_USER_INSTDIR
 var ALL_USERS_INSTDIR
-;var SILENT_USER_INSTDIR
 var SILENT_MULTIUSER
 var INSTALLED_APP_MODE
+var HKLM_UninstallString
+var HKCU_UninstallString
 
 ; Installer pages
 ; !define MUI_FINISHPAGE_NOAUTOCLOSE
@@ -284,38 +286,54 @@ FunctionEnd
 !define CURRENT_USER_INSTALLED_APP_MODE "CurrentUser"
 !define ALL_USERS_INSTALLED_APP_MODE "AllUsers"
 
-var UINTDIR
+var UNINSTDIR
 var ALL_USERS_UNINSTDIR
-
-!macro PerformGetInstalledAppMode
-	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY_LOCAL_MACHINE} "${PRODUCT_UNINST_KEY}" "UninstallString"
-	ReadRegStr $1 ${PRODUCT_UNINST_ROOT_KEY_CURRENT_USER} "${PRODUCT_UNINST_KEY}" "UninstallString"
-
-	StrCpy $UINTDIR "$INSTDIR\${UNINSTALLER_NAME}"
-	StrCpy $ALL_USERS_UNINSTDIR "$ALL_USERS_INSTDIR\${PRODUCT_NAME}\${UNINSTALLER_NAME}"
-	StrCpy $INSTALLED_APP_MODE "" ;Reset value
-	
-	${If} $0 != ""
-		${If} $0 == $UINTDIR
-			${If} $MultiUser.InstallMode == "CurrentUser"
-				StrCpy $INSTALLED_APP_MODE "${CURRENT_USER_INSTALLED_APP_MODE}"
-			${Else}
-				StrCpy $INSTALLED_APP_MODE "${ALL_USERS_INSTALLED_APP_MODE}"
-			${EndIf}
-		${ElseIf} $ALL_USERS_UNINSTDIR == $0
-				StrCpy $INSTALLED_APP_MODE "${ALL_USERS_INSTALLED_APP_MODE}"
-		${EndIf}
-	${ElseIf} $1 != "" 
-		StrCpy $INSTALLED_APP_MODE "${CURRENT_USER_INSTALLED_APP_MODE}"   
-	${EndIf}
-!macroend
+var CURRENT_USER_UNINSTDIR
 
 Function GetInstalledAppMode
-	!insertmacro PerformGetInstalledAppMode
+	StrCpy $UNINSTDIR "$INSTDIR\${UNINSTALLER_NAME}"
+	StrCpy $ALL_USERS_UNINSTDIR "$ALL_USERS_INSTDIR\${PRODUCT_NAME}\${UNINSTALLER_NAME}"
+	StrCpy $CURRENT_USER_UNINSTDIR "$CURRENT_USER_INSTDIR\${PRODUCT_NAME}\${UNINSTALLER_NAME}"
+	StrCpy $INSTALLED_APP_MODE "" ;Reset value
+	
+	${If} $HKLM_UninstallString != ""
+		${If} $HKLM_UninstallString == $ALL_USERS_UNINSTDIR
+			StrCpy $INSTALLED_APP_MODE "${ALL_USERS_INSTALLED_APP_MODE}"
+		${ElseIf} $HKLM_UninstallString == $CURRENT_USER_UNINSTDIR
+			StrCpy $INSTALLED_APP_MODE "${CURRENT_USER_INSTALLED_APP_MODE}"
+		${EndIf}
+	${EndIf}
+	
+	${If} $INSTALLED_APP_MODE == ""
+	${AndIf} $HKCU_UninstallString != "" 
+		StrCpy $INSTALLED_APP_MODE "${CURRENT_USER_INSTALLED_APP_MODE}"   
+	${EndIf}
+FunctionEnd
+
+Function GetHKCUUninstallString
+	ReadRegStr $HKCU_UninstallString ${PRODUCT_UNINST_ROOT_KEY_CURRENT_USER} "${PRODUCT_UNINST_KEY}" "UninstallString"
+	ClearErrors
+	FileOpen $0 "$ALL_USERS_INSTDIR\megatmp.HKCU_UninstallString.txt" w
+	IfErrors done
+	FileWriteUTF16LE $0 "$HKCU_UninstallString"
+	FileClose $0
+done:
+FunctionEnd
+
+Function ReadHKCUUninstallString
+  Sleep 200
+  FileOpen $R0 "$ALL_USERS_INSTDIR\megatmp.HKCU_UninstallString.txt" r
+  IfErrors done
+  FileReadUTF16LE $R0 "$HKCU_UninstallString"
+  FileClose $R0
+  Delete "$ALL_USERS_INSTDIR\megatmp.HKCU_UninstallString.txt"
+done:
 FunctionEnd
 
 !macro GetUninstalledAppMode
-    System::Call 'shell32::SHGetSpecialFolderPath(i $HWNDPARENT, t .r1, i ${CSIDL_COMMON_APPDATA}, i0)i.r0'
+	StrCpy $UNINSTDIR "$INSTDIR\${UNINSTALLER_NAME}"
+    
+	System::Call 'shell32::SHGetSpecialFolderPath(i $HWNDPARENT, t .r1, i ${CSIDL_COMMON_APPDATA}, i0)i.r0'
     StrCpy $ALL_USERS_INSTDIR "$1\${PRODUCT_NAME}"
 	
 	${If} "$INSTDIR" == "$ALL_USERS_INSTDIR"
@@ -323,6 +341,7 @@ FunctionEnd
     ${Else}
 		StrCpy $INSTALLED_APP_MODE "${CURRENT_USER_INSTALLED_APP_MODE}"
 	${EndIf}
+	
 !macroend
 
 !macro RemoveLocalMachineReg
@@ -331,16 +350,11 @@ FunctionEnd
 !macroend
 
 !macro CheckHKLMUninstallInfo
-	ReadRegStr $0 ${PRODUCT_UNINST_ROOT_KEY_LOCAL_MACHINE} "${PRODUCT_UNINST_KEY}" "UninstallString"
-	StrCpy $UINTDIR "$INSTDIR\${UNINSTALLER_NAME}"
-	
-	${If} $0 != ""
-	${AndIf} $0 == $UINTDIR
+	StrCpy $CURRENT_USER_UNINSTDIR "$CURRENT_USER_INSTDIR\${PRODUCT_NAME}\${UNINSTALLER_NAME}"
+
+	${If} $HKLM_UninstallString != ""
+	${AndIf} $HKLM_UninstallString == $CURRENT_USER_UNINSTDIR
 		!insertmacro RemoveLocalMachineReg
-	${Else}
-	    ${If} $INSTALLED_APP_MODE == "${ALL_USERS_INSTALLED_APP_MODE}"
-			!insertmacro RemoveLocalMachineReg
-		${EndIf}
 	${EndIf}
 !macroend
 
@@ -619,6 +633,12 @@ done:
   StrCmp $CURRENT_USER_INSTDIR "" readpaths 0
   StrCmp $USERNAME "" readpaths 0
 
+  # Get registry uninstall strings (user process)
+  ${UAC.CallFunctionAsUser} GetHKCUUninstallString
+  # Get HKCU on elevated process (if needed)
+  Call ReadHKCUUninstallString
+  ReadRegStr $HKLM_UninstallString ${PRODUCT_UNINST_ROOT_KEY_LOCAL_MACHINE} "${PRODUCT_UNINST_KEY}" "UninstallString"
+
   !insertmacro DEBUG_MSG "Checking install mode"
   
   Delete "$ALL_USERS_INSTDIR\megatmp.M1.txt"
@@ -636,12 +656,12 @@ done:
   ${Else}
      StrCmp "${CURRENT_USER_INSTALLED_APP_MODE}" $MultiUser.InstallMode currentuser
   ${EndIf}
+  
 alluser:
   !insertmacro DEBUG_MSG "Install for all"
   SetShellVarContext all
   StrCpy $INSTDIR "$ALL_USERS_INSTDIR\MEGAsync"
-  ${UAC.CallFunctionAsUser} GetInstalledAppMode
-  !insertmacro CheckHKLMUninstallInfo
+  Call GetInstalledAppMode
   ${If} "$INSTALLED_APP_MODE" == "${CURRENT_USER_INSTALLED_APP_MODE}"
 	!insertmacro ExitWithError 4 "You already have an installation per user in your computer. Please uninstall and install it again."
   ${EndIf}
@@ -650,8 +670,7 @@ currentuser:
   !insertmacro DEBUG_MSG "Install for current user"
   SetShellVarContext current
   StrCpy $INSTDIR "$CURRENT_USER_INSTDIR\MEGAsync"
-  ${UAC.CallFunctionAsUser} GetInstalledAppMode
-  !insertmacro CheckHKLMUninstallInfo
+  Call GetInstalledAppMode
   ${If} "$INSTALLED_APP_MODE" == "${ALL_USERS_INSTALLED_APP_MODE}"
 	!insertmacro ExitWithError 4 "You already have a machine-wide installation in your computer. Please uninstall and install it again."
   ${EndIf}
