@@ -17,6 +17,7 @@
 #include <QHostInfo>
 #include <QOperatingSystemVersion>
 #include <QScreen>
+#include <QSettings>
 #include <QtPlatformHeaders/QWindowsWindowFunctions>
 #include <QtWin>
 
@@ -49,6 +50,10 @@ enum class StartupApprovedState : BYTE
 }
 bool WindowsPlatform_exiting = false;
 static const QString NotAllowedDefaultFactoryBiosName = QString::fromUtf8("To be filled by O.E.M.");
+static const QLatin1String kWindowsCurrentUserUninstallRegSubKey(
+    "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEGAsync");
+static const QLatin1String kWindowsLocalMachineUninstallRegSubKey(
+    "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEGAsync");
 
 void PlatformImplementation::initialize(int, char *[])
 {
@@ -789,6 +794,39 @@ bool PlatformImplementation::makePubliclyReadable(const QString& fileName)
         LocalFree((HLOCAL) pNewDACL);
     }
     return result;
+}
+
+void PlatformImplementation::updateDisplayVersionAfterAutoUpdate(int versionCode, bool isPublic)
+{
+    const int major = versionCode / 10000;
+    const int minor = (versionCode / 100) % 100;
+    const int micro = versionCode % 100;
+    const QString displayVersion = QString::fromLatin1("%1.%2.%3").arg(major).arg(minor).arg(micro);
+    const auto& uninstallRegSubKey =
+        isPublic ? kWindowsLocalMachineUninstallRegSubKey : kWindowsCurrentUserUninstallRegSubKey;
+    const QString registryPath = QString::fromLatin1("%1\\%2").arg(
+        isPublic ? QLatin1String("HKEY_LOCAL_MACHINE") : QLatin1String("HKEY_CURRENT_USER"),
+        uninstallRegSubKey);
+
+    QSettings uninstallEntry(registryPath, QSettings::NativeFormat);
+    uninstallEntry.setValue(QLatin1String("DisplayVersion"), displayVersion);
+    uninstallEntry.sync();
+
+    if (uninstallEntry.status() != QSettings::NoError)
+    {
+        MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
+                     QString::fromUtf8("Unable to update uninstall DisplayVersion at %1 to %2")
+                         .arg(registryPath, displayVersion)
+                         .toUtf8()
+                         .constData());
+        return;
+    }
+
+    MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                 QString::fromUtf8("Updated uninstall DisplayVersion at %1 to %2")
+                     .arg(registryPath, displayVersion)
+                     .toUtf8()
+                     .constData());
 }
 
 void PlatformImplementation::streamWithApp(const QString &app, const QString &url)

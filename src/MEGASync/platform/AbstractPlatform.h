@@ -88,6 +88,7 @@ public:
     virtual void disableContextMenu(bool isDisabled) {}
 
     virtual bool makePubliclyReadable(const QString& fileName);
+    virtual void updateDisplayVersionAfterAutoUpdate(int versionCode, bool isPublic);
 
     virtual void addFileManagerExtensionToSystem() {}
 
