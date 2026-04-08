@@ -50,10 +50,10 @@ enum class StartupApprovedState : BYTE
 }
 bool WindowsPlatform_exiting = false;
 static const QString NotAllowedDefaultFactoryBiosName = QString::fromUtf8("To be filled by O.E.M.");
-static const QLatin1String kWindowsCurrentUserUninstallRegSubKey(
-    "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEGAsync");
-static const QLatin1String kWindowsLocalMachineUninstallRegSubKey(
-    "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEGAsync");
+static const QLatin1String kWindowsCurrentUserRegRoot("HKEY_CURRENT_USER");
+static const QLatin1String kWindowsLocalMachineRegRoot("HKEY_LOCAL_MACHINE");
+static const QLatin1String
+    kWindowsUninstallRegSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MEGAsync");
 
 void PlatformImplementation::initialize(int, char *[])
 {
@@ -802,13 +802,12 @@ void PlatformImplementation::updateDisplayVersionAfterAutoUpdate(int versionCode
     const int minor = (versionCode / 100) % 100;
     const int micro = versionCode % 100;
     const QString displayVersion = QString::fromLatin1("%1.%2.%3").arg(major).arg(minor).arg(micro);
-    const auto& uninstallRegSubKey =
-        isPublic ? kWindowsLocalMachineUninstallRegSubKey : kWindowsCurrentUserUninstallRegSubKey;
-    const QString registryPath = QString::fromLatin1("%1\\%2").arg(
-        isPublic ? QLatin1String("HKEY_LOCAL_MACHINE") : QLatin1String("HKEY_CURRENT_USER"),
-        uninstallRegSubKey);
+    const auto& registryRoot = isPublic ? kWindowsLocalMachineRegRoot : kWindowsCurrentUserRegRoot;
+    const QString registryPath =
+        QString::fromLatin1("%1\\%2").arg(registryRoot, kWindowsUninstallRegSubKey);
+    const auto settingsFormat = isPublic ? QSettings::Registry32Format : QSettings::NativeFormat;
 
-    QSettings uninstallEntry(registryPath, QSettings::NativeFormat);
+    QSettings uninstallEntry(registryPath, settingsFormat);
     uninstallEntry.setValue(QLatin1String("DisplayVersion"), displayVersion);
     uninstallEntry.sync();
 
