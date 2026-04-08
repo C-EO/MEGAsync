@@ -6966,8 +6966,18 @@ void MegaApplication::requestFetchSetFromLink(const QString& link)
     }
 }
 
-void MegaApplication::onAppStateChanged(AppState::AppStates, AppState::AppStates)
+void MegaApplication::onAppStateChanged(AppState::AppStates oldAppState,
+                                        AppState::AppStates newAppState)
 {
+    const bool initVisibilityChanged =
+        oldAppState == AppState::INIT || newAppState == AppState::INIT;
+
+    if (initVisibilityChanged)
+    {
+        createAppMenus();
+        createGuestMenu();
+    }
+
     updateTrayIcon();
     updateTrayIconMenu();
 }
