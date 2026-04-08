@@ -37,7 +37,9 @@ void NameConflictedStalledIssue::fillIssue(const mega::MegaSyncStall *stall)
             setIsFile(localPath.filePath(), true);
 
             //Use for autosolve
-            info->mItemAttributes->initAllAttributes();
+            info->mItemAttributes->preload(FileFolderAttributes::PRELOAD_MODIFIED_TIME |
+                                           FileFolderAttributes::PRELOAD_SIZE |
+                                           FileFolderAttributes::PRELOAD_CRC);
         }
     }
 
@@ -90,7 +92,14 @@ void NameConflictedStalledIssue::fillIssue(const mega::MegaSyncStall *stall)
                 }
 
                 //Use for autosolve
-                info->mItemAttributes->initAllAttributes();
+                auto preloadFlags = FileFolderAttributes::PRELOAD_MODIFIED_TIME |
+                                    FileFolderAttributes::PRELOAD_SIZE |
+                                    FileFolderAttributes::PRELOAD_CRC;
+                if (!node->isFile())
+                {
+                    preloadFlags |= RemoteFileFolderAttributes::PRELOAD_FILE_COUNT;
+                }
+                info->mItemAttributes->preload(preloadFlags);
             }
         }
     }

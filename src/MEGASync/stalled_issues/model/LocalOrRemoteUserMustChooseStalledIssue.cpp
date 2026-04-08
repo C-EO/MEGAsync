@@ -178,8 +178,11 @@ void LocalOrRemoteUserMustChooseStalledIssue::endFillingIssue()
     if(isFile())
     {
         //For autosolving
-        getLocalData()->getAttributes()->initAllAttributes();
-        getCloudData()->getAttributes()->initAllAttributes();
+        const auto preloadFlags = FileFolderAttributes::PRELOAD_MODIFIED_TIME |
+                                  FileFolderAttributes::PRELOAD_SIZE |
+                                  FileFolderAttributes::PRELOAD_CRC;
+        getLocalData()->getAttributes()->preload(preloadFlags);
+        getCloudData()->getAttributes()->preload(preloadFlags);
 
         getLocalData()->getAttributes()->requestCRC(this, [this](const QString& crc){
             mLocalCRCAtStart = crc;
