@@ -1990,8 +1990,8 @@ void MegaApplication::checkOverStorageStates(bool isOnboardingAboutClosing)
              ((QDateTime::currentMSecsSinceEpoch() - preferences->getOverStorageDialogExecution()) >
               Preferences::OQ_DIALOG_INTERVAL_MS)))
         {
-            if ((mDiscountPolicy && !mDiscountPolicy->isCampaignActive()) ||
-                (mDiscountStateMachine && mDiscountStateMachine->isInCooldownState()))
+            if (!mDiscountPolicy || !mDiscountPolicy->isCampaignActive() ||
+                !mDiscountStateMachine || mDiscountStateMachine->isInCooldownState())
             {
                 preferences->setOverStorageDialogExecution(QDateTime::currentMSecsSinceEpoch());
                 mStatsEventHandler->sendEvent(AppStatsEvents::EventType::OVER_STORAGE_DIAL);
@@ -2048,8 +2048,8 @@ void MegaApplication::checkOverStorageStates(bool isOnboardingAboutClosing)
                preferences->getAlmostOverStorageDialogExecution()) >
               Preferences::OQ_DIALOG_INTERVAL_MS)))
         {
-            if ((mDiscountPolicy && !mDiscountPolicy->isCampaignActive()) ||
-                (mDiscountStateMachine && mDiscountStateMachine->isInCooldownState()))
+            if (!mDiscountPolicy || !mDiscountPolicy->isCampaignActive() ||
+                !mDiscountStateMachine || mDiscountStateMachine->isInCooldownState())
             {
                 preferences->setAlmostOverStorageDialogExecution(
                     QDateTime::currentMSecsSinceEpoch());
@@ -3702,7 +3702,11 @@ void MegaApplication::updateStatesAfterTransferOverQuotaTimeHasExpired()
 void MegaApplication::registerUserActivity()
 {
     lastUserActivityExecution = QDateTime::currentMSecsSinceEpoch();
-    emit userActive();
+
+    if (AppState::instance()->getAppState() == AppState::NOMINAL)
+    {
+        emit userActive();
+    }
 }
 
 void MegaApplication::PSAseen(int id)
@@ -4682,8 +4686,8 @@ void MegaApplication::closeUpsellStorageDialog()
 
 void MegaApplication::showUpsellDialog(UpsellPlans::ViewMode viewMode)
 {
-    if ((mDiscountPolicy && !mDiscountPolicy->isCampaignActive()) ||
-        (mDiscountStateMachine && mDiscountStateMachine->isInCooldownState()))
+    if (!mDiscountPolicy || !mDiscountPolicy->isCampaignActive() || !mDiscountStateMachine ||
+        mDiscountStateMachine->isInCooldownState())
     {
         auto dialogInfo(DialogOpener::findDialog<QmlDialogWrapper<UpsellComponent>>());
         if (dialogInfo)
