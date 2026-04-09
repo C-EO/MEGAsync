@@ -262,8 +262,7 @@ bool NodeSelectorTreeViewWidget::isSelectionCorrect()
 {
     if (ui->tMegaFolders->selectionModel())
     {
-        return mSelectType->okButtonEnabled(this,
-                                            ui->tMegaFolders->selectionModel()->selectedIndexes());
+        return mSelectType->okButtonEnabled(this, ui->tMegaFolders->selectedRows());
     }
     return false;
 }
