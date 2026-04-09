@@ -552,7 +552,6 @@ bool NameConflictedStalledIssue::renameCloudNodesAutomatically(const QList<std::
                     else
                     {
                         cloudItemsBeingRenamed.append(newName);
-                        renameLocalSibling(localConflictedName, newName);
                         cloudConflictedName->solveByRename(newName);
                     }
                 }
@@ -601,7 +600,6 @@ bool NameConflictedStalledIssue::renameLocalItemsAutomatically(const QList<std::
                     if(file.rename(QDir::toNativeSeparators(fileInfo.filePath())))
                     {
                         localConflictedName->solveByRename(newName);
-                        renameCloudSibling(cloudConflictedName, newName);
                     }
                     else
                     {
