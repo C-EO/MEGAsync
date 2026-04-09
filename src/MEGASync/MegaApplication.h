@@ -224,6 +224,8 @@ signals:
     void syncsDialogClosed();
     void languageChanged();
     void meaningfulInteraction();
+    void userActive();
+    void enterOverquota();
 
 public slots:
     void updateTrayIcon();
