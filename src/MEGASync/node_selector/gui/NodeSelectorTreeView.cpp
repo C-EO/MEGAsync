@@ -990,36 +990,32 @@ void NodeSelectorTreeView::dropEvent(QDropEvent* event)
             {
                 // get the node handle of the drop index from the proxy model
                 auto node = getDropNode(dropIndex);
+
+                // If no node, try to get the parent node
+                if (!node)
+                {
+                    auto parentIndex(dropIndex.parent());
+                    node = getDropNode(parentIndex);
+                }
+
                 if (node)
                 {
                     MegaSyncApp->uploadFilesToNode(urlList,
                                                    node->getHandle(),
                                                    mega::MegaApi::PITAG_TRIGGER_DRAG_AND_DROP,
                                                    dialog->getDialog());
-                }
-                else
-                {
-                    auto parentIndex(dropIndex.parent());
-                    auto parentNode = getDropNode(parentIndex);
-                    if (parentNode)
-                    {
-                        MegaSyncApp->uploadFilesToNode(urlList,
-                                                       parentNode->getHandle(),
-                                                       mega::MegaApi::PITAG_TRIGGER_DRAG_AND_DROP,
-                                                       dialog->getDialog());
-                    }
-                    else
-                    {
-                        event->ignore();
-                        return;
-                    }
+
+                    // Accept the drop
+                    QTreeView::dropEvent(event);
+                    event->acceptProposedAction();
+                    return;
                 }
             }
         }
-
-        QTreeView::dropEvent(event);
-        event->acceptProposedAction();
     }
+
+    // By default, don´t accept the drop
+    event->ignore();
 }
 
 std::shared_ptr<MegaNode> NodeSelectorTreeView::getDropNode(const QModelIndex& dropIndex)
