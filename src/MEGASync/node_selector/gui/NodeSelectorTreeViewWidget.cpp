@@ -1839,6 +1839,11 @@ void DownloadType::init(NodeSelectorTreeViewWidget* wdg)
     wdg->mModel->showReadOnlyFolders(true);
 }
 
+void DownloadType::newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg)
+{
+    wdg->setNewFolderButtonVisibility(false);
+}
+
 bool DownloadType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
 {
     return !selected.isEmpty() || cloudDriveIsCurrentRootIndex(wdg);
@@ -1893,6 +1898,11 @@ void StreamType::init(NodeSelectorTreeViewWidget* wdg)
     wdg->ui->bNewFolder->hide();
     wdg->mModel->showFiles(true);
     wdg->mModel->showReadOnlyFolders(true);
+}
+
+void StreamType::newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg)
+{
+    wdg->setNewFolderButtonVisibility(false);
 }
 
 bool StreamType::okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected)
