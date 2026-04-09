@@ -977,39 +977,42 @@ void NodeSelectorTreeView::dropEvent(QDropEvent* event)
 {
     if (proxyModel()->getMegaModel()->acceptDragAndDrop(event->mimeData()))
     {
-        // get drop index
-        QModelIndex dropIndex = indexAt(event->pos());
-
         // Get the list of URLs
         QList<QUrl> urlList = event->mimeData()->urls();
         if (!urlList.isEmpty())
         {
+            // get drop index
+            QModelIndex dropIndex = indexAt(event->pos());
+
             auto dialog = DialogOpener::findDialog<NodeSelector>();
 
-            // get the node handle of the drop index from the proxy model
-            auto node = getDropNode(dropIndex);
-            if (node)
+            if (dialog)
             {
-                MegaSyncApp->uploadFilesToNode(urlList,
-                                               node->getHandle(),
-                                               mega::MegaApi::PITAG_TRIGGER_DRAG_AND_DROP,
-                                               dialog->getDialog());
-            }
-            else
-            {
-                auto parentIndex(dropIndex.parent());
-                auto parentNode = getDropNode(parentIndex);
-                if (parentNode)
+                // get the node handle of the drop index from the proxy model
+                auto node = getDropNode(dropIndex);
+                if (node)
                 {
                     MegaSyncApp->uploadFilesToNode(urlList,
-                                                   parentNode->getHandle(),
+                                                   node->getHandle(),
                                                    mega::MegaApi::PITAG_TRIGGER_DRAG_AND_DROP,
                                                    dialog->getDialog());
                 }
                 else
                 {
-                    event->ignore();
-                    return;
+                    auto parentIndex(dropIndex.parent());
+                    auto parentNode = getDropNode(parentIndex);
+                    if (parentNode)
+                    {
+                        MegaSyncApp->uploadFilesToNode(urlList,
+                                                       parentNode->getHandle(),
+                                                       mega::MegaApi::PITAG_TRIGGER_DRAG_AND_DROP,
+                                                       dialog->getDialog());
+                    }
+                    else
+                    {
+                        event->ignore();
+                        return;
+                    }
                 }
             }
         }
