@@ -92,18 +92,62 @@ void BackupsController::onBackupAddRequestStatus(int errorCode, int syncErrorCod
 QString BackupsController::getErrorString(int errorCode, int syncErrorCode) const
 {
     QString errorMsg;
-    if(errorCode != mega::MegaError::API_OK)
+    if (errorCode != mega::MegaError::API_OK && MegaSyncApp->getMegaApi()->isBusinessAccount() &&
+        !MegaSyncApp->getMegaApi()->isBusinessAccountActive())
     {
-        if(MegaSyncApp->getMegaApi()->isBusinessAccount()
-            && !MegaSyncApp->getMegaApi()->isBusinessAccountActive())
+        syncErrorCode = mega::MegaSync::ACCOUNT_EXPIRED;
+    }
+
+    if (syncErrorCode != mega::MegaSync::NO_SYNC_ERROR)
+    {
+        errorMsg = QCoreApplication::translate("MegaSyncError",
+                                               mega::MegaSync::getMegaSyncErrorCode(syncErrorCode));
+    }
+    else if (errorCode != mega::MegaError::API_OK)
+    {
+        errorMsg = getSyncAPIErrorMsg(errorCode);
+        if (errorMsg.isEmpty())
         {
-            errorMsg = QCoreApplication::translate("MegaSyncError",
-                                                   mega::MegaSync::getMegaSyncErrorCode(mega::MegaSync::ACCOUNT_EXPIRED));
-        }
-        else
-        {
-            errorMsg = SyncController::getErrorString(errorCode, syncErrorCode);
+            errorMsg = QCoreApplication::translate("MegaError",
+                                                   mega::MegaError::getErrorString(errorCode));
         }
     }
+
     return errorMsg;
+}
+
+QString BackupsController::getSyncAPIErrorMsg(int megaError) const
+{
+    switch (megaError)
+    {
+        case mega::MegaError::API_EARGS:
+            return QCoreApplication::translate(
+                "SyncController",
+                "Unable to create backup as selected folder is not valid. Try again.");
+            break;
+        case mega::MegaError::API_EACCESS:
+            return QCoreApplication::translate(
+                "SyncController",
+                "Unable to create backup. Try again and if issue continues, contact "
+                "[A]Support[/A].");
+            break;
+        case mega::MegaError::API_EINCOMPLETE:
+            return QCoreApplication::translate(
+                "SyncController",
+                "Unable to create backup as the device you're backing up from doesn't "
+                "have a name. "
+                "Give your device a name and then try again. If issue continues, contact "
+                "[A]Support[/A].");
+        case mega::MegaError::API_EINTERNAL:
+        // Fallthrough
+        case mega::MegaError::API_ENOENT:
+        // Fallthrough
+        case mega::MegaError::API_EEXIST:
+            return QCoreApplication::translate(
+                "SyncController",
+                "Unable to create backup. For further information, contact [A]Support[/A].");
+        default:
+            break;
+    }
+    return {};
 }
