@@ -15,7 +15,10 @@
 #include <QObject>
 #include <QPointer>
 #include <QReadWriteLock>
+#include <QSet>
 #include <QTimer>
+
+#include <cstddef>
 
 class LoadingSceneMessageHandler;
 class NameConflictedStalledIssue;
@@ -98,6 +101,7 @@ public:
     ~StalledIssuesReceiver(){}
 
     bool multiStepIssueSolveActive() const;
+    void rememberResolvedIssueHash(size_t hash);
 
     template <class ISSUE_TYPE>
     void addMultiStepIssueSolver(MultiStepIssueSolverBase* solver)
@@ -119,9 +123,13 @@ protected:
     void onRequestFinish(::mega::MegaApi*, ::mega::MegaRequest* request, ::mega::MegaError*);
 
 private:
+    void flushPendingResolvedIssueHashes();
+
     QMutex mCacheMutex;
+    QMutex mPendingResolvedIssueHashesMutex;
     ReceivedStalledIssues mStalledIssues;
     StalledIssuesCreator mIssueCreator;
+    QSet<size_t> mPendingResolvedIssueHashes;
     std::atomic<UpdateType> mUpdateType {UpdateType::NONE};
     std::atomic_int mUpdateRequests {0};
 };

@@ -37,6 +37,27 @@ void StalledIssuesReceiver::onUpdateStalledISsues(UpdateType type)
     }
 }
 
+void StalledIssuesReceiver::rememberResolvedIssueHash(size_t hash)
+{
+    QMutexLocker lock(&mPendingResolvedIssueHashesMutex);
+    mPendingResolvedIssueHashes.insert(hash);
+}
+
+void StalledIssuesReceiver::flushPendingResolvedIssueHashes()
+{
+    QSet<size_t> pendingResolvedIssueHashes;
+    {
+        QMutexLocker lock(&mPendingResolvedIssueHashesMutex);
+        pendingResolvedIssueHashes.swap(mPendingResolvedIssueHashes);
+    }
+
+    for (auto it = pendingResolvedIssueHashes.cbegin(); it != pendingResolvedIssueHashes.cend();
+         ++it)
+    {
+        mIssueCreator.rememberResolvedIssueHash(*it);
+    }
+}
+
 void StalledIssuesReceiver::onRequestFinish(mega::MegaApi*, mega::MegaRequest* request, mega::MegaError*)
 {
     if (request->getType() == ::mega::MegaRequest::TYPE_GET_SYNC_STALL_LIST)
@@ -45,6 +66,7 @@ void StalledIssuesReceiver::onRequestFinish(mega::MegaApi*, mega::MegaRequest* r
             QMutexLocker lock(&mCacheMutex);
             mStalledIssues.clear();
             IgnoredStalledIssue::clearIgnoredSyncs();
+            flushPendingResolvedIssueHashes();
 
             mIssueCreator.createIssues(request->getMegaSyncStallMap(), mUpdateType);
 
@@ -1221,6 +1243,12 @@ bool StalledIssuesModel::issueSolved(const StalledIssue* issue)
 {
     if(issue && issue->isSolved() && !issue->isPotentiallySolved())
     {
+        const auto& originalStall = issue->getOriginalStall();
+        if (originalStall && issue->shouldDiscardReappearingIssuesByResolvedHash())
+        {
+            mStalledIssuesReceiver->rememberResolvedIssueHash(originalStall->getHash());
+        }
+
         auto issueVariant(getIssueVariantByIssue(issue));
         if(issueVariant.isValid())
         {
