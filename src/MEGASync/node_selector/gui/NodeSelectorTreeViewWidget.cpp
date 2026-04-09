@@ -77,6 +77,14 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
 
                 mResizeEventsReceived = 0;
             });
+
+    // Empty pages
+    ui->emptyPage->installEventFilter(this);
+    ui->emptyFolderPage->installEventFilter(this);
+    // By default, the empty pages don´t allow drag and drop.
+    // emptyFolderPage can accept drops if "enableDragAndDrop" is called with true
+    ui->emptyFolderPage->setAcceptDrops(false);
+    ui->emptyPage->setAcceptDrops(false);
 }
 
 NodeSelectorTreeViewWidget::~NodeSelectorTreeViewWidget()
@@ -98,14 +106,12 @@ void NodeSelectorTreeViewWidget::init()
 
     initEmptyMessages();
 
-    ui->emptyPage->installEventFilter(this);
     mSelectType->init(this);
 
     ui->tMegaFolders->setSortingEnabled(true);
     ui->tMegaFolders->setAllowContextMenu(mSelectType->isContextMenuAllowed());
     ui->tMegaFolders->viewport()->installEventFilter(this);
-    ui->emptyFolderPage->installEventFilter(this);
-    ui->emptyFolderPage->setAcceptDrops(true);
+
     mProxyModel->setSourceModel(mModel.get());
 
     connect(mProxyModel.get(),
@@ -302,6 +308,7 @@ bool NodeSelectorTreeViewWidget::isEmpty() const
 
 void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)
 {
+    ui->emptyFolderPage->setAcceptDrops(enable);
     ui->tMegaFolders->setDragEnabled(enable);
     ui->tMegaFolders->viewport()->setAcceptDrops(enable);
     ui->tMegaFolders->setDropIndicatorShown(enable);
@@ -1674,6 +1681,7 @@ void NodeSelectorTreeViewWidget::setEmptyFolderPage()
     auto currentRootIndex(ui->tMegaFolders->rootIndex());
     auto topRootIndex(mModel->hasTopRootIndex() ? mProxyModel->index(0, 0) : QModelIndex());
 
+    // If we are inside a folder, show the "Empty folder" page.
     if (currentRootIndex != topRootIndex && mProxyModel->rowCount(currentRootIndex) == 0)
     {
         ui->stackedWidget->setCurrentWidget(ui->emptyFolderPage);
@@ -1830,6 +1838,11 @@ void DownloadType::init(NodeSelectorTreeViewWidget* wdg)
     wdg->mModel->showReadOnlyFolders(true);
 }
 
+void DownloadType::newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg)
+{
+    wdg->setNewFolderButtonVisibility(false);
+}
+
 bool DownloadType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
 {
     return !selected.isEmpty() || cloudDriveIsCurrentRootIndex(wdg);
@@ -1884,6 +1897,11 @@ void StreamType::init(NodeSelectorTreeViewWidget* wdg)
     wdg->ui->bNewFolder->hide();
     wdg->mModel->showFiles(true);
     wdg->mModel->showReadOnlyFolders(true);
+}
+
+void StreamType::newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg)
+{
+    wdg->setNewFolderButtonVisibility(false);
 }
 
 bool StreamType::okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected)
