@@ -18,7 +18,6 @@
 
 StalledIssuesReceiver::StalledIssuesReceiver(QObject* parent) : QObject(parent), mega::MegaRequestListener()
 {
-    qRegisterMetaType<size_t>("size_t");
     connect(&mIssueCreator, &StalledIssuesCreator::solvingIssues, this, &StalledIssuesReceiver::solvingIssues);
     connect(&mIssueCreator, &StalledIssuesCreator::solvingIssuesFinished, this, &StalledIssuesReceiver::solvingIssuesFinished);
 }
@@ -38,9 +37,25 @@ void StalledIssuesReceiver::onUpdateStalledISsues(UpdateType type)
     }
 }
 
-void StalledIssuesReceiver::onStalledIssueResolved(size_t hash)
+void StalledIssuesReceiver::rememberResolvedIssueHash(size_t hash)
 {
-    mIssueCreator.rememberResolvedIssueHash(hash);
+    QMutexLocker lock(&mPendingResolvedIssueHashesMutex);
+    mPendingResolvedIssueHashes.insert(hash);
+}
+
+void StalledIssuesReceiver::flushPendingResolvedIssueHashes()
+{
+    QSet<size_t> pendingResolvedIssueHashes;
+    {
+        QMutexLocker lock(&mPendingResolvedIssueHashesMutex);
+        pendingResolvedIssueHashes.swap(mPendingResolvedIssueHashes);
+    }
+
+    for (auto it = pendingResolvedIssueHashes.cbegin(); it != pendingResolvedIssueHashes.cend();
+         ++it)
+    {
+        mIssueCreator.rememberResolvedIssueHash(*it);
+    }
 }
 
 void StalledIssuesReceiver::onRequestFinish(mega::MegaApi*, mega::MegaRequest* request, mega::MegaError*)
@@ -51,6 +66,7 @@ void StalledIssuesReceiver::onRequestFinish(mega::MegaApi*, mega::MegaRequest* r
             QMutexLocker lock(&mCacheMutex);
             mStalledIssues.clear();
             IgnoredStalledIssue::clearIgnoredSyncs();
+            flushPendingResolvedIssueHashes();
 
             mIssueCreator.createIssues(request->getMegaSyncStallMap(), mUpdateType);
 
@@ -125,12 +141,6 @@ StalledIssuesModel::StalledIssuesModel():
     connect(this, &StalledIssuesModel::updateStalledIssuesOnReceiver,
         mStalledIssuesReceiver, &StalledIssuesReceiver::onUpdateStalledISsues,
         Qt::QueuedConnection);
-
-    connect(this,
-            &StalledIssuesModel::stalledIssueResolved,
-            mStalledIssuesReceiver,
-            &StalledIssuesReceiver::onStalledIssueResolved,
-            Qt::QueuedConnection);
 
     connect(&mEventTimer,&QTimer::timeout, this, &StalledIssuesModel::onSendEvent);
     mEventTimer.setSingleShot(true);
@@ -1236,7 +1246,7 @@ bool StalledIssuesModel::issueSolved(const StalledIssue* issue)
         const auto& originalStall = issue->getOriginalStall();
         if (originalStall && issue->shouldDiscardReappearingIssuesByResolvedHash())
         {
-            emit stalledIssueResolved(originalStall->getHash());
+            mStalledIssuesReceiver->rememberResolvedIssueHash(originalStall->getHash());
         }
 
         auto issueVariant(getIssueVariantByIssue(issue));

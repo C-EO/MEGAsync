@@ -12,10 +12,10 @@
 #include "ViewLoadingScene.h"
 
 #include <QAbstractItemModel>
-#include <QMetaType>
 #include <QObject>
 #include <QPointer>
 #include <QReadWriteLock>
+#include <QSet>
 #include <QTimer>
 
 #include <cstddef>
@@ -101,6 +101,7 @@ public:
     ~StalledIssuesReceiver(){}
 
     bool multiStepIssueSolveActive() const;
+    void rememberResolvedIssueHash(size_t hash);
 
     template <class ISSUE_TYPE>
     void addMultiStepIssueSolver(MultiStepIssueSolverBase* solver)
@@ -112,7 +113,6 @@ public:
 
 public slots:
     void onUpdateStalledISsues(UpdateType type);
-    void onStalledIssueResolved(size_t hash);
 
 signals:
     void stalledIssuesReady(ReceivedStalledIssues, UpdateType);
@@ -123,9 +123,13 @@ protected:
     void onRequestFinish(::mega::MegaApi*, ::mega::MegaRequest* request, ::mega::MegaError*);
 
 private:
+    void flushPendingResolvedIssueHashes();
+
     QMutex mCacheMutex;
+    QMutex mPendingResolvedIssueHashesMutex;
     ReceivedStalledIssues mStalledIssues;
     StalledIssuesCreator mIssueCreator;
+    QSet<size_t> mPendingResolvedIssueHashes;
     std::atomic<UpdateType> mUpdateType {UpdateType::NONE};
     std::atomic_int mUpdateRequests {0};
 };
@@ -236,7 +240,6 @@ signals:
     void stalledIssuesChanged();
     void stalledIssuesCountChanged();
     void stalledIssuesReceived();
-    void stalledIssueResolved(size_t hash);
 
     void uiBlocked();
     void uiUnblocked();
