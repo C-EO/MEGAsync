@@ -615,62 +615,6 @@ bool NameConflictedStalledIssue::renameLocalItemsAutomatically(const QList<std::
     return result;
 }
 
-bool NameConflictedStalledIssue::renameCloudSibling(std::shared_ptr<ConflictedNameInfo> item,
-                                                    const QString& newName)
-{
-    std::shared_ptr<mega::MegaError> error(nullptr);
-    if (item)
-    {
-        std::unique_ptr<mega::MegaNode> conflictedNode(
-            MegaSyncApp->getMegaApi()->getNodeByHandle(item->mHandle));
-        if (conflictedNode)
-        {
-            std::unique_ptr<mega::MegaNode> parentNode(
-                MegaSyncApp->getMegaApi()->getNodeByHandle(conflictedNode->getParentHandle()));
-            MegaApiSynchronizedRequest::runRequestWithResult(
-                &mega::MegaApi::renameNode,
-                MegaSyncApp->getMegaApi(),
-                [&error](mega::MegaRequest*, mega::MegaError* e)
-                {
-                    if (e->getErrorCode() != mega::MegaError::API_OK)
-                    {
-                        error.reset(e->copy());
-                    }
-                },
-                conflictedNode.get(),
-                newName.toUtf8().constData());
-
-            error ? item->setFailed(RenameRemoteNodeDialog::renamedFailedErrorString(
-                        error.get(),
-                        conflictedNode->isFile())) :
-                    item->solveByRename(newName);
-        }
-    }
-
-    return error == nullptr;
-}
-
-bool NameConflictedStalledIssue::renameLocalSibling(std::shared_ptr<ConflictedNameInfo> item, const QString &newName)
-{
-    auto result(false);
-    if(item)
-    {
-        QFileInfo fileInfo(item->mConflictedPath);
-        fileInfo.setFile(fileInfo.path(), item->getConflictedName());
-
-        QFile file(fileInfo.filePath());
-        if(file.exists())
-        {
-            auto isFile(fileInfo.isFile());
-            fileInfo.setFile(fileInfo.path(), newName);
-            result = file.rename(QDir::toNativeSeparators(fileInfo.filePath()));
-            result ?  item->solveByRename(newName) : item->setFailed(RenameLocalNodeDialog::renamedFailedErrorString(isFile));
-        }
-    }
-
-    return result;
-}
-
 std::shared_ptr<NameConflictedStalledIssue::ConflictedNameInfo> NameConflictedStalledIssue::findOtherSideItem(const QList<std::shared_ptr<ConflictedNameInfo>>& items, std::shared_ptr<ConflictedNameInfo> check)
 {
     std::shared_ptr<ConflictedNameInfo> partialFound(nullptr);
