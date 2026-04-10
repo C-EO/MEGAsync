@@ -13,6 +13,8 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QToolButton>
 
+#include <utility>
+
 namespace // anonymous namespace to hide names from other translation units
 {
 static QRegularExpression
@@ -188,7 +190,7 @@ void TokenParserWidgetManager::applyCurrentTheme()
         applyCurrentTheme(dialog);
     }
 
-    for (auto widget: qAsConst(mRegisteredWidgets))
+    for (auto widget: std::as_const(mRegisteredWidgets))
     {
         applyCurrentTheme(widget);
     }
@@ -307,7 +309,7 @@ void TokenParserWidgetManager::removeFrameOnDialogCombos(QWidget* widget)
         return;
     }
 
-    for (auto comboBox: qAsConst(comboBoxes))
+    for (auto comboBox: std::as_const(comboBoxes))
     {
         comboBox->view()->window()->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint |
                                                    Qt::NoDropShadowWindowHint);
@@ -390,7 +392,7 @@ void TokenParserWidgetManager::onThemeChanged()
 void TokenParserWidgetManager::tokenizeChildStyleSheets(QWidget* widget)
 {
     auto children = widget->findChildren<QWidget*>();
-    for (const auto& child: qAsConst(children))
+    for (const auto& child: std::as_const(children))
     {
         if (!child->styleSheet().isEmpty())
         {
