@@ -1,5 +1,6 @@
 #include "PlatformImplementation.h"
 
+#include "MacUpdateRouting.h"
 #include "MacXFunctions.h"
 #include "Preferences.h"
 #include "ThemeManager.h"
@@ -281,14 +282,32 @@ bool PlatformImplementation::loadThemeResource(const QString& theme)
 
 QString PlatformImplementation::getArchUpdateString() const
 {
-    QString platformPath;
-#if defined(__arm64__)
-    platformPath = QLatin1String("msyncarm64");
-#else
-    // Using msyncv2 to serve new updates and avoid keeping loader leftovers
-    platformPath = QLatin1String("msyncv2");
-#endif
-    return platformPath;
+    const auto routing =
+        MacUpdateRouting::selectUpdateRouting(MacUpdateRouting::runtimeArchitecture());
+    static bool routingReported = false;
+    if (!routingReported)
+    {
+        routingReported = true;
+        const bool isFallback =
+            routing.routingCase == MacUpdateRouting::UpdateRoutingCase::UnknownSystemFallback;
+        const auto logLevel = isFallback ? MegaApi::LOG_LEVEL_WARNING : MegaApi::LOG_LEVEL_INFO;
+        MegaApi::log(
+            logLevel,
+            QString::fromUtf8(
+                "macOS update routing resolved. case=%1 system=%2 binary=%3 translated=%4 track=%5")
+                .arg(QString::fromLatin1(MacUpdateRouting::routingCaseName(routing.routingCase)),
+                     QString::fromLatin1(MacUpdateRouting::architectureName(
+                         routing.runtimeArchitecture.systemArchitecture)),
+                     QString::fromLatin1(MacUpdateRouting::architectureName(
+                         routing.runtimeArchitecture.binaryArchitecture)),
+                     routing.runtimeArchitecture.translated ? QString::fromUtf8("true") :
+                                                              QString::fromUtf8("false"),
+                     QString::fromLatin1(routing.updateTrack))
+                .toUtf8()
+                .constData());
+    }
+
+    return QString::fromLatin1(routing.updateTrack);
 }
 
 bool PlatformImplementation::showInFolder(QString pathIn)
