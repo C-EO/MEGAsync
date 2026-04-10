@@ -578,10 +578,6 @@ private:
                                        bool ignoreLastModifiedName,
                                        QStringList &cloudItemsBeingRenamed);
 
-    //Rename siblings
-    bool renameCloudSibling(std::shared_ptr<ConflictedNameInfo> item, const QString& newName);
-    bool renameLocalSibling(std::shared_ptr<ConflictedNameInfo> item, const QString& newName);
-
     //Find local or remote sibling
     std::shared_ptr<ConflictedNameInfo> findOtherSideItem(const QList<std::shared_ptr<ConflictedNameInfo>>& items, std::shared_ptr<ConflictedNameInfo> check);
 
