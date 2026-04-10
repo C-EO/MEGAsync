@@ -3,6 +3,7 @@
 #include "megaapi.h"
 #include "MegaApplication.h"
 #include "Platform.h"
+#include "RequestListenerManager.h"
 
 namespace UserAttributes
 {
@@ -144,8 +145,10 @@ void DeviceNames::processGetDeviceNamesCallback(mega::MegaRequest* request, mega
         for (int keyIndex = 0; keyIndex < deviceNameKeys->size(); ++keyIndex)
         {
             const auto deviceId = QString::fromUtf8(deviceNameKeys->get(keyIndex));
-            const auto deviceName = QString::fromUtf8(
-                QByteArray::fromBase64(deviceNameMap->get(deviceNameKeys->get(keyIndex))));
+
+            QByteArray base64 = QByteArray(deviceNameMap->get(deviceNameKeys->get(keyIndex)));
+            QByteArray decoded = QByteArray::fromBase64(base64, QByteArray::Base64UrlEncoding);
+            QString deviceName = QString::fromUtf8(decoded);
 
             mAccountDeviceNames.insert(deviceId, deviceName);
         }
