@@ -37,10 +37,21 @@ public:
         NOT_READABLE = -2
     };
 
+    enum PreloadFlag
+    {
+        PRELOAD_NONE = 0x0,
+        PRELOAD_SIZE = 0x1,
+        PRELOAD_MODIFIED_TIME = 0x2,
+        PRELOAD_CREATED_TIME = 0x4,
+        PRELOAD_CRC = 0x8,
+        PRELOAD_LAST = 0x10,
+        PRELOAD_BASIC = PRELOAD_SIZE | PRELOAD_MODIFIED_TIME | PRELOAD_CREATED_TIME | PRELOAD_CRC
+    };
     FileFolderAttributes(QObject* parent);
     virtual ~FileFolderAttributes();
 
     virtual void initAllAttributes();
+    virtual void preload(int flags);
     void setValueUpdatesDisable();
     bool areValueUpdatesDisabled() const;
 
@@ -69,6 +80,11 @@ signals:
     void attributesChanged();
 
 protected:
+    virtual bool containsOnlyKnownFlags(int flags)
+    {
+        return (flags & ~PRELOAD_BASIC) == 0;
+    }
+
     virtual bool attributeNeedsUpdate(QObject* caller, int type);
     QObject* requestReady(int type, QObject* caller);
     void requestFinish(int type);
@@ -165,7 +181,18 @@ public:
 
     ~RemoteFileFolderAttributes() override;
 
+    enum RemotePreloadFlag
+    {
+        PRELOAD_NONE = 0x0,
+        PRELOAD_USER = FileFolderAttributes::PRELOAD_LAST,
+        PRELOAD_FILE_COUNT = PRELOAD_USER << 1,
+        PRELOAD_VERSIONS = PRELOAD_FILE_COUNT << 1,
+        PRELOAD_ALL = PRELOAD_USER | PRELOAD_FILE_COUNT | PRELOAD_VERSIONS |
+                      FileFolderAttributes::PreloadFlag::PRELOAD_BASIC
+    };
+
     void initAllAttributes() override;
+    void preload(int flags) override;
 
     void requestSize(QObject* caller, std::function<void(qint64)> func) override;
     void requestFileCount(QObject* caller, std::function<void (int)> func);
@@ -181,6 +208,12 @@ public:
     int fileCount();
 
     void setHandle(mega::MegaHandle newHandle);
+
+protected:
+    bool containsOnlyKnownFlags(int flags) override
+    {
+        return (flags & ~PRELOAD_ALL) == 0;
+    }
 
 private:
     bool attributeNeedsUpdate(QObject* caller, int type) override;
