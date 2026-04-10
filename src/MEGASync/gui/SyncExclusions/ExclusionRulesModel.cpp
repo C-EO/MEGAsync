@@ -2,6 +2,8 @@
 
 #include <QCoreApplication>
 
+#include <utility>
+
 ExclusionRulesModel::ExclusionRulesModel(QObject* parent, std::shared_ptr<MegaIgnoreManager> megaIgnoreManager)
     : QAbstractListModel(parent)
 {

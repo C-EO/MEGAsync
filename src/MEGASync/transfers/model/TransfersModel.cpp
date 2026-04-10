@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <utility>
 
 using namespace mega;
 
@@ -1411,7 +1412,9 @@ void TransfersModel::processCancelTransfers()
 
         mRowsToCancel.clear();
 
-        const auto cancelledPercentage = (indexesToCancel.size() * 100) / rowCount();
+        const auto totalRows = rowCount();
+        const auto cancelledPercentage =
+            totalRows > 0 ? (indexesToCancel.size() * 100) / totalRows : 0;
 
         //For large amount of transfers, this is quite faster: remove all transfers and recreate the tags by row map
         if (indexesToCancel.size() >= QUICK_CANCEL_THRESHOLD ||

@@ -13,6 +13,8 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QToolButton>
 
+#include <utility>
+
 namespace // anonymous namespace to hide names from other translation units
 {
 static QRegularExpression

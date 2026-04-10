@@ -11,6 +11,8 @@
 #include <QScrollBar>
 #include <QtConcurrent/QtConcurrent>
 
+#include <utility>
+
 using namespace mega;
 
 const int MAX_ITEMS_FOR_CONTEXT_MENU = 10;
