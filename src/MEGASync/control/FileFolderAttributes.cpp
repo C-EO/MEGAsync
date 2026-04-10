@@ -409,7 +409,7 @@ RemoteFileFolderAttributes::~RemoteFileFolderAttributes()
 
 void RemoteFileFolderAttributes::initAllAttributes()
 {
-    preload(PRELOAD_BASIC | PRELOAD_ALL);
+    preload(PRELOAD_ALL);
 }
 
 void RemoteFileFolderAttributes::preload(int flags)
