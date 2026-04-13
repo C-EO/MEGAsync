@@ -1,9 +1,12 @@
 #include "PlatformImplementation.h"
 
+#include "AppStatsEvents.h"
 #include "MacUpdateRouting.h"
 #include "MacXFunctions.h"
 #include "Preferences.h"
+#include "StatsEventHandler.h"
 #include "ThemeManager.h"
+#include "Utilities.h"
 
 #include <QHostInfo>
 #include <QScreen>
@@ -290,6 +293,23 @@ QString PlatformImplementation::getArchUpdateString() const
         routingReported = true;
         const bool isFallback =
             routing.routingCase == MacUpdateRouting::UpdateRoutingCase::UnknownSystemFallback;
+        // An x86_64 binary on Apple Silicon implies Rosetta, even if the translated probe does not
+        // confirm it.
+        const bool arm64UrlAdjustedForIntelBinary =
+            routing.routingCase == MacUpdateRouting::UpdateRoutingCase::RosettaOnAppleSilicon ||
+            routing.routingCase == MacUpdateRouting::UpdateRoutingCase::IntelBinaryOnAppleSilicon;
+        auto preferences = Preferences::instance();
+        auto statsEventHandler = MegaSyncApp->getStatsEventHandler();
+        if (arm64UrlAdjustedForIntelBinary && preferences && statsEventHandler &&
+            !preferences->isOneTimeActionDone(
+                Preferences::ONE_TIME_ACTION_MACOS_ARM64_UPDATE_URL_ADJUSTED_EVENT_SENT))
+        {
+            statsEventHandler->sendEvent(
+                AppStatsEvents::EventType::MACOS_ARM64_UPDATE_URL_ADJUSTED_FOR_INTEL_BINARY);
+            preferences->setOneTimeActionDone(
+                Preferences::ONE_TIME_ACTION_MACOS_ARM64_UPDATE_URL_ADJUSTED_EVENT_SENT,
+                true);
+        }
         const auto logLevel = isFallback ? MegaApi::LOG_LEVEL_WARNING : MegaApi::LOG_LEVEL_INFO;
         MegaApi::log(
             logLevel,
