@@ -15,9 +15,7 @@ GuestContent::GuestContent(QObject *parent)
 
 void GuestContent::onInitialPageButtonClicked()
 {
-#ifndef WIN32
     QmlDialogManager::instance()->openOnboardingDialog();
-#endif
 }
 
 void GuestContent::onAboutMEGAClicked()

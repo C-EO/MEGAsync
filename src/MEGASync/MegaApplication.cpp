@@ -1048,6 +1048,37 @@ void MegaApplication::start()
     //In case the previous session did not remove all of them
     Preferences::instance()->clearTempTransfersPath();
 
+    const auto startupSession = preferences->getSession();
+    const bool startupHasSession = !startupSession.isEmpty();
+    const bool startupLogged = preferences->logged();
+
+    MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                 QString::fromUtf8(
+                     "Logout diagnostics: start() entered. logged=%1 sessionEmpty=%2 appState=%3")
+                     .arg(startupLogged)
+                     .arg(startupSession.isEmpty())
+                     .arg(QVariant::fromValue(AppState::instance()->getAppState()).toString())
+                     .toUtf8()
+                     .constData());
+
+    // Self-heal stale account context persisted in settings. If there is no session to resume,
+    // startup should not keep an account group open as "logged".
+    if (!startupHasSession && startupLogged)
+    {
+        MegaApi::log(
+            MegaApi::LOG_LEVEL_WARNING,
+            "Logout diagnostics: stale logged preferences detected without a resumable session. "
+            "Clearing stale account settings before startup.");
+        preferences->unlink();
+        MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                     QString::fromUtf8(
+                         "Logout diagnostics: startup healing completed. logged=%1 sessionEmpty=%2")
+                         .arg(preferences->logged())
+                         .arg(preferences->getSession().isEmpty())
+                         .toUtf8()
+                         .constData());
+    }
+
     if (!preferences->lastExecutionTime())
     {
         Platform::getInstance()->enableTrayIcon(QFileInfo(MegaApplication::applicationFilePath()).fileName());
@@ -1152,6 +1183,10 @@ void MegaApplication::start()
     //Start the initial setup wizard if needed
     if (preferences->getSession().isEmpty())
     {
+        MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                     "Logout diagnostics: start() selected onboarding/login branch because "
+                     "session is empty.");
+
         if (!preferences->installationTime())
         {
             preferences->setInstallationTime(QDateTime::currentSecsSinceEpoch());
@@ -1193,10 +1228,21 @@ void MegaApplication::start()
     }
     else //Otherwise, login in the account
     {
+        MegaApi::log(
+            MegaApi::LOG_LEVEL_INFO,
+            QString::fromUtf8(
+                "Logout diagnostics: start() selected fast-login branch. logged=%1 sessionEmpty=%2")
+                .arg(preferences->logged())
+                .arg(preferences->getSession().isEmpty())
+                .toUtf8()
+                .constData());
+
         mLoginController = new FastLoginController(QmlManager::instance()->getEngine());
         if (mLoginController == nullptr || !static_cast<FastLoginController*>(mLoginController)->fastLogin()) //In case preferences are corrupt with empty session, just unlink and remove associated data.
         {
             MegaApi::log(MegaApi::LOG_LEVEL_ERROR, "MEGAsync preferences logged but empty session. Unlink account and fresh start.");
+            MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
+                         "Logout diagnostics: fastLogin() could not start. Forcing unlink().");
             unlink();
         }
         if (updated)
@@ -1209,8 +1255,19 @@ void MegaApplication::start()
     // The same name is used for fast login
     QmlManager::instance()->setRootContextProperty(QString::fromUtf8("loginControllerAccess"),
                                                    mLoginController);
+
+    MegaApi::log(
+        MegaApi::LOG_LEVEL_INFO,
+        QString::fromUtf8(
+            "Logout diagnostics: start() after controller setup. logged=%1 sessionEmpty=%2")
+            .arg(preferences->logged())
+            .arg(preferences->getSession().isEmpty())
+            .toUtf8()
+            .constData());
     if (preferences->getSession().isEmpty())
     {
+        MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                     "Logout diagnostics: start() requests openOnboardingDialog().");
         QmlDialogManager::instance()->openOnboardingDialog();
     }
 }
@@ -1461,6 +1518,14 @@ void MegaApplication::onFetchNodesFinished()
 
 void MegaApplication::onLogout()
 {
+    MegaApi::log(
+        MegaApi::LOG_LEVEL_INFO,
+        QString::fromUtf8("Logout diagnostics: onLogout() entered. logged=%1 sessionEmpty=%2")
+            .arg(preferences ? preferences->logged() : false)
+            .arg(preferences ? preferences->getSession().isEmpty() : true)
+            .toUtf8()
+            .constData());
+
     if (mIntervalExecutioner)
     {
         disconnect(mIntervalExecutioner.get(), &IntervalExecutioner::execute,
@@ -1480,22 +1545,47 @@ void MegaApplication::onLogout()
     // Queue processing of logout cleanup to avoid race conditions
     // due to threadifing processing.
     // Eg: transfers added to data model after a logout
+    MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                 "Logout diagnostics: onLogout() scheduling deferred cleanup.");
     mThreadPool->push([this]()
     {
         Utilities::queueFunctionInAppThread([this]()
         {
             if (preferences)
             {
+                MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                             QString::fromUtf8("Logout diagnostics: deferred logout cleanup "
+                                               "running. logged=%1 sessionEmpty=%2")
+                                 .arg(preferences->logged())
+                                 .arg(preferences->getSession().isEmpty())
+                                 .toUtf8()
+                                 .constData());
+
                 if (preferences->logged())
                 {
+                    MegaApi::log(
+                        MegaApi::LOG_LEVEL_INFO,
+                        "Logout diagnostics: deferred cleanup branch -> preferences->unlink().");
                     clearUserAttributes();
                     preferences->unlink();
                     preferences->setFirstStartDone();
                 }
                 else
                 {
+                    MegaApi::log(
+                        MegaApi::LOG_LEVEL_INFO,
+                        "Logout diagnostics: deferred cleanup branch -> resetGlobalSettings().");
                     preferences->resetGlobalSettings();
                 }
+
+                MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                             QString::fromUtf8("Logout diagnostics: preferences cleanup finished. "
+                                               "logged=%1 sessionEmpty=%2")
+                                 .arg(preferences->logged())
+                                 .arg(preferences->getSession().isEmpty())
+                                 .toUtf8()
+                                 .constData());
+
                 mLoginController->deleteLater();
                 mLoginController = nullptr;
                 DialogOpener::closeAllDialogs();
@@ -3180,14 +3270,35 @@ void MegaApplication::unlink(bool keepLogs)
         return;
     }
 
+    MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                 QString::fromUtf8("Logout diagnostics: unlink() entered. sdkLoggedIn=%1 "
+                                   "preferencesLogged=%2 sessionEmpty=%3 appState=%4")
+                     .arg(megaApi->isLoggedIn())
+                     .arg(preferences->logged())
+                     .arg(preferences->getSession().isEmpty())
+                     .arg(QVariant::fromValue(AppState::instance()->getAppState()).toString())
+                     .toUtf8()
+                     .constData());
+
     // Reset fields that will be initialized again upon login
     downloadQueue.clear();
     mRootNode.reset();
     mRubbishNode.reset();
     mVaultNode.reset();
-    if(megaApi->isLoggedIn())
+    if (megaApi->isLoggedIn())
     {
+        MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                     "Logout diagnostics: unlink() requests megaApi->logout().");
         megaApi->logout(true, nullptr);
+    }
+    else if (preferences->logged())
+    {
+        // If the SDK is already logged out, there may be no further TYPE_LOGOUT callback to
+        // clear the current account context in Preferences.
+        MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
+                     "Logout diagnostics: unlink() called while SDK is already logged out. "
+                     "Clearing stale account settings immediately.");
+        preferences->unlink();
     }
     megaApiFolders->setAccountAuth(nullptr);
     DialogOpener::closeAllDialogs();
@@ -3206,8 +3317,18 @@ void MegaApplication::unlink(bool keepLogs)
     // When unlinking to solve a sdk fatal issue, change back to nominal after unlink.
     if (AppState::instance()->getAppState() == AppState::FATAL_ERROR)
     {
+        MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                     "Logout diagnostics: unlink() moves AppState from FATAL_ERROR to NOMINAL.");
         emit requestAppState(AppState::NOMINAL);
     }
+
+    MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                 QString::fromUtf8(
+                     "Logout diagnostics: unlink() finished. preferencesLogged=%1 sessionEmpty=%2")
+                     .arg(preferences->logged())
+                     .arg(preferences->getSession().isEmpty())
+                     .toUtf8()
+                     .constData());
 }
 
 void MegaApplication::cleanLocalCaches(bool all)
