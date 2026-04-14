@@ -337,8 +337,10 @@ void UpdateTask::checkForUpdates()
     string appData = appDataFolder;
     string updateFile = appData.append(UPDATE_FILENAME);
 
+#if defined(__APPLE__)
     const auto routing =
         MacUpdateRouting::selectUpdateRouting(MacUpdateRouting::runtimeArchitecture());
+#endif
     string updateURL =
 #ifdef _WIN32
         UPDATE_CHECK_URL;
@@ -349,7 +351,7 @@ void UpdateTask::checkForUpdates()
     {
         updateURL = getenv("MEGA_UPDATE_CHECK_URL");
     }
-#ifndef _WIN32
+#if defined(__APPLE__)
     else
     {
         const bool isFallback =
