@@ -258,6 +258,9 @@ void uninstall()
         }
     }
 
+    // Close preferences to unlock cfg file
+    preferences->sync();
+
     QDir dir(MegaApplication::applicationDataPath());
     dir.removeRecursively();
     Platform::getInstance()->uninstall();
