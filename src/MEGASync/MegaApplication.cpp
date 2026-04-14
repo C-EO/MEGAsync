@@ -327,6 +327,7 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     mMaxMemoryUsage = 0;
     nodescurrent = false;
     getUserDataRequestReady = false;
+    mPendingGetUserDataRequests = 0;
     storageState = MegaApi::STORAGE_STATE_UNKNOWN;
     appliedStorageState = MegaApi::STORAGE_STATE_UNKNOWN;
     transferOverQuotaWaitTimeExpiredReceived = false;
@@ -1025,6 +1026,7 @@ void MegaApplication::start()
     paused = false;
     nodescurrent = false;
     getUserDataRequestReady = false;
+    mPendingGetUserDataRequests = 0;
     storageState = MegaApi::STORAGE_STATE_UNKNOWN;
     appliedStorageState = MegaApi::STORAGE_STATE_UNKNOWN;
     receivedStorageSum = 0;
@@ -1518,6 +1520,8 @@ void MegaApplication::onFetchNodesFinished()
 
 void MegaApplication::onLogout()
 {
+    mPendingGetUserDataRequests = 0;
+
     MegaApi::log(
         MegaApi::LOG_LEVEL_INFO,
         QString::fromUtf8("Logout diagnostics: onLogout() entered. logged=%1 sessionEmpty=%2")
@@ -2278,7 +2282,16 @@ void MegaApplication::periodicTasks()
                         });
                 });
         }
-        requestUserDiscounts();
+        if (!hasPendingGetUserDataRequest())
+        {
+            requestUserDiscounts();
+        }
+        else
+        {
+            MegaApi::log(
+                MegaApi::LOG_LEVEL_DEBUG,
+                "Skipping periodic getUserData request because another one is still pending");
+        }
         onGlobalSyncStateChanged(megaApi);
     }
 
@@ -6406,6 +6419,19 @@ void MegaApplication::onEvent(MegaApi*, MegaEvent* event)
     }
 }
 
+void MegaApplication::onRequestStart(MegaApi*, MegaRequest* request)
+{
+    if (request->getType() == MegaRequest::TYPE_GET_USER_DATA)
+    {
+        ++mPendingGetUserDataRequests;
+    }
+}
+
+bool MegaApplication::hasPendingGetUserDataRequest() const
+{
+    return mPendingGetUserDataRequests > 0;
+}
+
 //Called when a request has finished
 void MegaApplication::onRequestFinish(MegaApi*, MegaRequest *request, MegaError* e)
 {
@@ -6615,6 +6641,11 @@ void MegaApplication::onRequestFinish(MegaApi*, MegaRequest *request, MegaError*
     }
     case MegaRequest::TYPE_GET_USER_DATA:
     {
+        if (mPendingGetUserDataRequests > 0)
+        {
+            --mPendingGetUserDataRequests;
+        }
+
         if (e->getErrorCode() == MegaError::API_OK)
         {
             getUserDataRequestReady = true;
