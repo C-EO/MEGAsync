@@ -106,6 +106,7 @@ public:
     QString getFormattedDateByCurrentLanguage(const QDateTime& datetime, QLocale::FormatType format = QLocale::FormatType::LongFormat) const;
 
     void onEvent(mega::MegaApi *api, mega::MegaEvent *event) override;
+    void onRequestStart(mega::MegaApi* api, mega::MegaRequest* request) override;
     void onRequestFinish(mega::MegaApi* api, mega::MegaRequest *request, mega::MegaError* e) override;
     void onTransferStart(mega::MegaApi *api, mega::MegaTransfer *transfer) override;
     void onTransferFinish(mega::MegaApi* api, mega::MegaTransfer *transfer, mega::MegaError* e) override;
@@ -321,6 +322,9 @@ public slots:
     void requestFetchSetFromLink(const QString& link);
     void onAppStateChanged(AppState::AppStates, AppState::AppStates);
 
+private:
+    bool hasPendingGetUserDataRequest() const;
+
 private slots:
     void openFolderPathFromExternal(QString path);
     void registerUserActivity();
@@ -434,6 +438,7 @@ protected:
     int storageState;
     int appliedStorageState;
     bool getUserDataRequestReady;
+    int mPendingGetUserDataRequests;
     long long receivedStorageSum;
     unsigned long long mMaxMemoryUsage;
     int exportOps;
