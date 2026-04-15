@@ -340,9 +340,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>Backup operation failed</translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>백업</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Error adding backup</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -355,6 +365,11 @@
         <translation>백업 중지 중 오류</translation>
     </message>
     <message>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>Operation on backup ‘%1’ failed. Reason: %2</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
         <translation>“%1” 폴더를 동기화할 수 없습니다. 사유: %2</translation>
@@ -362,12 +377,17 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>일부 폴더가 백업 되지 않았습니다. 자세한 정보는 빨간 아이콘에 커서를 올려놓으세요.</translation>
+        <translation>일부 폴더가 백업 되지 않았습니다. 자세한 정보는 경고 아이콘에 커서를 올려놓으세요.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
         <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
         <translation>동기화 불가</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>Your backup can’t be removed. Reason: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -728,7 +748,7 @@
     <message>
         <source>Privacy Policy</source>
         <translatorcomment>Label for Privacy Policy link.</translatorcomment>
-        <translation>개인정보 처리 방침</translation>
+        <translation>개인정보 처리방침</translation>
     </message>
     <message>
         <source>Terms of Service</source>
@@ -948,7 +968,7 @@
     <message>
         <source>Contact support</source>
         <translatorcomment>Button label for system notification sent when sending crash report fails.CON-1280</translatorcomment>
-        <translation>지원에 연락</translation>
+        <translation>고객센터에 연락</translation>
     </message>
     <message>
         <source>Error report sent</source>
@@ -1625,7 +1645,7 @@
     <message>
         <source>Extensions</source>
         <translatorcomment>Drop down entry for specifying file extension as the exclusion rule target.SAT-449</translatorcomment>
-        <translation>확장 프로그램</translation>
+        <translation>확장</translation>
     </message>
     <message>
         <source>File and folder name</source>
@@ -3588,7 +3608,7 @@ https://mega.co.nz/#sync</source>
     <message>
         <source>Contact support</source>
         <translatorcomment>Label of the button used to contact support for assistance when a fatal error occurs - CON-844</translatorcomment>
-        <translation>지원 부서에 연락</translation>
+        <translation>고객센터에 연락</translation>
     </message>
     <message>
         <source>Critical system files which are required by this app are unable to be reached. This may be the permissions of the folder the system files are in. You can also try restarting the app to see if this resolves the issue. If the folder permissions have been checked and the app restarted, please [A]contact support[/A].</source>
@@ -5265,17 +5285,12 @@ Enter a different name</source>
     <message>
         <source>%1 of storage</source>
         <translatorcomment>Description of available storage for the promoted plan.snc.6228</translatorcomment>
-        <translation>%1의 저장소</translation>
+        <translation>저장소 %1</translation>
     </message>
     <message>
         <source>%1 of transfer</source>
         <translatorcomment>Description of available transfer quota for the promoted plan.snc.6228</translatorcomment>
-        <translation>%1의 전송량</translation>
-    </message>
-    <message>
-        <source>%1 per month, charged yearly</source>
-        <translatorcomment>Description for the dicount, variable is for currency.snc.6228</translatorcomment>
-        <translation>월 %1, 매년 결제</translation>
+        <translation>전송량 %1</translation>
     </message>
     <message numerus="yes">
         <source>%n day</source>
@@ -5302,11 +5317,6 @@ Enter a different name</source>
         <source>*%1</source>
         <translatorcomment>Please keep the &apos;*&apos; symbol. Disclaimer for the promoted price. %1 is the &quot;Tax may apply.&quot; string if local currency is € and &quot;Estimated price in your local currency. Tax may apply.&quot; if not; or &quot;Estimated price in your local currency.&quot; if there is no tax information and the billing price is not Euro. SNC-6271</translatorcomment>
         <translation>*%1</translation>
-    </message>
-    <message>
-        <source>*Tax may apply.</source>
-        <translatorcomment>disclaimer that promoted prices are tax exclusive .snc.6228</translatorcomment>
-        <translation>*세금이 추가될 수 있습니다.</translation>
     </message>
     <message>
         <source>Estimated price in your local currency.</source>
@@ -6138,6 +6148,16 @@ Enter a different name</source>
 </context>
 <context>
     <name>Preferences</name>
+    <message>
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.</translation>
+    </message>
     <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
 - Minor bug fixes and performance improvements.
@@ -7048,7 +7068,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Exporting the master key and keeping it in a secure location enables you to set a new password without data loss.</source>
         <translatorcomment>Label to inform the user to keep the master key in a secure location.</translatorcomment>
-        <translation>복구 키를 내보내고 안전한 장소에 보관하는 것은 데이터 손실 없이 새 비밀번호를 설정할 수 있도록 해줍니다.</translation>
+        <translation>복구 키를 내보내고 안전한 장소에 보관하는 것은 데이터 손실 없이 새 암호를 설정할 수 있도록 해줍니다.</translation>
     </message>
     <message>
         <source>File versions</source>
@@ -8265,6 +8285,21 @@ Please, refresh the list.</source>
         <translation>백업을 만들 수 없습니다. 다시 시도하시고 문제가 계속 되면, [A]지원[/A]에 연락하세요.</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation>Unable to create sync as selected folder is not valid. Try again.</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Unable to create sync. For further information, contact [A]Support[/A].</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>이 폴더에 백업된 폴더가 포함되어 있기 때문에 백업할 수 없습니다.</translation>
@@ -8546,6 +8581,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>백업 중지 중 오류</translation>
     </message>
     <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Error removing sync</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>“%1” 폴더를 동기화할 수 없습니다. 사유: %2</translation>
@@ -8553,7 +8593,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>일부 폴더가 동기화되지 않았습니다. 자세한 정보는, 빨간 아이콘에 커서를 올려놓으세요.</translation>
+        <translation>일부 폴더가 동기화되지 않았습니다. 자세한 정보는 경고 아이콘에 커서를 올려놓으세요.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
@@ -9685,7 +9725,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>%1/month, charged yearly</source>
         <translatorcomment>Text explaining the price shown is charged yearly, the placeholder %1 is for the currency name (EUR/month charged yearly).SNC-6228</translatorcomment>
-        <translation>월 %1, 매년 결제</translation>
+        <translation>월 %1, 연간 청구</translation>
     </message>
     <message>
         <source>(%1 per month)</source>
@@ -9775,7 +9815,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>per month, charged yearly</source>
         <translatorcomment>Text explaining the price shown is monthly price charged yearly.SNC-5636</translatorcomment>
-        <translation>월 요금, 매년 청구됨</translation>
+        <translation>월 요금, 연간 결제</translation>
     </message>
 </context>
 <context>
