@@ -340,9 +340,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>Backup operation failed</translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>Yedeklemeler</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Error adding backup</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -355,6 +365,11 @@
         <translation>Yedekleme durdurulurken hata oluştu</translation>
     </message>
     <message>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>Operation on backup ‘%1’ failed. Reason: %2</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
         <translation>“%1” klasörünüz senkronize edilemiyor. Sebebi: %2</translation>
@@ -362,12 +377,17 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>Bazı klasörler yedeklenmedi. Daha fazla bilgi için kırmızı simgenin üzerine gelin.</translation>
+        <translation>Bazı klasörler yedeklenmedi. Daha fazla bilgi için uyarı simgesinin üzerine gelin.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
         <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
         <translation>Senkronize edilemiyor</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>Your backup can’t be removed. Reason: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -1438,7 +1458,7 @@
         <source>Apply to all %1 duplicates</source>
         <translatorcomment>Checkbox text to apply the action to all the following conflicts. %1 is the number of conflicts</translatorcomment>
         <translation>
-            <numerusform>Diğer yinelenene uygula</numerusform>
+            <numerusform>Diğer aynı adlı öğeye uygula</numerusform>
         </translation>
     </message>
     <message>
@@ -4485,17 +4505,17 @@ Görünümü yenileyin.</translation>
     <message>
         <source>Remove duplicates</source>
         <translatorcomment>Button to solve a name conflict sync stall by removing duplicated items.SNC-2565</translatorcomment>
-        <translation>Yinelenenleri sil</translation>
+        <translation>Aynı adlı öğeleri sil</translation>
     </message>
     <message>
         <source>Remove duplicates and rename the rest</source>
         <translatorcomment>Merge folder action description for a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Yinelenenleri silin ve geri kalanını yeniden adlandırın</translation>
+        <translation>Aynı ada sahip olan öğeleri sil ve kalanları yeniden adlandır</translation>
     </message>
     <message>
         <source>Remove duplicates, merge folders and rename the rest</source>
         <translatorcomment>Merge folder action description for a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Yinelenenleri silin, klasörleri birleştirin ve gerisini yeniden adlandırın</translation>
+        <translation>Aynı ada sahip olan öğeleri sil, klasörleri birleştir ve kalanları yeniden adlandır</translation>
     </message>
     <message>
         <source>Rename all items</source>
@@ -4528,23 +4548,23 @@ This may be due to syncing to case insensitive local filesystems, or the effects
     <message>
         <source>This action will delete the duplicate files and rename the remaining items in case of name conflict (adding a suffix like (1)).</source>
         <translatorcomment>Info text for confirmation message for picked solution in a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Bu işlem, yinelenen dosyaları silecek ve kalan öğeleri (1) gibi bir son ek ekleyerek yeniden adlandıracaktır.</translation>
+        <translation>Bu işlem aynı ada sahip olan dosyaları silecek ve kalan öğeleri (1) gibi bir son ek ekleyerek yeniden adlandıracaktır.</translation>
     </message>
     <message>
         <source>This action will delete the duplicate files, merge all folders into a single one and rename the remaining items in case of name conflict (adding a suffix like (1)).</source>
         <translatorcomment>Info text for confirmation message for picked solution in a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Bu işlem, yinelenen dosyaları silecek, tüm klasörleri tek bir klasörde birleştirecek ve ad çakışması durumunda kalan öğeleri (1) gibi bir son ek ekleyerek yeniden adlandıracaktır.</translation>
+        <translation>Bu işlem aynı ada sahip olan dosyaları silecek, tüm klasörleri tek bir klasörde birleştirecek ve isim çakışması durumunda kalan öğeleri (1) gibi bir son ek ekleyerek yeniden adlandıracaktır.</translation>
     </message>
     <message>
         <source>This action will delete the duplicate files.</source>
         <translatorcomment>Info text for confirmation message of remove duplicates action in a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Bu işlem yinelenen dosyaları silecektir.</translation>
+        <translation>Bu işlem aynı ada sahip olan dosyaları silecektir.</translation>
     </message>
     <message>
         <source>This action will merge all folders into a single one. We will skip duplicated files
 and rename the files with the same name but different content (adding a suffix like (1))</source>
         <translatorcomment>Info text for confirmation message of merge folder action in a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Bu işlem tüm klasörleri tek bir klasörde birleştirir. Yinelenen dosyalar atlanacak ve aynı ada ancak farklı içeriğe sahip dosyalar (1) gibi bir son ek eklenerek yeniden adlandırılacaktır.</translation>
+        <translation>Bu işlem tüm klasörleri tek bir klasörde birleştirecektir. Aynı ada sahip olan dosyalar atlanacak ayrıca aynı isme sahip ancak içeriği farklı olan dosyalar ise (1) gibi bir son ek eklenerek yeniden adlandırılacaktır.</translation>
     </message>
     <message>
         <source>This action will rename the conflicted items (adding a suffix like (1)).</source>
@@ -4562,7 +4582,7 @@ and rename the files with the same name but different content (adding a suffix l
     <message>
         <source>Duplicated</source>
         <translatorcomment>Title for list showing all dublicated items in a conflicted name sync stall.SNC-2565</translatorcomment>
-        <translation>Yinelenen öğeler</translation>
+        <translation>Aynı adlı öğeler</translation>
     </message>
 </context>
 <context>
@@ -5272,11 +5292,6 @@ Farklı bir ad girin.</translation>
         <translatorcomment>Description of available transfer quota for the promoted plan.snc.6228</translatorcomment>
         <translation>%1 aktarım</translation>
     </message>
-    <message>
-        <source>%1 per month, charged yearly</source>
-        <translatorcomment>Description for the dicount, variable is for currency.snc.6228</translatorcomment>
-        <translation>Aylık %1, yıllık olarak faturalandırılır</translation>
-    </message>
     <message numerus="yes">
         <source>%n day</source>
         <translatorcomment>Number of remaining days before the offer expire.variable is for days minutes snc.6228</translatorcomment>
@@ -5302,11 +5317,6 @@ Farklı bir ad girin.</translation>
         <source>*%1</source>
         <translatorcomment>Please keep the &apos;*&apos; symbol. Disclaimer for the promoted price. %1 is the &quot;Tax may apply.&quot; string if local currency is € and &quot;Estimated price in your local currency. Tax may apply.&quot; if not; or &quot;Estimated price in your local currency.&quot; if there is no tax information and the billing price is not Euro. SNC-6271</translatorcomment>
         <translation>*%1</translation>
-    </message>
-    <message>
-        <source>*Tax may apply.</source>
-        <translatorcomment>disclaimer that promoted prices are tax exclusive .snc.6228</translatorcomment>
-        <translation>*Vergi uygulanabilir.</translation>
     </message>
     <message>
         <source>Estimated price in your local currency.</source>
@@ -6138,6 +6148,16 @@ Farklı bir ad girin.</translation>
 </context>
 <context>
     <name>Preferences</name>
+    <message>
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.</translation>
+    </message>
     <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
 - Minor bug fixes and performance improvements.
@@ -8265,6 +8285,21 @@ Listeyi yenileyin.</translation>
         <translation>Yedekleme oluşturulamıyor. Tekrar deneyin ve sorun devam ederse [A]Destek[/A] ile iletişime geçin.</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation>Unable to create sync as selected folder is not valid. Try again.</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Unable to create sync. For further information, contact [A]Support[/A].</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>Yedeklenmiş klasörler içerdiği için bu klasörü yedekleyemezsiniz.</translation>
@@ -8546,6 +8581,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Yedekleme durdurulurken hata oluştu</translation>
     </message>
     <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Error removing sync</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>“%1” adlı klasörünüz senkronize edilemiyor. Sebebi: %2</translation>
@@ -8553,7 +8593,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Bazı klasörler senkronize edilmedi. Daha fazla bilgi için kırmızı simgenin üzerine gelin.</translation>
+        <translation>Bazı klasörler senkronize edilemedi. Daha fazla bilgi için uyarı simgesinin üzerine gelin.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>

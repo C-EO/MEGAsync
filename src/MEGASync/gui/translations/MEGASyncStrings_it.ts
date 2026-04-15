@@ -6,12 +6,12 @@
     <message>
         <source>Account usage details</source>
         <translatorcomment>Title of the dialog that displays account usage details for the actual logged user.</translatorcomment>
-        <translation>Dettagli di utilizzo del conto</translation>
+        <translation>Dettagli di utilizzo dell&apos;account</translation>
     </message>
     <message>
         <source>Available storage</source>
         <translatorcomment>Label for Available storage space used. Maintain capital letter in first word.(Max 18 characters)</translatorcomment>
-        <translation>Spazio disponibile</translation>
+        <translation>Spazio di archiviazione disponibile</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -343,9 +343,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>Backup operation failed</translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>Backup</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Error adding backup</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -358,6 +368,11 @@
         <translation>Errore durante la rimozione del backup</translation>
     </message>
     <message>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>Operation on backup ‘%1’ failed. Reason: %2</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
         <translation>Impossibile sincronizzare la tua cartella “%1”. Motivo: %2</translation>
@@ -365,12 +380,17 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>Alcune cartelle non hanno effettuato il backup. Per maggiori informazioni, vai sull’icona rossa.</translation>
+        <translation>Alcune cartelle non hanno effettuato il backup. Per maggiori informazioni, vai sull’icona di errore.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
         <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
         <translation>Impossibile sincronizzare</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>Your backup can’t be removed. Reason: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -890,7 +910,7 @@
     <message>
         <source>The file %1 is unavailable because it was reported to contain content in breach of [A]MEGA’s Terms of Service[/A].</source>
         <translatorcomment>Title for the header widget sync stall that occurs when a file is blocked by ToS infringement. %1 is the file name. [A] is for links.SAT-1209</translatorcomment>
-        <translation>Il file %1 non è disponibile perché è stato segnalato per avere contenuti in violazione dei [A]Termini di servizio di MEGA[/A]. </translation>
+        <translation>Il file %1 non è disponibile perché è stato segnalato per avere contenuti in violazione dei [A]Termini di servizio di MEGA[/A].</translation>
     </message>
 </context>
 <context>
@@ -1153,7 +1173,7 @@
     <message>
         <source>Please resolve your payment issue to avoid suspension of your account.</source>
         <translatorcomment>Notification text to inform the user that there is a payment issue with the business accounts that needs to be solved to continue and avoid suspension.</translatorcomment>
-        <translation>Risolvi il problema con il tuo pagamento il prima possibile per evitare la sospensione del tuo account Business.</translation>
+        <translation>Risolvi il problema con il tuo pagamento il prima possibile per evitare la sospensione del tuo account Business</translation>
     </message>
     <message>
         <source>Pro Flexi Account deactivated</source>
@@ -1446,12 +1466,12 @@
     <message>
         <source>A file named [A] already exists at this destination</source>
         <translatorcomment>Dialog text shown when a file with the same name has been found on the cloud. [A] file name</translatorcomment>
-        <translation>Un file di nome [A] già esiste in questa destinazione</translation>
+        <translation>Un file di nome [A] già esiste in questa destinazione.</translation>
     </message>
     <message>
         <source>A folder named [A] already exists at this destination</source>
         <translatorcomment>Dialog text shown when a folder with the same name has been found on the cloud. [A] folder name</translatorcomment>
-        <translation>Una cartella di nome [A] già esiste in questa destinazione</translation>
+        <translation>Una cartella di nome [A] già esiste in questa destinazione.</translation>
     </message>
     <message numerus="yes">
         <source>Apply to all %1 duplicates</source>
@@ -2262,7 +2282,7 @@ Controlla la tua casella di posta elettronica per istruzioni su come sbloccare i
     <message>
         <source>Unknown</source>
         <translatorcomment>The incoming shared folder access is unknown. CON-1266</translatorcomment>
-        <translation>Unknown</translation>
+        <translation>Sconosciuto</translation>
     </message>
 </context>
 <context>
@@ -2474,7 +2494,7 @@ Controlla la tua casella di posta elettronica per istruzioni su come sbloccare i
         <source>We have contacted you by email to [A] on [B] but you still have %n file taking up [D] in your MEGA account, which requires you to have [E].</source>
         <translatorcomment>Informative label about account status regarding over quota storage. Placeholders will be replaced: [A] - user email, [B] - localized date list of emails sent to inform the user about the situation,  %n - amount of files in the current account, [D] - amount of storage used and [E] - min PRO plan needed to fix the situation.</translatorcomment>
         <translation>
-            <numerusform>Ti abbiamo contattato per email su [A] il [B] ma hai ancora %n file che occupano [D] nel tuo account MEGA, che ti obbliga ad avere [E].</numerusform>
+            <numerusform>Ti abbiamo contattato per email su [A] il [B] ma hai ancora %n file che occupa [D] nel tuo account MEGA, che ti obbliga ad avere [E].</numerusform>
             <numerusform>Ti abbiamo contattato per email su [A] il [B] ma hai ancora %n file che occupano [D] nel tuo account MEGA, che ti obbliga ad avere [E].</numerusform>
         </translation>
     </message>
@@ -3065,7 +3085,7 @@ Attendi il completamento dei caricamenti.</translation>
     <message>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
-        <translation>Hai effettuato la disconnessione di questo dispositivo da un’altra posizione.</translation>
+        <translation>Hai effettuato la disconnessione di questo dispositivo da un’altra posizione</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -4069,7 +4089,7 @@ Non puoi riottenere accesso ai tuoi dati archiviati o registrare un nuovo accoun
     <message>
         <source>Unable to create initial ignore file.</source>
         <translatorcomment>SDK error to inform the user that the ignore file couldn´t be created. CON-537</translatorcomment>
-        <translation>Impossibile creare un file .megaignore per questa sincronizzazione o per questo backup.</translation>
+        <translation>Impossibile creare un file .megaignore per questa sincronizzazione o per questo backup</translation>
     </message>
     <message>
         <source>Unable to open state cache database.</source>
@@ -4089,7 +4109,7 @@ Non puoi riottenere accesso ai tuoi dati archiviati o registrare un nuovo accoun
     <message>
         <source>Unable to retrieve the ID of current device</source>
         <translatorcomment>SDK error indicating that it can´t retrieve the ID of the device. CON-537</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile creare un backup poiché il dispositivo da cui effettui il backup non ha un nome. Assegna un nome al tuo dispositivo e riprova. Se il problema persiste, contatta l’assistenza.</translation>
     </message>
     <message>
         <source>Unable to write sync config to disk.</source>
@@ -5307,7 +5327,7 @@ Inserisci un nome differente.</translation>
     <message>
         <source>%1 %2</source>
         <translatorcomment>Disclaimer for the promoted price. %1 is the &quot;Estimated price in your local currency.&quot; string. %2 is the &quot;Tax may apply.&quot; string.SNC-6271</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2</translation>
     </message>
     <message>
         <source>%1 of storage</source>
@@ -5318,11 +5338,6 @@ Inserisci un nome differente.</translation>
         <source>%1 of transfer</source>
         <translatorcomment>Description of available transfer quota for the promoted plan.snc.6228</translatorcomment>
         <translation>%1 di banda di trasferimento</translation>
-    </message>
-    <message>
-        <source>%1 per month, charged yearly</source>
-        <translatorcomment>Description for the dicount, variable is for currency.snc.6228</translatorcomment>
-        <translation>%1 al mese, fatturato annualmente</translation>
     </message>
     <message numerus="yes">
         <source>%n day</source>
@@ -5350,18 +5365,13 @@ Inserisci un nome differente.</translation>
     </message>
     <message>
         <source>*%1</source>
-        <translatorcomment>Please keep the &apos;*&apos; symbol. Disclaimer for the promoted price. %1 is the &quot;Tax may apply.&quot; string if local currency is â‚¬ and &quot;Estimated price in your local currency. Tax may apply.&quot; if not; or &quot;Estimated price in your local currency.&quot; if there is no tax information and the billing price is not Euro. SNC-6271</translatorcomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*Tax may apply.</source>
-        <translatorcomment>disclaimer that promoted prices are tax exclusive .snc.6228</translatorcomment>
-        <translation>*Potrebbero essere applicate delle tasse.</translation>
+        <translatorcomment>Please keep the &apos;*&apos; symbol. Disclaimer for the promoted price. %1 is the &quot;Tax may apply.&quot; string if local currency is € and &quot;Estimated price in your local currency. Tax may apply.&quot; if not; or &quot;Estimated price in your local currency.&quot; if there is no tax information and the billing price is not Euro. SNC-6271</translatorcomment>
+        <translation>*%1</translation>
     </message>
     <message>
         <source>Estimated price in your local currency.</source>
         <translatorcomment>Disclaimer that promoted prices are an estimated price in the user&apos;s local currency .SNC-6271</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Prezzo stimato nella tua valuta locale.</translation>
     </message>
     <message>
         <source>Grab Deal</source>
@@ -5396,7 +5406,7 @@ Inserisci un nome differente.</translation>
     <message>
         <source>Tax may apply.</source>
         <translatorcomment>Disclaimer that promoted prices are tax exclusive .SNC-6271</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Potrebbero essere applicate delle tasse.</translation>
     </message>
     <message numerus="yes">
         <source>[B]%1% off[/B] for %n month</source>
@@ -6191,11 +6201,23 @@ Inserisci un nome differente.</translation>
 <context>
     <name>Preferences</name>
     <message>
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.</translation>
+    </message>
+    <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
 - Minor bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.2.0. SNC-6221</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>- Migliorata l&apos;affidabilità dei driver grafici problematici su Windows
+- Correzioni minori di bug e miglioramenti delle prestazioni
+</translation>
     </message>
 </context>
 <context>
@@ -6281,7 +6303,7 @@ Inserisci un nome differente.</translation>
     <message>
         <source>Your system doesn’t have a proxy set. To connect, set a valid http_proxy or https_proxy value in your environment.</source>
         <translatorcomment>Error banner shown when proxy settings is not found in the environment . SNC-5411</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Nessun proxy rilevato. Per connetterti, imposta un valore valido di http_proxy o https_proxy nel tuo ambiente.</translation>
     </message>
 </context>
 <context>
@@ -6577,7 +6599,7 @@ Sei sicuro di volerlo eliminare lo stesso?</translation>
     <message>
         <source>Show </source>
         <translatorcomment>Contextual menu from file list headers that allow to enable or disable diferent columns (size, type, data modified)</translatorcomment>
-        <translation>Mostra</translation>
+        <translation>Mostra </translation>
     </message>
     <message>
         <source>Show &amp;hidden files</source>
@@ -6592,7 +6614,7 @@ Sei sicuro di volerlo eliminare lo stesso?</translation>
     <message>
         <source>Unknown</source>
         <translatorcomment>Label used in Qt file/folder choosing dialog. Not being used at the moment.</translatorcomment>
-        <translation>Unknown</translation>
+        <translation>Sconosciuto</translation>
     </message>
 </context>
 <context>
@@ -6740,22 +6762,22 @@ Sei sicuro di volerlo eliminare lo stesso?</translation>
     <message>
         <source>Backup folder already exists on destination. Choose another.</source>
         <translatorcomment>Error hint to inform the user about the situation : the destination folder already contains a folder with the backup name, can&apos;t move it there! SNC-6067 </translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>C&apos;è già una cartella con questo nome in quella posizione, scegli un&apos;altra posizione</translation>
     </message>
     <message>
         <source>Destination folder doesn’t exist. Choose another.</source>
         <translatorcomment>Error hint to inform the user about the situation : the destination folder doesn&apos;t exist, can&apos;t move it there! SNC-6155 </translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>La cartella di destinazione non esiste. Scegli un&apos;altra cartella.</translation>
     </message>
     <message>
         <source>Error moving or removing remote backup folder</source>
         <translatorcomment>Title of the dialog shown when the deletion or move of the remote backup folder failed.SNC-4208, SNC-6067</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante lo spostamento o l&apos;eliminazione della cartella di backup in MEGA</translation>
     </message>
     <message>
         <source>Failed to move or remove the remote backup folder. Reason: %1</source>
         <translatorcomment>Error text when the deletion or move of the remote backup folder failed.SNC-4208, SNC-6067</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile spostare o eliminare la cartella di backup in MEGA. Motivo: %1</translation>
     </message>
 </context>
 <context>
@@ -8298,7 +8320,7 @@ Aggiorna la lista.</translation>
     <message>
         <source>Invalid remote path.</source>
         <translatorcomment>The selected remote path for the sync creation is invalid</translatorcomment>
-        <translation>Questa cartella MEGA non può essere sincronizzata.</translation>
+        <translation>Questa cartella MEGA non può essere sincronizzata. </translation>
     </message>
     <message>
         <source>This folder is already being synced.</source>
@@ -8331,6 +8353,21 @@ Aggiorna la lista.</translation>
         <translation>Impossibile creare il backup. Riprova, e se il problema persiste contatta il [A]Supporto[/A].</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation>Unable to create sync as selected folder is not valid. Try again.</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Unable to create sync. For further information, contact [A]Support[/A].</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>Non puoi effettuare il backup di questa cartella perché contiene cartelle di cui viene effettuato il backup.</translation>
@@ -8353,7 +8390,7 @@ Aggiorna la lista.</translation>
     <message>
         <source>You don&apos;t have enough permissions for this remote folder.</source>
         <translatorcomment>Warning message indicating that a folder can´t be synced as it the remote folder is an incoming share and the current user doesn´t have enought permisions</translatorcomment>
-        <translation>Non hai i permessi di pieno accesso a questa cartella condivisa e non puoi sincronizzarla.</translation>
+        <translation>Non hai i permessi di pieno accesso a questa cartella condivisa e non puoi sincronizzarla. </translation>
     </message>
 </context>
 <context>
@@ -8588,7 +8625,7 @@ Se il problema persiste, contatta support@mega.io.</translation>
         <source>Invalid folder for synchronization.
 Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apos; or &apos;:&apos; in your folder names.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
-        <translation>Impossibile sincronizzare la cartella. Assicurati che non ci sia  “\”, “/” o “:” nel nome.</translation>
+        <translation>Impossibile sincronizzare la cartella. Assicurati che non ci sia “\”, “/” o “:” nel nome della cartella.</translation>
     </message>
     <message>
         <source>You need Full access right to be able to sync the selected folder.</source>
@@ -8612,6 +8649,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Errore durante la rimozione del backup</translation>
     </message>
     <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Error removing sync</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>Impossibile sincronizzare la tua cartella “%1”. Motivo: %2</translation>
@@ -8619,7 +8661,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Alcune cartelle non sono state sincronizzate. Per maggiori informazioni, vai sull’icona rossa.</translation>
+        <translation>Alcune cartelle non sono state sincronizzate. Per maggiori informazioni, vai sull’icona di errore.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
@@ -8796,8 +8838,8 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>Maximum length is %n characters.</source>
         <translatorcomment>Label to indicate the maximum number of characters in the text area. The %n placeholder indicates the number of characters, please keep it. CON-942</translatorcomment>
         <translation>
-            <numerusform>La lunghezza massima è di %n carattere.</numerusform>
-            <numerusform>La lunghezza massima è di %n caratteri.</numerusform>
+            <numerusform>La lunghezza massima è di %n carattere</numerusform>
+            <numerusform>La lunghezza massima è di %n caratteri</numerusform>
         </translation>
     </message>
 </context>
@@ -9131,7 +9173,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>%n item couldn’t be uploaded to %1.</source>
         <translatorcomment>Body text of a system notification shown when %n items could not be uploaded to %1 destination. %n will be replaced with the number of items and %1 with the remote path. Singular version will not be used, but we include it as a reference. CON-223</translatorcomment>
         <translation>
-            <numerusform>Impossibile caricare %n oggetti in %1.</numerusform>
+            <numerusform>Impossibile caricare %n oggetto in %1.</numerusform>
             <numerusform>Impossibile caricare %n oggetti in %1.</numerusform>
         </translation>
     </message>
@@ -9388,7 +9430,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Cancel all downloads</source>
         <translatorcomment>Tooltip for cancel button when the user is in the downloads category</translatorcomment>
-        <translation>Annulla tutti i trasferimenti in Download</translation>
+        <translation>Annulla tutti i trasferimenti in Download </translation>
     </message>
     <message>
         <source>Cancel all failed</source>
@@ -9762,12 +9804,12 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>%1/month</source>
         <translatorcomment>Text to indicate the monthly price of the plan including the currency (e.g. NZD per month). The placeholder %1 shall be replaced by the currency symbol in text format.SNC-6228</translatorcomment>
-        <translation>%1/mese</translation>
+        <translation>%1 al mese</translation>
     </message>
     <message>
         <source>%1/month, charged yearly</source>
         <translatorcomment>Text explaining the price shown is charged yearly, the placeholder %1 is for the currency name (EUR/month charged yearly).SNC-6228</translatorcomment>
-        <translation>%1/mese, fatturato annualmente</translation>
+        <translation>%1 al mese, fatturato annualmente</translation>
     </message>
     <message>
         <source>(%1 per month)</source>
@@ -9787,12 +9829,12 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Charged monthly</source>
         <translatorcomment>Button to display plans with monthly subscription.SNC-5636</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Fatturato mensilmente</translation>
     </message>
     <message>
         <source>Charged yearly</source>
         <translatorcomment>Button to display plans with yearly subscription.SNC-5636</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Fatturato annualmente</translation>
     </message>
     <message>
         <source>Current plan</source>
@@ -9857,7 +9899,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>per month, charged yearly</source>
         <translatorcomment>Text explaining the price shown is monthly price charged yearly.SNC-5636</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>al mese, fatturato annualmente</translation>
     </message>
 </context>
 <context>
@@ -9874,8 +9916,8 @@ Please delete the folder sync from settings to cancel them.</source>
         <source>%1 (%2%) of %3 used</source>
         <translatorcomment>Label to indicate the amount and percentage of used and total space available. Keep %1 (%2%) and %3 substitution placeholders because they will be filled with the required amounts of storage space dynamically. SNC-3429</translatorcomment>
         <translation>
-            <numerusform>%1 (%2%) utilizzato su %3 </numerusform>
-            <numerusform>%1 (%2%) utilizzati su %3 </numerusform>
+            <numerusform>%1 (%2%) utilizzato su %3</numerusform>
+            <numerusform>%1 (%2%) utilizzati su %3</numerusform>
         </translation>
     </message>
     <message>
@@ -9977,7 +10019,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Basic</source>
         <translatorcomment>Label to refer to MEGA Basic account type in short form CON-719</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Basic</translation>
     </message>
     <message>
         <source>Business</source>
@@ -9992,7 +10034,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Essential</source>
         <translatorcomment>Label to refer to MEGA Essential account type in short form CON-719</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Essential</translation>
     </message>
     <message>
         <source>Free</source>
@@ -10057,7 +10099,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Starter</source>
         <translatorcomment>Label to refer to MEGA Starter account type in short form CON-719</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Starter</translation>
     </message>
     <message>
         <source>TB</source>
