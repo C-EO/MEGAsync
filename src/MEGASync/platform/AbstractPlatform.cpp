@@ -291,6 +291,9 @@ bool AbstractPlatform::makePubliclyReadable(const QString& /*fileName*/)
     return false;
 }
 
+void AbstractPlatform::updateDisplayVersionAfterAutoUpdate(int /*versionCode*/, bool /*isPublic*/)
+{}
+
 bool AbstractPlatform::validateSystemTrayIntegration()
 {
     return false;

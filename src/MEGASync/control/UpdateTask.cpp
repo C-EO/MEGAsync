@@ -153,6 +153,8 @@ void UpdateTask::finalCleanup()
     //Change the version info to skip checking the same update again.
     QApplication::setApplicationVersion(QString::number(updateVersion));
 
+    Platform::getInstance()->updateDisplayVersionAfterAutoUpdate(updateVersion, isPublic);
+
     //Remove the update folder (new location)
     Utilities::removeRecursively(updateFolder.absolutePath());
 
