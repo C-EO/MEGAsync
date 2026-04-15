@@ -34,6 +34,17 @@
 using std::string;
 using CryptoPP::Integer;
 
+namespace
+{
+
+const char* updateCheckUrlForTrack(const char* track)
+{
+    return strcmp(track, "msyncarm64") == 0 ? "http://g.static.mega.co.nz/eupd/msyncarm64/v.txt" :
+                                              "http://g.static.mega.co.nz/eupd/msyncv2/v.txt";
+}
+
+} // namespace
+
 #ifdef _WIN32
 
 #ifndef PATH_MAX
@@ -326,11 +337,34 @@ void UpdateTask::checkForUpdates()
     string appData = appDataFolder;
     string updateFile = appData.append(UPDATE_FILENAME);
 
-    string updateURL = UPDATE_CHECK_URL;
+#if defined(__APPLE__)
+    const auto routing =
+        MacUpdateRouting::selectUpdateRouting(MacUpdateRouting::runtimeArchitecture());
+#endif
+    string updateURL =
+#ifdef _WIN32
+        UPDATE_CHECK_URL;
+#else
+        updateCheckUrlForTrack(routing.updateTrack);
+#endif
     if (getenv("MEGA_UPDATE_CHECK_URL"))
     {
         updateURL = getenv("MEGA_UPDATE_CHECK_URL");
     }
+#if defined(__APPLE__)
+    else
+    {
+        const bool isFallback =
+            routing.routingCase == MacUpdateRouting::UpdateRoutingCase::UnknownSystemFallback;
+        LOG(isFallback ? LOG_LEVEL_WARNING : LOG_LEVEL_INFO,
+            "macOS updater routing resolved. case=%s system=%s binary=%s translated=%s url=%s",
+            MacUpdateRouting::routingCaseName(routing.routingCase),
+            MacUpdateRouting::architectureName(routing.runtimeArchitecture.systemArchitecture),
+            MacUpdateRouting::architectureName(routing.runtimeArchitecture.binaryArchitecture),
+            routing.runtimeArchitecture.translated ? "true" : "false",
+            updateCheckUrlForTrack(routing.updateTrack));
+    }
+#endif
     if (downloadFile((char *)((updateURL + randomSec).c_str()), updateFile.c_str()))
     {
         FILE * pFile;
