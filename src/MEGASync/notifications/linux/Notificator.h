@@ -9,6 +9,7 @@
 #ifdef USE_DBUS
 #include <QDBusInterface>
 #include <QDBusMessage>
+#include <QHash>
 #endif
 
 class DesktopAppNotification : public DesktopAppNotificationBase
@@ -53,8 +54,10 @@ public:
 private:
     QPointer<QDBusInterface> interface;
     bool dbussSupportsActions;
+    QHash<const QObject*, quint32> mNotificationIds;
 
     void notifyDBus(Class cls, const QString &title, const QString &text, const QIcon &icon, int millisTimeout, const QStringList &actions = QStringList(), DesktopAppNotification *notification = nullptr);
+    void onNotificationDestroyed(QObject* notification);
 #endif
 };
 
