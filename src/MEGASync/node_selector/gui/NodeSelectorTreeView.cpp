@@ -1012,6 +1012,12 @@ void NodeSelectorTreeView::dropEvent(QDropEvent* event)
                 }
             }
         }
+        else
+        {
+            // If there is no urlList, it may be a internal move
+            LoadingSceneView::dropEvent(event);
+            return;
+        }
     }
 
     // By default, don´t accept the drop
