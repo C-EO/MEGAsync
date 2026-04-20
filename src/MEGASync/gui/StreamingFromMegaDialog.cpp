@@ -323,6 +323,8 @@ bool StreamingFromMegaDialog::generateStreamURL()
 
 void StreamingFromMegaDialog::openStreamWithApp(QString app)
 {
+    registerPendingStreamingEvent();
+
     if (app.isEmpty())
     {
         Utilities::openUrl(QUrl::fromEncoded(streamURL.toUtf8()));
@@ -330,6 +332,16 @@ void StreamingFromMegaDialog::openStreamWithApp(QString app)
     }
 
     Platform::getInstance()->streamWithApp(app, streamURL);
+}
+
+void StreamingFromMegaDialog::registerPendingStreamingEvent()
+{
+    if (!mSelectedMegaNode)
+    {
+        return;
+    }
+
+    ++mPendingStreamingEvents[mSelectedMegaNode->getHandle()];
 }
 
 void StreamingFromMegaDialog::showStreamingError()
@@ -430,9 +442,25 @@ void StreamingFromMegaDialog::onTransferTemporaryError(mega::MegaApi*, mega::Meg
     }
 }
 
-void StreamingFromMegaDialog::onTransferStart(mega::MegaApi* api, mega::MegaTransfer* transfer)
+void StreamingFromMegaDialog::onTransferStart(mega::MegaApi*, mega::MegaTransfer* transfer)
 {
+    if (!transfer || !transfer->isStreamingTransfer())
+    {
+        return;
+    }
+
+    auto pendingEvent = mPendingStreamingEvents.find(transfer->getNodeHandle());
+    if (pendingEvent == mPendingStreamingEvents.end() || pendingEvent.value() <= 0)
+    {
+        return;
+    }
+
     MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
         AppStatsEvents::EventType::LINK_STREAM_STARTED,
         true);
+
+    if (--pendingEvent.value() == 0)
+    {
+        mPendingStreamingEvents.erase(pendingEvent);
+    }
 }
