@@ -48,7 +48,10 @@ Notificator::Notificator(const QString &programName, QSystemTrayIcon *trayicon, 
 
 #ifdef USE_DBUS
     interface = new QDBusInterface(QString::fromUtf8("org.freedesktop.Notifications"),
-        QString::fromUtf8("/org/freedesktop/Notifications"), QString::fromUtf8("org.freedesktop.Notifications"));
+                                   QString::fromUtf8("/org/freedesktop/Notifications"),
+                                   QString::fromUtf8("org.freedesktop.Notifications"),
+                                   QDBusConnection::sessionBus(),
+                                   this);
     if (interface->isValid())
     {
         mMode = Freedesktop;
@@ -73,12 +76,7 @@ Notificator::Notificator(const QString &programName, QSystemTrayIcon *trayicon, 
 #endif
 }
 
-Notificator::~Notificator()
-{
-#ifdef USE_DBUS
-    interface->deleteLater();
-#endif
-}
+Notificator::~Notificator() {}
 
 #ifdef USE_DBUS
 // Loosely based on http://www.qtcentre.org/archive/index.php/t-25879.html
@@ -225,21 +223,53 @@ void Notificator::notifyDBus(Class cls, const QString &title, const QString &tex
 
     if(dbussSupportsActions && notification)
     {
-        const uint32_t id = static_cast<uint32_t>(notification->getId());
+        connect(notification, &QObject::destroyed, this, &Notificator::onNotificationDestroyed);
         connect(notification,
-                &QObject::destroyed,
+                &DesktopAppNotificationBase::closed,
                 this,
-                [this, id]()
+                [this, notification](DesktopAppNotificationBase::CloseReason)
                 {
-                    if (mMode == Freedesktop && dbussSupportsActions && interface)
-                    {
-                        interface->call(QDBus::NoBlock, QString::fromUtf8("CloseNotification"), id);
-                    }
+                    mNotificationIds.remove(notification);
+                });
+        connect(notification,
+                &DesktopAppNotificationBase::failed,
+                this,
+                [this, notification]()
+                {
+                    mNotificationIds.remove(notification);
                 });
 
-        // fire with callback to gather ID
-        interface->callWithCallback(QString::fromUtf8("Notify"), args, notification,
-                                    SLOT(dBusNotificationSentCallback(QDBusMessage)), SLOT(dbusNotificationSentErrorCallback(QDBusError)));
+        auto* watcher = new QDBusPendingCallWatcher(
+            interface->asyncCallWithArgumentList(QString::fromUtf8("Notify"), args),
+            this);
+        const QPointer<DesktopAppNotification> guardedNotification(notification);
+
+        connect(watcher,
+                &QDBusPendingCallWatcher::finished,
+                this,
+                [this, guardedNotification, watcher]()
+                {
+                    watcher->deleteLater();
+
+                    if (!guardedNotification)
+                    {
+                        return;
+                    }
+
+                    const QDBusPendingReply<quint32> reply = *watcher;
+                    if (reply.isError())
+                    {
+                        guardedNotification->dbusNotificationSentErrorCallback(reply.error());
+                        return;
+                    }
+
+                    guardedNotification->dBusNotificationSentCallback(watcher->reply());
+                    const auto notificationId = static_cast<quint32>(guardedNotification->getId());
+                    if (notificationId != 0U)
+                    {
+                        mNotificationIds.insert(guardedNotification.data(), notificationId);
+                    }
+                });
     }
     else
     {
@@ -330,8 +360,6 @@ void DesktopAppNotification::dBusNotificationSentCallback(QDBusMessage dbusMssag
         MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Notification sent to DBUS: missing id").toUtf8().constData());
         assert(false && "QDBusMessage missing id");
     }
-
-    deleteLater();
 }
 
 void DesktopAppNotification::dbusNotificationSentErrorCallback(QDBusError error)
@@ -341,6 +369,7 @@ void DesktopAppNotification::dbusNotificationSentErrorCallback(QDBusError error)
         MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Notification to DBUS failed %1:\n%2").arg(error.name()).arg(error.message()).toUtf8().constData());
     }
 
+    emit failed();
     deleteLater();
 }
 
@@ -379,6 +408,15 @@ void DesktopAppNotification::dBusNotificationCallback(QDBusMessage dbusMssage)
     else if (dbusMssage.member() == QString::fromUtf8("NotificationClosed"))
     {
         emit closed(CloseReason::Unknown);
+    }
+}
+
+void Notificator::onNotificationDestroyed(QObject* notification)
+{
+    const auto notificationId = mNotificationIds.take(notification);
+    if (notificationId != 0U && mMode == Freedesktop && dbussSupportsActions && interface)
+    {
+        interface->call(QDBus::NoBlock, QString::fromUtf8("CloseNotification"), notificationId);
     }
 }
 #endif
