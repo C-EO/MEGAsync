@@ -386,6 +386,10 @@ Function ReadHKCUUninstallString
 done:
 FunctionEnd
 
+!macro ReadHKLMUninstallString
+	ReadRegStr $HKLM_UninstallString ${PRODUCT_UNINST_ROOT_KEY_LOCAL_MACHINE} "${PRODUCT_UNINST_KEY}" "UninstallString"
+!macroend
+
 !macro GetUninstalledAppMode
 	StrCpy $UNINSTDIR "$INSTDIR\${UNINSTALLER_NAME}"
     
@@ -406,10 +410,12 @@ FunctionEnd
 !macroend
 
 !macro CheckHKLMUninstallInfo
-	StrCpy $CURRENT_USER_UNINSTDIR "$CURRENT_USER_INSTDIR\${PRODUCT_NAME}\${UNINSTALLER_NAME}"
+	StrCpy $ALL_USERS_UNINSTDIR "$ALL_USERS_INSTDIR\${PRODUCT_NAME}\${UNINSTALLER_NAME}"
+	!insertmacro ReadHKLMUninstallString
 
 	${If} $HKLM_UninstallString != ""
-	${AndIf} $HKLM_UninstallString == $CURRENT_USER_UNINSTDIR
+	${AndIf} $INSTALLED_APP_MODE != $ALL_USERS_INSTALLED_APP_MODE
+	${AndIf} $HKLM_UninstallString != $ALL_USERS_UNINSTDIR
 		!insertmacro RemoveLocalMachineReg
 	${EndIf}
 !macroend
@@ -694,7 +700,7 @@ done:
   ${UAC.CallFunctionAsUser} GetHKCUUninstallString
   # Get HKCU on elevated process (if needed)
   Call ReadHKCUUninstallString
-  ReadRegStr $HKLM_UninstallString ${PRODUCT_UNINST_ROOT_KEY_LOCAL_MACHINE} "${PRODUCT_UNINST_KEY}" "UninstallString"
+  !insertmacro ReadHKLMUninstallString
 
   !insertmacro DEBUG_MSG "Checking install mode"
   
