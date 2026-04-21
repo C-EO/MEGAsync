@@ -418,7 +418,6 @@ FunctionEnd
 	${AndIf} $HKLM_UninstallString != $ALL_USERS_UNINSTDIR
 		!insertmacro RemoveLocalMachineReg
 	${EndIf}
-	MessageBox MB_OK "$ALL_USERS_UNINSTDIR; $HKLM_UninstallString; $INSTALLED_APP_MODE;"
 !macroend
 
 Function StartMenuPagePre
