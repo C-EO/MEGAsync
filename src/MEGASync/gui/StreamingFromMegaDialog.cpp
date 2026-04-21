@@ -210,6 +210,8 @@ void StreamingFromMegaDialog::on_bCopyLink_clicked()
 {
     if (!streamURL.isEmpty())
     {
+        registerPendingStreamingEvent();
+
         QApplication::clipboard()->setText(streamURL);
         ((MegaApplication *)qApp)->showInfoMessage(tr("The link has been copied to the clipboard"));
     }
