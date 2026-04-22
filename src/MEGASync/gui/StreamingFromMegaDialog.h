@@ -7,6 +7,7 @@
 
 #include <QClipboard>
 #include <QDialog>
+#include <QHash>
 #include <QMessageBox>
 #include <QPointer>
 
@@ -60,8 +61,10 @@ private:
     QString streamURL;
     LastStreamingSelection lastStreamSelection;
     QString mPublicLink;
+    QHash<mega::MegaHandle, int> mPendingStreamingEvents;
 
     bool generateStreamURL();
+    void registerPendingStreamingEvent();
     void updateFileInfo(QString fileName, LinkStatus status);
     void openStreamWithApp(QString app);
     void showStreamingError();
