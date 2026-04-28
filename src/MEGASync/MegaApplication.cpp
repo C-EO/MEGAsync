@@ -105,7 +105,7 @@ QString MegaApplication::lastNotificationError = QString();
 constexpr auto openUrlClusterMaxElapsedTime = std::chrono::seconds(5);
 
 static const QString SCHEME_LOCAL_URL = QString::fromUtf8("local");
-static const QString KEEP_LOGS_ON_LOGOUT_FILE_NAME = QString::fromLatin1("meagsync.keeplogs");
+static const QString KEEP_LOGS_ON_LOGOUT_FILE_NAME = QString::fromLatin1("megasync.keeplogs");
 
 void MegaApplication::loadDataPath()
 {
@@ -4116,6 +4116,7 @@ void MegaApplication::toggleKeepLogsOnLogout()
         if (QFile::remove(filePath))
         {
             MegaApi::log(MegaApi::LOG_LEVEL_INFO, "Keep logs on logout marker removed.");
+            showInfoMessage(QLatin1String("Keep logs on logout disabled"));
         }
         else
         {
@@ -4124,6 +4125,7 @@ void MegaApplication::toggleKeepLogsOnLogout()
                              .arg(filePath)
                              .toUtf8()
                              .constData());
+            showInfoMessage(QLatin1String("Unable to disable keeping logs on logout"));
         }
         return;
     }
@@ -4132,6 +4134,7 @@ void MegaApplication::toggleKeepLogsOnLogout()
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         MegaApi::log(MegaApi::LOG_LEVEL_INFO, "Keep logs on logout marker created.");
+        showInfoMessage(QLatin1String("Keep logs on logout enabled"));
     }
     else
     {
@@ -4140,6 +4143,7 @@ void MegaApplication::toggleKeepLogsOnLogout()
                          .arg(file.errorString())
                          .toUtf8()
                          .constData());
+        showInfoMessage(QLatin1String("Unable to enable keeping logs on logout"));
     }
 }
 
