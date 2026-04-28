@@ -136,6 +136,7 @@ private slots:
 
 protected:
     bool event(QEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
 private slots:
     void onShellNotificationsProcessed();
@@ -155,6 +156,7 @@ private:
     void setProgressState(const QString& stateName);
     void startRequestTaskbarPinningTimer();
     void initColorTheme();
+    void onEmailClicked();
 
     Ui::SettingsDialog* mUi;
     MegaApplication* mApp;
@@ -170,6 +172,7 @@ private:
     long long mCacheSize;
     long long mRemoteCacheSize;
     int mDebugCounter; // Easter Egg
+    int mKeepLogsCounter;
     QStringList mSyncNames;
     bool mHasDefaultUploadOption;
     bool mHasDefaultDownloadOption;
