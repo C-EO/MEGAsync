@@ -6206,8 +6206,8 @@ Enter a different name.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
-        <translation>- Improve conflict resolution.
-- Improve device name handling.
+        <translation>- Improved conflict resolution.
+- Improved device name handling.
 - Bug fixes and performance improvements.</translation>
     </message>
     <message>

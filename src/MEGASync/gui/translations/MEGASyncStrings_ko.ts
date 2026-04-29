@@ -342,7 +342,7 @@
     <message>
         <source>Backup operation failed</source>
         <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
-        <translation>Backup operation failed</translation>
+        <translation>백업 작업 실패</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -352,7 +352,7 @@
     <message>
         <source>Error adding backup</source>
         <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
-        <translation>Error adding backup</translation>
+        <translation>백업 추가 중 오류</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -367,7 +367,7 @@
     <message>
         <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
-        <translation>Operation on backup ‘%1’ failed. Reason: %2</translation>
+        <translation>백업 ‘%1’ 작업을 실패하였습니다. 이유: %2</translation>
     </message>
     <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
@@ -387,7 +387,7 @@
     <message>
         <source>Your backup can’t be removed. Reason: %1</source>
         <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
-        <translation>Your backup can’t be removed. Reason: %1</translation>
+        <translation>백업을 제거할 수 없습니다. 이유: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -6154,9 +6154,9 @@ Enter a different name</source>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
-        <translation>- Improve conflict resolution.
-- Improve device name handling.
-- Bug fixes and performance improvements.</translation>
+        <translation>- 충돌 해결 향상.
+- 기기 이름 처리 향상.
+- 버그 수정과 성능 향상.</translation>
     </message>
     <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
@@ -8287,17 +8287,17 @@ Please, refresh the list.</source>
     <message>
         <source>Unable to create sync as selected folder is not valid. Try again.</source>
         <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
-        <translation>Unable to create sync as selected folder is not valid. Try again.</translation>
+        <translation>선택한 폴더가 유효하지 않아서 동기화를 만들 수 없습니다. 다시 시도하세요.</translation>
     </message>
     <message>
         <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
         <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
-        <translation>Unable to create sync. For further information, contact [A]Support[/A].</translation>
+        <translation>동기화를 만들 수 없습니다. 자세한 정보는, [A]지원[/A]에 연락하세요.</translation>
     </message>
     <message>
         <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
         <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
-        <translation>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</translation>
+        <translation>동기화를 만들 수 없습니다. 다시 시도하고 문제가 계속 되면, [A]지원[/A]에 연락하세요.</translation>
     </message>
     <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
@@ -8583,7 +8583,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Error removing sync</source>
         <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
-        <translation>Error removing sync</translation>
+        <translation>동기화 제거 중 오류</translation>
     </message>
     <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>

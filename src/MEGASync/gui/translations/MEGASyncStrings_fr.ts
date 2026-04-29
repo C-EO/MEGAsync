@@ -345,7 +345,7 @@
     <message>
         <source>Backup operation failed</source>
         <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
-        <translation>Backup operation failed</translation>
+        <translation>L&apos;opération de sauvegarde a échoué</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -355,7 +355,7 @@
     <message>
         <source>Error adding backup</source>
         <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
-        <translation>Error adding backup</translation>
+        <translation>Erreur lors de l&apos;ajout de la sauvegarde</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -370,7 +370,7 @@
     <message>
         <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
-        <translation>Operation on backup ‘%1’ failed. Reason: %2</translation>
+        <translation>L&apos;opération sur la sauvegarde «&#xa0;%1&#xa0;» a échoué. Raison&#xa0;: %2</translation>
     </message>
     <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
@@ -390,7 +390,7 @@
     <message>
         <source>Your backup can’t be removed. Reason: %1</source>
         <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
-        <translation>Your backup can’t be removed. Reason: %1</translation>
+        <translation>Votre sauvegarde ne peut pas être supprimée. Raison&#xa0;: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -6206,9 +6206,9 @@ Saisissez un nom différent.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
-        <translation>- Improve conflict resolution.
-- Improve device name handling.
-- Bug fixes and performance improvements.</translation>
+        <translation>- Résolution des conflits améliorée.
+- Gestion des noms d&apos;appareils améliorée.
+- Corrections de bugs et améliorations des performances.</translation>
     </message>
     <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
@@ -8355,17 +8355,17 @@ Actualisez la liste.</translation>
     <message>
         <source>Unable to create sync as selected folder is not valid. Try again.</source>
         <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
-        <translation>Unable to create sync as selected folder is not valid. Try again.</translation>
+        <translation>Impossible de créer la synchronisation car le dossier sélectionné n’est pas valide. Veuillez réessayer.</translation>
     </message>
     <message>
         <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
         <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
-        <translation>Unable to create sync. For further information, contact [A]Support[/A].</translation>
+        <translation>Impossible de créer la synchronisation. Pour plus d&apos;informations, contactez [A]l&apos;assistance[/A].</translation>
     </message>
     <message>
         <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
         <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
-        <translation>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</translation>
+        <translation>Impossible de créer la synchronisation. Réessayez et si le problème persiste, contactez [A]l&apos;assistance[/A].</translation>
     </message>
     <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
@@ -8651,7 +8651,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Error removing sync</source>
         <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
-        <translation>Error removing sync</translation>
+        <translation>Erreur lors de la suppression de la synchronisation</translation>
     </message>
     <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
