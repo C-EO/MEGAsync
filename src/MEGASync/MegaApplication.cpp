@@ -64,6 +64,8 @@
 
 #include <QCheckBox>
 #include <QClipboard>
+#include <QFile>
+#include <QFileInfo>
 #include <QFontDatabase>
 #include <QFuture>
 #include <QNetworkProxy>
@@ -103,6 +105,7 @@ QString MegaApplication::lastNotificationError = QString();
 constexpr auto openUrlClusterMaxElapsedTime = std::chrono::seconds(5);
 
 static const QString SCHEME_LOCAL_URL = QString::fromUtf8("local");
+static const QString KEEP_LOGS_ON_LOGOUT_FILE_NAME = QString::fromLatin1("megasync.keeplogs");
 
 void MegaApplication::loadDataPath()
 {
@@ -782,6 +785,16 @@ QString MegaApplication::applicationDataPath()
         loadDataPath();
     }
     return dataPath;
+}
+
+QString MegaApplication::keepLogsOnLogoutFilePath()
+{
+    return QDir(applicationDataPath()).filePath(KEEP_LOGS_ON_LOGOUT_FILE_NAME);
+}
+
+bool MegaApplication::keepLogsOnLogoutEnabled()
+{
+    return QFileInfo::exists(keepLogsOnLogoutFilePath());
 }
 
 QString MegaApplication::getCurrentLanguageCode()
@@ -3326,7 +3339,16 @@ void MegaApplication::unlink(bool keepLogs)
 
     if (!keepLogs)
     {
-        logger->cleanLogs();
+        if (keepLogsOnLogoutEnabled())
+        {
+            MegaApi::log(
+                MegaApi::LOG_LEVEL_INFO,
+                "Logout diagnostics: skipping log cleanup because keep logs marker exists.");
+        }
+        else
+        {
+            logger->cleanLogs();
+        }
     }
 
     // When unlinking to solve a sdk fatal issue, change back to nominal after unlink.
@@ -4085,6 +4107,45 @@ void MegaApplication::toggleLogging()
             MegaApi::log(MegaApi::LOG_LEVEL_INFO, QString::fromUtf8("Version string: %1   Version code: %2.%3   User-Agent: %4").arg(Preferences::VERSION_STRING)
                      .arg(Preferences::VERSION_CODE).arg(Preferences::BUILD_ID).arg(QString::fromUtf8(megaApi->getUserAgent())).toUtf8().constData());
         }
+    }
+}
+
+void MegaApplication::toggleKeepLogsOnLogout()
+{
+    const auto filePath = keepLogsOnLogoutFilePath();
+    if (QFileInfo::exists(filePath))
+    {
+        if (QFile::remove(filePath))
+        {
+            MegaApi::log(MegaApi::LOG_LEVEL_INFO, "Keep logs on logout marker removed.");
+            showInfoMessage(QLatin1String("Keep logs on logout disabled"));
+        }
+        else
+        {
+            MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
+                         QString::fromUtf8("Unable to remove keep logs on logout marker: %1")
+                             .arg(filePath)
+                             .toUtf8()
+                             .constData());
+            showInfoMessage(QLatin1String("Unable to disable keeping logs on logout"));
+        }
+        return;
+    }
+
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        MegaApi::log(MegaApi::LOG_LEVEL_INFO, "Keep logs on logout marker created.");
+        showInfoMessage(QLatin1String("Keep logs on logout enabled"));
+    }
+    else
+    {
+        MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
+                     QString::fromUtf8("Unable to create keep logs on logout marker: %1")
+                         .arg(file.errorString())
+                         .toUtf8()
+                         .constData());
+        showInfoMessage(QLatin1String("Unable to enable keeping logs on logout"));
     }
 }
 

@@ -24,6 +24,7 @@
 #include <QFileDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QRect>
 #include <QShortcut>
 #include <QtConcurrent/QtConcurrent>
@@ -80,9 +81,11 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
     mCacheSize(-1),
     mRemoteCacheSize(-1),
     mDebugCounter(0),
+    mKeepLogsCounter(0),
     usersUpdateListener(std::make_unique<UsersUpdateListener>())
 {
     mUi->setupUi(this);
+    mUi->lEmail->installEventFilter(this);
 
     connect(usersUpdateListener.get(),
             &UsersUpdateListener::userEmailUpdated,
@@ -492,6 +495,20 @@ bool SettingsDialog::event(QEvent* event)
     }
 
     return QDialog::event(event);
+}
+
+bool SettingsDialog::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == mUi->lEmail && event->type() == QEvent::MouseButtonRelease)
+    {
+        auto mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() == Qt::LeftButton)
+        {
+            onEmailClicked();
+        }
+    }
+
+    return QDialog::eventFilter(watched, event);
 }
 
 void SettingsDialog::on_bGeneral_clicked()
@@ -1084,6 +1101,16 @@ void SettingsDialog::on_lAccountType_clicked()
     {
         mApp->toggleLogging();
         mDebugCounter = 0;
+    }
+}
+
+void SettingsDialog::onEmailClicked()
+{
+    mKeepLogsCounter++;
+    if (mKeepLogsCounter == NUMBER_OF_CLICKS_TO_DEBUG)
+    {
+        mApp->toggleKeepLogsOnLogout();
+        mKeepLogsCounter = 0;
     }
 }
 

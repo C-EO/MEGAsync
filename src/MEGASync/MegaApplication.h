@@ -90,6 +90,8 @@ class MegaApplication : public QApplication, public mega::MegaListener
     Q_OBJECT
 
     static void loadDataPath();
+    static QString keepLogsOnLogoutFilePath();
+    static bool keepLogsOnLogoutEnabled();
 
 public:
 
@@ -150,6 +152,7 @@ public:
     // Create menus for the "..." menu in InfoDialog view.
     void createInfoDialogMenus();
     void toggleLogging();
+    void toggleKeepLogsOnLogout();
 
     std::shared_ptr<mega::MegaNode> getRootNode(bool forceReset = false);
     std::shared_ptr<mega::MegaNode> getVaultNode(bool forceReset = false);
