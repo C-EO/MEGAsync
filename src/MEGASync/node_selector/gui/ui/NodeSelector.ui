@@ -67,13 +67,13 @@ background-color: #FFFFFF; /*colorToken.page-background*/
      </property>
      <property name="minimumSize">
       <size>
-       <width>256</width>
+       <width>64</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>256</width>
+       <width>64</width>
        <height>16777215</height>
       </size>
      </property>
@@ -85,103 +85,14 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        <number>16</number>
       </property>
       <property name="leftMargin">
-       <number>13</number>
+       <number>12</number>
       </property>
       <property name="topMargin">
-       <number>24</number>
+       <number>28</number>
       </property>
       <property name="bottomMargin">
        <number>24</number>
       </property>
-      <item>
-       <widget class="QWidget" name="wTop" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>32</height>
-         </size>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QWidget" name="wTitleContainer" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>16</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="title">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Files</string>
-              </property>
-              <property name="font-size" stdset="0">
-               <string notr="true">subtitle</string>
-              </property>
-              <property name="regular" stdset="0">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="SearchLineEdit" name="leSearch">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item>
        <widget class="QGroupBox" name="wStorage">
         <property name="title">
@@ -189,7 +100,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
         </property>
         <layout class="QVBoxLayout" name="wSearchLayout_2">
          <property name="spacing">
-          <number>8</number>
+          <number>12</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -205,16 +116,22 @@ background-color: #FFFFFF; /*colorToken.page-background*/
          </property>
          <item>
           <widget class="TabSelector" name="fCloudDrive" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>36</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>16777215</height>
+             <height>36</height>
             </size>
            </property>
            <property name="icon" stdset="0">
@@ -223,14 +140,14 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
            </property>
            <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
+            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="TabSelector" name="fIncomingShares" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -238,13 +155,13 @@ background-color: #FFFFFF; /*colorToken.page-background*/
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>36</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>16777215</height>
+             <height>36</height>
             </size>
            </property>
            <property name="icon" stdset="0">
@@ -253,22 +170,28 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
            </property>
            <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
+            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="TabSelector" name="fBackups" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>36</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>16777215</height>
+             <height>36</height>
             </size>
            </property>
            <property name="icon" stdset="0">
@@ -277,22 +200,28 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normalon>:/devices_small_thin_solid</normalon>:/devices_small_thin_outline</iconset>
            </property>
            <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
+            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="TabSelector" name="fRubbish" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>36</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>16777215</height>
+             <height>36</height>
             </size>
            </property>
            <property name="icon" stdset="0">
@@ -301,7 +230,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
            </property>
            <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
+            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
@@ -311,7 +240,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
       <item>
        <widget class="QGroupBox" name="wSearch">
         <property name="title">
-         <string>Search</string>
+         <string notr="true"/>
         </property>
         <property name="type" stdset="0">
          <string notr="true">mega</string>
@@ -561,12 +490,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
    <class>TabSelector</class>
    <extends>QWidget</extends>
    <header>TabSelector.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SearchLineEdit</class>
-   <extends>QFrame</extends>
-   <header>SearchLineEdit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

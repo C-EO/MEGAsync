@@ -84,7 +84,7 @@ background-color: transparent;
           <height>16777215</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,2,0,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,2,0,0,0">
          <property name="spacing">
           <number>4</number>
          </property>
@@ -596,6 +596,9 @@ color: #616366; /*colorToken.text-secondary*/
             </item>
            </layout>
           </widget>
+         </item>
+         <item>
+          <widget class="SearchLineEdit" name="leSearchTool"/>
          </item>
         </layout>
        </widget>
@@ -1258,6 +1261,12 @@ color: #616366; /*colorToken.text-secondary*/
    <class>ElidingLabel</class>
    <extends>QLabel</extends>
    <header>gui/ElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SearchLineEdit</class>
+   <extends>QFrame</extends>
+   <header>SearchLineEdit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

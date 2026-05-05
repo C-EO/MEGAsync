@@ -73,6 +73,8 @@ public:
     void selectPendingIndexes();
 
     virtual void setTitleText(const QString& nodeName);
+    void setSearchText(const QString& text);
+    void clearSearchText();
 
     virtual void treeViewWidgetSelected() {}
 
@@ -117,6 +119,7 @@ signals:
     void viewReady();
     void uiIsBlocked(bool state);
     void selectionIsCorrect(bool state);
+    void searchRequested(const QString& text);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
@@ -253,6 +256,7 @@ private:
     void checkOkButton(const QModelIndexList& selected);
     bool shouldUpdateImmediately();
     bool areThereNodesToUpdate();
+    void updateCurrentTitle();
 
     // Expand and select
     void expandPendingIndexes();

@@ -40,6 +40,12 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     ui->setupUi(this);
     ui->cbAlwaysUploadToLocation->hide();
 
+    TabSelector::applyActionToTabSelectors(ui->wLeftPaneNS,
+                                           [](TabSelector* tabSelector)
+                                           {
+                                               tabSelector->setIconOnly(true);
+                                           });
+
     connect(ui->stackedWidget,
             &QStackedWidget::currentChanged,
             this,
@@ -73,9 +79,6 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
                                            });
 
     connect(ui->fSearch, &TabSelector::hidden, this, &NodeSelector::onfShowSearchHidden);
-    connect(ui->leSearch, &SearchLineEdit::search, this, &NodeSelector::onSearch);
-
-    ui->leSearch->addCustomWidget(ui->wTitleContainer);
 
     ui->wSearch->hide();
     ui->fRubbish->hide();
@@ -133,20 +136,35 @@ void NodeSelector::init()
 
 void NodeSelector::updateNodeSelectorTabs()
 {
-    ui->fCloudDrive->setTitle(MegaNodeNames::getCloudDriveName());
-    ui->fIncomingShares->setTitle(MegaNodeNames::getIncomingSharesName());
-    ui->fBackups->setTitle(MegaNodeNames::getBackupsName());
-    ui->fRubbish->setTitle(MegaNodeNames::getRubbishName());
+    auto setIconOnlyTabTitle = [](TabSelector* tab, const QString& title)
+    {
+        tab->setTitle(QString());
+        tab->setToolTip(title);
+        tab->setAccessibleName(title);
+    };
+
+    setIconOnlyTabTitle(ui->fCloudDrive, MegaNodeNames::getCloudDriveName());
+    setIconOnlyTabTitle(ui->fIncomingShares, MegaNodeNames::getIncomingSharesName());
+    setIconOnlyTabTitle(ui->fBackups, MegaNodeNames::getBackupsName());
+    setIconOnlyTabTitle(ui->fRubbish, MegaNodeNames::getRubbishName());
 }
 
 void NodeSelector::onSearch(const QString& text)
 {
+    auto sourceWidget = getTreeViewWidget(sender());
+
     ui->wSearch->show();
     ui->fSearch->setTitle(text);
     ui->fSearch->setSelected(true);
 
     mSearchWidget->search(text);
     onbShowSearchClicked();
+    mSearchWidget->setSearchText(text);
+
+    if (sourceWidget && sourceWidget != mSearchWidget)
+    {
+        sourceWidget->clearSearchText();
+    }
 }
 
 void NodeSelector::onUiIsBlocked(bool state)
@@ -224,7 +242,13 @@ void NodeSelector::onfShowSearchHidden()
 {
     ui->wSearch->hide();
     ui->fSearch->setTitle(QString());
-    ui->leSearch->onClearClicked();
+    for (int page = 0; page < ui->stackedWidget->count(); ++page)
+    {
+        if (auto viewContainer = getTreeViewWidget(page))
+        {
+            viewContainer->clearSearchText();
+        }
+    }
     mSearchWidget->stopSearch();
     if (getCurrentTreeViewWidget() == mSearchWidget)
     {
@@ -483,6 +507,12 @@ void NodeSelector::initSpecialisedWidgets()
         auto viewContainer = getTreeViewWidget(page);
         if (viewContainer)
         {
+            connect(viewContainer,
+                    &NodeSelectorTreeViewWidget::searchRequested,
+                    this,
+                    &NodeSelector::onSearch,
+                    Qt::UniqueConnection);
+
             viewContainer->init();
             connect(viewContainer,
                     &NodeSelectorTreeViewWidget::onCustomButtonClicked,

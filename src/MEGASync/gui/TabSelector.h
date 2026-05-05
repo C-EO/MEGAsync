@@ -42,6 +42,8 @@ public:
     bool isSelected() const;
     void toggleOffSiblings();
 
+    void setIconOnly(bool state);
+
     void setIconTokens(const std::shared_ptr<TokenPropertySetter>& newIconTokens);
     void hideIcon();
 
@@ -79,6 +81,8 @@ private:
     std::shared_ptr<TokenPropertySetter> mCloseButtonTokens;
     QString mTitle;
     bool mConnectedToDropEvent;
+    bool mCloseButtonVisible;
+    bool mIconOnly;
 };
 
 #endif // TABSELECTOR_H

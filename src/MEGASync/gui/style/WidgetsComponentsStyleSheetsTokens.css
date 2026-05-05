@@ -773,6 +773,16 @@ background-color: #fff3f4f4; /*colorToken.surface-2*/
     TabSelector
 */
 
+TabSelector.sidebar-icononly[selected = false]
+{
+background-color:  transparent;
+}
+
+TabSelector.sidebar-icononly[selected = true]
+{
+background-color: #FFFFFF;/*colorToken.page-background*/
+}
+
 TabSelector.sidebar[selected = false]
 {
 background-color:  transparent;

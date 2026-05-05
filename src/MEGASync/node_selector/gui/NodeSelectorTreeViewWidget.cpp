@@ -12,15 +12,18 @@
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
 #include "RenameNodeDialog.h"
 #include "RequestListenerManager.h"
+#include "SearchLineEdit.h"
 #include "TokenizableItems/TokenPropertySetter.h"
 #include "ui_NodeSelectorTreeViewWidget.h"
 
 #include <QKeyEvent>
+#include <QSizePolicy>
 
 #include <algorithm>
 
 const int CHECK_UPDATED_NODES_INTERVAL = 1000;
 const int IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD = 200;
+const int SEARCH_LINE_EDIT_WIDTH = 188;
 
 NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWidget* parent):
     QWidget(parent),
@@ -39,11 +42,18 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     ui->setupUi(this);
     setFocusProxy(ui->tMegaFolders);
     ui->searchButtonsWidget->setVisible(false);
+    ui->leSearchTool->setFixedWidth(SEARCH_LINE_EDIT_WIDTH);
+    ui->leSearchTool->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    ui->leSearchTool->setMode(SearchLineEdit::ALWAYS_EXPANDED);
 
     connect(ui->bNewFolder,
             &QPushButton::clicked,
             this,
             &NodeSelectorTreeViewWidget::onbNewFolderClicked);
+    connect(ui->leSearchTool,
+            &SearchLineEdit::search,
+            this,
+            &NodeSelectorTreeViewWidget::searchRequested);
 
     checkBackForwardButtons();
     addCustomButtons(this);
@@ -185,11 +195,8 @@ bool NodeSelectorTreeViewWidget::event(QEvent* event)
 {
     if (event->type() == QEvent::LanguageChange)
     {
-        if (!ui->tMegaFolders->rootIndex().isValid())
-        {
-            updateRootTitle();
-        }
         ui->retranslateUi(this);
+        updateCurrentTitle();
 
         if (mSelectType)
         {
@@ -287,6 +294,16 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
 void NodeSelectorTreeViewWidget::setTitleText(const QString& nodeName)
 {
     ui->lFolderName->setText(nodeName);
+}
+
+void NodeSelectorTreeViewWidget::setSearchText(const QString& text)
+{
+    ui->leSearchTool->setText(text);
+}
+
+void NodeSelectorTreeViewWidget::clearSearchText()
+{
+    ui->leSearchTool->onClearClicked();
 }
 
 void NodeSelectorTreeViewWidget::clearSelection()
@@ -779,6 +796,7 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
     emit uiIsBlocked(mUiBlocked);
 
     ui->bNewFolder->setDisabled(state);
+    ui->leSearchTool->setDisabled(state);
     ui->searchButtonsWidget->setDisabled(state);
 
     if (!state)
@@ -1212,6 +1230,18 @@ bool NodeSelectorTreeViewWidget::areThereNodesToUpdate()
 void NodeSelectorTreeViewWidget::updateRootTitle()
 {
     setTitleText(getRootText());
+}
+
+void NodeSelectorTreeViewWidget::updateCurrentTitle()
+{
+    const auto rootIndex = ui->tMegaFolders->rootIndex();
+    if (!rootIndex.isValid())
+    {
+        updateRootTitle();
+        return;
+    }
+
+    setTitleText(rootIndex.data(Qt::DisplayRole).toString());
 }
 
 void NodeSelectorTreeViewWidget::expandPendingIndexes()
@@ -1722,14 +1752,7 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
 
     onRootIndexChanged(node_column_idx);
     setEmptyFolderPage();
-
-    if (!node_column_idx.isValid())
-    {
-        updateRootTitle();
-        return;
-    }
-
-    setTitleText(node_column_idx.data(Qt::DisplayRole).toString());
+    updateCurrentTitle();
 }
 
 QIcon NodeSelectorTreeViewWidget::getEmptyIcon()

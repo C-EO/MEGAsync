@@ -13,7 +13,8 @@ static int COLLAPSE_SIZE = 32; /* Square */
 
 SearchLineEdit::SearchLineEdit(QWidget* parent):
     QFrame(parent),
-    ui(new Ui::SearchLineEdit)
+    ui(new Ui::SearchLineEdit),
+    mMode(Mode::EXPANDABLE)
 {
     ui->setupUi(this);
 
@@ -58,7 +59,7 @@ SearchLineEdit::~SearchLineEdit()
 
 void SearchLineEdit::setText(const QString& text)
 {
-    ui->leSearchField->setVisible(!text.isEmpty());
+    ui->leSearchField->setVisible(mMode == Mode::ALWAYS_EXPANDED || !text.isEmpty());
     ui->leSearchField->setText(text);
 }
 
@@ -66,6 +67,11 @@ void SearchLineEdit::showTextEntry(bool state, bool force)
 {
     if (!force &&
         ((state && ui->leSearchField->isVisible()) || (!state && !ui->leSearchField->isVisible())))
+    {
+        return;
+    }
+
+    if (!state && mMode == Mode::ALWAYS_EXPANDED)
     {
         return;
     }
@@ -123,6 +129,12 @@ void SearchLineEdit::showTextEntry(bool state, bool force)
     }
 }
 
+void SearchLineEdit::setMode(Mode mode)
+{
+    mMode = mode;
+    showTextEntry(mode == Mode::ALWAYS_EXPANDED, true);
+}
+
 QPropertyAnimation* SearchLineEdit::runGeometryAnimation(QWidget* target,
                                                          const QRect& startRect,
                                                          const QRect& endRect,
@@ -172,15 +184,18 @@ bool SearchLineEdit::eventFilter(QObject* obj, QEvent* evnt)
             return true;
         }
     }
-    else if (obj == ui->leSearchField && evnt->type() == QEvent::FocusOut &&
-             ui->leSearchField->text().isEmpty())
+    else if (mMode == Mode::EXPANDABLE)
     {
-        showTextEntry(false, true);
-    }
-    else if (mTopParent == obj && evnt->type() == QEvent::MouseButtonRelease)
-    {
-        onClearClicked();
-        showTextEntry(false);
+        if (obj == ui->leSearchField && evnt->type() == QEvent::FocusOut &&
+            ui->leSearchField->text().isEmpty())
+        {
+            showTextEntry(false, true);
+        }
+        else if (mTopParent == obj && evnt->type() == QEvent::MouseButtonRelease)
+        {
+            onClearClicked();
+            showTextEntry(false);
+        }
     }
 
     return QFrame::eventFilter(obj, evnt);

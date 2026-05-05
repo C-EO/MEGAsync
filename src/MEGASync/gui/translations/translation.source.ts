@@ -4500,16 +4500,6 @@ Enter a different name.</translation>
         <translation>Always upload to this destination</translation>
     </message>
     <message>
-        <source>Files</source>
-        <translatorcomment>Sidebar title. SNC.5804</translatorcomment>
-        <translation>Files</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translatorcomment>Search button header</translatorcomment>
-        <translation>Search</translation>
-    </message>
-    <message>
         <source>Select a MEGA folder</source>
         <translatorcomment>Node selector dialog title</translatorcomment>
         <translation>Select a MEGA folder</translation>

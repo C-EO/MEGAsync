@@ -28,6 +28,14 @@ public:
     void setText(const QString& text);
     void showTextEntry(bool state, bool force = false);
 
+    enum Mode
+    {
+        ALWAYS_EXPANDED,
+        EXPANDABLE
+    };
+
+    void setMode(Mode mode);
+
     void addCustomWidget(QWidget* widget);
 
 protected:
@@ -58,6 +66,7 @@ private:
     ButtonIconManager mButtonManager;
     QString mOldString;
     QPointer<QDialog> mTopParent;
+    Mode mMode;
 };
 
 #endif // SEARCHLINEEDIT_H

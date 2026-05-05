@@ -22,7 +22,9 @@ const char* TAB_SELECTOR_GROUP = "tabselector_group";
 TabSelector::TabSelector(QWidget* parent):
     QWidget(parent),
     ui(new Ui::TabSelector),
-    mConnectedToDropEvent(false)
+    mConnectedToDropEvent(false),
+    mCloseButtonVisible(false),
+    mIconOnly(false)
 {
     ui->setupUi(this);
 
@@ -70,7 +72,7 @@ TabSelector::~TabSelector()
 void TabSelector::setTitle(const QString& title)
 {
     mTitle = title;
-    ui->lTitle->setText(mTitle);
+    ui->lTitle->setText(mIconOnly ? QString() : mTitle);
 }
 
 QString TabSelector::getTitle() const
@@ -95,12 +97,13 @@ QSize TabSelector::getIconSize() const
 
 void TabSelector::setCloseButtonVisible(bool state)
 {
-    ui->lClose->setVisible(state);
+    mCloseButtonVisible = state;
+    ui->lClose->setVisible(mCloseButtonVisible && !mIconOnly);
 }
 
 bool TabSelector::isCloseButtonVisible() const
 {
-    return ui->lClose->isVisible();
+    return mCloseButtonVisible;
 }
 
 void TabSelector::setCounter(unsigned long long count)
@@ -109,6 +112,13 @@ void TabSelector::setCounter(unsigned long long count)
 
     if (currentValue != count)
     {
+        if (mIconOnly)
+        {
+            ui->lCounter->setText(QString());
+            ui->lCounter->hide();
+            return;
+        }
+
         if (count > 0)
         {
             ui->lCounter->show();
@@ -151,6 +161,29 @@ void TabSelector::setSelected(bool state)
 bool TabSelector::isSelected() const
 {
     return property(SELECTED).toBool();
+}
+
+void TabSelector::setIconOnly(bool state)
+{
+    if (mIconOnly == state)
+    {
+        return;
+    }
+
+    mIconOnly = state;
+
+    if (mIconOnly)
+    {
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        layout()->setContentsMargins(0, 0, 0, 0);
+        layout()->setSpacing(0);
+
+        ui->lIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        ui->lTitle->hide();
+        ui->lCounter->hide();
+        ui->lClose->hide();
+        ui->lTitle->setText(QString());
+    }
 }
 
 bool TabSelector::event(QEvent* event)

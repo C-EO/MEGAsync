@@ -246,8 +246,6 @@ void StreamNodeSelector::onOkButtonClicked()
 CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
     NodeSelector(SelectTypeSPtr(new CloudDriveType), parent)
 {
-    updateDialogWindowTitle();
-
     mDragBackDrop = new QWidget(this);
     mDragBackDrop->hide();
 
@@ -279,10 +277,7 @@ void CloudDriveNodeSelector::createSpecialisedWidgets()
     enableDragAndDrop(true);
 }
 
-void CloudDriveNodeSelector::onLanguageChangeEvent()
-{
-    updateDialogWindowTitle();
-}
+void CloudDriveNodeSelector::onLanguageChangeEvent() {}
 
 void CloudDriveNodeSelector::enableDragAndDrop(bool enable)
 {
@@ -592,11 +587,6 @@ void CloudDriveNodeSelector::checkMovingItems(const QList<mega::MegaHandle>& han
     {
         performItemsToBeMoved(handles, type, true, true);
     }
-}
-
-void CloudDriveNodeSelector::updateDialogWindowTitle()
-{
-    setWindowTitle(ui->title->text());
 }
 
 CloudDriveNodeSelector::HandlesByTab
