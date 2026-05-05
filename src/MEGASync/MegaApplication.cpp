@@ -27,6 +27,7 @@
 #include "IntervalExecutioner.h"
 #include "LoginController.h"
 #include "mega/types.h"
+#include "MegaAPIStartupConfig.h"
 #include "MegaMenuItemAction.h"
 #include "MegaProxyStyle.h"
 #include "MessageDialogOpener.h"
@@ -75,6 +76,8 @@
 #include <QTranslator>
 
 #include <cassert>
+#include <cstddef>
+#include <cstdint>
 
 #ifdef Q_OS_LINUX
 #include <QSvgRenderer>
@@ -609,13 +612,7 @@ void MegaApplication::initialize()
     // Init the Service Urls instance with the newly created API
     ServiceUrls::instance()->reset(megaApi);
 
-    // Set maximum log line size to 10k (same as SDK default)
-    // Otherwise network logging can cause large glitches when logging hundreds of MB
-    // On Mac it is particularly apparent, causing the beachball to appear often
-    size_t newPayLoadLogSize = 10240;
-    megaApi->log(MegaApi::LOG_LEVEL_INFO, QString::fromUtf8("Establishing max payload log size: %1").arg(newPayLoadLogSize).toUtf8().constData());
-    megaApi->setMaxPayloadLogSize(newPayLoadLogSize);
-    megaApiFolders->setMaxPayloadLogSize(newPayLoadLogSize);
+    MegaAPIStartupConfig::apply(*megaApi, *megaApiFolders);
 
     mStatsEventHandler = std::make_unique<ProxyStatsEventHandler>(megaApi);
     QmlManager::instance()->setRootContextProperty(mStatsEventHandler.get());
