@@ -22,6 +22,8 @@ class SearchLineEdit: public QFrame
     Q_OBJECT
 
 public:
+    Q_PROPERTY(Mode mode MEMBER mMode WRITE setMode)
+
     explicit SearchLineEdit(QWidget* parent = nullptr);
     ~SearchLineEdit();
     void setIcon(const QIcon& icon);
@@ -61,6 +63,7 @@ private:
                                              const QRect& startRect,
                                              const QRect& endRect,
                                              QEasingCurve type);
+    void expand();
 
     Ui::SearchLineEdit* ui;
     ButtonIconManager mButtonManager;

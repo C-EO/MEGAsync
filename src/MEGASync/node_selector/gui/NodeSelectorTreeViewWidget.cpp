@@ -5,25 +5,21 @@
 #include "MegaApplication.h"
 #include "MegaNodeNames.h"
 #include "MessageDialogOpener.h"
-#include "NewFolderDialog.h"
 #include "NodeSelectorDelegates.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorProxyModel.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
 #include "RenameNodeDialog.h"
 #include "RequestListenerManager.h"
-#include "SearchLineEdit.h"
 #include "TokenizableItems/TokenPropertySetter.h"
 #include "ui_NodeSelectorTreeViewWidget.h"
 
 #include <QKeyEvent>
-#include <QSizePolicy>
 
 #include <algorithm>
 
 const int CHECK_UPDATED_NODES_INTERVAL = 1000;
 const int IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD = 200;
-const int SEARCH_LINE_EDIT_WIDTH = 188;
 
 NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWidget* parent):
     QWidget(parent),
@@ -35,25 +31,11 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     mManuallyResizedColumn(false),
     mResizeEventsReceived(0),
     first(true),
-    mUiBlocked(false),
-    mNewFolderHandle(mega::INVALID_HANDLE),
-    mNewFolderAdded(false)
+    mUiBlocked(false)
 {
     ui->setupUi(this);
     setFocusProxy(ui->tMegaFolders);
     ui->searchButtonsWidget->setVisible(false);
-    ui->leSearchTool->setFixedWidth(SEARCH_LINE_EDIT_WIDTH);
-    ui->leSearchTool->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    ui->leSearchTool->setMode(SearchLineEdit::ALWAYS_EXPANDED);
-
-    connect(ui->bNewFolder,
-            &QPushButton::clicked,
-            this,
-            &NodeSelectorTreeViewWidget::onbNewFolderClicked);
-    connect(ui->leSearchTool,
-            &SearchLineEdit::search,
-            this,
-            &NodeSelectorTreeViewWidget::searchRequested);
 
     checkBackForwardButtons();
     addCustomButtons(this);
@@ -74,8 +56,6 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     ui->backupsSearch->setProperty("title", MegaNodeNames::getBackupsName());
     ui->incomingSharesSearch->setProperty("title", MegaNodeNames::getIncomingSharesName());
     ui->rubbishSearch->setProperty("title", MegaNodeNames::getRubbishName());
-
-    ui->incomingInfo->setVisible(false);
 
     mResizeEventsTimer.setSingleShot(true);
     mResizeEventsTimer.setInterval(10);
@@ -291,21 +271,6 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
     return QWidget::eventFilter(watched, event);
 }
 
-void NodeSelectorTreeViewWidget::setTitleText(const QString& nodeName)
-{
-    ui->lFolderName->setText(nodeName);
-}
-
-void NodeSelectorTreeViewWidget::setSearchText(const QString& text)
-{
-    ui->leSearchTool->setText(text);
-}
-
-void NodeSelectorTreeViewWidget::clearSearchText()
-{
-    ui->leSearchTool->onClearClicked();
-}
-
 void NodeSelectorTreeViewWidget::clearSelection()
 {
     ui->tMegaFolders->clearSelection();
@@ -337,9 +302,28 @@ NodeSelectorModelItem* NodeSelectorTreeViewWidget::rootItem()
     return mModel->getItemByIndex(rootIndex);
 }
 
+QModelIndex NodeSelectorTreeViewWidget::getCurrentRootIndex()
+{
+    return ui->tMegaFolders->rootIndex();
+}
+
 NodeSelectorProxyModel* NodeSelectorTreeViewWidget::getProxyModel()
 {
     return mProxyModel.get();
+}
+
+NodeSelectorTreeViewWidget::HeaderState NodeSelectorTreeViewWidget::getHeaderState() const
+{
+    auto state = mHeaderState;
+    state.canGoBack = state.canGoBack && !mUiBlocked;
+    state.canGoForward = state.canGoForward && !mUiBlocked;
+    state.newFolderEnabled = state.newFolderEnabled && state.newFolderVisible && !mUiBlocked;
+    return state;
+}
+
+const QMap<uint, QPushButton*>& NodeSelectorTreeViewWidget::customButtons() const
+{
+    return mCustomButtons;
 }
 
 bool NodeSelectorTreeViewWidget::isInRootView() const
@@ -369,15 +353,47 @@ void NodeSelectorTreeViewWidget::setTitle(const QString& title)
     setTitleText(title);
 }
 
-void NodeSelectorTreeViewWidget::mousePressEvent(QMouseEvent* event)
+void NodeSelectorTreeViewWidget::goBack()
 {
-    if (event->button() == Qt::BackButton && ui->bBack->isEnabled())
+    if (!mNavigationInfo.backwardHandles.isEmpty() && !mUiBlocked)
     {
         onGoBackClicked();
     }
-    else if (event->button() == Qt::ForwardButton && ui->bForward->isEnabled())
+}
+
+void NodeSelectorTreeViewWidget::goForward()
+{
+    if (!mNavigationInfo.forwardHandles.isEmpty() && !mUiBlocked)
     {
         onGoForwardClicked();
+    }
+}
+
+void NodeSelectorTreeViewWidget::requestNewFolder()
+{
+    if (getHeaderState().newFolderEnabled)
+    {
+        emit newFolderRequested();
+    }
+}
+
+void NodeSelectorTreeViewWidget::setTitleText(const QString& nodeName)
+{
+    mHeaderState.folderName = nodeName;
+    notifyHeaderStateChanged();
+}
+
+void NodeSelectorTreeViewWidget::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::BackButton && !mNavigationInfo.backwardHandles.isEmpty() &&
+        !mUiBlocked)
+    {
+        goBack();
+    }
+    else if (event->button() == Qt::ForwardButton && !mNavigationInfo.forwardHandles.isEmpty() &&
+             !mUiBlocked)
+    {
+        goForward();
     }
 }
 
@@ -457,20 +473,25 @@ void NodeSelectorTreeViewWidget::checkViewOnModelChange()
 
 void NodeSelectorTreeViewWidget::checkNewFolderAdded(QPointer<NodeSelectorModelItem> item)
 {
-    if (mNewFolderAdded)
+    if (mNewFolderInfo.recentlyAdded)
     {
         // If the row inserted is the new row, stop iterating over the new insertions
-        if (item->getNode()->getHandle() == mNewFolderHandle)
+        if (item->getNode()->getHandle() == mNewFolderInfo.handle)
         {
-            auto newFolderIndex(mProxyModel->getIndexFromHandle(mNewFolderHandle));
+            auto newFolderIndex(mProxyModel->getIndexFromHandle(mNewFolderInfo.handle));
 
             onItemDoubleClick(newFolderIndex);
             selectionHasChanged(QModelIndexList() << newFolderIndex);
 
-            mNewFolderHandle = mega::INVALID_HANDLE;
-            mNewFolderAdded = false;
+            mNewFolderInfo.handle = mega::INVALID_HANDLE;
+            mNewFolderInfo.recentlyAdded = false;
         }
     }
+}
+
+void NodeSelectorTreeViewWidget::setNewFolderInfo(const NewFolderInfo& newNewFolderInfo)
+{
+    mNewFolderInfo = newNewFolderInfo;
 }
 
 void NodeSelectorTreeViewWidget::onLevelLoaded()
@@ -524,14 +545,6 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
                 &NodeSelectorTreeView::enterKeyPressed,
                 this,
                 &NodeSelectorTreeViewWidget::enterKeyPressed);
-        connect(ui->bForward,
-                &QPushButton::clicked,
-                this,
-                &NodeSelectorTreeViewWidget::onGoForwardClicked);
-        connect(ui->bBack,
-                &QPushButton::clicked,
-                this,
-                &NodeSelectorTreeViewWidget::onGoBackClicked);
         connect(ui->tMegaFolders->header(),
                 &QHeaderView::sectionResized,
                 this,
@@ -647,57 +660,7 @@ QModelIndex NodeSelectorTreeViewWidget::getRootIndexFromIndex(const QModelIndex&
 
 void NodeSelectorTreeViewWidget::onbNewFolderClicked()
 {
-    auto parentNode = mProxyModel->getNode(ui->tMegaFolders->rootIndex());
-    if (!parentNode)
-    {
-        parentNode = MegaSyncApp->getRootNode();
-        if (!parentNode)
-            return;
-    }
-
-    QPointer<NewFolderDialog> dialog(new NewFolderDialog(parentNode, ui->tMegaFolders));
-    dialog->init();
-    DialogOpener::showDialog(dialog,
-                             [this, dialog]()
-                             {
-                                 auto newNode = dialog->getNewNode();
-                                 // IF the dialog return a node, there are two scenarios:
-                                 // 1) The dialog has been accepted, a new folder has been created
-                                 // 2) The dialog has been rejected because the folder already
-                                 // exists. If so, select the existing folder
-                                 if (newNode)
-                                 {
-                                     mNewFolderHandle = newNode->getHandle();
-                                     mNewFolderAdded = true;
-
-                                     // Focusing a widget whose top-level window is not the active
-                                     // window makes Qt call QWindow::requestActivate()
-                                     // (QWidgetPrivate::setFocus_sys). Wayland does not support it
-                                     // and older Qt 5.15 builds crash there, so only force the
-                                     // activation/focus when our window is already active. When it
-                                     // is not (e.g. just after the NewFolderDialog closes on
-                                     // Wayland), the compositor restores focus on its own.
-                                     const QWindow* selectorWindow =
-                                         window() ? window()->windowHandle() : nullptr;
-                                     const bool windowAlreadyActive =
-                                         selectorWindow &&
-                                         selectorWindow == QGuiApplication::focusWindow();
-                                     if (!Platform::getInstance()->isWayland() ||
-                                         windowAlreadyActive)
-                                     {
-#ifdef Q_OS_LINUX
-                                         // It seems that the NodeSelector is not activated when the
-                                         // NewFolderDialog is closed, so the ui->tMegaFolders is
-                                         // not correctly focused
-                                         qApp->setActiveWindow(parentWidget()->parentWidget());
-#endif
-
-                                         // Set the focus to the view to allow the user to press
-                                         // enter (or go back, in a future feature)
-                                         ui->tMegaFolders->setFocus();
-                                     }
-                                 }
-                             });
+    requestNewFolder();
 }
 
 bool NodeSelectorTreeViewWidget::isAllowedToEnterInIndex(const QModelIndex& idx)
@@ -732,13 +695,12 @@ void NodeSelectorTreeViewWidget::checkButtonsVisibility()
 
 void NodeSelectorTreeViewWidget::addCustomButtons(NodeSelectorTreeViewWidget* wdg)
 {
-    auto buttonsMap = mSelectType->addCustomButtons(wdg);
-    foreach(auto& id, buttonsMap.keys())
+    mCustomButtons = mSelectType->addCustomButtons(wdg);
+    foreach(auto& id, mCustomButtons.keys())
     {
-        auto button = buttonsMap.value(id);
+        auto button = mCustomButtons.value(id);
         if (button)
         {
-            ui->customButtonsLayout->insertWidget(0, button);
             connect(button,
                     &QPushButton::clicked,
                     this,
@@ -748,6 +710,14 @@ void NodeSelectorTreeViewWidget::addCustomButtons(NodeSelectorTreeViewWidget* wd
                     });
         }
     }
+}
+
+void NodeSelectorTreeViewWidget::setIncomingInfoData(const IncomingInfoData& data,
+                                                     bool showIncomingInfo)
+{
+    mHeaderState.incomingInfo = data;
+    mHeaderState.showIncomingInfo = showIncomingInfo;
+    notifyHeaderStateChanged();
 }
 
 std::shared_ptr<NodeSelectorProxyModel> NodeSelectorTreeViewWidget::createProxyModel()
@@ -794,9 +764,6 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
     }
 
     emit uiIsBlocked(mUiBlocked);
-
-    ui->bNewFolder->setDisabled(state);
-    ui->leSearchTool->setDisabled(state);
     ui->searchButtonsWidget->setDisabled(state);
 
     if (!state)
@@ -806,8 +773,7 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
     }
     else
     {
-        ui->bBack->setEnabled(false);
-        ui->bForward->setEnabled(false);
+        notifyHeaderStateChanged();
     }
 }
 
@@ -1670,8 +1636,9 @@ void NodeSelectorTreeViewWidget::dropIntoRootIndex(QDropEvent* event)
 
 void NodeSelectorTreeViewWidget::setNewFolderButtonVisibility(bool state)
 {
-    ui->bNewFolder->setVisible(state);
+    mHeaderState.newFolderVisible = state;
     ui->tMegaFolders->setAllowNewFolderContextMenuItem(state);
+    notifyHeaderStateChanged();
 }
 
 void NodeSelectorTreeViewWidget::setSelectedNodeHandle(const MegaHandle& selectedHandle)
@@ -1717,10 +1684,16 @@ bool NodeSelectorTreeViewWidget::containsTakenDownSelected() const
 
 void NodeSelectorTreeViewWidget::checkBackForwardButtons()
 {
-    ui->navigationButtons->setVisible(!mNavigationInfo.backwardHandles.isEmpty() ||
-                                      !mNavigationInfo.forwardHandles.isEmpty());
-    ui->bBack->setEnabled(!mNavigationInfo.backwardHandles.isEmpty());
-    ui->bForward->setEnabled(!mNavigationInfo.forwardHandles.isEmpty());
+    mHeaderState.showNavigation =
+        !mNavigationInfo.backwardHandles.isEmpty() || !mNavigationInfo.forwardHandles.isEmpty();
+    mHeaderState.canGoBack = !mNavigationInfo.backwardHandles.isEmpty();
+    mHeaderState.canGoForward = !mNavigationInfo.forwardHandles.isEmpty();
+    notifyHeaderStateChanged();
+}
+
+void NodeSelectorTreeViewWidget::notifyHeaderStateChanged()
+{
+    emit headerStateChanged();
 }
 
 void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
@@ -1948,7 +1921,7 @@ std::shared_ptr<NodeSelectorProxyModel> SelectType::createProxyModel()
 
 void DownloadType::init(NodeSelectorTreeViewWidget* wdg)
 {
-    wdg->ui->bNewFolder->hide();
+    wdg->setNewFolderButtonVisibility(false);
     wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
     wdg->mModel->showFiles(true);
     wdg->mModel->showReadOnlyFolders(true);
@@ -2027,7 +2000,7 @@ bool SyncType::isAllowedToNavigateInside(const QModelIndex& index)
 
 void StreamType::init(NodeSelectorTreeViewWidget* wdg)
 {
-    wdg->ui->bNewFolder->hide();
+    wdg->setNewFolderButtonVisibility(false);
     wdg->mModel->showFiles(true);
     wdg->mModel->showReadOnlyFolders(true);
 }
@@ -2089,7 +2062,7 @@ NodeSelectorModelItemSearch::Types UploadType::allowedTypes()
 //////////////////////////////////////////////////////////////////
 void CloudDriveType::init(NodeSelectorTreeViewWidget* wdg)
 {
-    wdg->ui->bNewFolder->hide();
+    wdg->setNewFolderButtonVisibility(false);
     wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
     wdg->mModel->showFiles(true);
     wdg->mModel->showReadOnlyFolders(true);

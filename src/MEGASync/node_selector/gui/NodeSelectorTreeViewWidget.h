@@ -8,7 +8,9 @@
 
 #include <QDebug>
 #include <QItemSelectionModel>
+#include <QMap>
 #include <QPersistentModelIndex>
+#include <QPixmap>
 #include <QPushButton>
 #include <QTimer>
 #include <QWidget>
@@ -47,6 +49,30 @@ class NodeSelectorTreeViewWidget: public QWidget
     };
 
 public:
+    struct IncomingInfoData
+    {
+        QPixmap folderIcon;
+        QPixmap userIcon;
+        QPixmap accessIcon;
+        QString accessLabel;
+        QString folderName;
+        QString userName;
+        QString userEmail;
+        int accessType = -1;
+    };
+
+    struct HeaderState
+    {
+        QString folderName;
+        bool showIncomingInfo = false;
+        IncomingInfoData incomingInfo;
+        bool showNavigation = false;
+        bool canGoBack = false;
+        bool canGoForward = false;
+        bool newFolderVisible = true;
+        bool newFolderEnabled = true;
+    };
+
     static const int LOADING_VIEW_THRESSHOLD;
     static const int LABEL_ELIDE_MARGIN;
     static const char* FULL_NAME_PROPERTY;
@@ -72,10 +98,6 @@ public:
 
     void selectPendingIndexes();
 
-    virtual void setTitleText(const QString& nodeName);
-    void setSearchText(const QString& text);
-    void clearSearchText();
-
     virtual void treeViewWidgetSelected() {}
 
     void clearSelection();
@@ -83,6 +105,7 @@ public:
 
     void abort();
     NodeSelectorModelItem* rootItem();
+    QModelIndex getCurrentRootIndex();
     NodeSelectorProxyModel* getProxyModel();
     bool isInRootView() const;
     bool isEmpty() const;
@@ -106,8 +129,21 @@ public:
     void resetMergeFolderHandles(const QMultiHash<SourceHandle, TargetHandle>& handles);
 
     bool isUiBlocked();
+    HeaderState getHeaderState() const;
+    const QMap<uint, QPushButton*>& customButtons() const;
 
     void dropIntoRootIndex(QDropEvent* event);
+    void goBack();
+    void goForward();
+    void requestNewFolder();
+
+    struct NewFolderInfo
+    {
+        mega::MegaHandle handle = mega::INVALID_HANDLE;
+        bool recentlyAdded = false;
+    };
+
+    void setNewFolderInfo(const NewFolderInfo& newNewFolderInfo);
 
 public slots:
     virtual void checkViewOnModelChange();
@@ -116,10 +152,11 @@ public slots:
 signals:
     void enterKeyPressed();
     void onCustomButtonClicked(uint id);
+    void newFolderRequested();
     void viewReady();
     void uiIsBlocked(bool state);
     void selectionIsCorrect(bool state);
-    void searchRequested(const QString& text);
+    void headerStateChanged();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
@@ -148,11 +185,13 @@ protected:
         return false;
     }
 
+    virtual void setTitleText(const QString& nodeName);
     virtual void onRootIndexChanged(const QModelIndex& source_idx);
     virtual QModelIndex getAddedNodeParent(mega::MegaHandle parentHandle);
     QModelIndex getRootIndexFromIndex(const QModelIndex& index);
     void selectIndex(const QModelIndex& index, bool setCurrent, bool exclusiveSelect = false);
     void selectIndex(const mega::MegaHandle& handle, bool setCurrent, bool exclusiveSelect = false);
+    void setIncomingInfoData(const IncomingInfoData& data, bool showIncomingInfo);
 
     enum class NodeState
     {
@@ -182,6 +221,7 @@ protected:
     Navigation mNavigationInfo;
     mega::MegaApi* mMegaApi;
     SelectTypeSPtr mSelectType;
+    HeaderState mHeaderState;
 
 protected slots:
     // Title
@@ -268,10 +308,12 @@ private:
     // Column width
     QList<int> mVisibleColumns;
     void updateColumnsWidth(bool updateVisibleColumnCounter);
+    void notifyHeaderStateChanged();
 
     ButtonIconManager mButtonIconManager;
     bool first;
     bool mUiBlocked;
+    QMap<uint, QPushButton*> mCustomButtons;
 
     struct UpdateNodesInfo
     {
@@ -313,8 +355,8 @@ private:
     QTimer mNodesUpdateTimer;
 
     void checkNewFolderAdded(QPointer<NodeSelectorModelItem> item);
-    mega::MegaHandle mNewFolderHandle;
-    bool mNewFolderAdded;
+
+    NewFolderInfo mNewFolderInfo;
 
     friend class DownloadType;
     friend class SyncType;

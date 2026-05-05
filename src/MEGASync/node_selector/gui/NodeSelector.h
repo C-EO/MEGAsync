@@ -155,9 +155,14 @@ private slots:
     void onSearch(const QString& text);
     void onUiIsBlocked(bool state);
     void onSelectionChanged(bool state);
+    void onbNewFolderClicked();
 
 private:
     QModelIndex getParentIncomingShareByIndex(QModelIndex idx);
+    void applyHeaderState(const NodeSelectorTreeViewWidget::HeaderState& state);
+    void syncHeaderButtons(NodeSelectorTreeViewWidget* wid);
+    void clearHeaderButtons();
+    void refreshHeader(NodeSelectorTreeViewWidget* wid);
 
     virtual void onOkButtonClicked() = 0;
     void shortCutConnects(int ignoreThis);
@@ -183,6 +188,7 @@ private:
 
     // Selection changed signal
     QMetaObject::Connection mSelectionChangedConnection;
+    QMetaObject::Connection mHeaderStateConnection;
 };
 
 #endif // NODESELECTOR_H

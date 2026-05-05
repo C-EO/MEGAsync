@@ -6,9 +6,11 @@
 #include "MegaApplication.h"
 #include "MegaNodeNames.h"
 #include "MessageDialogOpener.h"
+#include "NewFolderDialog.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorProxyModel.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
+#include "SearchLineEdit.h"
 #include "TabSelector.h"
 #include "TokenizableItems/TokenPropertySetter.h"
 #include "ui_NodeSelector.h"
@@ -24,7 +26,7 @@
 
 using namespace mega;
 
-const char* ITS_ON_NS = "itsOn";
+constexpr auto ACCESS_PROPERTY = "access";
 
 NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     QDialog(parent),
@@ -110,6 +112,31 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     connect(ui->bOk, &QPushButton::clicked, this, &NodeSelector::confirmSelection);
     connect(ui->bCancel, &QPushButton::clicked, this, &NodeSelector::reject);
 
+    connect(ui->bNewFolder, &QPushButton::clicked, this, &NodeSelector::onbNewFolderClicked);
+    connect(ui->bBack,
+            &QPushButton::clicked,
+            this,
+            [this]()
+            {
+                if (auto wid = getCurrentTreeViewWidget())
+                {
+                    wid->goBack();
+                }
+            });
+    connect(ui->bForward,
+            &QPushButton::clicked,
+            this,
+            [this]()
+            {
+                if (auto wid = getCurrentTreeViewWidget())
+                {
+                    wid->goForward();
+                }
+            });
+    connect(ui->leSearchTool, &SearchLineEdit::search, this, &NodeSelector::onSearch);
+
+    ui->incomingInfo->hide();
+
     resize(1024, 720);
     setMinimumSize(760, 400);
 }
@@ -130,6 +157,7 @@ void NodeSelector::init()
     createSpecialisedWidgets();
     addSearch();
     initSpecialisedWidgets();
+    onCurrentWidgetChanged(ui->stackedWidget->currentIndex());
 
     mInitialised = true;
 }
@@ -151,34 +179,190 @@ void NodeSelector::updateNodeSelectorTabs()
 
 void NodeSelector::onSearch(const QString& text)
 {
-    auto sourceWidget = getTreeViewWidget(sender());
-
     ui->wSearch->show();
     ui->fSearch->setTitle(text);
     ui->fSearch->setSelected(true);
 
     mSearchWidget->search(text);
     onbShowSearchClicked();
-    mSearchWidget->setSearchText(text);
+}
 
-    if (sourceWidget && sourceWidget != mSearchWidget)
+void NodeSelector::onbNewFolderClicked()
+{
+    auto sourceWidget = getCurrentTreeViewWidget();
+
+    if (!sourceWidget)
     {
-        sourceWidget->clearSearchText();
+        return;
     }
+
+    auto parentNode = sourceWidget->getProxyModel()->getNode(sourceWidget->getCurrentRootIndex());
+    if (!parentNode)
+    {
+        parentNode = MegaSyncApp->getRootNode();
+        if (!parentNode)
+            return;
+    }
+
+    QPointer<NewFolderDialog> dialog(new NewFolderDialog(parentNode, this));
+    dialog->init();
+    DialogOpener::showDialog(
+        dialog,
+        [this, dialog, sourceWidget]()
+        {
+            auto newNode = dialog->getNewNode();
+            // IF the dialog return a node, there are two scenarios:
+            // 1) The dialog has been accepted, a new folder has been created
+            // 2) The dialog has been rejected because the folder already
+            // exists. If so, select the existing folder
+            if (newNode)
+            {
+                sourceWidget->setNewFolderInfo({newNode->getHandle(), true});
+
+                // Focusing a widget whose top-level window is not the active
+                // window makes Qt call QWindow::requestActivate()
+                // (QWidgetPrivate::setFocus_sys). Wayland does not support it
+                // and older Qt 5.15 builds crash there, so only force the
+                // activation/focus when our window is already active. When it
+                // is not (e.g. just after the NewFolderDialog closes on
+                // Wayland), the compositor restores focus on its own.
+                const QWindow* selectorWindow = window() ? window()->windowHandle() : nullptr;
+                const bool windowAlreadyActive =
+                    selectorWindow && selectorWindow == QGuiApplication::focusWindow();
+                if (!Platform::getInstance()->isWayland() || windowAlreadyActive)
+                {
+#ifdef Q_OS_LINUX
+                    // It seems that the NodeSelector is not activated when the
+                    // NewFolderDialog is closed, so the ui->tMegaFolders is
+                    // not correctly focused
+                    qApp->setActiveWindow(this);
+#endif
+
+                    // Set the focus to the view to allow the user to press
+                    // enter (or go back, in a future feature)
+                    setFocus();
+                }
+            }
+        });
 }
 
 void NodeSelector::onUiIsBlocked(bool state)
 {
     ui->bCancel->setDisabled(state);
+    ui->leSearchTool->setDisabled(state);
     if (state)
     {
         ui->bOk->setDisabled(true);
+    }
+
+    if (auto wid = getCurrentTreeViewWidget())
+    {
+        applyHeaderState(wid->getHeaderState());
     }
 }
 
 void NodeSelector::onSelectionChanged(bool state)
 {
     ui->bOk->setEnabled(state);
+}
+
+void NodeSelector::applyHeaderState(const NodeSelectorTreeViewWidget::HeaderState& state)
+{
+    ui->navigationButtons->setVisible(state.showNavigation);
+    ui->bBack->setEnabled(state.canGoBack);
+    ui->bForward->setEnabled(state.canGoForward);
+
+    ui->lFolderName->setText(state.folderName);
+    ui->incomingInfo->setVisible(state.showIncomingInfo);
+    ui->lFolderName->setVisible(!state.showIncomingInfo);
+
+    ui->bNewFolder->setVisible(state.newFolderVisible);
+    ui->bNewFolder->setEnabled(state.newFolderEnabled);
+
+    const auto& incomingInfo = state.incomingInfo;
+    ui->sh_folderIcon->setIcon(incomingInfo.folderIcon);
+    ui->sh_folderName->setText(incomingInfo.folderName);
+    ui->sh_userIcon->setIcon(incomingInfo.userIcon);
+    ui->sh_accessIcon->setIcon(incomingInfo.accessIcon);
+    ui->sh_accessLabel->setText(incomingInfo.accessLabel);
+    ui->sh_userName->setText(incomingInfo.userName);
+    ui->sh_userEmail->setText(incomingInfo.userEmail);
+
+    const auto hasAccessInfo = !incomingInfo.accessLabel.isEmpty();
+    const auto hasOwnerInfo = !incomingInfo.userName.isEmpty() || !incomingInfo.userEmail.isEmpty();
+    const auto showSeparator =
+        !incomingInfo.userName.isEmpty() && !incomingInfo.userEmail.isEmpty();
+
+    ui->sh_accessContainer->setVisible(hasAccessInfo);
+    ui->shareeInfo->setVisible(hasOwnerInfo);
+    ui->sh_userIcon->setVisible(hasOwnerInfo);
+    ui->sh_separator->setVisible(showSeparator);
+
+    ui->sh_accessContainer->setProperty(ACCESS_PROPERTY, incomingInfo.accessType);
+    if (incomingInfo.accessType == mega::MegaShare::ACCESS_FULL)
+    {
+        ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
+                                       QLatin1String("support-success"));
+    }
+    else if (incomingInfo.accessType == mega::MegaShare::ACCESS_READ)
+    {
+        ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
+                                       QLatin1String("text-secondary"));
+    }
+    else if (incomingInfo.accessType == mega::MegaShare::ACCESS_READWRITE)
+    {
+        ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-info"));
+    }
+    else
+    {
+        ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
+                                       QLatin1String("text-secondary"));
+    }
+
+    ui->sh_accessContainer->setStyleSheet(ui->sh_accessContainer->styleSheet());
+}
+
+void NodeSelector::clearHeaderButtons()
+{
+    for (int index = ui->customButtonsLayout->count() - 1; index >= 0; --index)
+    {
+        auto item = ui->customButtonsLayout->itemAt(index);
+        auto button = item ? qobject_cast<QPushButton*>(item->widget()) : nullptr;
+        if (button && button != ui->bNewFolder)
+        {
+            ui->customButtonsLayout->removeWidget(button);
+            button->hide();
+        }
+    }
+}
+
+void NodeSelector::syncHeaderButtons(NodeSelectorTreeViewWidget* wid)
+{
+    clearHeaderButtons();
+    if (!wid)
+    {
+        return;
+    }
+
+    for (auto button: wid->customButtons())
+    {
+        if (button)
+        {
+            button->show();
+            ui->customButtonsLayout->insertWidget(0, button);
+        }
+    }
+}
+
+void NodeSelector::refreshHeader(NodeSelectorTreeViewWidget* wid)
+{
+    if (!wid || wid != getCurrentTreeViewWidget())
+    {
+        return;
+    }
+
+    syncHeaderButtons(wid);
+    applyHeaderState(wid->getHeaderState());
 }
 
 void NodeSelector::showDefaultUploadOption(bool show)
@@ -242,14 +426,9 @@ void NodeSelector::onfShowSearchHidden()
 {
     ui->wSearch->hide();
     ui->fSearch->setTitle(QString());
-    for (int page = 0; page < ui->stackedWidget->count(); ++page)
-    {
-        if (auto viewContainer = getTreeViewWidget(page))
-        {
-            viewContainer->clearSearchText();
-        }
-    }
+    ui->leSearchTool->onClearClicked();
     mSearchWidget->stopSearch();
+
     if (getCurrentTreeViewWidget() == mSearchWidget)
     {
         onOptionSelected(CLOUD_DRIVE);
@@ -507,12 +686,6 @@ void NodeSelector::initSpecialisedWidgets()
         auto viewContainer = getTreeViewWidget(page);
         if (viewContainer)
         {
-            connect(viewContainer,
-                    &NodeSelectorTreeViewWidget::searchRequested,
-                    this,
-                    &NodeSelector::onSearch,
-                    Qt::UniqueConnection);
-
             viewContainer->init();
             connect(viewContainer,
                     &NodeSelectorTreeViewWidget::onCustomButtonClicked,
@@ -528,6 +701,11 @@ void NodeSelector::initSpecialisedWidgets()
                     &NodeSelectorTreeViewWidget::enterKeyPressed,
                     ui->bOk,
                     &QPushButton::click,
+                    Qt::UniqueConnection);
+            connect(viewContainer,
+                    &NodeSelectorTreeViewWidget::newFolderRequested,
+                    this,
+                    &NodeSelector::onbNewFolderClicked,
                     Qt::UniqueConnection);
             connect(viewContainer,
                     &NodeSelectorTreeViewWidget::viewReady,
@@ -687,6 +865,8 @@ void NodeSelector::onCurrentWidgetChanged(int index)
 {
     if (auto wid = dynamic_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
     {
+        disconnect(mHeaderStateConnection);
+
         if (mNodeToBeSelected)
         {
             wid->clearSelection();
@@ -704,7 +884,17 @@ void NodeSelector::onCurrentWidgetChanged(int index)
                                               this,
                                               &NodeSelector::onSelectionChanged,
                                               Qt::UniqueConnection);
+        mHeaderStateConnection = connect(
+            wid,
+            &NodeSelectorTreeViewWidget::headerStateChanged,
+            this,
+            [this, wid]()
+            {
+                refreshHeader(wid);
+            },
+            Qt::UniqueConnection);
 
+        refreshHeader(wid);
         onSelectionChanged(wid->isSelectionCorrect());
     }
 }

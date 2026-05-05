@@ -102,13 +102,15 @@ void NodeSelectorTreeViewWidgetCloudDrive::onRootIndexChanged(const QModelIndex&
 /// \param mode
 /// \param parent
 
-const char* ACCESS_PROPERTY = "access";
-
 NodeSelectorTreeViewWidgetIncomingShares::NodeSelectorTreeViewWidgetIncomingShares(
     SelectTypeSPtr mode,
     QWidget* parent):
     NodeSelectorTreeViewWidget(mode, parent)
 {
+    IncomingInfoData data;
+    data.folderName = MegaNodeNames::getIncomingSharesName();
+    data.folderIcon = getEmptyIcon().pixmap(32, 32);
+    setIncomingInfoData(data, true);
     setTitle(MegaNodeNames::getIncomingSharesName());
 }
 
@@ -126,7 +128,9 @@ bool NodeSelectorTreeViewWidgetIncomingShares::isNodeCompatibleWithModel(mega::M
 
 void NodeSelectorTreeViewWidgetIncomingShares::setTitleText(const QString& nodeName)
 {
-    ui->sh_folderName->setText(nodeName);
+    auto incomingInfo(mHeaderState.incomingInfo);
+    incomingInfo.folderName = nodeName;
+    setIncomingInfoData(incomingInfo, true);
     NodeSelectorTreeViewWidget::setTitleText(nodeName);
 }
 
@@ -158,53 +162,29 @@ void NodeSelectorTreeViewWidgetIncomingShares::onRootIndexChanged(const QModelIn
     NodeSelectorTreeViewWidget::onRootIndexChanged(idx);
 
     // Fill Incoming info
+    IncomingInfoData incomingInfo;
+    incomingInfo.folderName = idx.isValid() ? idx.data(Qt::DisplayRole).toString() : getRootText();
+    incomingInfo.folderIcon =
+        (idx.isValid() ? qvariant_cast<QPixmap>(idx.data(Qt::DecorationRole)) :
+                         getEmptyIcon().pixmap(32, 32));
+
     QModelIndex in_share_idx = getParentIncomingShareByIndex(idx);
     auto item(NodeSelectorModel::getItemByIndex(in_share_idx));
     if (in_share_idx.isValid() && item)
     {
         in_share_idx = in_share_idx.sibling(in_share_idx.row(), NodeSelectorModel::Column::USER);
-        QPixmap folderPixmap = qvariant_cast<QPixmap>(idx.data(Qt::DecorationRole));
-        QPixmap pm = qvariant_cast<QPixmap>(in_share_idx.data(Qt::DecorationRole));
-        ui->sh_folderIcon->setIcon(folderPixmap);
-        ui->sh_userIcon->setIcon(pm);
+        incomingInfo.userIcon = qvariant_cast<QPixmap>(in_share_idx.data(Qt::DecorationRole));
 
         in_share_idx = in_share_idx.sibling(in_share_idx.row(), NodeSelectorModel::Column::ACCESS);
-        QPixmap accessPixmap = qvariant_cast<QPixmap>(in_share_idx.data(Qt::DecorationRole));
-        ui->sh_accessIcon->setIcon(accessPixmap);
-
-        ui->sh_accessLabel->setText(in_share_idx.data(Qt::DisplayRole).toString());
-
-        // Background-color
-        auto accessType = in_share_idx.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
-        ui->sh_accessContainer->setProperty(ACCESS_PROPERTY, accessType);
-        if (accessType == mega::MegaShare::ACCESS_FULL)
-        {
-            ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
-                                           QLatin1String("support-success"));
-        }
-        else if (accessType == mega::MegaShare::ACCESS_READ)
-        {
-            ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
-                                           QLatin1String("text-secondary"));
-        }
-        else if (accessType == mega::MegaShare::ACCESS_READWRITE)
-        {
-            ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-info"));
-        }
-        // Update dynamic properties
-        ui->sh_accessContainer->setStyleSheet(ui->sh_accessContainer->styleSheet());
-
-        ui->sh_folderName->setText(idx.data(Qt::DisplayRole).toString());
-        ui->sh_userEmail->setText(item->getOwnerEmail());
-        ui->sh_userName->setText(item->getOwnerName());
-        ui->incomingInfo->setVisible(true);
-        ui->lFolderName->setVisible(false);
+        incomingInfo.accessIcon = qvariant_cast<QPixmap>(in_share_idx.data(Qt::DecorationRole));
+        incomingInfo.accessLabel = in_share_idx.data(Qt::DisplayRole).toString();
+        incomingInfo.accessType =
+            in_share_idx.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
+        incomingInfo.userEmail = item->getOwnerEmail();
+        incomingInfo.userName = item->getOwnerName();
     }
-    else
-    {
-        ui->incomingInfo->setVisible(false);
-        ui->lFolderName->setVisible(true);
-    }
+
+    setIncomingInfoData(incomingInfo, true);
 }
 
 bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentRootIndexReadOnly()
