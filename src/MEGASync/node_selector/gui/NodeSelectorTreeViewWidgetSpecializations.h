@@ -144,6 +144,7 @@ private:
     void checkSearchButtonsVisibility();
     void changeColumnsVisibility(NodeSelectorModelItemSearch::Type type);
     void resetChipsVisibility();
+    void expandSearchResults();
     QString getRootText() override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;

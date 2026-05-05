@@ -139,6 +139,19 @@ private:
     NodeSelectorModelItem* createSearchItem(mega::MegaNode* node,
                                             NodeSelectorModelItemSearch::Types typesAllowed);
     void appendRootItems(const QList<NodeSelectorModelItem*>& items);
+    NodeSelectorModelItemSearch* createSearchTreeItem(mega::MegaNode* node,
+                                                      NodeSelectorModelItemSearch::Types type);
+    bool canCreateSearchItem(mega::MegaNode* node);
+    QList<std::shared_ptr<mega::MegaNode>>
+        createSearchPath(mega::MegaNode* node, NodeSelectorModelItemSearch::Types type) const;
+    void addSearchPath(QList<NodeSelectorModelItem*>& items,
+                       const QList<std::shared_ptr<mega::MegaNode>>& path,
+                       NodeSelectorModelItemSearch::Types type);
+    NodeSelectorModelItem* findSearchItem(const QList<NodeSelectorModelItem*>& items,
+                                          mega::MegaHandle handle) const;
+    NodeSelectorModelItem* findSearchChild(NodeSelectorModelItem* parent,
+                                           mega::MegaHandle handle) const;
+    bool isSearchRootNode(mega::MegaNode* node, NodeSelectorModelItemSearch::Types type) const;
 
     std::atomic<bool> mShowFiles{true};
     std::atomic<bool> mShowReadOnlyFolders{true};

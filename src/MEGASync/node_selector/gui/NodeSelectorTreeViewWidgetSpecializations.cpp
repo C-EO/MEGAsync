@@ -508,6 +508,7 @@ void NodeSelectorTreeViewWidgetSearch::onBackupsSearchClicked()
     auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
     proxy_model->setMode(NodeSelectorModelItemSearch::Type::BACKUP);
     changeColumnsVisibility(NodeSelectorModelItemSearch::Type::BACKUP);
+    expandSearchResults();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onRubbishSearchClicked()
@@ -515,6 +516,7 @@ void NodeSelectorTreeViewWidgetSearch::onRubbishSearchClicked()
     auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
     proxy_model->setMode(NodeSelectorModelItemSearch::Type::RUBBISH);
     changeColumnsVisibility(NodeSelectorModelItemSearch::Type::RUBBISH);
+    expandSearchResults();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onIncomingSharesSearchClicked()
@@ -522,6 +524,7 @@ void NodeSelectorTreeViewWidgetSearch::onIncomingSharesSearchClicked()
     auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
     proxy_model->setMode(NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
     changeColumnsVisibility(NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
+    expandSearchResults();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onCloudDriveSearchClicked()
@@ -529,6 +532,7 @@ void NodeSelectorTreeViewWidgetSearch::onCloudDriveSearchClicked()
     auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
     proxy_model->setMode(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
     changeColumnsVisibility(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
+    expandSearchResults();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onItemDoubleClick(const QModelIndex& index)
@@ -579,6 +583,11 @@ void NodeSelectorTreeViewWidgetSearch::resetChipsVisibility()
     ui->rubbishSearch->setVisible(true);
 
     ui->searchButtonsWidget->setVisible(true);
+}
+
+void NodeSelectorTreeViewWidgetSearch::expandSearchResults()
+{
+    ui->tMegaFolders->expandAll();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
@@ -652,10 +661,12 @@ void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
 
         // Do it after setting the model to the view, otherwise it won´t work
         changeColumnsVisibility(tabSelected);
+        expandSearchResults();
     }
     else
     {
         NodeSelectorTreeViewWidget::onLevelLoaded();
+        expandSearchResults();
     }
 }
 

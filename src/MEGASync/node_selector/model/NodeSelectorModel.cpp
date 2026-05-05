@@ -126,10 +126,11 @@ void NodeRequester::search(const QString& text, NodeSelectorModelItemSearch::Typ
 
     for (int i = 0; i < nodeList->size(); i++)
     {
-        auto item = createSearchItem(nodeList->get(i), typesAllowed);
-        if (item)
+        auto type = NodeSelectorModelSearch::calculateSearchType(nodeList->get(i));
+        if ((typesAllowed & type) && canCreateSearchItem(nodeList->get(i)))
         {
-            items.append(item);
+            auto path = createSearchPath(nodeList->get(i), type);
+            addSearchPath(items, path, type);
         }
     }
 
@@ -194,20 +195,52 @@ NodeSelectorModelItem*
     NodeRequester::createSearchItem(mega::MegaNode* node,
                                     NodeSelectorModelItemSearch::Types typesAllowed)
 {
+    NodeSelectorModelItemSearch::Types type = NodeSelectorModelSearch::calculateSearchType(node);
+
+    if ((typesAllowed & type) && canCreateSearchItem(node))
+    {
+        mSearchedTypes |= type;
+        return createSearchTreeItem(node, type);
+    }
+
+    return nullptr;
+}
+
+NodeSelectorModelItemSearch*
+    NodeRequester::createSearchTreeItem(mega::MegaNode* node,
+                                        NodeSelectorModelItemSearch::Types type)
+{
+    auto nodeUptr = std::unique_ptr<mega::MegaNode>(node->copy());
+    auto item = new NodeSelectorModelItemSearch(std::move(nodeUptr), type);
+    if (item->isValid())
+    {
+        connect(item,
+                &NodeSelectorModelItemSearch::typeChanged,
+                this,
+                &NodeRequester::onSearchItemTypeChanged);
+        return item;
+    }
+
+    item->deleteLater();
+    return nullptr;
+}
+
+bool NodeRequester::canCreateSearchItem(mega::MegaNode* node)
+{
     if (isAborted() || mSearchCanceled)
     {
-        return nullptr;
+        return false;
     }
     if ((node->isFile() && !mShowFiles))
     {
-        return nullptr;
+        return false;
     }
     else if (mSyncSetupMode)
     {
         int access = MegaSyncApp->getMegaApi()->getAccess(node);
         if (access != mega::MegaShare::ACCESS_FULL && access != mega::MegaShare::ACCESS_OWNER)
         {
-            return nullptr;
+            return false;
         }
     }
     else if (!mShowReadOnlyFolders)
@@ -215,32 +248,135 @@ NodeSelectorModelItem*
         if (MegaSyncApp->getMegaApi()->getAccess(node) == mega::MegaShare::ACCESS_READ ||
             !node->isNodeKeyDecrypted())
         {
-            return nullptr;
+            return false;
         }
     }
 
-    NodeSelectorModelItemSearch::Types type = NodeSelectorModelSearch::calculateSearchType(node);
+    return true;
+}
 
-    if (typesAllowed & type)
+QList<std::shared_ptr<mega::MegaNode>>
+    NodeRequester::createSearchPath(mega::MegaNode* node,
+                                    NodeSelectorModelItemSearch::Types type) const
+{
+    QList<std::shared_ptr<mega::MegaNode>> path;
+
+    auto megaApi = MegaSyncApp->getMegaApi();
+    auto currentNode = std::shared_ptr<mega::MegaNode>(node->copy());
+    while (currentNode && !isSearchRootNode(currentNode.get(), type))
     {
-        mSearchedTypes |= type;
-        auto nodeUptr = std::unique_ptr<mega::MegaNode>(node->copy());
-        auto item = new NodeSelectorModelItemSearch(std::move(nodeUptr), type);
-        if (item->isValid())
+        path.prepend(currentNode);
+        currentNode.reset(megaApi->getParentNode(currentNode.get()));
+    }
+
+    return path;
+}
+
+void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
+                                  const QList<std::shared_ptr<mega::MegaNode>>& path,
+                                  NodeSelectorModelItemSearch::Types type)
+{
+    if (path.isEmpty())
+    {
+        return;
+    }
+
+    mSearchedTypes |= type;
+
+    NodeSelectorModelItem* parentItem(nullptr);
+    for (const auto& node: path)
+    {
+        auto existingItem = parentItem ? findSearchChild(parentItem, node->getHandle()) :
+                                         findSearchItem(items, node->getHandle());
+        if (!existingItem)
         {
-            connect(item,
-                    &NodeSelectorModelItemSearch::typeChanged,
-                    this,
-                    &NodeRequester::onSearchItemTypeChanged);
-            return item;
+            if (parentItem)
+            {
+                const auto newItems = parentItem->addNodes({node});
+                existingItem = newItems.isEmpty() ? nullptr : newItems.first().data();
+                if (auto searchItem = dynamic_cast<NodeSelectorModelItemSearch*>(existingItem))
+                {
+                    connect(searchItem,
+                            &NodeSelectorModelItemSearch::typeChanged,
+                            this,
+                            &NodeRequester::onSearchItemTypeChanged);
+                }
+            }
+            else
+            {
+                existingItem = createSearchTreeItem(node.get(), type);
+                if (existingItem)
+                {
+                    items.append(existingItem);
+                }
+            }
         }
-        else
+
+        if (!existingItem)
         {
-            item->deleteLater();
+            return;
+        }
+
+        parentItem = existingItem;
+    }
+}
+
+NodeSelectorModelItem* NodeRequester::findSearchItem(const QList<NodeSelectorModelItem*>& items,
+                                                     mega::MegaHandle handle) const
+{
+    for (auto item: items)
+    {
+        if (item && item->getNode() && item->getNode()->getHandle() == handle)
+        {
+            return item;
         }
     }
 
     return nullptr;
+}
+
+NodeSelectorModelItem* NodeRequester::findSearchChild(NodeSelectorModelItem* parent,
+                                                      mega::MegaHandle handle) const
+{
+    if (!parent)
+    {
+        return nullptr;
+    }
+
+    for (int i = 0; i < parent->getNumChildren(); ++i)
+    {
+        auto child = parent->getChild(i);
+        if (child && child->getNode() && child->getNode()->getHandle() == handle)
+        {
+            return child;
+        }
+    }
+
+    return nullptr;
+}
+
+bool NodeRequester::isSearchRootNode(mega::MegaNode* node,
+                                     NodeSelectorModelItemSearch::Types type) const
+{
+    auto isNode = [node](const std::shared_ptr<mega::MegaNode>& rootNode)
+    {
+        return rootNode && node && rootNode->getHandle() == node->getHandle();
+    };
+
+    if (type.testFlag(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE))
+    {
+        return isNode(MegaSyncApp->getRootNode());
+    }
+    if (type.testFlag(NodeSelectorModelItemSearch::Type::BACKUP))
+    {
+        return isNode(MegaSyncApp->getVaultNode());
+    }
+    if (type.testFlag(NodeSelectorModelItemSearch::Type::RUBBISH))
+    {
+        return isNode(MegaSyncApp->getRubbishNode());
+    }
+
+    return false;
 }
 
 void NodeRequester::createCloudDriveRootItem()
@@ -3043,11 +3179,15 @@ QPair<QIcon, QString> NodeSelectorModel::getFolderIcon(NodeSelectorModelItem* it
                     icon = Utilities::getFolderPixmap(Utilities::FolderType::TYPE_SYNC,
                                                       Utilities::AttributeType::MEDIUM);
                 }
-                else if (item->getStatus() == NodeSelectorModelItem::Status::BACKUP)
+                else
                 {
-                    if (auto backupItem = dynamic_cast<NodeSelectorModelItemBackup*>(item))
+                    auto searchItem = dynamic_cast<NodeSelectorModelItemSearch*>(item);
+
+                    if ((searchItem &&
+                         searchItem->getType() & NodeSelectorModelItemSearch::Type::BACKUP) ||
+                        item->getStatus() == NodeSelectorModelItem::Status::BACKUP)
                     {
-                        if (backupItem->isDeviceFolder())
+                        if (item->isDeviceFolder())
                         {
                             QString nodeDeviceId(QString::fromUtf8(node->getDeviceId()));
                             if (!nodeDeviceId.isEmpty())
@@ -3079,7 +3219,7 @@ QPair<QIcon, QString> NodeSelectorModel::getFolderIcon(NodeSelectorModelItem* it
                                 token = QLatin1String("background-inverse");
                             }
                         }
-                        else if (backupItem->isBackupFolder())
+                        else if (item->isBackupFolder())
                         {
                             icon = Utilities::getFolderPixmap(Utilities::FolderType::TYPE_BACKUP_2,
                                                               Utilities::AttributeType::MEDIUM);

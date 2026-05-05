@@ -67,6 +67,7 @@ public:
     virtual bool isMyBackupsFolder() const;
     virtual bool isDeviceFolder() const;
     bool isFile() const;
+    virtual bool isBackupFolder() const;
     bool isInShare() const;
     bool isInVault() const;
     bool isCloudDrive() const;
@@ -162,7 +163,7 @@ public:
     bool isSyncable() override;
     bool isMyBackupsFolder() const override;
     bool isDeviceFolder() const override;
-    bool isBackupFolder() const;
+    bool isBackupFolder() const override;
 
 private:
     NodeSelectorModelItem* createModelItem(std::unique_ptr<mega::MegaNode> node,
@@ -197,6 +198,9 @@ public:
 
     void setType(Types type);
     int getNumChildren() override;
+    bool isMyBackupsFolder() const override;
+    bool isDeviceFolder() const override;
+    bool isBackupFolder() const override;
 
 signals:
     void typeChanged(Types type);

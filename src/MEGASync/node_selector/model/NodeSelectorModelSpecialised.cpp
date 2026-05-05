@@ -470,7 +470,8 @@ void NodeSelectorModelBackups::onRootItemCreated()
 NodeSelectorModelSearch::NodeSelectorModelSearch(NodeSelectorModelItemSearch::Types allowedTypes,
                                                  QObject* parent):
     NodeSelectorModel(parent),
-    mAllowedTypes(allowedTypes)
+    mAllowedTypes(allowedTypes),
+    mDeviceNamesRequest(UserAttributes::DeviceNames::requestDeviceNames())
 {
     qRegisterMetaType<NodeSelectorModelItemSearch::Types>("NodeSelectorModelItemSearch::Types");
 }
@@ -533,6 +534,25 @@ QVariant NodeSelectorModelSearch::data(const QModelIndex& index, int role) const
         return QVariant();
     }
     return NodeSelectorModel::data(index, role);
+}
+
+QVariant NodeSelectorModelSearch::getDisplayText(NodeSelectorModelItem* item) const
+{
+    if (item->isMyBackupsFolder())
+    {
+        return MegaNodeNames::getBackupsName();
+    }
+    if (item->isDeviceFolder())
+    {
+        const auto deviceId = QString::fromUtf8(item->getNode()->getDeviceId());
+        const auto deviceName = mDeviceNamesRequest->getDeviceName(deviceId);
+        if (!deviceName.isEmpty())
+        {
+            return deviceName;
+        }
+    }
+
+    return NodeSelectorModel::getDisplayText(item);
 }
 
 bool NodeSelectorModelSearch::addNodes(QList<std::shared_ptr<mega::MegaNode>> nodes,

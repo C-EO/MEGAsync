@@ -431,9 +431,15 @@ void NodeSelectorModelItem::calculateSyncStatus()
 
     mStatus = Status::NONE;
 
-    // if current item has a parent and the parent is already a sync or a sync_child, current item
-    // is also a sync_child if not, continue checking. This avoid to block the mutex in the megaapi
-    // call below.
+    if (isBackupFolder())
+    {
+        mStatus = Status::BACKUP;
+        return;
+    }
+
+    // if current item has a parent and the parent is already a sync or a sync_child, current
+    // item is also a sync_child if not, continue checking. This avoid to block the mutex in the
+    // megaapi call below.
     if (parent())
     {
         if (auto parent_item = qobject_cast<NodeSelectorModelItem*>(parent()))
@@ -444,6 +450,7 @@ void NodeSelectorModelItem::calculateSyncStatus()
                 case Status::SYNC_CHILD:
                 {
                     mStatus = Status::SYNC_CHILD;
+                    return;
                 }
                 default:
                     break;
@@ -507,6 +514,11 @@ bool NodeSelectorModelItem::isFile() const
     return getNode() && getNode()->isFile();
 }
 
+bool NodeSelectorModelItem::isBackupFolder() const
+{
+    return false;
+}
+
 bool NodeSelectorModelItem::isInShare() const
 {
     return mNode->isInShare();
@@ -548,7 +560,34 @@ void NodeSelectorModelItemSearch::setType(Types type)
 
 int NodeSelectorModelItemSearch::getNumChildren()
 {
-    return 0;
+    return static_cast<int>(mChildItems.size());
+}
+
+bool NodeSelectorModelItemSearch::isMyBackupsFolder() const
+{
+    return mType.testFlag(NodeSelectorModelItemSearch::Type::BACKUP) && parent() == nullptr;
+}
+
+bool NodeSelectorModelItemSearch::isDeviceFolder() const
+{
+    if (!mType.testFlag(NodeSelectorModelItemSearch::Type::BACKUP))
+    {
+        return false;
+    }
+
+    auto parentItem = getParent();
+    return parentItem && parentItem->isMyBackupsFolder();
+}
+
+bool NodeSelectorModelItemSearch::isBackupFolder() const
+{
+    if (!mType.testFlag(NodeSelectorModelItemSearch::Type::BACKUP))
+    {
+        return false;
+    }
+
+    auto parentItem = getParent();
+    return parentItem && parentItem->isDeviceFolder();
 }
 
 NodeSelectorModelItem*
@@ -557,8 +596,7 @@ NodeSelectorModelItem*
                                                  NodeSelectorModelItem* parentItem)
 {
     Q_UNUSED(showFiles)
-    Q_UNUSED(parentItem)
-    return nullptr;
+    return new NodeSelectorModelItemSearch(std::move(node), mType, parentItem);
 }
 
 NodeSelectorModelItemIncomingShare::NodeSelectorModelItemIncomingShare(
