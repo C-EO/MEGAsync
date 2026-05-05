@@ -87,7 +87,7 @@ private:
     QMap<mega::MegaHandle, std::shared_ptr<mega::MegaNode>> mFailedRemotePaths;
     //
 
-    int mUndoSuccessful;
+    qsizetype mUndoSuccessful;
     uint mSolveAttempts;
 
     StalledIssuesList mDetectedCloudSideIssuesToFix;

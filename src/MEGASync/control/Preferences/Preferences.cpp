@@ -2,6 +2,7 @@
 
 #include "FullName.h"
 #include "ParallelConnectionsValues.h"
+#include "QtMetaEnumUtils.h"
 #include "StatsEventHandler.h"
 #include "Version.h"
 
@@ -238,8 +239,7 @@ const QString Preferences::firstWebDownloadKey      = QString::fromLatin1("first
 const QString Preferences::fatWarningShownKey       = QString::fromLatin1("fatWarningShown");
 const QString Preferences::installationTimeKey      = QString::fromLatin1("installationTime");
 const QString Preferences::accountCreationTimeKey   = QString::fromLatin1("accountCreationTime");
-const QString Preferences::hasLoggedInKey           = QString::fromLatin1("hasLoggedIn");
-const QString Preferences::useHttpsOnlyKey          = QString::fromLatin1("useHttpsOnly");
+const QString Preferences::hasLoggedInKey = QString::fromLatin1("hasLoggedIn");
 const QString Preferences::SSLcertificateExceptionKey  = QString::fromLatin1("SSLcertificateException");
 const QString Preferences::maxMemoryUsageKey        = QString::fromLatin1("maxMemoryUsage");
 const QString Preferences::maxMemoryReportTimeKey   = QString::fromLatin1("maxMemoryReportTime");
@@ -273,7 +273,6 @@ const bool Preferences::defaultStartOnStartup = true;
 const bool Preferences::defaultUpdateAutomatically = true;
 const bool Preferences::defaultCleanerDaysLimit     = true;
 
-const bool Preferences::defaultUseHttpsOnly         = true;
 const bool Preferences::defaultSSLcertificateException = false;
 const int  Preferences::defaultUploadLimitKB        = -1;
 const int  Preferences::defaultDownloadLimitKB      = 0;
@@ -399,7 +398,7 @@ void Preferences::initialize(QString dataPath)
 
 Preferences::Preferences():
     QObject(),
-    mutex(QMutex::Recursive),
+    mutex(),
     mSettings(nullptr),
     lastTransferNotification(0)
 {
@@ -1281,7 +1280,7 @@ void Preferences::recoverDeprecatedNotificationsSettings()
 QString Preferences::notificationsTypeToString(NotificationsTypes type)
 {
     QMetaEnum metaEnum = QMetaEnum::fromType<NotificationsTypes>();
-    return QString::fromUtf8(metaEnum.valueToKey(notificationsTypeUT(type)));
+    return QString::fromUtf8(metaEnum.valueToKey(toQtMetaEnumValue(type)));
 }
 
 /************ STALLED ISSUES **********************************/
@@ -1372,16 +1371,6 @@ bool Preferences::startOnStartup()
 void Preferences::setStartOnStartup(bool value)
 {
     setValueConcurrently(startOnStartupKey, value);
-}
-
-bool Preferences::usingHttpsOnly()
-{
-    return getValueConcurrent<bool>(useHttpsOnlyKey, defaultUseHttpsOnly);
-}
-
-void Preferences::setUseHttpsOnly(bool value)
-{
-    setValueConcurrently(useHttpsOnlyKey, value);
 }
 
 bool Preferences::SSLcertificateException()
@@ -2315,11 +2304,11 @@ void Preferences::setLastPublicHandle(MegaHandle handle, int type)
     mutex.unlock();
 }
 
-int Preferences::getNumUsers()
+qsizetype Preferences::getNumUsers()
 {
     mutex.lock();
     assert(!logged());
-    int value = mSettings->numChildGroups();
+    qsizetype value = mSettings->numChildGroups();
     mutex.unlock();
     return value;
 }
@@ -2720,8 +2709,13 @@ bool Preferences::hasEmail(QString email)
         value = !storedEmail.compare(email);
         if (!value)
         {
-            MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Email key differs from requested email: %1. Removing the old entry: %2")
-                         .arg(email).arg(storedEmail).toUtf8().constData());
+            MegaApi::log(
+                MegaApi::LOG_LEVEL_ERROR,
+                QString::fromUtf8(
+                    "Email key differs from requested email: %1. Removing the old entry: %2")
+                    .arg(email, storedEmail)
+                    .toUtf8()
+                    .constData());
             mSettings->remove(QString::fromLatin1(""));
         }
         mSettings->endGroup();
@@ -2754,10 +2748,10 @@ void Preferences::readFolders()
     loadedSyncsMap.clear();
 
     mSettings->beginGroup(syncsGroupByTagKey);
-    int numSyncs = mSettings->numChildGroups();
-    for (int i = 0; i < numSyncs; i++)
+    const auto numSyncs = mSettings->numChildGroups();
+    for (auto i = 0; i < numSyncs; ++i)
     {
-        mSettings->beginGroup(i);
+        mSettings->beginGroup(static_cast<int>(i));
 
         auto sc = std::make_shared<SyncSettings>(mSettings->value(configuredSyncsKey).value<QString>());
         if (sc->backupId())

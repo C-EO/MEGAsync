@@ -52,12 +52,16 @@ protected:
 
 class LinkInvalid : public LinkObject
 {
+    Q_OBJECT
+
 public:
     LinkInvalid(mega::MegaApi* megaApi = nullptr, MegaNodeSPtr node = nullptr, const QString& link = DEFAULT_STR);
 };
 
 class LinkNode : public LinkObject
 {
+    Q_OBJECT
+
 public:
     LinkNode(mega::MegaApi* megaApi = nullptr, MegaNodeSPtr node = nullptr, const QString& link = DEFAULT_STR);
 
@@ -71,6 +75,8 @@ private:
 
 class LinkSet : public LinkObject
 {
+    Q_OBJECT
+
 public:
     LinkSet(mega::MegaApi* megaApi, const AlbumCollection& set);
 

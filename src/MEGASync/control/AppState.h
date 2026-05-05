@@ -36,6 +36,7 @@ class AppState: public QObject
 public:
     enum AppStates
     {
+        INIT,
         NOMINAL,
         RELOADING,
         FATAL_ERROR,

@@ -19,6 +19,8 @@ class InfoDialogTransfersProxyModel;
 
 class InfoDialogTransfersView : public LoadingSceneView<InfoDialogTransferLoadingItem, QTreeView>
 {
+    Q_OBJECT
+
 public:
     InfoDialogTransfersView(QWidget* parent)
         : LoadingSceneView<InfoDialogTransferLoadingItem, QTreeView>(parent)

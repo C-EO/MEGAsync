@@ -17,7 +17,6 @@
 #include <QApplication>
 #include <QCryptographicHash>
 #include <QDateTime>
-#include <QDesktopWidget>
 #include <QDirIterator>
 #include <QImageReader>
 #include <QPixmapCache>
@@ -668,8 +667,8 @@ QString Utilities::getAvatarPath(QString email)
         return QString();
     }
 
-    QString avatarsPath = QString::fromUtf8("%1/avatars/%2.jpg")
-            .arg(Preferences::instance()->getDataPath()).arg(email);
+    QString avatarsPath =
+        QString::fromUtf8("%1/avatars/%2.jpg").arg(Preferences::instance()->getDataPath(), email);
     return QDir::toNativeSeparators(avatarsPath);
 }
 
@@ -731,7 +730,7 @@ void Utilities::copyRecursively(QString srcPath, QString dstPath)
         src.copy(dstPath);
 #ifndef _WIN32
        QFileInfo info(src);
-       time_t t = info.lastModified().toTime_t();
+       time_t t = info.lastModified().toSecsSinceEpoch();
        struct utimbuf times = { t, t };
        utime(dstPath.toUtf8().constData(), &times);
 #endif
@@ -962,8 +961,7 @@ QString Utilities::createSimpleUsedString(long long usedData)
 QString Utilities::createSimpleUsedOfString(long long usedData, long long totalData)
 {
     return QCoreApplication::translate("Utilities", "%1 of %2")
-        .arg(getSizeString(usedData))
-        .arg(getSizeString(totalData));
+        .arg(getSizeString(usedData), getSizeString(totalData));
 }
 
 QString Utilities::createSimpleUsedStringWithoutReplacement(long long usedData)
@@ -983,13 +981,13 @@ QString Utilities::createCompleteUsedString(long long usedData, long long totalD
 QString Utilities::extractJSONString(QString json, QString name)
 {
     QString pattern = name + QString::fromUtf8("\":\"");
-    int pos = json.indexOf(pattern);
+    const auto pos = json.indexOf(pattern);
     if (pos < 0)
     {
         return QString();
     }
 
-    int end = json.indexOf(QString::fromUtf8("\""), pos + pattern.size());
+    const auto end = json.indexOf(QString::fromUtf8("\""), pos + pattern.size());
     if (end < 0)
     {
         return QString();
@@ -1003,7 +1001,7 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
     QStringList resultList;
 
     QString pattern = name + QString::fromUtf8("\":[\"");
-    int startPos = json.indexOf(pattern);
+    auto startPos = json.indexOf(pattern);
     if (startPos < 0)
     {
         return resultList;
@@ -1011,17 +1009,17 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
 
     startPos += pattern.size(); // Move to the beginning of the first string
 
-    int endPos = json.indexOf(QString::fromUtf8("\"]"), startPos);
+    const auto endPos = json.indexOf(QString::fromUtf8("\"]"), startPos);
     if (endPos < 0)
     {
         return resultList;
     }
 
-    QString substr = json.mid(startPos, endPos - startPos);
-    QStringList parts = substr.remove(QString::fromUtf8("\"")).split(QString::fromUtf8(","));
+    auto substr = json.mid(startPos, endPos - startPos);
+    const auto parts = substr.remove(QLatin1Char('"')).split(QLatin1Char(','));
 
     // Trim whitespace from each part and add it to the result list
-    for (const QString& part : parts)
+    for (const auto& part: parts)
     {
         resultList.append(part.trimmed());
     }
@@ -1032,14 +1030,14 @@ QStringList Utilities::extractJSONStringList(const QString& json, const QString&
 long long Utilities::extractJSONNumber(QString json, QString name)
 {
     QString pattern = name + QString::fromUtf8("\":");
-    int pos = json.indexOf(pattern);
+    const auto pos = json.indexOf(pattern);
     if (pos < 0)
     {
         return 0;
     }
 
-    int end = pos + pattern.size();
-    int count = 0;
+    auto end = pos + pattern.size();
+    auto count = 0;
     while (json[end].isDigit())
     {
         end++;
@@ -1109,12 +1107,20 @@ QString Utilities::joinLogZipFiles(MegaApi *megaApi, const QDateTime *timestampS
     QDir logDir{MegaApplication::applicationDataPath().append(QString::fromUtf8("/") + LOGS_FOLDER_LEAFNAME_QSTRING)};
     if (logDir.exists())
     {
-        QString fileFormat{QDir::separator() + QString::fromUtf8("%1%2%3")
-                                                    .arg(QDateTime::currentDateTimeUtc().toString(QString::fromLatin1("yyMMdd_hhmmss")))
-                                                    .arg(megaApi->getMyUser() ? QString::fromUtf8("_") + QString::fromUtf8(std::unique_ptr<MegaUser>(megaApi->getMyUser())->getEmail()) : QString::fromUtf8(""))
-                                                    .arg(!appenHashReference.isEmpty() ? QString::fromUtf8("_") + appenHashReference : QString::fromUtf8(""))};
+        QString fileFormat{
+            QDir::separator() +
+            QString::fromUtf8("%1%2%3").arg(
+                QDateTime::currentDateTimeUtc().toString(QString::fromLatin1("yyMMdd_hhmmss")),
+                megaApi->getMyUser() ?
+                    QString::fromUtf8("_") +
+                        QString::fromUtf8(
+                            std::unique_ptr<MegaUser>(megaApi->getMyUser())->getEmail()) :
+                    QString::fromUtf8(""),
+                !appenHashReference.isEmpty() ? QString::fromUtf8("_") + appenHashReference :
+                                                QString::fromUtf8(""))};
 
-        QFileInfo joinLogsFile(logDir.absolutePath().append(fileFormat).append(QString::fromUtf8(".gz")));
+        QFileInfo joinLogsFile(
+            logDir.absolutePath().append(fileFormat).append(QString::fromUtf8(".gz")));
 #ifdef _WIN32
         FILE * pFile = nullptr;
         errno_t er = _wfopen_s(&pFile, joinLogsFile.absoluteFilePath().toStdWString().c_str(), L"a+b");
@@ -1139,10 +1145,19 @@ QString Utilities::joinLogZipFiles(MegaApi *megaApi, const QDateTime *timestampS
         gzinit(&crc, &tot, pFile);
 
         QFileInfoList logFiles = logDir.entryInfoList(QStringList() << QString::fromUtf8("MEGAsync.[0-9]*.log"), QDir::Files);
-        int nLogFiles = logFiles.count();
+        int nLogFiles = static_cast<int>(logFiles.count());
 
-        std::sort(logFiles.begin(), logFiles.end(), [](const QFileInfo &v1, const QFileInfo &v2){
-            return v1.fileName().remove(QRegExp(QString::fromUtf8("[^\\d]"))).toInt() > v2.fileName().remove(QRegExp(QString::fromUtf8("[^\\d]"))).toInt();} );
+        std::sort(logFiles.begin(),
+                  logFiles.end(),
+                  [](const QFileInfo& v1, const QFileInfo& v2)
+                  {
+                      return v1.fileName()
+                                 .remove(QRegularExpression(QString::fromUtf8("[^\\d]")))
+                                 .toInt() >
+                             v2.fileName()
+                                 .remove(QRegularExpression(QString::fromUtf8("[^\\d]")))
+                                 .toInt();
+                  });
 
         foreach (QFileInfo i, logFiles)
         {
@@ -1338,7 +1353,7 @@ void Utilities::getDaysAndHoursToTimestamp(int64_t secsTimestamps, int64_t &rema
     }
 
     // Get seconcs diff between now and secsTimestamps
-    int64_t tDiff = secsTimestamps - QDateTime::currentDateTimeUtc().toMSecsSinceEpoch() / MSEC_IN_1_SEC;
+    const auto tDiff = secsTimestamps - QDateTime::currentSecsSinceEpoch();
 
     // Compute in hours, then in days
     remainHours = tDiff / SECS_IN_1_HOUR;
@@ -1490,15 +1505,16 @@ QString Utilities::getNonDuplicatedLocalName(const QFileInfo &currentFile, bool 
 QPair<QString, QString> Utilities::getFilenameBasenameAndSuffix(const QString& fileName)
 {
     QMimeDatabase db;
-    int length = fileName.length();
+    const auto length = fileName.length();
     QList <QPair <int, QMimeType> > list;
-    for (int index = length; index > -1; index--)
+    for (auto index = length; index >= 0; --index)
     {
-        QList<QMimeType> mimes = db.mimeTypesForFileName(fileName.section(QLatin1String(""), index, length));
-        QMimeType mime = mimes.isEmpty() ? QMimeType() : mimes.last();
+        const auto mimes =
+            db.mimeTypesForFileName(fileName.section(QLatin1String(""), index, length));
+        const auto mime = mimes.isEmpty() ? QMimeType() : mimes.last();
         if (mime.isValid() && (list.isEmpty() || list.last().second != mime))
         {
-            list.push_back(qMakePair(index, mime));
+            list.append({index, mime});
         }
     }
 
@@ -2111,6 +2127,11 @@ void Utilities::sleepMilliseconds(unsigned int milliseconds)
 
 int Utilities::partPer(long long part, long long total, uint ref)
 {
+    return partPer(static_cast<long double>(part), static_cast<long double>(total), ref);
+}
+
+int Utilities::partPer(long double part, long double total, uint ref)
+{
     // Use maximum precision
     long double partd(part);
     long double totald(total);
@@ -2313,4 +2334,3 @@ TimeInterval& TimeInterval::operator=(const TimeInterval& other)
     useSecondPrecision = other.useSecondPrecision;
     return *this;
 }
-

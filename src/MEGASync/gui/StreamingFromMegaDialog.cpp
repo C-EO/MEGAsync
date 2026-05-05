@@ -210,6 +210,8 @@ void StreamingFromMegaDialog::on_bCopyLink_clicked()
 {
     if (!streamURL.isEmpty())
     {
+        registerPendingStreamingEvent();
+
         QApplication::clipboard()->setText(streamURL);
         ((MegaApplication *)qApp)->showInfoMessage(tr("The link has been copied to the clipboard"));
     }
@@ -252,7 +254,7 @@ void StreamingFromMegaDialog::on_bOpenOther_clicked()
         WCHAR buffer[MAX_PATH];
         if (SHGetFolderPath(0, CSIDL_PROGRAM_FILES, NULL, SHGFP_TYPE_CURRENT, buffer) == S_OK)
         {
-            defaultPath = QString::fromUtf16((ushort *)buffer);
+            defaultPath = QString::fromUtf16((char16_t*)buffer);
         }
     #else
         #ifdef __APPLE__
@@ -323,6 +325,8 @@ bool StreamingFromMegaDialog::generateStreamURL()
 
 void StreamingFromMegaDialog::openStreamWithApp(QString app)
 {
+    registerPendingStreamingEvent();
+
     if (app.isEmpty())
     {
         Utilities::openUrl(QUrl::fromEncoded(streamURL.toUtf8()));
@@ -330,6 +334,16 @@ void StreamingFromMegaDialog::openStreamWithApp(QString app)
     }
 
     Platform::getInstance()->streamWithApp(app, streamURL);
+}
+
+void StreamingFromMegaDialog::registerPendingStreamingEvent()
+{
+    if (!mSelectedMegaNode)
+    {
+        return;
+    }
+
+    ++mPendingStreamingEvents[mSelectedMegaNode->getHandle()];
 }
 
 void StreamingFromMegaDialog::showStreamingError()
@@ -430,9 +444,25 @@ void StreamingFromMegaDialog::onTransferTemporaryError(mega::MegaApi*, mega::Meg
     }
 }
 
-void StreamingFromMegaDialog::onTransferStart(mega::MegaApi* api, mega::MegaTransfer* transfer)
+void StreamingFromMegaDialog::onTransferStart(mega::MegaApi*, mega::MegaTransfer* transfer)
 {
+    if (!transfer || !transfer->isStreamingTransfer())
+    {
+        return;
+    }
+
+    auto pendingEvent = mPendingStreamingEvents.find(transfer->getNodeHandle());
+    if (pendingEvent == mPendingStreamingEvents.end() || pendingEvent.value() <= 0)
+    {
+        return;
+    }
+
     MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
         AppStatsEvents::EventType::LINK_STREAM_STARTED,
         true);
+
+    if (--pendingEvent.value() == 0)
+    {
+        mPendingStreamingEvents.erase(pendingEvent);
+    }
 }

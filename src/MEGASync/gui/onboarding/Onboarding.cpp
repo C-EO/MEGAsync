@@ -2,16 +2,13 @@
 
 #include "AccountStatusController.h"
 #include "BackupCandidatesComponent.h"
-#include "DeviceNameChecker.h"
 #include "LoginController.h"
 #include "MegaApplication.h"
 #include "MessageDialogOpener.h"
 #include "OnboardingQmlDialog.h"
 #include "PasswordStrengthChecker.h"
 #include "SettingsDialog.h"
-#include "Syncs.h"
 #include "SyncsComponent.h"
-#include "SyncsData.h"
 
 #include <QQmlEngine>
 
@@ -44,25 +41,6 @@ QUrl Onboarding::getQmlUrl()
 void Onboarding::openPreferences(int tabIndex) const
 {
     MegaSyncApp->openSettings(tabIndex);
-}
-
-void Onboarding::checkDeviceName(const QString& name)
-{
-    DeviceNameChecker* deviceNameChecker = new DeviceNameChecker(this, name);
-    QObject::connect(deviceNameChecker,
-                     &QThread::finished,
-                     deviceNameChecker,
-                     &QObject::deleteLater);
-
-    QObject::connect(deviceNameChecker,
-                     &DeviceNameChecker::deviceNameCheck,
-                     this,
-                     [this](bool isValid)
-                     {
-                         emit deviceNameChecked(isValid);
-                     });
-
-    deviceNameChecker->start();
 }
 
 void Onboarding::showClosingButLoggingInWarningDialog() const

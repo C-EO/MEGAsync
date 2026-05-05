@@ -422,7 +422,7 @@ void LoginController::onLogin(mega::MegaRequest* request, mega::MegaError* e)
         fetchNodes();
         if (!mPreferences->hasLoggedIn())
         {
-            mPreferences->setHasLoggedIn(QDateTime::currentDateTime().toMSecsSinceEpoch() / 1000);
+            mPreferences->setHasLoggedIn(QDateTime::currentSecsSinceEpoch());
         }
         MegaSyncApp->onLoginFinished();
     }
@@ -496,7 +496,7 @@ void LoginController::onAccountCreation(mega::MegaRequest* request, mega::MegaEr
         MegaSyncApp->getStatsEventHandler()->sendEvent(AppStatsEvents::EventType::ACC_CREATION_START);
         if (!mPreferences->accountCreationTime())
         {
-                mPreferences->setAccountCreationTime(QDateTime::currentDateTime().toMSecsSinceEpoch() / 1000);
+            mPreferences->setAccountCreationTime(QDateTime::currentSecsSinceEpoch());
         }
         setState(WAITING_EMAIL_CONFIRMATION);
     }

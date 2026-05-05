@@ -368,6 +368,7 @@ class DownloadType: public SelectType
 public:
     explicit DownloadType() = default;
     void init(NodeSelectorTreeViewWidget* wdg) override;
+    void newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
     NodeSelectorModelItemSearch::Types allowedTypes() override;
 };
@@ -387,6 +388,7 @@ class StreamType: public SelectType
 public:
     explicit StreamType() = default;
     void init(NodeSelectorTreeViewWidget* wdg) override;
+    void newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
     NodeSelectorModelItemSearch::Types allowedTypes() override;
 };

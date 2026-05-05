@@ -9,6 +9,8 @@
 
 class NameConflictedStalledIssue : public StalledIssue
 {
+    Q_OBJECT
+
 public:
     class ConflictedNameInfo
     {
@@ -447,9 +449,9 @@ public:
             return true;
         }
 
-        int size() const
+        qsizetype size() const
         {
-            auto counter(0);
+            qsizetype counter = 0;
             foreach(auto& conflictedName, mConflictedNames)
             {
                 counter += conflictedName.conflictedNames.size();
@@ -575,10 +577,6 @@ private:
                                        const QList<std::shared_ptr<ConflictedNameInfo>>& localConflictedNames,
                                        bool ignoreLastModifiedName,
                                        QStringList &cloudItemsBeingRenamed);
-
-    //Rename siblings
-    bool renameCloudSibling(std::shared_ptr<ConflictedNameInfo> item, const QString& newName);
-    bool renameLocalSibling(std::shared_ptr<ConflictedNameInfo> item, const QString& newName);
 
     //Find local or remote sibling
     std::shared_ptr<ConflictedNameInfo> findOtherSideItem(const QList<std::shared_ptr<ConflictedNameInfo>>& items, std::shared_ptr<ConflictedNameInfo> check);

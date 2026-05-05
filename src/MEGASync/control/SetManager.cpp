@@ -576,7 +576,7 @@ void SetManager::handleCreateFolderResponse(MegaRequest* request, MegaError* err
     }
 
     // Copy (import) all Elements to the Cloud Drive
-    for (const auto& wrappedNode: mCurrentSet.nodeList)
+    for (const auto& wrappedNode: std::as_const(mCurrentSet.nodeList))
     {
         if (!copyNode(wrappedNode.getMegaNode(), createdNode))
         {
@@ -624,8 +624,9 @@ void SetManager::handleCopyNodeResponse(MegaRequest* request, MegaError* error)
 void SetManager::checkandHandleFinishedImport()
 {
     // Check if we are waiting for more Elements to import, or if we are done
-    int nrElementsToImport = mCurrentSet.elementHandleList.size();
-    int nrImportedElements = mSucceededImportElements.size() + mFailedImportElements.size() + mAlreadyExistingImportElements.size();
+    const auto nrElementsToImport = mCurrentSet.elementHandleList.size();
+    const auto nrImportedElements = mSucceededImportElements.size() + mFailedImportElements.size() +
+                                    mAlreadyExistingImportElements.size();
 
     if (nrImportedElements == nrElementsToImport)
     {
@@ -717,8 +718,8 @@ AlbumCollection SetManager::filterSet(const AlbumCollection& srcSet, const QList
     dstSet.name = srcSet.name;
     dstSet.link = srcSet.link;
 
-    const int nrElements = srcSet.elementHandleList.size();
-    for (int i = 0; i < nrElements; i++)
+    const auto nrElements = srcSet.elementHandleList.size();
+    for (auto i = 0; i < nrElements; i++)
     {
         MegaHandle handle = srcSet.elementHandleList[i];
         if (elementHandleList.contains(handle))
@@ -741,7 +742,7 @@ bool SetManager::getPreviewElementNodes()
     if (mCurrentSet.elementHandleList.isEmpty()) { return false; }
 
     // Fetch all Elements
-    for (const auto& handle : mCurrentSet.elementHandleList)
+    for (const auto& handle: std::as_const(mCurrentSet.elementHandleList))
     {
         mMegaApi->getPreviewElementNode(handle, mDelegateListener.get());
     }

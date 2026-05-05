@@ -2,18 +2,19 @@
 
 QmlDeviceName::QmlDeviceName(QObject* parent):
     QObject{parent},
+    mCheckDeviceNameRequested(false),
     mSetDeviceNameRequested(false),
-    mDeviceNameRequest(UserAttributes::DeviceNames::requestDeviceNames())
+    mDeviceNamesRequest(UserAttributes::DeviceNames::requestDeviceNames())
 {
-    connect(mDeviceNameRequest.get(),
+    connect(mDeviceNamesRequest.get(),
             &UserAttributes::DeviceNames::attributeReady,
             this,
-            &QmlDeviceName::onDeviceNameSet,
+            &QmlDeviceName::onDeviceNameReady,
             Qt::QueuedConnection);
 
-    if (mDeviceNameRequest->isAttributeReady())
+    if (mDeviceNamesRequest->isAttributeReady())
     {
-        onDeviceNameSet();
+        onDeviceNameReady();
     }
 }
 
@@ -22,24 +23,45 @@ QString QmlDeviceName::getDeviceName() const
     return mName;
 }
 
+void QmlDeviceName::checkDeviceName(const QString& newName)
+{
+    mCheckDeviceNameRequested = true;
+    mCandidateName = newName;
+
+    if (mDeviceNamesRequest->isAttributeReady())
+    {
+        onDeviceNameReady();
+    }
+}
+
 void QmlDeviceName::setDeviceName(const QString& newName)
 {
     mSetDeviceNameRequested = true;
 
     if (mName == newName)
     {
-        onDeviceNameSet();
+        onDeviceNameReady();
     }
     else
     {
-        mDeviceNameRequest->setDeviceName(newName);
+        mDeviceNamesRequest->setDeviceName(newName);
     }
 }
 
-void QmlDeviceName::onDeviceNameSet()
+void QmlDeviceName::onDeviceNameReady()
 {
-    mName = mDeviceNameRequest->getDeviceName();
-    emit deviceNameChanged();
+    auto newName = mDeviceNamesRequest->getDeviceName();
+    if (mName != newName)
+    {
+        mName = newName;
+        emit deviceNameChanged();
+    }
+
+    if (mCheckDeviceNameRequested)
+    {
+        mCheckDeviceNameRequested = false;
+        emit deviceNameChecked(isCandidateNameAvailable());
+    }
 
     // Emit only if this object is the source of the device name set
     if (mSetDeviceNameRequested)
@@ -47,4 +69,10 @@ void QmlDeviceName::onDeviceNameSet()
         mSetDeviceNameRequested = false;
         emit deviceNameSetRequestCompleted();
     }
+}
+
+bool QmlDeviceName::isCandidateNameAvailable() const
+{
+    return mDeviceNamesRequest->getDeviceName() == mCandidateName ||
+           mDeviceNamesRequest->getDeviceNames().key(mCandidateName).isEmpty();
 }

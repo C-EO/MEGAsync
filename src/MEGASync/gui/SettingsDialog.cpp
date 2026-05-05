@@ -24,6 +24,7 @@
 #include <QFileDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QRect>
 #include <QShortcut>
 #include <QtConcurrent/QtConcurrent>
@@ -80,9 +81,11 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
     mCacheSize(-1),
     mRemoteCacheSize(-1),
     mDebugCounter(0),
+    mKeepLogsCounter(0),
     usersUpdateListener(std::make_unique<UsersUpdateListener>())
 {
     mUi->setupUi(this);
+    mUi->lEmail->installEventFilter(this);
 
     connect(usersUpdateListener.get(),
             &UsersUpdateListener::userEmailUpdated,
@@ -323,7 +326,7 @@ void SettingsDialog::loadSettings()
         QString file = it.next();
         if (file.startsWith(fullPrefix))
         {
-            int extensionIndex = file.lastIndexOf(QString::fromUtf8("."));
+            const auto extensionIndex = file.lastIndexOf(u'.');
             if ((extensionIndex - fullPrefix.size()) <= 0)
             {
                 continue;
@@ -333,7 +336,7 @@ void SettingsDialog::loadSettings()
             QString languageString = Utilities::languageCodeToString(languageCode);
             if (!languageString.isEmpty())
             {
-                int i = 0;
+                auto i = 0;
                 while (i < languages.size() && (languageString > languages[i]))
                 {
                     i++;
@@ -344,7 +347,8 @@ void SettingsDialog::loadSettings()
         }
     }
 
-    for (int i = mLanguageCodes.size() - 1; i >= 0; i--)
+    const auto langs = static_cast<int>(mLanguageCodes.size());
+    for (int i = langs - 1; i >= 0; i--)
     {
         if (currentLanguage.startsWith(mLanguageCodes[i]))
         {
@@ -355,7 +359,7 @@ void SettingsDialog::loadSettings()
 
     if (currentIndex == -1)
     {
-        currentIndex = mLanguageCodes.indexOf(QString::fromUtf8("en"));
+        currentIndex = static_cast<int>(mLanguageCodes.indexOf(QString::fromUtf8("en")));
     }
 
     mUi->cLanguage->addItems(languages);
@@ -493,6 +497,20 @@ bool SettingsDialog::event(QEvent* event)
     return QDialog::event(event);
 }
 
+bool SettingsDialog::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == mUi->lEmail && event->type() == QEvent::MouseButtonRelease)
+    {
+        auto mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() == Qt::LeftButton)
+        {
+            onEmailClicked();
+        }
+    }
+
+    return QDialog::eventFilter(watched, event);
+}
+
 void SettingsDialog::on_bGeneral_clicked()
 {
     MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
@@ -511,15 +529,15 @@ void SettingsDialog::on_bGeneral_clicked()
 void SettingsDialog::on_bClearCache_clicked()
 {
     QString syncs;
-    for (auto syncSetting: mModel->getAllSyncSettings())
+    const auto allSyncsSettings = mModel->getAllSyncSettings();
+    for (const auto& syncSetting: allSyncsSettings)
     {
         QFileInfo fi(syncSetting->getLocalFolder() + QDir::separator() +
                      QString::fromUtf8(MEGA_DEBRIS_FOLDER));
         if (fi.exists() && fi.isDir())
         {
             syncs += QString::fromUtf8("<br/><a href=\"local://#%1\">%2</a>")
-                         .arg(fi.absoluteFilePath() + QDir::separator())
-                         .arg(syncSetting->name());
+                         .arg(fi.absoluteFilePath() + QDir::separator(), syncSetting->name());
         }
     }
 
@@ -539,7 +557,7 @@ void SettingsDialog::on_bClearCache_clicked()
     {
         if (msg->result() == QMessageBox::Yes)
         {
-            QtConcurrent::run(deleteCache);
+            QThreadPool::globalInstance()->start(deleteCache);
             mCacheSize = 0;
             onCacheSizeAvailable();
         }
@@ -579,7 +597,11 @@ void SettingsDialog::on_bClearRemoteCache_clicked()
     {
         if (msg->result() == QMessageBox::Yes)
         {
-            QtConcurrent::run(deleteRemoteCache, mMegaApi);
+            QThreadPool::globalInstance()->start(
+                [=]()
+                {
+                    deleteRemoteCache(mMegaApi);
+                });
             mRemoteCacheSize = 0;
             onCacheSizeAvailable();
         }
@@ -781,7 +803,7 @@ void SettingsDialog::on_cOverlayIcons_toggled(bool checked)
 
     mPreferences->disableOverlayIcons(!checked);
 
-    const int configuredSyncCount = mModel->getNumSyncedFolders(SyncInfo::AllHandledSyncTypes);
+    const auto configuredSyncCount = mModel->getNumSyncedFolders(SyncInfo::AllHandledSyncTypes);
     if (configuredSyncCount <= 0)
         return;
 
@@ -805,7 +827,8 @@ void SettingsDialog::on_cDesktopIntegration_toggled(bool checked)
     // 1. Toggle left pane sync shortcuts in the explorer
     if (checked)
     {
-        for (auto syncSetting: mModel->getAllSyncSettings())
+        const auto allSyncsSettings = mModel->getAllSyncSettings();
+        for (const auto& syncSetting: allSyncsSettings)
         {
             Platform::getInstance()->addSyncToLeftPane(syncSetting->getLocalFolder(),
                                                        syncSetting->name(),
@@ -1078,6 +1101,16 @@ void SettingsDialog::on_lAccountType_clicked()
     {
         mApp->toggleLogging();
         mDebugCounter = 0;
+    }
+}
+
+void SettingsDialog::onEmailClicked()
+{
+    mKeepLogsCounter++;
+    if (mKeepLogsCounter == NUMBER_OF_CLICKS_TO_DEBUG)
+    {
+        mApp->toggleKeepLogsOnLogout();
+        mKeepLogsCounter = 0;
     }
 }
 
@@ -1613,12 +1646,6 @@ void SettingsDialog::on_bOpenBandwidthSettings_clicked()
                 {
                     mApp->setMaxConnections(MegaTransfer::TYPE_DOWNLOAD,
                                             mPreferences->parallelDownloadConnections());
-                }
-
-                if (bandwidthSettings->settingHasChanged(
-                        BandwidthSettings::SettingChanged::USE_HTTPS))
-                {
-                    mApp->setUseHttpsOnly(mPreferences->usingHttpsOnly());
                 }
 
                 updateNetworkTab();

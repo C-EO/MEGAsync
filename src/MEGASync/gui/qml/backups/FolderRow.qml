@@ -418,7 +418,7 @@ Item {
                 leftIconColor: ColorTheme.iconSecondary
                 error: hint.visible
                 sizes: SmallSizes {}
-                validator: RegExpValidator { regExp: RegexExpressions.allowedFolderChars }
+                validator: RegularExpressionValidator { regularExpression: RegexExpressions.allowedFolderChars }
 
                 onAccepted: {
                     doneAction();

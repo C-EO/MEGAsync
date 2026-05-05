@@ -819,29 +819,29 @@ QString SyncController::getErrStrCurrentBackupInsideExistingBackup()
     return tr("You can't backup this folder as it's already inside a backed up folder.");
 }
 
-QString SyncController::getSyncAPIErrorMsg(int megaError)
+QString SyncController::getSyncAPIErrorMsg(int megaError) const
 {
     switch (megaError)
     {
         case MegaError::API_EARGS:
-            return tr("Unable to create backup as selected folder is not valid. Try again.");
-        break;
+            return tr("Unable to create sync as selected folder is not valid. Try again.");
+            break;
         case MegaError::API_EACCESS:
-            return tr("Unable to create backup. Try again and if issue continues, contact [A]Support[/A].");
-        break;
+            return tr("Unable to create sync. Try again and if issue continues, contact "
+                      "[A]Support[/A].");
+            break;
         case MegaError::API_EINCOMPLETE:
-            return tr("Unable to create backup as the device you're backing up from doesn't have a name. "
-                     "Give your device a name and then try again. If issue continues, contact [A]Support[/A].");
+        // Fallthrough
         case MegaError::API_EINTERNAL:
         // Fallthrough
         case MegaError::API_ENOENT:
         // Fallthrough
         case MegaError::API_EEXIST:
-            return tr("Unable to create backup. For further information, contact [A]Support[/A].");
+            return tr("Unable to create sync. For further information, contact [A]Support[/A].");
         default:
             break;
     }
-    return QString();
+    return {};
 }
 
 QString SyncController::getSyncTypeString(const mega::MegaSync::SyncType& syncType)

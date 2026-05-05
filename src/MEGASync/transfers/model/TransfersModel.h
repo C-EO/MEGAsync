@@ -6,17 +6,14 @@
 #include "QTMegaTransferListener.h"
 #include "TransferItem.h"
 #include "TransferMetaData.h"
-#include "TransferRemainingTime.h"
 #include "TransferTrack.h"
 
 #include <QAbstractItemModel>
 #include <QFutureWatcher>
-#include <QLinkedList>
 #include <QReadWriteLock>
 #include <QtConcurrent/QtConcurrent>
 
 #include <memory>
-#include <set>
 
 struct TransfersCount
 {
@@ -203,7 +200,9 @@ private:
 
     QExplicitlySharedDataPointer<TransferData> createData(mega::MegaTransfer* transfer, mega::MegaError *e);
     QExplicitlySharedDataPointer<TransferData> onTransferEvent(mega::MegaTransfer* transfer, mega::MegaError *e);
-    QList<QExplicitlySharedDataPointer<TransferData>> extractFromCache(QMap<int, QExplicitlySharedDataPointer<TransferData>>& dataMap, int spaceForTransfers);
+    QList<QExplicitlySharedDataPointer<TransferData>>
+        extractFromCache(QMap<int, QExplicitlySharedDataPointer<TransferData>>& dataMap,
+                         qsizetype spaceForTransfers);
     QExplicitlySharedDataPointer<TransferData> checkIfRepeatedAndRemove(QMap<int, QExplicitlySharedDataPointer<TransferData>>& dataMap, mega::MegaTransfer *transfer);
     QExplicitlySharedDataPointer<TransferData> checkIfRepeatedAndSubstitute(QMap<int, QExplicitlySharedDataPointer<TransferData>>& dataMap, mega::MegaTransfer *transfer);
     QExplicitlySharedDataPointer<TransferData> checkIfRepeatedAndSubstituteInStartTransfers(QMap<int, QExplicitlySharedDataPointer<TransferData> > &dataMap, mega::MegaTransfer *transfer);
@@ -234,7 +233,7 @@ private:
     QMutex mTrackTransferMutex;
     TransfersCount mTransfersCount;
     LastTransfersCount mLastTransfersCount;
-    std::atomic<int> mMaxTransfersToProcess;
+    std::atomic<qsizetype> mMaxTransfersToProcess;
 
     QList<int> mRetriedFolder;
     QList<int> mIgnoredFiles;
@@ -432,8 +431,8 @@ private:
     bool isUiBlockedModeActive() const ;
     void setUiBlockedMode(bool state);
 
-    void setUiBlockedModeByCounter(int transferCount);
-    void updateUiBlockedByCounter(int updates);
+    void setUiBlockedModeByCounter(qsizetype transferCount);
+    void updateUiBlockedByCounter(qsizetype updates);
     bool isUiBlockedByCounter() const;
     void setUiBlockedByCounterMode(bool state);
 
@@ -475,7 +474,7 @@ private:
     uint8_t mUpdateMostPriorityTransfer;
     uint8_t mUiBlockedCounter;
 
-    int mUiBlockedByCounter;
+    qsizetype mUiBlockedByCounter;
     uint8_t  mUiBlockedByCounterSafety;
 
     QHash<TransferTag, QPersistentModelIndex> mTagByOrder;

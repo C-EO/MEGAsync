@@ -13,6 +13,8 @@
  */
 class RecursiveShellNotifier : public ShellNotifierDecorator
 {
+    Q_OBJECT
+
 public:
     RecursiveShellNotifier(std::shared_ptr<AbstractShellNotifier> baseNotifier);
     virtual ~RecursiveShellNotifier() = default;

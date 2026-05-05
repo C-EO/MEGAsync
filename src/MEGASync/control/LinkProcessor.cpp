@@ -438,7 +438,7 @@ void LinkProcessor::setImportParentNode(MegaNodeSPtr importParentNode)
 {
     if (!importParentNode) { return; }
 
-    for (const auto& linkObjectPtr: qAsConst(mLinkObjects))
+    for (const auto& linkObjectPtr: std::as_const(mLinkObjects))
     {
         // Verify that linkObjectPtr is selected and without errors
         if (!linkObjectPtr ||

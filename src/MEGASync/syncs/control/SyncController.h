@@ -83,7 +83,7 @@ public:
     //Error strings
     QString getErrStrCurrentBackupOverExistingBackup();
     QString getErrStrCurrentBackupInsideExistingBackup();
-    QString getErrorString(int errorCode, int syncErrorCode) const;
+    virtual QString getErrorString(int errorCode, int syncErrorCode) const;
     QString getRemoteFolderErrorMessage(int errorCode, int syncErrorCode);
 
     // Check is sync folder is case sensitive
@@ -101,12 +101,12 @@ signals:
 
 protected:
     SyncController(QObject* parent = nullptr);
+    virtual QString getSyncAPIErrorMsg(int megaError) const;
 
 private:
     void updateSyncSettings(const mega::MegaError& e, std::shared_ptr<SyncSettings> syncSetting);
     void createPendingBackups();
 
-    static QString getSyncAPIErrorMsg(int megaError);
     static QString getSyncTypeString(const mega::MegaSync::SyncType& syncType);
 
     static QString getDescription(SyncInfo::SyncOrigin origin);

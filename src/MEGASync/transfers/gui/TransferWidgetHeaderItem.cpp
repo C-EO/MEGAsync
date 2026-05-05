@@ -60,7 +60,12 @@ void TransferWidgetHeaderItem::turnOffSorting()
 
 void TransferWidgetHeaderItem::forceClick()
 {
-    auto releaseEvent = new QMouseEvent(QEvent::MouseButtonRelease,QPointF(), Qt::LeftButton, Qt::NoButton, Qt::KeyboardModifier::NoModifier);
+    auto releaseEvent = new QMouseEvent(QEvent::MouseButtonRelease,
+                                        QPointF(),
+                                        QPointF(),
+                                        Qt::LeftButton,
+                                        Qt::NoButton,
+                                        Qt::KeyboardModifier::NoModifier);
     QApplication::postEvent(this, releaseEvent);
 }
 
@@ -86,7 +91,7 @@ void TransferWidgetHeaderItem::mouseReleaseEvent(QMouseEvent *event)
     QWidget::mouseReleaseEvent(event);
 }
 
-void TransferWidgetHeaderItem::enterEvent(QEvent *event)
+void TransferWidgetHeaderItem::enterEvent(QEvent* event)
 {
     ui->line->show();
     QWidget::enterEvent(event);

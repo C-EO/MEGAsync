@@ -28,10 +28,32 @@ FileFolderAttributes::~FileFolderAttributes()
 
 void FileFolderAttributes::initAllAttributes()
 {
-    requestSize(nullptr, nullptr);
-    requestModifiedTime(nullptr, nullptr);
-    requestCreatedTime(nullptr, nullptr);
-    requestCRC(nullptr, nullptr);
+    preload(PRELOAD_BASIC);
+}
+
+void FileFolderAttributes::preload(int flags)
+{
+    Q_ASSERT(containsOnlyKnownFlags(flags));
+
+    if (flags & PRELOAD_SIZE)
+    {
+        requestSize(nullptr, nullptr);
+    }
+
+    if (flags & PRELOAD_MODIFIED_TIME)
+    {
+        requestModifiedTime(nullptr, nullptr);
+    }
+
+    if (flags & PRELOAD_CREATED_TIME)
+    {
+        requestCreatedTime(nullptr, nullptr);
+    }
+
+    if (flags & PRELOAD_CRC)
+    {
+        requestCRC(nullptr, nullptr);
+    }
 }
 
 void FileFolderAttributes::setValueUpdatesDisable()
@@ -387,11 +409,29 @@ RemoteFileFolderAttributes::~RemoteFileFolderAttributes()
 
 void RemoteFileFolderAttributes::initAllAttributes()
 {
-    FileFolderAttributes::initAllAttributes();
+    preload(PRELOAD_ALL);
+}
 
-    requestUser(nullptr, nullptr);
-    requestVersions(nullptr, nullptr);
-    requestFileCount(nullptr, nullptr);
+void RemoteFileFolderAttributes::preload(int flags)
+{
+    Q_ASSERT(containsOnlyKnownFlags(flags));
+
+    FileFolderAttributes::preload(flags);
+
+    if (flags & PRELOAD_USER)
+    {
+        requestUser(nullptr, nullptr);
+    }
+
+    if (flags & PRELOAD_VERSIONS)
+    {
+        requestVersions(nullptr, nullptr);
+    }
+
+    if (flags & PRELOAD_FILE_COUNT)
+    {
+        requestFileCount(nullptr, nullptr);
+    }
 }
 
 void RemoteFileFolderAttributes::requestSize(QObject* caller,std::function<void(qint64)> func)
@@ -566,60 +606,60 @@ void RemoteFileFolderAttributes::requestUser(QObject *caller, std::function<void
             {
                 mIsCurrentUser = false;
                 mOwner = node->getOwner();
+                mUserEmail.clear();
+                mUserFullName = nullptr;
+                mValues.remove(RemoteAttributeTypes::USER);
 
-                std::unique_ptr<mega::MegaNode> node = getNode();
-                if (node)
-                {
-                    if (attributeNeedsUpdate(caller, RemoteAttributeTypes::USER))
-                    {
-                        auto listener =
-                            RequestListenerManager::instance().registerAndGetCustomFinishListener(
-                                this,
-                                [this, caller, func](mega::MegaRequest* request,
-                                                     mega::MegaError* e) {
-                                    if (e->getErrorCode() == mega::MegaError::API_OK)
-                                    {
-                                        auto emailFromRequest = request->getEmail();
-                                        if (emailFromRequest)
-                                        {
-                                            mUserEmail = QString::fromUtf8(emailFromRequest);
-                                            mUserFullName =
-                                                UserAttributes::FullName::requestFullName(
-                                                    emailFromRequest);
-                                        }
-                                    }
+                auto listener =
+                    RequestListenerManager::instance().registerAndGetCustomFinishListener(
+                        this,
+                        [this, caller](mega::MegaRequest* request, mega::MegaError* e)
+                        {
+                            if (e->getErrorCode() == mega::MegaError::API_OK)
+                            {
+                                auto emailFromRequest = request->getEmail();
+                                if (emailFromRequest)
+                                {
+                                    mUserEmail = QString::fromUtf8(emailFromRequest);
+                                    mUserFullName =
+                                        UserAttributes::FullName::requestFullName(emailFromRequest);
+                                }
+                            }
 
-                                    if (mUserFullName)
-                                    {
-                                        if (mUserFullName->isAttributeReady())
+                            if (mUserFullName)
+                            {
+                                if (mUserFullName->isAttributeReady())
+                                {
+                                    mValues.insert(RemoteAttributeTypes::USER,
+                                                   mUserFullName->getFullName());
+                                    emit attributeReady(RemoteAttributeTypes::USER);
+                                }
+                                else
+                                {
+                                    this->connect(
+                                        mUserFullName.get(),
+                                        &UserAttributes::FullName::fullNameReady,
+                                        caller,
+                                        [this](const QString& fullName)
                                         {
-                                            mValues.insert(RemoteAttributeTypes::USER,
-                                                           mUserFullName->getFullName());
+                                            mValues.insert(RemoteAttributeTypes::USER, fullName);
                                             emit attributeReady(RemoteAttributeTypes::USER);
-                                        }
-                                        else
-                                        {
-                                            this->connect(
-                                                mUserFullName.get(),
-                                                &UserAttributes::FullName::fullNameReady,
-                                                caller,
-                                                [this] {
-                                                    mValues.insert(RemoteAttributeTypes::USER,
-                                                                   mUserFullName->getFullName());
-                                                    emit attributeReady(RemoteAttributeTypes::USER);
-                                                });
-                                        }
-                                    }
-                                });
+                                        });
+                                }
+                            }
+                            else
+                            {
+                                mValues.remove(RemoteAttributeTypes::USER);
+                                emit attributeReady(RemoteAttributeTypes::USER);
+                            }
+                        });
 
-                        MegaSyncApp->getMegaApi()->getUserEmail(mOwner, listener.get());
+                MegaSyncApp->getMegaApi()->getUserEmail(mOwner, listener.get());
 
-                        // We always send the user, even if the request is async...just to show on
-                        // GUI a "loading user..." or the most recent user while the new is received
-                        emit attributeReady(RemoteAttributeTypes::USER, true);
-                        return;
-                    }
-                }
+                // We always send the user, even if the request is async...just to show on
+                // GUI a "loading user..." or the most recent user while the new is received
+                emit attributeReady(RemoteAttributeTypes::USER, true);
+                return;
             }
             else
             {
@@ -638,16 +678,13 @@ void RemoteFileFolderAttributes::requestVersions(QObject* caller, std::function<
 {
     if (requestValue<int>(caller, RemoteAttributeTypes::VERSIONS, func))
     {
-        if (attributeNeedsUpdate(caller, RemoteFileFolderAttributes::VERSIONS))
+        std::unique_ptr<mega::MegaNode> node = getNode();
+        if (node)
         {
-            std::unique_ptr<mega::MegaNode> node = getNode();
-            if (node)
-            {
-                std::unique_ptr<mega::MegaNodeList> nodeList(
-                    MegaSyncApp->getMegaApi()->getVersions(node.get()));
+            std::unique_ptr<mega::MegaNodeList> nodeList(
+                MegaSyncApp->getMegaApi()->getVersions(node.get()));
 
-                mValues.insert(RemoteAttributeTypes::VERSIONS, nodeList->size());
-            }
+            mValues.insert(RemoteAttributeTypes::VERSIONS, nodeList->size());
         }
 
         emit attributeReady(RemoteAttributeTypes::VERSIONS);

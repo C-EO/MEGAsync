@@ -32,18 +32,15 @@ typedef struct tagNOTIFYITEM
 
 //INotificationCB GUID
 #pragma warning(suppress: 4467) //usage of ATL attributes is deprecated
-[ uuid ("D782CCBA-AFB0-43F1-94DB-FDA3779EACCB") ]
-interface INotificationCB : public IUnknown
+interface __declspec(uuid("D782CCBA-AFB0-43F1-94DB-FDA3779EACCB")) INotificationCB: public IUnknown
 {
     virtual HRESULT __stdcall Notify (ULONG, NOTIFYITEM *) = 0;
 };
 
 //ItrayNotifyNew GUID (Windows 10)
-#pragma warning(suppress: 4467) //usage of ATL attributes is deprecated
-[ uuid ("D133CE13-3537-48BA-93A7-AFCD5D2053B4") ]
-
+#pragma warning(suppress: 4467) // usage of ATL attributes is deprecated
 // Virtual functions for Windows 10+ (interface originally introduced in Windows 8)
-interface ITrayNotifyNew : public IUnknown
+interface __declspec(uuid("D133CE13-3537-48BA-93A7-AFCD5D2053B4")) ITrayNotifyNew: public IUnknown
 {
     virtual HRESULT __stdcall RegisterCallback (INotificationCB *,unsigned long *) = 0;
     virtual HRESULT __stdcall UnregisterCallback (unsigned long ) = 0;
@@ -54,8 +51,7 @@ interface ITrayNotifyNew : public IUnknown
 
 //ItrayNotify GUID (XP - Windows 7)
 #pragma warning(suppress: 4467) //usage of ATL attributes is deprecated
-[ uuid ("FB852B2C-6BAD-4605-9551-F15F87830935") ]
-interface ITrayNotify : public IUnknown
+interface __declspec(uuid("FB852B2C-6BAD-4605-9551-F15F87830935")) ITrayNotify: public IUnknown
 {
     virtual HRESULT __stdcall RegisterCallback (INotificationCB *) = 0;
     virtual HRESULT __stdcall SetPreference (NOTIFYITEM const *) = 0;
@@ -63,14 +59,16 @@ interface ITrayNotify : public IUnknown
 };
 
 //TrayNotifyClass GUID
-#pragma warning(suppress: 4467) //usage of ATL attributes is deprecated
-[ uuid ("25DEAD04-1EAC-4911-9E3A-AD0A4AB560FD") ]
-class TrayNotify : public ITrayNotify {};
+#pragma warning(suppress: 4467) // usage of ATL attributes is deprecated
+
+class __declspec(uuid("25DEAD04-1EAC-4911-9E3A-AD0A4AB560FD")) TrayNotify: public ITrayNotify
+{};
 
 //TrayNotifyClassNew GUID
-#pragma warning(suppress: 4467) //usage of ATL attributes is deprecated
-[ uuid ("25DEAD04-1EAC-4911-9E3A-AD0A4AB560FD") ]
-class TrayNotifyNew : public ITrayNotifyNew {};
+#pragma warning(suppress: 4467) // usage of ATL attributes is deprecated
+
+class __declspec(uuid("25DEAD04-1EAC-4911-9E3A-AD0A4AB560FD")) TrayNotifyNew: public ITrayNotifyNew
+{};
 /*  ************************************************************************  */
 
 class WinTrayReceiver : public INotificationCB

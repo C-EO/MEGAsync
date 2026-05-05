@@ -116,48 +116,63 @@ void LinuxSignalHandler(int signum)
                 break;
             case QtDebugMsg:
                 MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Qt Debug: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_DEBUG,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
             case QtWarningMsg:
                 MegaApi::log(MegaApi::LOG_LEVEL_WARNING, QString::fromUtf8("Qt Warning: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_WARNING, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
             case QtCriticalMsg:
                 MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Qt Critical: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_ERROR, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_ERROR,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
             case QtFatalMsg:
                 MegaApi::log(MegaApi::LOG_LEVEL_FATAL, QString::fromUtf8("Qt FATAL: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_FATAL, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_FATAL,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
-           default:
+            default:
                 MegaApi::log(MegaApi::LOG_LEVEL_MAX, QString::fromUtf8("Qt MSG: %1").arg(msg).toUtf8().constData());
-                MegaApi::log(MegaApi::LOG_LEVEL_MAX, QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
-                             .arg(QString::fromUtf8(context.category))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(QString::fromUtf8(context.function))
-                             .arg(QString::fromUtf8(context.file))
-                             .arg(context.version).toUtf8().constData());
+                MegaApi::log(MegaApi::LOG_LEVEL_MAX,
+                             QString::fromUtf8("Qt Context: %1 %2 %3 %4 %5")
+                                 .arg(QString::fromUtf8(context.category),
+                                      QString::fromUtf8(context.file),
+                                      QString::fromUtf8(context.function),
+                                      QString::fromUtf8(context.file))
+                                 .arg(context.version)
+                                 .toUtf8()
+                                 .constData());
                 break;
         }
     }
@@ -227,9 +242,10 @@ void uninstall()
             preferences->unlink();
         }
 
-        for (int i = 0; i < preferences->getNumUsers(); i++)
+        const auto numUsers = preferences->getNumUsers();
+        for (auto i = 0; i < numUsers; ++i)
         {
-            preferences->enterUser(i);
+            preferences->enterUser(static_cast<int>(i));
 
             // now for the new syncs cached configurations
             auto loadedSyncs = preferences->getLoadedSyncsMap();
@@ -241,6 +257,9 @@ void uninstall()
             preferences->leaveUser();
         }
     }
+
+    // Close preferences to unlock cfg file
+    preferences->sync();
 
     QDir dir(MegaApplication::applicationDataPath());
     dir.removeRecursively();
@@ -389,22 +408,22 @@ int main(int argc, char *argv[])
 
     Platform::getInstance()->setRenderingBackend();
 
-#ifndef Q_OS_MACX
+#ifndef Q_OS_MACOS
     const QString autoScreenScaleFactor = qEnvironmentVariable("QT_AUTO_SCREEN_SCALE_FACTOR");
     if (autoScreenScaleFactor == QString::fromUtf8("0"))
     {
         logMessages.emplace_back(MegaApi::LOG_LEVEL_DEBUG,
                                  QStringLiteral("auto screen scale factor disabled because of "
                                                 "QT_AUTO_SCREEN_SCALE_FACTOR set to 0"));
-   }
-   else
-   {
-       QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-       QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-   }
+    }
+    else
+    {
+        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+        QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    }
 #endif
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
 
     bool harfbuzzEnabled = qputenv("QT_HARFBUZZ","old");
 
@@ -440,7 +459,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-#ifndef Q_OS_MACX
+#ifndef Q_OS_MACOS
 #if defined(WIN32)
     ScaleFactorManager scaleFactorManager(OsType::WIN);
 #endif
@@ -498,7 +517,7 @@ int main(int argc, char *argv[])
         MegaApi::log(message.logLevel, message.message.toUtf8().constData());
     }
 
-#ifndef Q_OS_MACX
+#ifndef Q_OS_MACOS
     const QVector<QString> scaleFactorLogMessages = scaleFactorManager.getLogMessages();
     for (const QString& message: scaleFactorLogMessages)
     {
@@ -517,7 +536,7 @@ int main(int argc, char *argv[])
 
     qInstallMessageHandler(messageHandler);
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
 
     auto current = QOperatingSystemVersion::current();
     MegaApi::log(MegaApi::LOG_LEVEL_INFO, QString::fromUtf8("Running on macOS version: %1.%2.%3")

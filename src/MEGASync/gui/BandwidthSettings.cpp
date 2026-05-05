@@ -62,8 +62,6 @@ void BandwidthSettings::initialize()
                                          ParallelConnectionsValues::getMaxValue());
     mUi->eMaxDownloadConnections->setValue(mPreferences->parallelDownloadConnections());
     mUi->eMaxUploadConnections->setValue(mPreferences->parallelUploadConnections());
-
-    mUi->cbUseHttps->setChecked(mPreferences->usingHttpsOnly());
 }
 
 void BandwidthSettings::on_rUploadAutoLimit_toggled(bool checked)
@@ -165,14 +163,6 @@ void BandwidthSettings::on_bUpdate_clicked()
         mSettingsChanged.setFlag(DOWNLOAD_CONNECTIONS, true);
 
         mPreferences->setParallelDownloadConnections(mUi->eMaxDownloadConnections->value());
-    }
-
-    // URL
-    if (mUi->cbUseHttps->isChecked() != mPreferences->usingHttpsOnly())
-    {
-        mSettingsChanged.setFlag(USE_HTTPS, true);
-
-        mPreferences->setUseHttpsOnly(mUi->cbUseHttps->isChecked());
     }
 
     accept();

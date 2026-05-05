@@ -76,7 +76,7 @@ void DownloadQueueController::removeBatch()
     }
 }
 
-int DownloadQueueController::getDownloadQueueSize()
+qsizetype DownloadQueueController::getDownloadQueueSize()
 {
     return mDownloadQueue.size();
 }

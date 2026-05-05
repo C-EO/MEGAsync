@@ -4,10 +4,6 @@
 
 using namespace mega;
 
-#ifdef WIN32
-extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
-#endif
-
 SyncSettings::~SyncSettings()
 {
 }

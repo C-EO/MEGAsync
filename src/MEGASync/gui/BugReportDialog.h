@@ -41,7 +41,7 @@ private:
     QPointer<ProgressIndicatorDialog> mProgressIndicatorDialog;
     std::unique_ptr<BugReportController> mController;
 
-    const static int mMaxDescriptionLength = 3000;
+    const static auto mMaxDescriptionLength = 3000;
 
 private slots:
     void onSubmitClicked();

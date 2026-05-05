@@ -2,6 +2,8 @@
 
 #include <QCoreApplication>
 
+#include <utility>
+
 ExclusionRulesModel::ExclusionRulesModel(QObject* parent, std::shared_ptr<MegaIgnoreManager> megaIgnoreManager)
     : QAbstractListModel(parent)
 {
@@ -330,7 +332,7 @@ void ExclusionRulesModel::editRule(int targetType, int wildCard, QString ruleVal
     emit dataChanged(createIndex(index, 0), createIndex(index, 0));
     // Remove the first value and add the rest
     splitted.pop_front();
-    for (const auto& value: qAsConst(splitted))
+    for (const auto& value: std::as_const(splitted))
     {
         addNewRule(targetType, wildCard, value);
     }
@@ -344,8 +346,8 @@ void ExclusionRulesModel::addNewRule(int targetType, int wildCard, QString ruleV
     }
     bool ruleAdded = false;
     int exisitingRuleIndex = -1;
-    auto splitted = ruleVale.split(QString::fromUtf8(","));
-    for (auto value : splitted)
+    auto splitted = ruleVale.split(u',');
+    for (auto& value: splitted)
     {
         value = value.trimmed();
         if(value.isEmpty())

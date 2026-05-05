@@ -161,7 +161,7 @@ void LocalOrRemoteUserMustChooseStalledIssue::fillIssue(const mega::MegaSyncStal
 {
     StalledIssue::fillIssue(stall);
 
-    std::shared_ptr<UploadTransferInfo> info(new UploadTransferInfo());
+    auto info = std::make_shared<UploadTransferInfo>();
     info->state = TransferData::ACTIVE_STATES_MASK;
     //Check if transfer already exists
     if (isBeingSolvedByUpload(info, true))
@@ -178,8 +178,11 @@ void LocalOrRemoteUserMustChooseStalledIssue::endFillingIssue()
     if(isFile())
     {
         //For autosolving
-        getLocalData()->getAttributes()->initAllAttributes();
-        getCloudData()->getAttributes()->initAllAttributes();
+        const auto preloadFlags = FileFolderAttributes::PRELOAD_MODIFIED_TIME |
+                                  FileFolderAttributes::PRELOAD_SIZE |
+                                  FileFolderAttributes::PRELOAD_CRC;
+        getLocalData()->getAttributes()->preload(preloadFlags);
+        getCloudData()->getAttributes()->preload(preloadFlags);
 
         getLocalData()->getAttributes()->requestCRC(this, [this](const QString& crc){
             mLocalCRCAtStart = crc;
@@ -195,7 +198,7 @@ bool LocalOrRemoteUserMustChooseStalledIssue::chooseLocalSide()
 {
     if(getCloudData())
     {
-        std::shared_ptr<UploadTransferInfo> info(new UploadTransferInfo());
+        auto info = std::make_shared<UploadTransferInfo>();
         info->state = TransferData::ACTIVE_STATES_MASK;
         //Check if transfer already exists
         if (!isBeingSolvedByUpload(info, true))
@@ -220,13 +223,15 @@ bool LocalOrRemoteUserMustChooseStalledIssue::chooseLocalSide()
                 }
                 else
                 {
-                    //Only upload the file if the versions are enabled
-                    //Using appDataId == 0 means that there will be no notification for this upload
-                    StalledIssuesUtilities::getMegaUploader()->upload(info->localPath,
-                                                                      info->filename,
-                                                                      parentNode,
-                                                                      0,
-                                                                      nullptr);
+                    // Only upload the file if the versions are enabled
+                    // Using appDataId == 0 means that there will be no notification for this upload
+                    auto upInfo = std::make_unique<MegaUploader::UploadInfo>(
+                        mega::MegaApi::PITAG_TRIGGER_SYNC_ALGORITHM);
+                    upInfo->mLocalPath = info->localPath;
+                    upInfo->mNodeName = info->filename;
+                    upInfo->mRemoteNodeHandle = info->parentHandle;
+
+                    StalledIssuesUtilities::getMegaUploader()->upload(std::move(upInfo));
                 }
 
                 return true;

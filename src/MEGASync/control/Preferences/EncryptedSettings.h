@@ -18,7 +18,7 @@ public:
     void beginGroup(const QString & prefix);
     void beginGroup(int numGroup);
     void endGroup();
-    int numChildGroups();
+    qsizetype numChildGroups();
     bool containsGroup(QString groupName);
     bool isGroupEmpty();
     void remove(const QString & key);

@@ -121,7 +121,7 @@ void HTTPServer::checkAndPurgeRequests()
     }
 }
 
-void HTTPServer::onUploadSelectionAccepted(int files, int folders)
+void HTTPServer::onUploadSelectionAccepted(qsizetype files, qsizetype folders)
 {
     for (QMultiMap<QString, RequestData*>::iterator it = webDataRequests.begin() ; it != webDataRequests.end(); it++)
     {
@@ -445,7 +445,7 @@ void HTTPServer::externalDownloadRequest(QString &response, const HTTPRequest& r
     QPointer<HTTPServer> safeServer = this;
 
     MegaApi::log(MegaApi::LOG_LEVEL_DEBUG, "ExternalDownload command received from the webclient");
-    int start = request.data.indexOf(QString::fromUtf8("\"f\":[")) + 5;
+    auto start = request.data.indexOf(QString::fromUtf8("\"f\":[")) + 5;
     if (start > 0)
     {
         QString privateAuth = Utilities::extractJSONString(request.data.mid(0, start), QString::fromUtf8("esid"));
@@ -469,7 +469,7 @@ void HTTPServer::externalDownloadRequest(QString &response, const HTTPRequest& r
         {
             QQueue<WrappedNode> downloadQueue;
 
-            int end;
+            auto end = 0;
             bool firstnode = true;
 
             while (request.data[start] == QChar::fromLatin1('{'))
@@ -1057,11 +1057,12 @@ QString HTTPServer::findCorrespondingAllowedOrigin(const QStringList& headers)
     const auto allowedOrigins = ServiceUrls::instance()->getHttpAllowedOrigins();
     for (const QString& allowedOrigin: allowedOrigins)
     {
-        QRegExp check = QRegExp(QString::fromUtf8("Origin: %1").arg(allowedOrigin),
-                                Qt::CaseSensitive, QRegExp::Wildcard);
+        QString wildcardExp = QRegularExpression::wildcardToRegularExpression(
+            QString::fromUtf8("Origin: %1").arg(allowedOrigin));
+        QRegularExpression check(wildcardExp, QRegularExpression::NoPatternOption);
         for (const QString& header : headers)
         {
-            if (check.exactMatch(header))
+            if (check.match(header).hasMatch())
             {
                return header.mid(8);
             }
@@ -1074,7 +1075,8 @@ void HTTPServer::processPostRequest(QAbstractSocket *socket, HTTPRequest* reques
                                     const QStringList& headers, const QString& content)
 {
     QString contentLengthId = QString::fromUtf8("Content-length: ");
-    QStringList contentLengthHeader = headers.filter(QRegExp(contentLengthId, Qt::CaseInsensitive));
+    QStringList contentLengthHeader = headers.filter(
+        QRegularExpression(contentLengthId, QRegularExpression::CaseInsensitiveOption));
     if (!contentLengthHeader.size())
     {
         MegaApi::log(MegaApi::LOG_LEVEL_WARNING, "Missing Content-length header");
@@ -1083,7 +1085,10 @@ void HTTPServer::processPostRequest(QAbstractSocket *socket, HTTPRequest* reques
     }
 
     bool ok;
-    request->contentLength = contentLengthHeader[0].mid(contentLengthId.size(), contentLengthHeader[0].size() - contentLengthId.size()).toInt(&ok);
+    request->contentLength =
+        contentLengthHeader[0]
+            .mid(contentLengthId.size(), contentLengthHeader[0].size() - contentLengthId.size())
+            .toInt(&ok);
     if (!ok || request->contentLength < content.size())
     {
         if (!ok)
@@ -1166,7 +1171,8 @@ bool HTTPServer::hasFieldWithValue(const QStringList& headers, const char* field
     bool isFieldAsExpected = false;
     QString fieldNameStr = QString::fromUtf8(fieldName);
     QString keyString = QString::fromUtf8("%1: ").arg(fieldNameStr);
-    QStringList foundValues = headers.filter(QRegExp(keyString, Qt::CaseInsensitive));
+    QStringList foundValues =
+        headers.filter(QRegularExpression(keyString, QRegularExpression::CaseInsensitiveOption));
     if (foundValues.size() == 1)
     {
         QString foundValue = foundValues.front().mid(keyString.length());

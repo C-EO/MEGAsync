@@ -5,12 +5,16 @@
 #include "MegaApplication.h"
 #include "Utilities.h"
 
-DuplicatedNodeInfo::DuplicatedNodeInfo(DuplicatedUploadBase* checker)
-    : mSolution(NodeItemType::UPLOAD),
+#include <QFileInfo>
+#include <QHash>
+
+DuplicatedNodeInfo::DuplicatedNodeInfo(DuplicatedUploadBase* checker, PiTagTrigger piTagTrigger):
+    mSolution(NodeItemType::UPLOAD),
     mSourceItemIsFile(false),
     mHasConflict(false),
     mIsNameConflict(false),
-    mChecker(checker)
+    mChecker(checker),
+    mPiTagTrigger(piTagTrigger)
 {
 }
 
@@ -25,17 +29,22 @@ void DuplicatedNodeInfo::setParentNode(const std::shared_ptr<mega::MegaNode> &ne
     mParentNode = newParentNode;
 }
 
+PiTagTrigger DuplicatedNodeInfo::getPiTagTrigger() const
+{
+    return mPiTagTrigger;
+}
+
 const std::shared_ptr<mega::MegaNode> &DuplicatedNodeInfo::getConflictNode() const
 {
     return mConflictNode;
 }
 
-void DuplicatedNodeInfo::setConflictNode(const std::shared_ptr<mega::MegaNode> &newRemoteConflictNode)
+void DuplicatedNodeInfo::setConflictNode(std::shared_ptr<mega::MegaNode> newRemoteConflictNode)
 {
-    mConflictNode = newRemoteConflictNode;
+    mConflictNode = std::move(newRemoteConflictNode);
 
-    auto time = newRemoteConflictNode->isFile() ? mConflictNode->getModificationTime()
-                                                : mConflictNode->getCreationTime();
+    auto time = mConflictNode->isFile() ? mConflictNode->getModificationTime() :
+                                          mConflictNode->getCreationTime();
     mConflictNodeModifiedTime = QDateTime::fromSecsSinceEpoch(time);
 }
 
@@ -256,7 +265,7 @@ std::shared_ptr<ConflictTypes> CheckDuplicatedNodes::checkMoves(
 
         if (foundNode)
         {
-            info->setConflictNode(foundNode);
+            info->setConflictNode(std::move(foundNode));
             info->setHasConflict(true);
             info->setName(moveNodeName);
             info->setIsNameConflict(true);
@@ -280,11 +289,11 @@ std::shared_ptr<ConflictTypes> CheckDuplicatedNodes::checkMoves(
     return conflicts;
 }
 
-std::shared_ptr<ConflictTypes>
-    CheckDuplicatedNodes::checkUploads(QQueue<QString>& nodePaths,
+std::unique_ptr<ConflictTypes>
+    CheckDuplicatedNodes::checkUploads(QQueue<QPair<QString, PiTagTrigger>>& nodePaths,
                                        std::shared_ptr<mega::MegaNode> targetNode)
 {
-    auto conflicts = std::make_shared<ConflictTypes>();
+    auto conflicts = std::make_unique<ConflictTypes>();
     conflicts->mFolderCheck = new DuplicatedUploadFolder();
     conflicts->mFileCheck = new DuplicatedUploadFile();
     conflicts->mTargetNode = targetNode;
@@ -304,29 +313,22 @@ std::shared_ptr<ConflictTypes>
 
     while (!nodePaths.isEmpty())
     {
-        auto localPath(nodePaths.dequeue());
-        QFileInfo localPathInfo(localPath);
-        bool isFile(localPathInfo.isFile());
-        DuplicatedUploadBase* checker(nullptr);
-        if (isFile)
-        {
-            checker = conflicts->mFileCheck;
-        }
-        else
-        {
-            checker = conflicts->mFolderCheck;
-        }
+        const auto item = nodePaths.dequeue();
+        const auto localPath(item.first);
+        const QFileInfo localPathInfo(localPath);
+        const bool isFile(localPathInfo.isFile());
+        DuplicatedUploadBase* checker = isFile ? conflicts->mFileCheck : conflicts->mFolderCheck;
 
-        auto info = std::make_shared<DuplicatedNodeInfo>(checker);
+        auto info = std::make_shared<DuplicatedNodeInfo>(checker, item.second);
         info->setSourceItemPath(localPathInfo.absoluteFilePath());
         info->setParentNode(targetNode);
 
-        QString nodeToUploadName(localPathInfo.fileName());
+        const auto nodeToUploadName(localPathInfo.fileName());
         auto node(nodesOnCloudDrive.value(nodeToUploadName.toLower()));
         if (node)
         {
             std::shared_ptr<mega::MegaNode> smartNode(node->copy());
-            info->setConflictNode(smartNode);
+            info->setConflictNode(std::move(smartNode));
             info->setHasConflict(true);
             info->setName(nodeToUploadName);
 
@@ -355,7 +357,7 @@ std::shared_ptr<ConflictTypes>
     return conflicts;
 }
 
-bool ConflictTypes::isEmpty() const
+bool ConflictTypes::hasNoConflicts() const
 {
     return mFileConflicts.isEmpty() && mFolderConflicts.isEmpty() && mFileNameConflicts.isEmpty() &&
            mFolderNameConflicts.isEmpty();

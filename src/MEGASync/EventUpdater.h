@@ -1,17 +1,18 @@
 #ifndef EVENTUPDATER_H
 #define EVENTUPDATER_H
 
+#include <QtCore>
 class EventUpdater
 {
 public:
-    EventUpdater(int _totalSize, int threshold = 100);
+    EventUpdater(qsizetype _totalSize, qsizetype threshold = 100);
     virtual ~EventUpdater() = default;
 
-    bool update(int currentSize);
+    bool update(qsizetype currentSize);
 
 private:
-    int mTotalSize;
-    int mUpdateThreshold;
+    qsizetype mTotalSize;
+    qsizetype mUpdateThreshold;
 };
 
 #endif // EVENTUPDATER_H

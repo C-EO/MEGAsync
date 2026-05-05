@@ -369,7 +369,8 @@ namespace Util {
                             ComPtr<IXmlNamedNodeMap> attributes;
                             hr = audioNode->get_Attributes(&attributes);
                             if (SUCCEEDED(hr)) {
-                                for (auto it : attribute_names) {
+                                for (const auto& it: attribute_names)
+                                {
                                     hr = addAttribute(xml, it, attributes.Get());
                                 }
                             }

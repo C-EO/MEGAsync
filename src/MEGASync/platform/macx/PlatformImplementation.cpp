@@ -1,8 +1,12 @@
 #include "PlatformImplementation.h"
 
+#include "AppStatsEvents.h"
+#include "MacUpdateRouting.h"
 #include "MacXFunctions.h"
 #include "Preferences.h"
+#include "StatsEventHandler.h"
 #include "ThemeManager.h"
+#include "Utilities.h"
 
 #include <QHostInfo>
 #include <QScreen>
@@ -281,14 +285,49 @@ bool PlatformImplementation::loadThemeResource(const QString& theme)
 
 QString PlatformImplementation::getArchUpdateString() const
 {
-    QString platformPath;
-#if defined(__arm64__)
-    platformPath = QLatin1String("msyncarm64");
-#else
-    // Using msyncv2 to serve new updates and avoid keeping loader leftovers
-    platformPath = QLatin1String("msyncv2");
-#endif
-    return platformPath;
+    const auto routing =
+        MacUpdateRouting::selectUpdateRouting(MacUpdateRouting::runtimeArchitecture());
+    static bool routingReported = false;
+    if (!routingReported)
+    {
+        routingReported = true;
+        const bool isFallback =
+            routing.routingCase == MacUpdateRouting::UpdateRoutingCase::UnknownSystemFallback;
+        // An x86_64 binary on Apple Silicon implies Rosetta, even if the translated probe does not
+        // confirm it.
+        const bool arm64UrlAdjustedForIntelBinary =
+            routing.routingCase == MacUpdateRouting::UpdateRoutingCase::RosettaOnAppleSilicon ||
+            routing.routingCase == MacUpdateRouting::UpdateRoutingCase::IntelBinaryOnAppleSilicon;
+        auto preferences = Preferences::instance();
+        auto statsEventHandler = MegaSyncApp->getStatsEventHandler();
+        if (arm64UrlAdjustedForIntelBinary && preferences && statsEventHandler &&
+            !preferences->isOneTimeActionDone(
+                Preferences::ONE_TIME_ACTION_MACOS_ARM64_UPDATE_URL_ADJUSTED_EVENT_SENT))
+        {
+            statsEventHandler->sendEvent(
+                AppStatsEvents::EventType::MACOS_ARM64_UPDATE_URL_ADJUSTED_FOR_INTEL_BINARY);
+            preferences->setOneTimeActionDone(
+                Preferences::ONE_TIME_ACTION_MACOS_ARM64_UPDATE_URL_ADJUSTED_EVENT_SENT,
+                true);
+        }
+        const auto logLevel = isFallback ? MegaApi::LOG_LEVEL_WARNING : MegaApi::LOG_LEVEL_INFO;
+        MegaApi::log(
+            logLevel,
+            QString::fromUtf8(
+                "macOS update routing resolved. case=%1 system=%2 binary=%3 translated=%4 track=%5")
+                .arg(QString::fromLatin1(MacUpdateRouting::routingCaseName(routing.routingCase)),
+                     QString::fromLatin1(MacUpdateRouting::architectureName(
+                         routing.runtimeArchitecture.systemArchitecture)),
+                     QString::fromLatin1(MacUpdateRouting::architectureName(
+                         routing.runtimeArchitecture.binaryArchitecture)),
+                     routing.runtimeArchitecture.translated ? QString::fromUtf8("true") :
+                                                              QString::fromUtf8("false"),
+                     QString::fromLatin1(routing.updateTrack))
+                .toUtf8()
+                .constData());
+    }
+
+    return QString::fromLatin1(routing.updateTrack);
 }
 
 bool PlatformImplementation::showInFolder(QString pathIn)

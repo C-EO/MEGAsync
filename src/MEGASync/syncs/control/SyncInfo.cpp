@@ -39,7 +39,7 @@ SyncInfo *SyncInfo::instance()
 SyncInfo::SyncInfo():
     QObject(),
     preferences(Preferences::instance()),
-    syncMutex(QMutex::Recursive),
+    syncMutex(),
     delegateListener(std::make_unique<QTMegaListener>(MegaSyncApp->getMegaApi(), this))
 {
     MegaSyncApp->getMegaApi()->addListener(delegateListener.get());
@@ -286,10 +286,10 @@ void SyncInfo::reset()
     unattendedDisabledSyncs.clear();
 }
 
-int SyncInfo::getNumSyncedFolders(const QVector<SyncType>& types)
+qsizetype SyncInfo::getNumSyncedFolders(const QVector<SyncType>& types)
 {
     QMutexLocker qm(&syncMutex);
-    int value (0);
+    qsizetype value(0);
     for (auto type : types)
     {
         value += configuredSyncs[type].size();

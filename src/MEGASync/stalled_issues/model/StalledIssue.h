@@ -312,7 +312,7 @@ public:
 
     int getPathProblem() const;
 
-    bool operator==(const StalledIssue &data);
+    bool operator==(const StalledIssue& data) const;
 
     virtual void updateIssue(const mega::MegaSyncStall* stallIssue);
 
@@ -399,7 +399,17 @@ public:
     //In case there are two syncs, use the first one
     mega::MegaSync::SyncType getSyncType() const;
 
-    virtual bool shouldBeIgnored() const {return false;}
+    virtual bool shouldBeIgnored() const
+    {
+        return false;
+    }
+
+    // If we receive an issue with the same hash just after solving it, discard it.
+    // By default, we don´t discard it, just reimplement this method to change the behaviour
+    virtual bool shouldDiscardReappearingIssuesByResolvedHash() const
+    {
+        return false;
+    }
 
     bool wasAutoResolutionApplied() const;
     void setAutoResolutionApplied(bool newAutoResolutionApplied);
@@ -492,7 +502,7 @@ public:
         mData.reset();
     }
 
-    bool operator==(const StalledIssueVariant& issue)
+    bool operator==(const StalledIssueVariant& issue) const
     {
         return issue.mData == this->mData;
     }

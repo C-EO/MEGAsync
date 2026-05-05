@@ -325,7 +325,7 @@ void TransfersWidget::transferFilterReset()
     mProxyModel->resetAllFilters();
 }
 
-void TransfersWidget::mouseRelease(const QPoint &point)
+void TransfersWidget::mouseRelease(const QPointF& point)
 {
    if(ui->tvTransfers->isVisible())
    {
@@ -334,7 +334,7 @@ void TransfersWidget::mouseRelease(const QPoint &point)
            auto viewGlobalPos = parentWidget()->mapToGlobal(ui->tvTransfers->pos());
            QRect viewGlobalRect(viewGlobalPos, ui->tvTransfers->size());
 
-           auto pressedOnView = viewGlobalRect.contains(point);
+           auto pressedOnView = viewGlobalRect.contains(point.toPoint());
            if(!pressedOnView)
            {
                ui->tvTransfers->clearSelection();

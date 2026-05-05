@@ -1,6 +1,5 @@
 #include "DuplicatedNodeDialog.h"
 
-#include "DuplicatedNodeItem.h"
 #include "EventUpdater.h"
 #include "MegaApplication.h"
 #include "ui_DuplicatedNodeDialog.h"
@@ -66,11 +65,13 @@ void DuplicatedNodeDialog::cleanUi()
     }
 }
 
-void DuplicatedNodeDialog::setConflictItems(int count)
+void DuplicatedNodeDialog::setConflictItems(qsizetype count)
 {
     if(count > 1)
     {
-        QString checkBoxText(tr("Apply to all %1 duplicates", "", count).arg(count));
+        static const qsizetype maxInt = std::numeric_limits<int>::max();
+        const auto intCount = static_cast<int>(std::min(count, maxInt)); // Safe cast
+        const auto checkBoxText(tr("Apply to all %1 duplicates", "", intCount).arg(count));
         ui->cbApplyToAll->setText(checkBoxText);
         ui->cbApplyToAll->show();
     }
@@ -90,7 +91,7 @@ void DuplicatedNodeDialog::setHeader(const QString& baseText, const QString& nod
 
 void DuplicatedNodeDialog::fillDialog()
 {
-    auto conflictNumber(mConflictsBeingProcessed.size());
+    const auto conflictNumber(mConflictsBeingProcessed.size());
     setConflictItems(conflictNumber);
     processConflict(mConflictsBeingProcessed.first());
 }
@@ -247,7 +248,7 @@ void DuplicatedNodeDialog::updateHeader()
         mCurrentNodeName,
         Qt::ElideMiddle,
         (ui->lDescriptionFileExists->width() - (textBoundingRect - NameBoundingRect - 1)));
-    auto boldName = QString(QLatin1String("<b>%1</b>")).arg(elidedName);
+    auto boldName = QString(QLatin1String("<b>%1</b>")).arg(elidedName.toHtmlEscaped());
 
     headerText = headerText.replace(placeholder, boldName);
 
@@ -255,7 +256,7 @@ void DuplicatedNodeDialog::updateHeader()
 
     if (elidedName != mCurrentNodeName)
     {
-        ui->lDescriptionFileExists->setToolTip(mCurrentNodeName);
+        ui->lDescriptionFileExists->setToolTip(mCurrentNodeName.toHtmlEscaped());
     }
 }
 
@@ -294,7 +295,7 @@ const QList<std::shared_ptr<DuplicatedNodeInfo> > &DuplicatedNodeDialog::getReso
 
 bool DuplicatedNodeDialog::isEmpty() const
 {
-    return mConflicts->isEmpty();
+    return mConflicts->hasNoConflicts();
 }
 
 void DuplicatedNodeDialog::show()

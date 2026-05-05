@@ -174,7 +174,14 @@ void WordWrapLabel::onAdaptHeight(bool parentConstrained)
                     textLayout->endLayout();
                     textLayout = nullptr;
 
-                    QTextBrowser::setText(elidedText);
+                    if (mFormat == Qt::PlainText)
+                    {
+                        QTextBrowser::setPlainText(elidedText);
+                    }
+                    else
+                    {
+                        QTextBrowser::setText(elidedText);
+                    }
 
                     if(elidedText != mText)
                     {

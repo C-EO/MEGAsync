@@ -1,7 +1,7 @@
 #ifndef CLASSFACTORYSHELLEXTPENDING_H
 #define CLASSFACTORYSHELLEXTPENDING_H
 
-#include "classfactory.h"
+#include "ClassFactory.h"
 class ClassFactoryShellExtPending :
     public ClassFactory
 {

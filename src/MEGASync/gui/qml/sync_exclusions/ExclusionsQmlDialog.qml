@@ -230,9 +230,9 @@ QmlDialog {
                 implicitWidth: 48
                 colors.border: ColorTheme.borderStrongSelected
                 horizontalAlignment: TextInput.AlignRight
-                // RegExpValidator to validate numbers from 1 to 999 with up to two decimal places
-                validator: RegExpValidator {
-                    regExp: RegexExpressions.allow3DigitsOnly
+                // RegularExpressionValidator to validate numbers from 1 to 999 with up to two decimal places
+                validator: RegularExpressionValidator {
+                    regularExpression: RegexExpressions.allow3DigitsOnly
                 }
 
                 onTextChanged: {
@@ -303,8 +303,8 @@ QmlDialog {
                 colors.border: ColorTheme.borderStrongSelected
                 horizontalAlignment: TextInput.AlignRight
                 enabled: sizeRuleCheckbox.checked && (sizeLimitComboBox.currentText === ExclusionsStrings.outsideOf)
-                validator: RegExpValidator {
-                    regExp: RegexExpressions.allow3DigitsOnly
+                validator: RegularExpressionValidator {
+                    regularExpression: RegexExpressions.allow3DigitsOnly
                 }
                 sizes.iconMargin: 6
                 onTextChanged: {

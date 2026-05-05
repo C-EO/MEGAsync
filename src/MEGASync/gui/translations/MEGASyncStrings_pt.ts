@@ -343,9 +343,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>Não foi possível fazer o backup</translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>Backups</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Não foi possível adicionar o backup</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -358,6 +368,11 @@
         <translation>Erro ao interromper o backup</translation>
     </message>
     <message>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>Ocorre um erro na operação de backup “%1”. Motivo: %2</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
         <translation>Não foi possível sincronizar a pasta “%1”. Motivo: %2</translation>
@@ -365,12 +380,17 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>Não foi possível fazer o backup de algumas pastas. Para obter mais informações, passe o cursor do mouse sobre o ícone vermelho.</translation>
+        <translation>Não foi possível fazer o backup de algumas pastas. Para obter mais informações, passe o cursor do mouse sobre o ícone de aviso.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
         <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
         <translation>Não foi possível sincronizar</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>Não foi possível remover o seu backup. Motivo: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -495,7 +515,7 @@
     <message>
         <source>Bandwidth</source>
         <translatorcomment>Title of the dialog to manage Bandwidth settings.</translatorcomment>
-        <translation>Banda larga</translation>
+        <translation>Largura de banda</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -2699,7 +2719,7 @@ gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com</translation>
     <message>
         <source>Ok</source>
         <translatorcomment>Confirmation button inthe loading scene of stalled issues dialog shown when all issues have been solved in the smart mode.SNC-2565</translatorcomment>
-        <translation>Ok</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -6182,6 +6202,16 @@ Digite um nome diferente.
 <context>
     <name>Preferences</name>
     <message>
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation>- Resolução de conflitos aprimorada.
+- Melhoria no tratamento dos nomes dos dispositivos.
+- Correção de bugs e melhorias de desempenho.</translation>
+    </message>
+    <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
 - Minor bug fixes and performance improvements.
 </source>
@@ -6983,7 +7013,7 @@ Você quer deletá-lo mesmo assim?</translation>
     <message>
         <source>Bandwidth</source>
         <translatorcomment>Tab label of Bandwidth dialog. Max 15 characters.</translatorcomment>
-        <translation>Banda</translation>
+        <translation>Largura de banda</translation>
     </message>
     <message>
         <source>Change Password</source>
@@ -7459,7 +7489,7 @@ Você quer deletá-lo mesmo assim?</translation>
     <message>
         <source>Upload to MEGA</source>
         <translatorcomment>Label displayed when a user is trying to upload a file/folder to MEGA from the shell extension. String as short as possible.</translatorcomment>
-        <translation>Fazer upload ao MEGA</translation>
+        <translation>Fazer upload no MEGA</translation>
     </message>
     <message>
         <source>View on MEGA</source>
@@ -8324,6 +8354,21 @@ Atualize a lista.</translation>
         <translation>Não foi possível fazer o backup. Tente novamente mais tarde. e, se o problema persistir, entre em contato com a nossa equipe de [A]Suporte[/A].</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation>Não foi possível criar a sincronização porque a pasta selecionada não é válida. Tente novamente.</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Não foi possível criar a sincronização. Para mais informações, entre em contato com o nosso [A]suporte[/A].</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Não foi possível criar a sincronização. Tente novamente e, se o problema persistir, entre em contato com o nosso [A]suporte[/A].</translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>Não é possível fazer o backup desta pasta porque ela contém pastas com backup.</translation>
@@ -8605,6 +8650,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Erro ao interromper o backup</translation>
     </message>
     <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Não foi possível remover a sincronização</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>Não foi possível sincronizar “%1”. Motivo: %2</translation>
@@ -8612,7 +8662,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Não foi possível sincronizar algumas pastas. Para obter mais informações, passe o cursor do mouse sobre o ícone vermelho.</translation>
+        <translation>Não foi possível sincronizar algumas pastas. Para obter mais informações, passe o cursor do mouse sobre o ícone de aviso.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
@@ -9461,7 +9511,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Clear all completed</source>
         <translatorcomment>Tooltip for clear button when the user is in the completed category</translatorcomment>
-        <translation>Eliminar as transferências completadas</translation>
+        <translation>Eliminar as transferências concluídas</translation>
     </message>
     <message>
         <source>Clear all documents</source>
@@ -9724,7 +9774,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Upload to MEGA</source>
         <translatorcomment>Label and Title of the dialog displayed when a user is trying to upload a file/folder to MEGA.(MAX 20 characters)</translatorcomment>
-        <translation>Fazer upload ao MEGA</translation>
+        <translation>Fazer upload no MEGA</translation>
     </message>
 </context>
 <context>

@@ -173,12 +173,12 @@ int NodeSelectorModelItem::getNumChildren()
         return mChildrenCounter;
     }
 
-    return mChildItems.size();
+    return static_cast<int>(mChildItems.size());
 }
 
 int NodeSelectorModelItem::indexOf(NodeSelectorModelItem* item)
 {
-    return mChildItems.indexOf(item);
+    return static_cast<int>(mChildItems.indexOf(item));
 }
 
 QString NodeSelectorModelItem::getOwnerName() const
@@ -369,7 +369,8 @@ int NodeSelectorModelItem::row()
 {
     if (NodeSelectorModelItem* parent = getParent())
     {
-        return parent->mChildItems.indexOf(const_cast<NodeSelectorModelItem*>(this));
+        return static_cast<int>(
+            parent->mChildItems.indexOf(const_cast<NodeSelectorModelItem*>(this)));
     }
     return 0;
 }

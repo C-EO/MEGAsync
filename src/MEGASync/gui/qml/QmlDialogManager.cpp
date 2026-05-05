@@ -6,6 +6,7 @@
 #include "GuestContent.h"
 #include "GuestQmlDialog.h"
 #include "LoginController.h"
+#include "megaapi.h"
 #include "Onboarding.h"
 #include "OnboardingQmlDialog.h"
 #include "QmlDialogWrapper.h"
@@ -43,17 +44,43 @@ void QmlDialogManager::openGuestDialog()
 
 bool QmlDialogManager::openOnboardingDialog(bool force)
 {
-    if (MegaSyncApp->finished() || (!force && Preferences::instance()->logged()))
+    const bool appFinished = MegaSyncApp->finished();
+    const bool logged = Preferences::instance()->logged();
+    const auto session = Preferences::instance()->getSession();
+    const bool hasSession = !session.isEmpty();
+
+    if (appFinished || (!force && hasSession))
     {
+        mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_INFO,
+                           QString::fromUtf8("Logout diagnostics: openOnboardingDialog() blocked. "
+                                             "force=%1 appFinished=%2 logged=%3 sessionEmpty=%4")
+                               .arg(force)
+                               .arg(appFinished)
+                               .arg(logged)
+                               .arg(session.isEmpty())
+                               .toUtf8()
+                               .constData());
         return false;
     }
 
     if(auto dialog = DialogOpener::findDialog<QmlDialogWrapper<Onboarding>>())
     {
+        mega::MegaApi::log(
+            mega::MegaApi::LOG_LEVEL_INFO,
+            "Logout diagnostics: openOnboardingDialog() reusing existing onboarding dialog.");
         DialogOpener::showDialog(dialog->getDialog());
     }
     else
     {
+        mega::MegaApi::log(
+            mega::MegaApi::LOG_LEVEL_INFO,
+            QString::fromUtf8("Logout diagnostics: openOnboardingDialog() creating new onboarding "
+                              "dialog. force=%1 logged=%2 sessionEmpty=%3")
+                .arg(force)
+                .arg(logged)
+                .arg(session.isEmpty())
+                .toUtf8()
+                .constData());
         QPointer<QmlDialogWrapper<Onboarding>> onboarding = new QmlDialogWrapper<Onboarding>();
         auto onboardingInfo(DialogOpener::showDialog(onboarding));
         if (onboardingInfo)

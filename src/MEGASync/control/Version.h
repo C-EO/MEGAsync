@@ -4,11 +4,11 @@
 // These numbers are used in different build project scripts. Keep this in
 // mind if you want to change the format.
 #define VER_MAJOR 6
-#define VER_MINOR 2
-#define VER_MICRO 2
-#define VER_RC 0
+#define VER_MINOR 3
+#define VER_MICRO 0
+#define VER_RC 1
 // Format: "VER_MAJOR.VER_MINOR.VER_MICRO.VER_RC\0"
-#define VER_PRODUCTVERSION_STR "6.2.2.0\0"
+#define VER_PRODUCTVERSION_STR "6.3.0.1\0"
 #define VER_PRODUCTVERSION VER_MAJOR, VER_MINOR, VER_MICRO, VER_RC
 #define VER_FILEVERSION VER_MAJOR, VER_MINOR, VER_MICRO, VER_RC
 #define VER_FILEVERSION_CODE (VER_MAJOR * 10000 + VER_MINOR * 100 + VER_MICRO)
@@ -26,7 +26,7 @@
 #define VER_PRODUCTNAME_STR         "MEGAsync\0"
 
 /* SDK commit hash, 7 chars */
-#define VER_SDK_ID "f7d7a1c" // v10.6.3
+#define VER_SDK_ID "eb773dc" // v10.12.0
 
 // clang-format off
 // Update scrips relying on this value if you move it
@@ -38,7 +38,9 @@
 //"- item n\n"
 //)
 #define VER_CHANGES_NOTES QT_TRANSLATE_NOOP("Preferences", \
-"- Fixes for sync issues.\n"     \
+"- Improve conflict resolution.\n"                         \
+"- Improve device name handling.\n"                        \
+"- Bug fixes and performance improvements.\n"              \
 )
 // clang-format on
 

@@ -346,9 +346,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>Резервные копии</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -361,6 +371,11 @@
         <translation>Ошибка остановки синхронизации</translation>
     </message>
     <message>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
         <translation>Невозможно синхронизировать папку «%1». Причина: %2</translation>
@@ -368,12 +383,17 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>Резервные копии некоторых папок не созданы. Чтобы получить дополнительную информацию, наведите курсор на красный значок.</translation>
+        <translation>Резервные копии некоторых папок не созданы. Для подробностей наведите курсор на значок предупреждения.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
         <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
         <translation>Не удалось синхронизировать</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -6233,6 +6253,14 @@ Enter a different name</source>
 <context>
     <name>Preferences</name>
     <message>
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
 - Minor bug fixes and performance improvements.
 </source>
@@ -8391,6 +8419,21 @@ Please, refresh the list.</source>
         <translation>Не удаётся создать резервную копию. Повторите попытку и, если проблема не исчезнет, обратитесь в [A]службу поддержки[/A].</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>Вы не можете создать резервную копию этой папки, так как в ней находятся папки с резервными копиями.</translation>
@@ -8672,6 +8715,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Ошибка остановки синхронизации</translation>
     </message>
     <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>Невозможно синхронизировать папку «%1». Причина: %2</translation>
@@ -8679,7 +8727,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Резервные копии не синхронизированы. Для подробностей наведите курсор на красный значок.</translation>
+        <translation>Резервные копии не синхронизированы. Для подробностей наведите курсор на значок предупреждения.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>

@@ -129,7 +129,13 @@ void StalledIssueHeader::showIgnoreFile()
 
 void StalledIssueHeader::propagateButtonClick()
 {
-    QApplication::postEvent(this, new QMouseEvent(QEvent::MouseButtonPress, QPointF(), Qt::LeftButton, Qt::NoButton, Qt::KeyboardModifier::AltModifier));
+    QApplication::postEvent(this,
+                            new QMouseEvent(QEvent::MouseButtonPress,
+                                            QPointF(),
+                                            QPointF(),
+                                            Qt::LeftButton,
+                                            Qt::NoButton,
+                                            Qt::KeyboardModifier::AltModifier));
     qApp->processEvents();
 }
 

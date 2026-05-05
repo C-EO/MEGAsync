@@ -16,7 +16,7 @@ void RecursiveShellNotifier::notify(const QString& path)
     QStringList foldersToNotify;
     findFoldersRecursively(path, foldersToNotify);
 
-    for (const auto& folder : qAsConst(foldersToNotify))
+    for (const auto& folder: std::as_const(foldersToNotify))
     {
         mBaseNotifier->notify(folder);
         if (WindowsPlatform_exiting) return;
@@ -29,7 +29,7 @@ void RecursiveShellNotifier::findFoldersRecursively(const QString &path, QString
 {
     QDir dir(path);
     QFileInfoList children = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot);
-    for (const auto& child : qAsConst(children))
+    for (const auto& child: std::as_const(children))
     {
         if (WindowsPlatform_exiting) return;
         QString childPath = QDir::toNativeSeparators(child.absoluteFilePath());

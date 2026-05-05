@@ -38,7 +38,7 @@ ChangeLogDialog::ChangeLogDialog(QString version, QString SDKversion, QString ch
 {
     ui->setupUi(this);
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
 #endif
 

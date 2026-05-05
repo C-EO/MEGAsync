@@ -343,9 +343,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>El backup ha fallado</translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>Backups</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Error al añadir el backup</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -358,6 +368,11 @@
         <translation>Error al detener el backup</translation>
     </message>
     <message>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>El backup de ‘%1’ ha fallado. Razón: %2</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
         <translation>Tu carpeta “%1” no se puede sincronizar. Razón: %2</translation>
@@ -365,12 +380,17 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>No se ha podido hacer el backup de algunas carpetas. Coloca el cursor sobre el icono rojo de advertencia para obtener más información.</translation>
+        <translation>No se ha podido hacer el backup de algunas carpetas. Coloca el cursor sobre el icono de advertencia para obtener más información.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
         <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
         <translation>Sincronización no realizada</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>No se puede eliminar el backup. Razón: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -4684,7 +4704,7 @@ Introduzca un nombre diferente.</translation>
     <message>
         <source>Date added</source>
         <translatorcomment>Table header title for node date added info. SNC.5804</translatorcomment>
-        <translation>Fecha de subida</translation>
+        <translation>Fecha de inclusión</translation>
     </message>
     <message>
         <source>Error copying file</source>
@@ -4819,7 +4839,7 @@ Introduzca un nombre diferente.</translation>
     <message>
         <source>Sort by date added</source>
         <translatorcomment>Table header tooltip for Date added column. SNC.5804</translatorcomment>
-        <translation>Ordenar por fecha de subida</translation>
+        <translation>Ordenar por fecha de inclusión</translation>
     </message>
     <message>
         <source>Sort by last modified date</source>
@@ -5345,7 +5365,7 @@ Introduzca un nombre diferente.</translation>
     </message>
     <message>
         <source>*%1</source>
-        <translatorcomment>Please keep the &apos;*&apos; symbol. Disclaimer for the promoted price. %1 is the &quot;Tax may apply.&quot; string if local currency is â‚¬ and &quot;Estimated price in your local currency. Tax may apply.&quot; if not; or &quot;Estimated price in your local currency.&quot; if there is no tax information and the billing price is not Euro. SNC-6271</translatorcomment>
+        <translatorcomment>Please keep the &apos;*&apos; symbol. Disclaimer for the promoted price. %1 is the &quot;Tax may apply.&quot; string if local currency is € and &quot;Estimated price in your local currency. Tax may apply.&quot; if not; or &quot;Estimated price in your local currency.&quot; if there is no tax information and the billing price is not Euro. SNC-6271</translatorcomment>
         <translation>*%1</translation>
     </message>
     <message>
@@ -6180,6 +6200,16 @@ Introduzca un nombre diferente.</translation>
 </context>
 <context>
     <name>Preferences</name>
+    <message>
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation>- Mejor resolución de conflictos.
+- Mejor gestión de nombres de dispositivos.
+- Correcciones de errores y mejoras de rendimiento.</translation>
+    </message>
     <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
 - Minor bug fixes and performance improvements.
@@ -8323,6 +8353,21 @@ Actualiza la lista.</translation>
         <translation>No ha sido posible hacer un backup. Vuelve a intentarlo y si el problema continúa, contacta con [A]Soporte[/A].</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation>No se puede crear la sincronización porque la carpeta seleccionada no es válida. Inténtalo de nuevo.</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>No se puede crear la sincronización. Para más información, ponte en contacto con [A]Soporte[/A].</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>No se ha podido crear la sincronización. Intente de nuevo y si el problema persiste, contacta con [A]Soporte[/A].</translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>No puedes hacer un backup de esta carpeta porque contiene carpetas con backup.</translation>
@@ -8604,6 +8649,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Error al detener el backup</translation>
     </message>
     <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Error al eliminar la sincronización</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>Tu carpeta “%1” no se puede sincronizar. Razón: %2</translation>
@@ -8611,7 +8661,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Algunas carpetas no se han sincronizado. Para obtener más información, coloca el cursor encima del icono rojo.</translation>
+        <translation>Algunas carpetas no se han sincronizado. Para obtener más información, coloca el cursor encima del icono de advertencia.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>

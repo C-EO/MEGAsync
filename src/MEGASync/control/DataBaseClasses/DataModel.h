@@ -9,6 +9,8 @@
 
 class DataModel: public QAbstractItemModel
 {
+    Q_OBJECT
+
 public:
     DataModel(std::shared_ptr<DataController> controller, QObject* parent):
         QAbstractItemModel(parent),

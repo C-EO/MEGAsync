@@ -7,6 +7,8 @@
 
 class IgnoredStalledIssue : public StalledIssue
 {
+    Q_OBJECT
+
 public:
     IgnoredStalledIssue(const mega::MegaSyncStall *stallIssue);
     ~IgnoredStalledIssue() = default;
@@ -54,6 +56,8 @@ private:
 
 class CloudNodeIsBlockedIssue : public IgnoredStalledIssue
 {
+    Q_OBJECT
+
 public:
     CloudNodeIsBlockedIssue(const mega::MegaSyncStall *stallIssue);
     ~CloudNodeIsBlockedIssue() = default;

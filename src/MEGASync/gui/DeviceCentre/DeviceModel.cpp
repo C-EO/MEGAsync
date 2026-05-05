@@ -26,7 +26,7 @@ void DeviceModel::reset(const QString& deviceId, const DeviceData& data)
 int DeviceModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return mDevicesData.size();
+    return static_cast<int>(mDevicesData.size());
 }
 
 int DeviceModel::columnCount(const QModelIndex& parent) const

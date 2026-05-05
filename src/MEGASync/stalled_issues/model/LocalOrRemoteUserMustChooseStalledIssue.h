@@ -7,6 +7,8 @@ class MegaUploader;
 
 class LocalOrRemoteUserMustChooseStalledIssue : public StalledIssue
 {
+    Q_OBJECT
+
 public:
     LocalOrRemoteUserMustChooseStalledIssue(const mega::MegaSyncStall *stallIssue);
     ~LocalOrRemoteUserMustChooseStalledIssue() = default;
@@ -15,6 +17,11 @@ public:
     bool isAutoSolvable() const override;
     void setIsSolved(SolveType type) override;
     bool checkForExternalChanges() override;
+
+    bool shouldDiscardReappearingIssuesByResolvedHash() const override
+    {
+        return true;
+    }
 
     void fillIssue(const mega::MegaSyncStall *stall) override;
     void endFillingIssue() override;

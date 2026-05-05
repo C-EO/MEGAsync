@@ -5,6 +5,8 @@
 
 #include <QIcon>
 #include <QList>
+#include <QObject>
+#include <QPointer>
 
 #include <memory>
 

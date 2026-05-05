@@ -24,7 +24,7 @@ public:
 
     QSet<QString> getRemoteFolders() const;
 
-    QString getErrorString(int errorCode, int syncErrorCode) const;
+    QString getErrorString(int errorCode, int syncErrorCode) const override;
 
 signals:
     void backupFinished(const QString& folder, int errorCode, int syncErrorCode);
@@ -43,6 +43,7 @@ private:
     bool existsName(const QString& name) const;
     bool hasBackupsWithErrors() const;
     void showErrorMessage() const;
+    QString getSyncAPIErrorMsg(int megaError) const override;
 
 private slots:
     void onBackupAddRequestStatus(int errorCode, int syncErrorCode, QString name);

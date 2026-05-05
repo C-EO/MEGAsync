@@ -2,6 +2,7 @@
 #define UTILITIES_H
 
 #include "megaapi.h"
+#include "QtMetaEnumUtils.h"
 #include "ThreadPool.h"
 
 #include <QDesktopServices>
@@ -627,6 +628,7 @@ public:
 
     // Compute the part per <ref> of <part> from <total>. Defaults to %
     static int partPer(long long part, long long total, uint ref = 100);
+    static int partPer(long double part, long double total, uint ref = 100);
 
     static QString getFileHash(const QString& filePath);
 

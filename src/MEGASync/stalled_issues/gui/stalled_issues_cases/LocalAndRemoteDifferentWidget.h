@@ -25,7 +25,7 @@ public:
     struct KeepSideInfo
     {
         bool isFile = false;
-        int numberOfIssues = 1;
+        qsizetype numberOfIssues = 1;
         QString itemName;
     };
 

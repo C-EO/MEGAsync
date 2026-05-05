@@ -2693,7 +2693,7 @@ margin-top: 0px;
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>16777212</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="cursor">
@@ -2830,7 +2830,7 @@ margin-top: 0px;
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>16777212</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="cursor">

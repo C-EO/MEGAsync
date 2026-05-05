@@ -240,14 +240,14 @@ void ButtonIconManager::changeButtonTextColor(QAbstractButton* button, double al
         button->setPalette(paletteButton);
 
         button->setStyleSheet(QString::fromLatin1("color: rgba(%1,%2,%3,%4);")
-                              .arg(QString::number(textColor.red()))
-                              .arg(QString::number(textColor.green()))
-                              .arg(QString::number(textColor.blue()))
-                              .arg(QString::number(textColor.alpha())));
+                                  .arg(QString::number(textColor.red()),
+                                       QString::number(textColor.green()),
+                                       QString::number(textColor.blue()),
+                                       QString::number(textColor.alpha())));
     }
 }
 
-ButtonIconManager::IconInfo ButtonIconManager::splitIconPath(const QString &iconPath)
+ButtonIconManager::IconInfo ButtonIconManager::splitIconPath(const QString& iconPath)
 {
     IconInfo info;
 

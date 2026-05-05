@@ -266,7 +266,9 @@ bool MacXExtServer::GetAnswerToRequest(const char *buf, QByteArray *response)
             QFileInfo file(filePath);
             if (file.exists())
             {
-                QtConcurrent::run(QDesktopServices::openUrl, QUrl::fromLocalFile(filePath));
+                QThreadPool::globalInstance()->start([filePath] {
+                    QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+                });
             }
             return false;
         }

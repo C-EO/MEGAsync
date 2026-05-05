@@ -109,7 +109,7 @@ int SyncItemModel::rowCount(const QModelIndex& parent) const
     if (parent.isValid())
         return 0;
 
-    return mList.size();
+    return static_cast<int>(mList.size());
 }
 
 int SyncItemModel::columnCount(const QModelIndex& parent) const
@@ -472,7 +472,7 @@ void SyncItemModel::insertSync(std::shared_ptr<SyncSettings> sync)
         {
             if ((*it) == sync)
             {
-                int pos = it - mList.cbegin();
+                const auto pos = static_cast<int>(it - mList.cbegin());
                 sendDataChanged(pos);
                 break;
             }
@@ -482,7 +482,9 @@ void SyncItemModel::insertSync(std::shared_ptr<SyncSettings> sync)
     {
         if (sync->getType() == mSyncType)
         {
-            beginInsertRows(QModelIndex(), mList.size(), mList.size());
+            beginInsertRows(QModelIndex(),
+                            static_cast<int>(mList.size()),
+                            static_cast<int>(mList.size()));
             mList.append(sync);
             endInsertRows();
         }
@@ -496,7 +498,7 @@ void SyncItemModel::updateSyncStats(std::shared_ptr<::mega::MegaSyncStats> stats
     {
         if ((*it)->backupId() == stats->getBackupId())
         {
-            int pos = it - mList.cbegin();
+            const auto pos = static_cast<int>(it - mList.cbegin());
             sendDataChanged(pos);
             break;
         }

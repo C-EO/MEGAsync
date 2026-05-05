@@ -167,6 +167,8 @@ private:
 
 class MegaIgnoreExtensionRule : public MegaIgnoreNameRule
 {
+    Q_OBJECT
+
 public:
     MegaIgnoreExtensionRule(const QString& rule, bool isCommented);
     explicit MegaIgnoreExtensionRule(Class classType, const QString& extension);

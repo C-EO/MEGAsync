@@ -346,9 +346,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>Operațiunea de backup a eșuat</translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>Backupuri</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Eroare la adăugarea backup-ului</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -361,6 +371,11 @@
         <translation>Eroare la oprirea backupului</translation>
     </message>
     <message>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>Operațiunea asupra backup-ului ‘%1’ a eșuat. Motiv: %2</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
         <translation>Folderul dvs. „%1” nu se poate sincroniza. Motivul: %2</translation>
@@ -368,12 +383,17 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>Unele foldere nu au fost salvate. Pentru mai multe informații, treceți cu mouse-ul peste pictograma roșie.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sync operation failed</source>
         <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
         <translation>Imposibil de sincronizat</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>Backup-ul tău nu poate fi șters. Motiv: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -6233,6 +6253,16 @@ Introdu un alt nume.</translation>
 <context>
     <name>Preferences</name>
     <message>
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation>- Rezolvare a conflictelor îmbunătățită.
+- Gestionarea numelui dispozitivului îmbunătățită.
+- Remedieri de erori și îmbunătiri ale performanței.</translation>
+    </message>
+    <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
 - Minor bug fixes and performance improvements.
 </source>
@@ -8391,6 +8421,21 @@ Actualizați lista.</translation>
         <translation>Nu se poate crea backupul. Încearcă din nou și dacă problema continuă, contactează [A]Asistența[/A].</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation>Nu se poate crea sincronizare deoarece folderul selectat nu este valid. Încercați din nou.</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Nu se poate crea sincronizare. Pentru informații suplimentare, contactați [A]Support[/A].</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Nu se poate crea sincronizare. Încercați din nou și, dacă problema persistă, contactați [A]Support[/A].</translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>Nu poți face backup acestui folder deoarece acesta conține foldere pentru care s-a făcut backup.</translation>
@@ -8672,6 +8717,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Eroare la oprirea backupului</translation>
     </message>
     <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Eroare la eliminarea sincronizării.</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>Folderul dvs. „%1” nu se poate sincroniza. Motivul: %2</translation>
@@ -8679,7 +8729,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Unele foldere nu s-au sincronizat. Pentru mai multe informații, treceți cu mouse-ul peste pictograma roșie.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sync operation failed</source>

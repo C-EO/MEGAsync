@@ -227,8 +227,6 @@ public:
     void setProExpirityTime(long long value);
     bool startOnStartup();
     void setStartOnStartup(bool value);
-    bool usingHttpsOnly();
-    void setUseHttpsOnly(bool value);
     bool SSLcertificateException();
     void setSSLcertificateException(bool value);
     QString language();
@@ -359,7 +357,7 @@ public:
     void getLastHandleInfo(mega::MegaHandle &lastHandle, int &type, long long &timestamp);
     void setLastPublicHandle(mega::MegaHandle handle, int type);
 
-    int getNumUsers();
+    qsizetype getNumUsers();
 
     // enter user preferences and load syncs into loadedSyncsMap
     void enterUser(int i);
@@ -501,7 +499,8 @@ public:
         ONE_TIME_ACTION_HGFS_WARNING = 5,
         ONE_TIME_ACTION_ONBOARDING_SHOWN = 6,
         ONE_TIME_ACTION_UNHIDE_TRAY_ICON = 7,
-        ONE_TIME_ACTION_REQUEST_PIN_TASKBAR
+        ONE_TIME_ACTION_REQUEST_PIN_TASKBAR = 8,
+        ONE_TIME_ACTION_MACOS_ARM64_UPDATE_URL_ADJUSTED_EVENT_SENT = 9
     };
 
     enum {
@@ -604,7 +603,7 @@ public:
     static const int minSyncStateChangeProcessingIntervalMs;
 
 protected:
-    QMutex mutex;
+    QRecursiveMutex mutex;
     void login(QString account);
     void logout();
 
@@ -761,7 +760,6 @@ protected:
     static const QString transferDownloadMethodKey;
     static const QString transferUploadMethodKey;
     static const QString lastCustomStreamingAppKey;
-    static const QString useHttpsOnlyKey;
     static const QString SSLcertificateExceptionKey;
     static const QString maxMemoryUsageKey;
     static const QString maxMemoryReportTimeKey;
@@ -832,7 +830,6 @@ protected:
     static const int defaultTransferUploadMethod;
     static const int defaultFolderPermissions;
     static const int defaultFilePermissions;
-    static const bool defaultUseHttpsOnly;
     static const bool defaultSSLcertificateException;
     static const int defaultAccountStatus;
     static const bool defaultNeedsFetchNodes;

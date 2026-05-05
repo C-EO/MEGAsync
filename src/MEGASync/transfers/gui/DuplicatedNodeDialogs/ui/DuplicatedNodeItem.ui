@@ -276,6 +276,9 @@
               <property name="text">
                <string notr="true"/>
               </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
               <property name="type" stdset="0">
                <string notr="true">primary</string>
               </property>

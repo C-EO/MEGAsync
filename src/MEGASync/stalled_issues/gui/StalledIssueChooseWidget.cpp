@@ -56,7 +56,13 @@ void StalledIssueChooseWidget::addDefaultButton()
 
 void StalledIssueChooseWidget::onActionClicked(int button_id)
 {
-    QApplication::postEvent(this, new QMouseEvent(QEvent::MouseButtonPress, QPointF(), Qt::LeftButton, Qt::NoButton, Qt::KeyboardModifier::AltModifier));
+    QApplication::postEvent(this,
+                            new QMouseEvent(QEvent::MouseButtonPress,
+                                            QPointF(),
+                                            QPointF(),
+                                            Qt::LeftButton,
+                                            Qt::NoButton,
+                                            Qt::KeyboardModifier::AltModifier));
     qApp->processEvents();
 
     emit chooseButtonClicked(button_id);

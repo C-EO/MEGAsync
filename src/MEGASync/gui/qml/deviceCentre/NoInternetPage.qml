@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.15
 
 import components.texts 1.0 as Texts
 

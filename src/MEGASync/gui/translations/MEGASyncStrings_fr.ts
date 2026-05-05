@@ -343,9 +343,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>L&apos;opération de sauvegarde a échoué</translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>Sauvegardes</translation>
+    </message>
+    <message>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Erreur lors de l&apos;ajout de la sauvegarde</translation>
     </message>
     <message>
         <source>Error adding sync</source>
@@ -358,6 +368,11 @@
         <translation>Erreur d’arrêt de la sauvegarde</translation>
     </message>
     <message>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>L&apos;opération sur la sauvegarde «&#xa0;%1&#xa0;» a échoué. Raison&#xa0;: %2</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
         <translation>Votre dossier «&#xa0;%1&#xa0;» ne peut pas être synchronisé. Raison&#xa0;: %2</translation>
@@ -365,12 +380,17 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>Certains fichiers n’ont pas été sauvegardés. Pour plus de précisions, survolez l’icône rouge.</translation>
+        <translation>Certains dossiers n’ont pas été sauvegardés. Pour plus de précisions, survolez l’icône d&apos;avertissement.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
         <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
         <translation>Impossible de synchroniser</translation>
+    </message>
+    <message>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>Votre sauvegarde ne peut pas être supprimée. Raison&#xa0;: %1</translation>
     </message>
     <message>
         <source>Your sync can&apos;t be removed. Reason: %1</source>
@@ -740,7 +760,7 @@
     <message>
         <source>Terms of Service</source>
         <translatorcomment>Label for Terms of Service link.</translatorcomment>
-        <translation>Conditions générales d’utilisation</translation>
+        <translation>Conditions d&apos;utilisation</translation>
     </message>
     <message>
         <source>[A]This software uses Qt ([C] 2018 The Qt Company Ltd) which is covered by GNU LESSER GENERAL PUBLIC LICENSE Version 3[/A]</source>
@@ -890,7 +910,7 @@
     <message>
         <source>The file %1 is unavailable because it was reported to contain content in breach of [A]MEGA’s Terms of Service[/A].</source>
         <translatorcomment>Title for the header widget sync stall that occurs when a file is blocked by ToS infringement. %1 is the file name. [A] is for links.SAT-1209</translatorcomment>
-        <translation>Le dossier %1 n’est pas disponible car il a été signalé qu’il contenait du contenu contraire à [A]Conditions générales d’utilisation de MEGA[/A].</translation>
+        <translation>Le dossier %1 n’est pas disponible car il a été signalé qu’il contenait du contenu contraire à [A]Conditions d&apos;utilisation de MEGA[/A].</translation>
     </message>
 </context>
 <context>
@@ -3769,7 +3789,7 @@ https://mega.co.nz/#sync</source>
     <message>
         <source>Terms of Service breached</source>
         <translatorcomment>Error shown when terms of service are breached during download.</translatorcomment>
-        <translation>Non-respect des Conditions générales d’utilisation</translation>
+        <translation>Non-respect des Conditions d&apos;utilisation</translation>
     </message>
     <message>
         <source>The app has detected an error and needs to reload. If you experience this issue more than once, contact our Support team.</source>
@@ -3821,7 +3841,7 @@ Pour de plus amples renseignements sur la manière de déposer un contre-avis, v
     <message>
         <source>Your account was terminated due to a breach of MEGA&apos;s Terms of Service, such as abuse of rights of others; sharing and/or importing illegal data; or system abuse.</source>
         <translatorcomment>Error triggered by SDK when an account has been terminated due to a breach of MEGA&apos;s terms of Service.</translatorcomment>
-        <translation>Votre compte a été résilié en raison du non-respect des Conditions générales d’utilisation de MEGA.
+        <translation>Votre compte a été résilié en raison du non-respect des Conditions d&apos;utilisation de MEGA.
 Vous ne pourrez pas accéder à vos données stockées de nouveau ni être autorisé à créer un nouveau compte MEGA.</translation>
     </message>
     <message>
@@ -5312,7 +5332,7 @@ Saisissez un nom différent.</translation>
     <message>
         <source>%1 of storage</source>
         <translatorcomment>Description of available storage for the promoted plan.snc.6228</translatorcomment>
-        <translation>%1 d’espace de stockage</translation>
+        <translation>%1 de stockage</translation>
     </message>
     <message>
         <source>%1 of transfer</source>
@@ -5392,8 +5412,8 @@ Saisissez un nom différent.</translation>
         <source>[B]%1% off[/B] for %n month</source>
         <translatorcomment>Description of the amount of discount (%1) and how many months (%n) the discount is for. snc.6228</translatorcomment>
         <translation>
-            <numerusform>[B]%1 % de réduction[/B] pendant %n mois</numerusform>
-            <numerusform>[B]%1 % de réduction[/B] pendant %n mois</numerusform>
+            <numerusform>[B]%1&#xa0;% de réduction[/B] pendant %n mois</numerusform>
+            <numerusform>[B]%1&#xa0;% de réduction[/B] pendant %n mois</numerusform>
         </translation>
     </message>
 </context>
@@ -5617,7 +5637,7 @@ Saisissez un nom différent.</translation>
     <message>
         <source>I agree with MEGA&apos;s [B][A]Terms of service[/A][/B]</source>
         <translatorcomment>Label shown in the right of a checkbox to accept terms of servcice [B] is for bold and [A] is for link to the terms of service page in the web CON-466</translatorcomment>
-        <translation>J’ai lu et accepte les [B][A]Conditions générales d’utilisation[/A] [/B]de MEGA</translation>
+        <translation>J’ai lu et accepte les [B][A]Conditions d&apos;utilisation[/A] [/B]de MEGA</translation>
     </message>
     <message>
         <source>If you don&apos;t receive the email within 1 hour, please [B][A]contact support[/A][/B].</source>
@@ -6180,6 +6200,16 @@ Saisissez un nom différent.</translation>
 </context>
 <context>
     <name>Preferences</name>
+    <message>
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation>- Résolution des conflits améliorée.
+- Gestion des noms d&apos;appareils améliorée.
+- Corrections de bugs et améliorations des performances.</translation>
+    </message>
     <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
 - Minor bug fixes and performance improvements.
@@ -8323,6 +8353,21 @@ Actualisez la liste.</translation>
         <translation>Impossible de créer la sauvegarde. Réessayez et si le problème persiste, contactez [A]l’assistance[/A].</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation>Impossible de créer la synchronisation car le dossier sélectionné n’est pas valide. Veuillez réessayer.</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Impossible de créer la synchronisation. Pour plus d&apos;informations, contactez [A]l&apos;assistance[/A].</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Impossible de créer la synchronisation. Réessayez et si le problème persiste, contactez [A]l&apos;assistance[/A].</translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>Vous ne pouvez pas sauvegarder ce dossier, car il comprend des dossiers sauvegardés.</translation>
@@ -8604,6 +8649,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Erreur d’arrêt de la sauvegarde</translation>
     </message>
     <message>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Erreur lors de la suppression de la synchronisation</translation>
+    </message>
+    <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
         <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
         <translation>Votre dossier «&#xa0;%1&#xa0;» ne peut pas être synchronisé. Raison&#xa0;: %2</translation>
@@ -8611,7 +8661,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Certains dossiers ne sont pas synchronisés. Pour plus de précisions survolez l’icône rouge.</translation>
+        <translation>Certains dossiers ne sont pas synchronisés. Pour plus de précisions, survolez l’icône d&apos;avertissement.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>
@@ -9747,8 +9797,8 @@ Please delete the folder sync from settings to cancel them.</source>
         <source>%1% off for %n month</source>
         <translatorcomment>Label indicating the discount for a plan. placeholder %1 is for the discount percentage, and placeholder %n for the number of months getting discounted.SNC-6228</translatorcomment>
         <translation>
-            <numerusform>%1 % de réduction pendant %n mois</numerusform>
-            <numerusform>%1 % de réduction pendant %n mois</numerusform>
+            <numerusform>%1&#xa0;% de réduction pendant %n mois</numerusform>
+            <numerusform>%1&#xa0;% de réduction pendant %n mois</numerusform>
         </translation>
     </message>
     <message>

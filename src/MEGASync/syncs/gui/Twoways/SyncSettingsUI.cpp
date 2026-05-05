@@ -89,7 +89,7 @@ QString SyncSettingsUI::getErrorAddingTitle() const
 
 QString SyncSettingsUI::getErrorRemovingTitle() const
 {
-    return tr("Error removing backup");
+    return tr("Error removing sync");
 }
 
 QString SyncSettingsUI::getErrorRemovingText(std::shared_ptr<mega::MegaError> err)

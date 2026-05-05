@@ -11,11 +11,12 @@ class UserMessageCacheManager;
 
 class UserMessageDelegate : public QStyledItemDelegate
 {
+    Q_OBJECT
 
 public:
     UserMessageDelegate() = delete;
     UserMessageDelegate(QAbstractItemModel* proxyModel, QTreeView* view);
-    virtual ~UserMessageDelegate() = default;
+    virtual ~UserMessageDelegate();
 
 protected:
     void paint(QPainter* painter,
@@ -63,7 +64,6 @@ private:
 
     QWidget* getWidget(const QModelIndex& index) const;
     QModelIndex getEditorCurrentIndex() const;
-
 };
 
 #endif // USER_MESSAGE_DELEGATE_H

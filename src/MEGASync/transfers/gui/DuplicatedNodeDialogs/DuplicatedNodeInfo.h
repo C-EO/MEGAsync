@@ -9,6 +9,8 @@
 
 #include <memory>
 
+using PiTagTrigger = decltype(mega::MegaUploadOptions::pitagTrigger);
+
 enum class NodeItemType
 {
     FOLDER_UPLOAD_AND_MERGE =0,
@@ -27,13 +29,16 @@ class DuplicatedNodeInfo : public QObject
     Q_OBJECT
 
 public:
-    DuplicatedNodeInfo(DuplicatedUploadBase* checker);
+    DuplicatedNodeInfo(DuplicatedUploadBase* checker,
+                       PiTagTrigger piTagTrigger = mega::MegaApi::PITAG_TRIGGER_NOT_APPLICABLE);
 
     const std::shared_ptr<mega::MegaNode> &getParentNode() const;
     void setParentNode(const std::shared_ptr<mega::MegaNode> &newParentNode);
 
+    PiTagTrigger getPiTagTrigger() const;
+
     const std::shared_ptr<mega::MegaNode>& getConflictNode() const;
-    void setConflictNode(const std::shared_ptr<mega::MegaNode> &newRemoteConflictNode);
+    void setConflictNode(std::shared_ptr<mega::MegaNode> newRemoteConflictNode);
 
     const QString& getSourceItemPath() const;
     void setSourceItemPath(const QString &newLocalPath);
@@ -79,6 +84,7 @@ protected:
     QDateTime mConflictNodeModifiedTime;
     QDateTime mSourceItemModifiedTime;
     DuplicatedUploadBase* mChecker;
+    PiTagTrigger mPiTagTrigger;
 };
 
 class DuplicatedMoveNodeInfo : public DuplicatedNodeInfo
@@ -117,7 +123,7 @@ struct ConflictTypes
     QList<std::shared_ptr<DuplicatedNodeInfo>> mFileNameConflicts;
     QList<std::shared_ptr<DuplicatedNodeInfo>> mFolderNameConflicts;
 
-    bool isEmpty() const;
+    bool hasNoConflicts() const;
 };
 
 class CheckDuplicatedNodes
@@ -126,8 +132,9 @@ public:
     static std::shared_ptr<ConflictTypes> checkMoves(
         QList<QPair<mega::MegaHandle, std::shared_ptr<mega::MegaNode>>> handlesAndTargetNode,
         std::shared_ptr<mega::MegaNode> sourceNode);
-    static std::shared_ptr<ConflictTypes> checkUploads(
-        QQueue<QString>& nodePaths, std::shared_ptr<mega::MegaNode> targetNode);
+    static std::unique_ptr<ConflictTypes>
+        checkUploads(QQueue<QPair<QString, PiTagTrigger>>& nodePaths,
+                     std::shared_ptr<mega::MegaNode> targetNode);
 };
 
 #endif // DUPLICATEDNODEINFO_H

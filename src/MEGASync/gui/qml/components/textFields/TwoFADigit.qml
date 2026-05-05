@@ -20,7 +20,7 @@ TextField {
         padding: 0
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
-        validator: RegExpValidator { regExp: RegexExpressions.digit2FA }
+        validator: RegularExpressionValidator { regularExpression: RegexExpressions.digit2FA }
         font {
             pixelSize: Texts.Text.Size.HUGE
             weight: Font.Bold

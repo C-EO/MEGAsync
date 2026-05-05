@@ -75,14 +75,14 @@ void NameConflict::updateUi(std::shared_ptr<const NameConflictedStalledIssue> is
     auto nameData = getData();
 
     //Fill conflict names
-    auto conflictedNamesInfo = getConflictedNamesInfo();
+    const auto conflictedNamesInfo = getConflictedNamesInfo();
 
     //Reset widgets
     bool allSolved(true);
 
-    for(int index = conflictedNamesInfo.size()-1; index >= 0; index--)
+    for (int index = static_cast<int>(conflictedNamesInfo.size() - 1); index >= 0; index--)
     {
-        std::shared_ptr<NameConflictedStalledIssue::ConflictedNameInfo> info(conflictedNamesInfo.at(index));
+        const auto info(conflictedNamesInfo.at(index));
         QString conflictedName(getConflictedName(info));
 
         QWidget* parent(ui->nameConflicts);
@@ -381,7 +381,8 @@ void NameConflict::setDelegate(QPointer<StalledIssueBaseDelegateWidget> newDeleg
     mDelegateWidget = newDelegate;
 }
 
-QString NameConflict::getConflictedName(std::shared_ptr<NameConflictedStalledIssue::ConflictedNameInfo> info) const
+QString NameConflict::getConflictedName(
+    const std::shared_ptr<NameConflictedStalledIssue::ConflictedNameInfo>& info) const
 {
     return info->getConflictedName();
 }

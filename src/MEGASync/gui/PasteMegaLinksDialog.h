@@ -2,6 +2,7 @@
 #define PASTEMEGALINKSDIALOG_H
 
 #include <QDialog>
+#include <QRegularExpression>
 
 namespace Ui {
 class PasteMegaLinksDialog;
@@ -29,19 +30,28 @@ public:
 
     QString base64regExp = QString::fromUtf8("A-Za-z0-9_-");
 
-    QRegExp rxHeaderFile = QRegExp(QString::fromUtf8("^#![%1]{8}![%1]{43}").arg(base64regExp));
-    QRegExp rxHeaderFileNew = QRegExp(QString::fromUtf8("^file\\/[%1]{8}#[%1]{43}").arg(base64regExp));
+    QRegularExpression rxHeaderFile =
+        QRegularExpression(QString::fromUtf8("^#![%1]{8}![%1]{43}").arg(base64regExp));
+    QRegularExpression rxHeaderFileNew =
+        QRegularExpression(QString::fromUtf8("^file\\/[%1]{8}#[%1]{43}").arg(base64regExp));
 
-    QRegExp rxHeaderFolder = QRegExp(QString::fromUtf8("^#F![%1]{8}![%1]{22}").arg(base64regExp));
-    QRegExp rxHeaderFolderNew = QRegExp(QString::fromUtf8("^folder\\/[%1]{8}#[%1]{22}").arg(base64regExp));
+    QRegularExpression rxHeaderFolder =
+        QRegularExpression(QString::fromUtf8("^#F![%1]{8}![%1]{22}").arg(base64regExp));
+    QRegularExpression rxHeaderFolderNew =
+        QRegularExpression(QString::fromUtf8("^folder\\/[%1]{8}#[%1]{22}").arg(base64regExp));
 
-    QRegExp rxHeaderFolderSubfolder = QRegExp(QString::fromUtf8("^#F![%1]{8}![%1]{22}![%1]{8}").arg(base64regExp));
-    QRegExp rxHeaderFolderSubfolderNew = QRegExp(QString::fromUtf8("^folder\\/[%1]{8}#[%1]{22}\\/folder\\/[%1]{8}").arg(base64regExp));
+    QRegularExpression rxHeaderFolderSubfolder =
+        QRegularExpression(QString::fromUtf8("^#F![%1]{8}![%1]{22}![%1]{8}").arg(base64regExp));
+    QRegularExpression rxHeaderFolderSubfolderNew = QRegularExpression(
+        QString::fromUtf8("^folder\\/[%1]{8}#[%1]{22}\\/folder\\/[%1]{8}").arg(base64regExp));
 
-    QRegExp rxHeaderFolderFile = QRegExp(QString::fromUtf8("^#F![%1]{8}![%1]{22}\\?[%1]{8}").arg(base64regExp));
-    QRegExp rxHeaderFolderFileNew = QRegExp(QString::fromUtf8("^folder\\/[%1]{8}#[%1]{22}\\/file\\/[%1]{8}").arg(base64regExp));
+    QRegularExpression rxHeaderFolderFile =
+        QRegularExpression(QString::fromUtf8("^#F![%1]{8}![%1]{22}\\?[%1]{8}").arg(base64regExp));
+    QRegularExpression rxHeaderFolderFileNew = QRegularExpression(
+        QString::fromUtf8("^folder\\/[%1]{8}#[%1]{22}\\/file\\/[%1]{8}").arg(base64regExp));
 
-    QRegExp rxHeaderCollectionNew = QRegExp(QString::fromUtf8("^collection\\/[%1]{8}#[%1]{22}").arg(base64regExp));
+    QRegularExpression rxHeaderCollectionNew =
+        QRegularExpression(QString::fromUtf8("^collection\\/[%1]{8}#[%1]{22}").arg(base64regExp));
 
     explicit PasteMegaLinksDialog(QWidget *parent = 0);
     ~PasteMegaLinksDialog();

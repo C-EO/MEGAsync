@@ -32,7 +32,7 @@ DeviceNamePageForm {
         let error = DeviceName.getErrorCode(deviceNameTextField.text);
         if (error === DeviceName.Error.NONE) {
             pageInWaitState(true);
-            onboardingAccess.checkDeviceName(deviceNameTextField.text);
+            deviceName.checkDeviceName(deviceNameTextField.text);
         }
         else {
             DeviceName.showErrorRoutine(deviceNameTextField, error);
@@ -55,15 +55,7 @@ DeviceNamePageForm {
     }
 
     Connections {
-        target: window
-
-        function onInitializePageFocus() {
-            deviceNameTextField.forceActiveFocus();
-        }
-    }
-
-    Connections {
-        target: onboardingAccess
+        target: deviceName
 
         function onDeviceNameChecked(valid) {
             if (valid) {
@@ -73,6 +65,14 @@ DeviceNamePageForm {
                 pageInWaitState(false);
                 DeviceName.showErrorRoutine(deviceNameTextField, DeviceName.Error.NAME_EXIST);
             }
+        }
+    }
+
+    Connections {
+        target: window
+
+        function onInitializePageFocus() {
+            deviceNameTextField.forceActiveFocus();
         }
     }
 }

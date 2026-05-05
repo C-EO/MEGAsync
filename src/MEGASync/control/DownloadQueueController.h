@@ -28,7 +28,7 @@ public:
     void addTransferBatch(std::shared_ptr<TransferBatch> batch);
     void removeBatch();
 
-    int getDownloadQueueSize();
+    qsizetype getDownloadQueueSize();
     bool isDownloadQueueEmpty();
     void clearDownloadQueue();
     WrappedNode dequeueDownloadQueue();

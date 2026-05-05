@@ -27,6 +27,8 @@ class MessageDialogData;
 #ifdef Q_OS_WINDOWS
 class ExternalDialogOpener : public QWidget
 {
+    Q_OBJECT
+
 public:
     ExternalDialogOpener();
     ~ExternalDialogOpener();
@@ -35,6 +37,8 @@ public:
 
 class DialogBlocker : public QDialog
 {
+    Q_OBJECT
+
 public:
     DialogBlocker(QWidget* parent);
     ~DialogBlocker();

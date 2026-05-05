@@ -280,21 +280,27 @@ int WaitingSpinnerWidget::lineCountDistanceFromPrimary(int current, int primary,
     return distance;
 }
 
-QColor WaitingSpinnerWidget::currentLineColor(int countDistance, int totalNrOfLines,
-                                              qreal trailFadePerc, qreal minOpacity,
-                                              QColor color) {
-    if (countDistance == 0) {
+QColor WaitingSpinnerWidget::currentLineColor(int countDistance,
+                                              int totalNrOfLines,
+                                              qreal trailFadePerc,
+                                              qreal minOpacity,
+                                              QColor color)
+{
+    if (countDistance == 0)
+    {
         return color;
     }
-    const qreal minAlphaF = minOpacity / 100.0;
-    int distanceThreshold =
-            static_cast<int>(ceil((totalNrOfLines - 1) * trailFadePerc / 100.0));
-    if (countDistance > distanceThreshold) {
+    const auto minAlphaF = minOpacity / 100.0;
+    const auto distanceThreshold = ceil((totalNrOfLines - 1) * trailFadePerc / 100.0);
+    if (countDistance > distanceThreshold)
+    {
         color.setAlphaF(minAlphaF);
-    } else {
-        qreal alphaDiff = color.alphaF() - minAlphaF;
-        qreal gradient = alphaDiff / static_cast<qreal>(distanceThreshold + 1);
-        qreal resultAlpha = color.alphaF() - gradient * countDistance;
+    }
+    else
+    {
+        const auto alphaDiff = color.alphaF() - minAlphaF;
+        const auto gradient = alphaDiff / (distanceThreshold + 1.);
+        auto resultAlpha = color.alphaF() - gradient * countDistance;
 
         // If alpha is out of bounds, clip it.
         resultAlpha = std::min(1.0, std::max(0.0, resultAlpha));

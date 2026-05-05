@@ -3,8 +3,8 @@
 
 #include "ChooseFolder.h"
 #include "QmlDialogWrapper.h"
+#include "Syncs.h"
 
-class Syncs;
 class SyncsData;
 class SyncsComponent : public QMLComponent
 {

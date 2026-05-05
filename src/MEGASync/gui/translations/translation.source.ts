@@ -343,14 +343,19 @@
 <context>
     <name>BackupSettingsUI</name>
     <message>
+        <source>Backup operation failed</source>
+        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
+        <translation>Backup operation failed</translation>
+    </message>
+    <message>
         <source>Backups</source>
         <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
         <translation>Backups</translation>
     </message>
     <message>
-        <source>Error adding sync</source>
-        <translatorcomment>Title of the error message displayed when there was en error while trying to add a sync. SNC-4208</translatorcomment>
-        <translation>Error adding sync</translation>
+        <source>Error adding backup</source>
+        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
+        <translation>Error adding backup</translation>
     </message>
     <message>
         <source>Error removing backup</source>
@@ -358,24 +363,19 @@
         <translation>Error stopping backup</translation>
     </message>
     <message>
-        <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
-        <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
-        <translation>Your folder “%1” can’t sync. Reason: %2</translation>
+        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
+        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
+        <translation>Operation on backup ‘%1’ failed. Reason: %2</translation>
     </message>
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>Some folders haven’t been backed up. For more information, hover over the red icon.</translation>
+        <translation>Some folders haven’t been backed up. For more information, hover over the warning icon.</translation>
     </message>
     <message>
-        <source>Sync operation failed</source>
-        <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
-        <translation>Unable to sync</translation>
-    </message>
-    <message>
-        <source>Your sync can&apos;t be removed. Reason: %1</source>
-        <translatorcomment>Warning message title indicating that an error happened removing a sync. the reason is given at runtime in place of the placeholder.SNC-4208</translatorcomment>
-        <translation>Your sync can’t be removed. Reason: %1</translation>
+        <source>Your backup can’t be removed. Reason: %1</source>
+        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
+        <translation>Your backup can’t be removed. Reason: %1</translation>
     </message>
 </context>
 <context>
@@ -533,11 +533,6 @@
         <translation>Number of connections per transfer</translation>
     </message>
     <message>
-        <source>Only enable this option if tranfers don&apos;t start. Under all other circumstances, using HTTP is satisfactory as MEGA already encrypts all data.</source>
-        <translatorcomment>Description label about the option Use HTTPS for transfers that don&apos;t start checkbox.</translatorcomment>
-        <translation>Only enable this option if transfers don’t start. Under all other circumstances, using HTTP is satisfactory as MEGA already encrypts all data.</translation>
-    </message>
-    <message>
         <source>Upload rate limit</source>
         <translatorcomment>Section title for upload rate limit details.</translatorcomment>
         <translation>Upload rate limit</translation>
@@ -546,11 +541,6 @@
         <source>Uploads:</source>
         <translatorcomment>Label to indicate the limit of upload connections per transfer.</translatorcomment>
         <translation>Uploads:</translation>
-    </message>
-    <message>
-        <source>Use HTTPS for transfers that don&apos;t start</source>
-        <translatorcomment>Checkbox label to set the option to use https for transfer connections.</translatorcomment>
-        <translation>Use HTTPS for transfers that don’t start</translation>
     </message>
 </context>
 <context>
@@ -5345,7 +5335,7 @@ Enter a different name.</translation>
     </message>
     <message>
         <source>*%1</source>
-        <translatorcomment>Please keep the &apos;*&apos; symbol. Disclaimer for the promoted price. %1 is the &quot;Tax may apply.&quot; string if local currency is â‚¬ and &quot;Estimated price in your local currency. Tax may apply.&quot; if not; or &quot;Estimated price in your local currency.&quot; if there is no tax information and the billing price is not Euro. SNC-6271</translatorcomment>
+        <translatorcomment>Please keep the &apos;*&apos; symbol. Disclaimer for the promoted price. %1 is the &quot;Tax may apply.&quot; string if local currency is € and &quot;Estimated price in your local currency. Tax may apply.&quot; if not; or &quot;Estimated price in your local currency.&quot; if there is no tax information and the billing price is not Euro. SNC-6271</translatorcomment>
         <translation>*%1</translation>
     </message>
     <message>
@@ -6181,13 +6171,14 @@ Enter a different name.</translation>
 <context>
     <name>Preferences</name>
     <message>
-        <source>- Improved reliability for problematic graphics drivers on Windows.
-- Minor bug fixes and performance improvements.
+        <source>- Improve conflict resolution.
+- Improve device name handling.
+- Bug fixes and performance improvements.
 </source>
-        <translatorcomment>Change log for version 6.2.0. SNC-6221</translatorcomment>
-        <translation>- Improved reliability for problematic graphics drivers on Windows
-- Minor bug fixes and performance improvements
-</translation>
+        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
+        <translation>- Improved conflict resolution.
+- Improved device name handling.
+- Bug fixes and performance improvements.</translation>
     </message>
 </context>
 <context>
@@ -8323,6 +8314,21 @@ Refresh the list.</translation>
         <translation>Unable to create backup. Try again and if the issue continues, contact [A]Support[/A].</translation>
     </message>
     <message>
+        <source>Unable to create sync as selected folder is not valid. Try again.</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced because the local folder is invalid. SNC-3258</translatorcomment>
+        <translation>Unable to create sync as selected folder is not valid. Try again.</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. For further information, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Unable to create sync. For further information, contact [A]Support[/A].</translation>
+    </message>
+    <message>
+        <source>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</source>
+        <translatorcomment>Warning message indicating that a folder can&apos;t be synced. SNC-3258</translatorcomment>
+        <translation>Unable to create sync. Try again and if issue continues, contact [A]Support[/A].</translation>
+    </message>
+    <message>
         <source>You can&apos;t backup this folder as it contains backed up folders.</source>
         <translatorcomment>Warning message indicating that the selected folder for backup contains backed up folders, ence it can not be backed up.</translatorcomment>
         <translation>You can’t back up this folder as it contains backed up folders.</translation>
@@ -8596,9 +8602,9 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Error adding sync</translation>
     </message>
     <message>
-        <source>Error removing backup</source>
-        <translatorcomment>Error message dialog title.SNC-4208</translatorcomment>
-        <translation>Error stopping backup</translation>
+        <source>Error removing sync</source>
+        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
+        <translation>Error removing sync</translation>
     </message>
     <message>
         <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
@@ -8608,7 +8614,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Some folders have not synchronised. For more information, hover over the red icon.</translation>
+        <translation>Some folders have not synchronised. For more information, hover over the warning icon.</translation>
     </message>
     <message>
         <source>Sync operation failed</source>

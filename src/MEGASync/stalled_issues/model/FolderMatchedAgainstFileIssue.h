@@ -6,6 +6,8 @@
 
 class FolderMatchedAgainstFileIssue : public StalledIssue
 {
+    Q_OBJECT
+
 public:
     FolderMatchedAgainstFileIssue(const mega::MegaSyncStall *stallIssue);
     ~FolderMatchedAgainstFileIssue() = default;
@@ -18,7 +20,6 @@ public:
 
 private:
     StalledIssuesUtilities::KeepBothSidesState mResult;
-
 };
 
 #endif // FOLDERMATCHEDAGAINSTFILEISSUE_H

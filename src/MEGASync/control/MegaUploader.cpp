@@ -1,50 +1,63 @@
 #include "MegaUploader.h"
 
-#include <QtCore>
-#include <QApplication>
-#include <QPointer>
-#include <QFile>
-#include <QtConcurrent/QtConcurrent>
+#include <QDir>
+#include <QFileInfo>
 
-#ifndef WIN32
-#include <utime.h>
-#endif
+MegaUploader::MegaUploader(mega::MegaApi* megaApi,
+                           std::shared_ptr<FolderTransferListener> listener):
+    mMegaApi(megaApi),
+    mFolderTransferListener(std::move(listener)),
+    mFolderTransferListenerDelegate(
+        std::make_unique<mega::QTMegaTransferListener>(megaApi, mFolderTransferListener.get()))
+{}
 
-using namespace mega;
-using namespace std;
-
-MegaUploader::MegaUploader(MegaApi *megaApi, std::shared_ptr<FolderTransferListener> _listener)
-    : mFolderTransferListener(_listener),
-    mFolderTransferListenerDelegate(std::make_shared<QTMegaTransferListener>(megaApi, mFolderTransferListener.get()))
+void MegaUploader::upload(std::unique_ptr<UploadInfo> uploadInfo)
 {
-    this->megaApi = megaApi;
-}
+    const QFileInfo fileInfo(uploadInfo->mLocalPath);
+    const auto filePath = QDir::toNativeSeparators(fileInfo.absoluteFilePath());
 
-void MegaUploader::upload(QString path, const QString& nodeName, std::shared_ptr<MegaNode> parent, unsigned long long appDataID, const std::shared_ptr<TransferBatch>& transferBatch)
-{
-    QFileInfo info(path);
+    const auto appDataId =
+        uploadInfo->mTransferBatch ? uploadInfo->mTransferBatch->getAppDataId() : 0;
 
-    QString currentPath = QDir::toNativeSeparators(info.absoluteFilePath());
-    QString msg = QString::fromLatin1("Starting upload : '%1' - '%2' - '%3'").arg(info.fileName(), currentPath).arg(appDataID);
-    megaApi->log(MegaApi::LOG_LEVEL_DEBUG, msg.toUtf8().constData());
-    startUpload(currentPath, nodeName, appDataID, parent.get(), transferBatch ? transferBatch->getCancelTokenPtr() : nullptr);
+    const auto msg = QString::fromLatin1("Starting upload : '%1' - '%2' - '%3'")
+                         .arg(fileInfo.fileName(), filePath)
+                         .arg(appDataId);
+    mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_DEBUG, msg.toUtf8().constData());
+
+    // If the node is not set, use the handle to get it.
+    if (!uploadInfo->mRemoteNode)
+    {
+        uploadInfo->mRemoteNode.reset(mMegaApi->getNodeByHandle(uploadInfo->mRemoteNodeHandle));
+    }
+
+    startUpload(filePath,
+                uploadInfo->mNodeName,
+                appDataId,
+                uploadInfo->mRemoteNode.get(),
+                uploadInfo->mTransferBatch ? uploadInfo->mTransferBatch->getCancelTokenPtr() :
+                                             nullptr,
+                uploadInfo->mPiTagTrigger);
 
     emit startingTransfers();
 }
 
-void MegaUploader::startUpload(const QString& localPath, const QString &nodeName, unsigned long long appDataID, MegaNode* parent, MegaCancelToken* cancelToken)
+void MegaUploader::startUpload(const QString& localPath,
+                               const QString& nodeName,
+                               AppDataID appDataID,
+                               mega::MegaNode* parent,
+                               mega::MegaCancelToken* cancelToken,
+                               PiTagTrigger piTagTrigger)
 {
-    QByteArray localPathArray = localPath.toUtf8();
-
-    QByteArray appData = appDataID > 0 ? (QString::number(appDataID) + QLatin1Char('*')).toUtf8() : QByteArray();
-    MegaUploadOptions options;
+    const auto appData =
+        appDataID > 0 ? (QString::number(appDataID) + QLatin1Char('*')).toUtf8() : QByteArray();
+    mega::MegaUploadOptions options;
     options.fileName = nodeName.toStdString();
     options.appData = appData.isEmpty() ? nullptr : appData.constData();
-    options.pitagTrigger = ::mega::MegaApi::PITAG_TRIGGER_PICKER;
+    options.pitagTrigger = piTagTrigger;
 
-    megaApi->startUpload(localPathArray.constData(),
-                         parent,
-                         cancelToken,
-                         &options,
-                         mFolderTransferListenerDelegate.get());
+    mMegaApi->startUpload(localPath.toUtf8().constData(),
+                          parent,
+                          cancelToken,
+                          &options,
+                          mFolderTransferListenerDelegate.get());
 }
