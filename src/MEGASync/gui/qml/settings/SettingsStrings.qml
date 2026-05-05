@@ -26,4 +26,6 @@ QtObject {
     readonly property string availableTooltipFormat: qsTr("Available[BR]%1")
     readonly property string rubbishBinTooltipFormat: qsTr("Rubbish Bin[BR]%1")
     readonly property string downloadsTooltipFormat: qsTr("Transfers[BR]%1")
+    readonly property string tableSyncsNameColumn: qsTr("Synced folders")
+    readonly property string tableSyncsStatusColumn: qsTr("Status")
 }
