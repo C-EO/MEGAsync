@@ -3,4 +3,5 @@ AccountStateSurface 1.0 AccountStateSurface.qml
 QuotaProgressSegments 1.0 QuotaProgressSegments.qml
 QuotaProgressSegmentItem 1.0 QuotaProgressSegmentItem.qml
 QuotaProgressToolTip QuotaProgressToolTip.qml
+SyncSettings SyncSettings.qml
 singleton SettingsStrings SettingsStrings.qml

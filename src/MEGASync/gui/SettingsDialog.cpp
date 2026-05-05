@@ -434,11 +434,9 @@ void SettingsDialog::loadSettings()
     updateNetworkTab();
 
     // File management tab
-    mUi->syncSettings->setParentDialog(this);
     mUi->backupSettings->setParentDialog(this);
 
     // Syncs and backups
-    mUi->syncSettings->setToolBarItem(mUi->bSyncs);
     mUi->backupSettings->setToolBarItem(mUi->bBackup);
 
     mLoadingSettings--;
@@ -1100,7 +1098,7 @@ void SettingsDialog::setSyncAddButtonEnabled(const bool enabled, SettingsDialog:
     switch (tab)
     {
         case SYNCS_TAB:
-            syncSettings = mUi->syncSettings;
+            // syncSettings = mUi->syncSettings;
             break;
         case BACKUP_TAB:
             syncSettings = mUi->backupSettings;

@@ -1734,16 +1734,16 @@ border: none
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pSyncs">
-      <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
+     <widget class="SyncSettingsQuickWidget" name="pSyncs">
+      <layout class="QVBoxLayout" name="verticalLayout_8" stretch="">
        <property name="spacing">
-        <number>24</number>
+        <number>0</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
        <property name="topMargin">
-        <number>10</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
         <number>0</number>
@@ -1751,9 +1751,6 @@ border: none
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item>
-        <widget class="SyncSettingsUI" name="syncSettings" native="true"/>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="pBackup">
@@ -4501,12 +4498,6 @@ border: none
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SyncSettingsUI</class>
-   <extends>QWidget</extends>
-   <header>syncs/gui/Twoways/SyncSettingsUI.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>BackupSettingsUI</class>
    <extends>QWidget</extends>
    <header>syncs/gui/Backups/BackupSettingsUI.h</header>
@@ -4516,6 +4507,12 @@ border: none
    <class>AccountStateQuickWidget</class>
    <extends>QWidget</extends>
    <header>qml/AccountStateQuickWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SyncSettingsQuickWidget</class>
+   <extends>QWidget</extends>
+   <header>syncs/SyncSettingsQuickWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
