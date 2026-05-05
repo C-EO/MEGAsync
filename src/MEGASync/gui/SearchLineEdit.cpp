@@ -99,14 +99,7 @@ void SearchLineEdit::showTextEntry(bool state, bool force)
                     this,
                     [this]()
                     {
-                        ui->leSearchField->show();
-                        ui->leSearchField->resize(ui->leSearchField->sizeHint());
-                        if (!ui->leSearchField->text().isEmpty())
-                        {
-                            ui->tSearchCancel->resize(ui->tSearchCancel->sizeHint());
-                            ui->tSearchCancel->show();
-                        }
-                        ui->customWidget->hide();
+                        expand();
                     });
         }
 
@@ -132,7 +125,10 @@ void SearchLineEdit::showTextEntry(bool state, bool force)
 void SearchLineEdit::setMode(Mode mode)
 {
     mMode = mode;
-    showTextEntry(mode == Mode::ALWAYS_EXPANDED, true);
+    if (mode == Mode::ALWAYS_EXPANDED)
+    {
+        expand();
+    }
 }
 
 QPropertyAnimation* SearchLineEdit::runGeometryAnimation(QWidget* target,
@@ -147,6 +143,18 @@ QPropertyAnimation* SearchLineEdit::runGeometryAnimation(QWidget* target,
     animation->setEasingCurve(type);
     animation->start(QAbstractAnimation::DeleteWhenStopped);
     return animation;
+}
+
+void SearchLineEdit::expand()
+{
+    ui->leSearchField->show();
+    ui->leSearchField->resize(ui->leSearchField->sizeHint());
+    if (!ui->leSearchField->text().isEmpty())
+    {
+        ui->tSearchCancel->resize(ui->tSearchCancel->sizeHint());
+        ui->tSearchCancel->show();
+    }
+    ui->customWidget->hide();
 }
 
 void SearchLineEdit::addCustomWidget(QWidget* widget)
