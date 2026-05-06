@@ -125,6 +125,10 @@ QtObject {
     readonly property url pause_circle_medium_thin_outline: "qrc:/pause-circle_medium_thin_outline.svg"
     readonly property url play_circle_medium_thin_outline: "qrc:/play-circle_medium_thin_outline.svg"
 
+    readonly property url folder_search_small_thin_outline: "qrc:/folder-search_small_thin_outline.svg"
+    readonly property url sync_01_small_thin_outline: "qrc:/sync-01_small_thin_outline.svg"
+
+
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //   Standard Icons
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

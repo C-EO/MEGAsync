@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 
 import common 1.0
 
+import components.images 1.0
 import components.texts 1.0
 
 import SyncSettingsModel 1.0
@@ -22,6 +23,7 @@ Item {
     readonly property int syncItemHoritzontalPadding: 12
     readonly property int syncItemContentSpacing: 4
     readonly property int syncItemContentNameWidth: 404
+    readonly property int folderSearchIconSize: 16
 
     Column {
         id: content
@@ -43,7 +45,7 @@ Item {
 
                 text: SettingsStrings.tableSyncsNameColumn
                 font.pixelSize: root.titleTextPixelSize
-                font.weight: Font.Demibold
+                font.weight: Font.DemiBold
                 elide: Text.ElideRight
                 width: syncNameLabelWidth
             }
@@ -53,13 +55,13 @@ Item {
 
                 text: SettingsStrings.tableSyncsStatusColumn
                 font.pixelSize: root.titleTextPixelSize
-                font.weight: Font.Demibold
+                font.weight: Font.DemiBold
                 elide: Text.ElideRight
             }
         }
 
         Rectangle {
-            id: storageDivider
+            id: syncsUnderLineTitle
 
             width: parent.width
             height: Constants.dividerThickness
@@ -72,49 +74,120 @@ Item {
             height: listViewOfSyncItems
             width: parent.width
             model: syncSettingsModel
-            delegate: syncItem
+            delegate: syncComponent
         }
     }
 
     Component {
-        id: syncItem
+        id: syncComponent
 
-        Rectangle
-        {
+        Rectangle {
+            id: syncItem
+
             width: syncList.width
             height: syncItemBackgroundHeight
-            color: mouseArea.containsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
+            color: syncItemMouseArea.containsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
             radius: syncItemBackgroundRadius
 
-            Row {
-                id: syncRow
-
-                anchors.fill: parent
-                topPadding: syncItemVerticalPadding
-                bottomPadding: topPadding
-                leftPadding: syncItemHoritzontalPadding
-                rightPadding: leftPadding
-                spacing: syncItemContentSpacing
-
-                Text {
-                    id: syncName
-
-                    text: folder
-                    width: syncItemContentNameWidth
-                }
-
-                Text {
-                    id: syncStatus
-
-                    text: status
-                }
-            }
-
             MouseArea {
-                id: mouseArea
+                id: syncItemMouseArea
 
                 anchors.fill: parent
                 hoverEnabled: true
+                propagateComposedEvents: true
+                z: 0
+            }
+
+            RowLayout {
+                id: syncRow
+
+                anchors.fill: parent
+                anchors.topMargin: syncItemVerticalPadding
+                anchors.bottomMargin: syncItemVerticalPadding
+                anchors.leftMargin: syncItemHoritzontalPadding
+                anchors.rightMargin: syncItemHoritzontalPadding
+                spacing: syncItemContentSpacing
+
+                Row {
+                    id: syncNameContent
+
+                    Layout.preferredWidth: syncItemContentNameWidth
+                    width: syncItemContentNameWidth
+                    spacing: syncItemContentSpacing
+
+                    Text {
+                        id: syncName
+
+                        text: folder
+                    }
+
+                    SvgImage {
+                        id: folderSearchIcon
+
+                        color: ColorTheme.iconPrimary
+                        source: Images.folder_search_small_thin_outline
+                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                        visible: syncItemMouseArea.containsMouse
+
+                        MouseArea {
+                            id: folderSearchMouseArea
+
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                // open folder
+                            }
+                        }
+                    }
+                }
+
+                RowLayout {
+                    id: syncSatusContent
+
+                    spacing: syncItemContentSpacing
+                    Layout.fillWidth: true
+
+                    SvgImage {
+                        id: folderStatusIcon
+
+                        color: ColorTheme.iconPrimary
+                        source: Images.sync_01_small_thin_outline
+                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                    }
+
+                    Text {
+                        id: syncStatus
+
+                        text: status
+                    }
+
+                    Item {
+                        Layout.fillWidth: true
+                    }
+
+                    SvgImage {
+                        id: menuIcon
+
+                        color: ColorTheme.iconPrimary
+                        source: Images.threeDots
+                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                        visible: syncItemMouseArea.containsMouse
+
+                        MouseArea {
+                            id: menuIconMouseArea
+
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                // open folder
+                            }
+                        }
+                    }
+                }
             }
         }
     }

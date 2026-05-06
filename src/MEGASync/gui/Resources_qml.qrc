@@ -122,5 +122,7 @@
         <file alias="images/qml/offer_banner@2x.png">images/qml/offer_banner@2x.png</file>
         <file alias="images/qml/offer_banner.png">images/qml/offer_banner.png</file>
         <file alias="tag-01-medium-thin-outline.svg">images/themed/tokenizable/tag-01-medium-thin-outline.svg</file>
+        <file alias="folder-search_small_thin_outline.svg">images/qml/folder-search_small_thin_outline.svg</file>
+        <file alias="sync-01_small_thin_outline.svg">images/qml/sync-01_small_thin_outline.svg</file>
     </qresource>
 </RCC>
