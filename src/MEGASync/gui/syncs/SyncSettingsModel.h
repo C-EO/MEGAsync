@@ -16,7 +16,8 @@ class SyncSettingsModel: public QAbstractListModel
 
     enum Role
     {
-        FolderRole = Qt::UserRole + 1,
+        NameRole = Qt::UserRole + 1,
+        FolderRole,
         StatusRole
     };
 

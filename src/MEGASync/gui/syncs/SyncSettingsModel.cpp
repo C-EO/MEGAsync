@@ -21,7 +21,7 @@ void SyncSettingsModel::removeSync(std::shared_ptr<SyncSettings> sync) {}
 
 QHash<int, QByteArray> SyncSettingsModel::roleNames() const
 {
-    return {{FolderRole, "folder"}, {StatusRole, "status"}};
+    return {{NameRole, "name"}, {FolderRole, "folder"}, {StatusRole, "status"}};
 }
 
 int SyncSettingsModel::rowCount(const QModelIndex& parent) const
@@ -53,6 +53,9 @@ QVariant SyncSettingsModel::data(const QModelIndex& index, int role) const
     switch (role)
     {
         case FolderRole:
+            return sync->getLocalFolder();
+
+        case NameRole:
             return sync->name(false, true);
 
         case StatusRole:

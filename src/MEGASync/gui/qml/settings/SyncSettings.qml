@@ -118,7 +118,7 @@ Item {
                     Text {
                         id: syncName
 
-                        text: folder
+                        text: name
                     }
 
                     SvgImage {
@@ -137,7 +137,7 @@ Item {
                             cursorShape: Qt.PointingHandCursor
 
                             onClicked: {
-                                // open folder
+                                syncSettings.exploreLocalSync(folder);
                             }
                         }
                     }
