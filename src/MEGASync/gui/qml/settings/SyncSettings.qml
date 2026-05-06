@@ -20,7 +20,6 @@ Item {
     readonly property int listViewOfSyncItems: 270
     readonly property int syncItemBackgroundRadius: 6
     readonly property int syncItemBackgroundHeight: 32
-    readonly property int syncItemVerticalPadding: 7
     readonly property int syncItemHoritzontalPadding: 12
     readonly property int syncItemContentSpacing: 4
     readonly property int syncItemContentNameWidth: 404
@@ -123,8 +122,10 @@ Item {
 
             width: syncList.width
             height: syncItemBackgroundHeight
-            color: syncItemMouseArea.containsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
+            color: syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
             radius: syncItemBackgroundRadius
+
+            property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
 
             MouseArea {
                 id: syncItemMouseArea
@@ -132,15 +133,12 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 propagateComposedEvents: true
-                z: 0 // push to the bottom, we want to have another mouse area above.
             }
 
             RowLayout {
                 id: syncRow
 
                 anchors.fill: parent
-                anchors.topMargin: syncItemVerticalPadding
-                anchors.bottomMargin: syncItemVerticalPadding
                 anchors.leftMargin: syncItemHoritzontalPadding
                 anchors.rightMargin: syncItemHoritzontalPadding
                 spacing: syncItemContentSpacing
@@ -148,6 +146,7 @@ Item {
                 Row {
                     id: syncNameContent
 
+                    Layout.preferredHeight: parent.height
                     Layout.preferredWidth: syncItemContentNameWidth
                     width: syncItemContentNameWidth
                     spacing: syncItemContentSpacing
@@ -156,6 +155,7 @@ Item {
                         id: syncName
 
                         text: name
+                        anchors.verticalCenter: parent.verticalCenter
                     }
 
                     SvgImage {
@@ -164,7 +164,8 @@ Item {
                         color: ColorTheme.iconPrimary
                         source: Images.folder_search_small_thin_outline
                         sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
-                        visible: syncItemMouseArea.containsMouse
+                        visible: syncItemContainsMouse
+                        anchors.verticalCenter: parent.verticalCenter
 
                         MouseArea {
                             id: folderSearchMouseArea
@@ -210,7 +211,7 @@ Item {
                         color: ColorTheme.iconPrimary
                         source: Images.threeDots
                         sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
-                        visible: syncItemMouseArea.containsMouse
+                        visible: syncItemContainsMouse
 
                         MouseArea {
                             id: menuIconMouseArea
