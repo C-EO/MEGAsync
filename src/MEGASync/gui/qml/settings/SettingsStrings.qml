@@ -28,4 +28,5 @@ QtObject {
     readonly property string downloadsTooltipFormat: qsTr("Transfers[BR]%1")
     readonly property string tableSyncsNameColumn: qsTr("Synced folders")
     readonly property string tableSyncsStatusColumn: qsTr("Status")
+    readonly property string addSync: qsTr("Add sync")
 }

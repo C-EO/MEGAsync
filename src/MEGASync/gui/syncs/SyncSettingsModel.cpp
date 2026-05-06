@@ -106,7 +106,7 @@ QString SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
                 }
                 else
                 {
-                    s = tr("Monitoring");
+                    s = tr("Synced");
                 }
             }
         }

@@ -5,6 +5,7 @@ import common 1.0
 
 import components.images 1.0
 import components.texts 1.0
+import components.buttons 1.0
 
 import SyncSettingsModel 1.0
 
@@ -12,7 +13,7 @@ Item {
     id: root
 
     readonly property int defaultTopMargin: 19
-    readonly property int tableTitleUnderLineSpacing: 4
+    readonly property int syncTableSpacing: 4
     readonly property int titleTextPixelSize: 10
     readonly property int syncTablePadding: 12
     readonly property int syncNameLabelWidth: 412
@@ -24,6 +25,9 @@ Item {
     readonly property int syncItemContentSpacing: 4
     readonly property int syncItemContentNameWidth: 404
     readonly property int folderSearchIconSize: 16
+    readonly property int verticalAddSyncButtonSeparator: 16
+    readonly property int leftPaddingAddSyncButton: 12
+    readonly property int rightPaddingAddSyncButton: 16
 
     Column {
         id: content
@@ -31,7 +35,7 @@ Item {
         anchors.fill: parent
         anchors.topMargin: defaultTopMargin
         width: parent.width
-        spacing: tableTitleUnderLineSpacing
+        spacing: syncTableSpacing
 
         Row {
             id: syncsColumnsLabels
@@ -75,6 +79,39 @@ Item {
             width: parent.width
             model: syncSettingsModel
             delegate: syncComponent
+            spacing: syncTableSpacing
+        }
+
+        Rectangle {
+            id: syncsUnderLineTable
+
+            width: parent.width
+            height: Constants.dividerThickness
+            color: ColorTheme.borderStrong
+        }
+
+        Item {
+            height: verticalAddSyncButtonSeparator
+            width: parent.width
+        }
+
+        Row {
+            width: parent.width
+            layoutDirection: Qt.RightToLeft
+
+            PrimaryButton {
+                id: addSyncButton
+
+                text: SettingsStrings.addSync
+                icons.source: Images.plus
+                icons.position: Icon.Position.LEFT
+                leftPadding: leftPaddingAddSyncButton
+                rightPadding: rightPaddingAddSyncButton
+                width: contentRow.implicitWidth
+                onClicked: {
+                    syncSettings.addSync();
+                }
+            }
         }
     }
 
@@ -95,7 +132,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 propagateComposedEvents: true
-                z: 0
+                z: 0 // push to the bottom, we want to have another mouse area above.
             }
 
             RowLayout {
@@ -181,9 +218,8 @@ Item {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-
                             onClicked: {
-                                // open folder
+                                // open menu
                             }
                         }
                     }

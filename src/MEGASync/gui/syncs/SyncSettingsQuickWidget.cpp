@@ -1,5 +1,6 @@
 #include "SyncSettingsQuickWidget.h"
 
+#include "CreateRemoveSyncsManager.h"
 #include "Platform.h"
 #include "QmlManager.h"
 #include "SyncSettingsModel.h"
@@ -23,4 +24,9 @@ SyncSettingsQuickWidget::SyncSettingsQuickWidget(QWidget* parent):
 void SyncSettingsQuickWidget::exploreLocalSync(const QString& localFolder) const
 {
     Platform::getInstance()->showInFolder(localFolder);
+}
+
+void SyncSettingsQuickWidget::addSync() const
+{
+    CreateRemoveSyncsManager::addSync(SyncInfo::SyncOrigin::SETTINGS_ORIGIN);
 }
