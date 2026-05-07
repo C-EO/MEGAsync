@@ -31,6 +31,7 @@ Item {
     readonly property int maxSyncListSize: 390
     readonly property int issueLabelPixelSize: 12
     readonly property int issuePartHeigh: 58
+    readonly property int issuePartSpacing: 4
     readonly property int switchButtonSeparator: 12
 
     ColumnLayout {
@@ -135,7 +136,7 @@ Item {
             spacing: 0
 
             ColumnLayout {
-                spacing: 4
+                spacing: issuePartSpacing
 
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -170,8 +171,10 @@ Item {
 
             ColumnLayout {
                 spacing: 0
+
                 RowLayout {
                     spacing: 0
+
                     Item {
                         Layout.fillWidth: true
                         Layout.minimumWidth: switchButtonSeparator
@@ -179,6 +182,7 @@ Item {
 
                     SwitchButton {
                         id: fixIssue
+                        text: ""
                     }
                 }
 

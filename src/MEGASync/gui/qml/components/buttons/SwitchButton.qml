@@ -6,33 +6,25 @@ import common 1.0
 Switch {
     id: root
 
-    text: qsTr("Switch")
-
     indicator: Rectangle {
-        implicitWidth: 48
-        implicitHeight: 26
+        implicitWidth: 40
+        implicitHeight: 20
         x: root.leftPadding
         y: parent.height / 2 - height / 2
-        radius: 13
-        color: root.checked ? "#17a81a" : "#ffffff"
-        border.color: root.checked ? "#17a81a" : "#cccccc"
+        radius: 10
+        color: root.checked ? ColorTheme.buttonPrimary : "transparent"
+        border.color: root.checked ? ColorTheme.buttonPrimary : "#cccccc"
+        border.width: 2
+        readonly property int borderSpacing: 2
 
         Rectangle {
-            x: root.checked ? parent.width - width : 0
-            width: 26
-            height: 26
-            radius: 13
-            color: root.down ? "#cccccc" : "#ffffff"
-            border.color: root.checked ? (root.down ? "#17a81a" : "#21be2b") : "#999999"
+            x: root.checked ? parent.width - width - parent.border.width - parent.borderSpacing : parent.border.width + parent.borderSpacing
+            y: parent.border.width + parent.borderSpacing
+            width: parent.height - (parent.border.width * 2) - (parent.borderSpacing * 2)
+            height: width
+            radius: height / 2.0
+            color: root.checked ? "red" : ColorTheme.buttonPrimary
+            //border.color: root.checked ? (root.down ? "#17a81a" : "#21be2b") : "#999999"
         }
-    }
-
-    contentItem: Text {
-        text: root.text
-        font: root.font
-        opacity: enabled ? 1.0 : 0.3
-        color: root.down ? "#17a81a" : "#21be2b"
-        verticalAlignment: Text.AlignVCenter
-        leftPadding: root.indicator.width + root.spacing
     }
 }
