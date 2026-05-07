@@ -5,6 +5,7 @@
 #include "megaapi.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorNavigation.h"
+#include "NodeSelectorNodeActions.h"
 #include "NodeSelectorSelectTypes.h"
 #include "NodeSelectorTabTypes.h"
 #include "QTMegaListener.h"
@@ -183,6 +184,7 @@ protected:
     std::shared_ptr<NodeSelectorProxyModel> mProxyModel;
     std::unique_ptr<NodeSelectorModel> mModel;
     NodeSelectorNavigation mNavigation;
+    NodeSelectorNodeActions mNodeActions;
     mega::MegaApi* mMegaApi;
     SelectTypeSPtr mSelectType;
 

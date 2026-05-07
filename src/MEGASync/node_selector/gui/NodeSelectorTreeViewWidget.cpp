@@ -1,15 +1,12 @@
 #include "NodeSelectorTreeViewWidget.h"
 
-#include "DialogOpener.h"
 #include "EventUpdater.h"
 #include "MegaApplication.h"
 #include "MegaNodeNames.h"
-#include "MessageDialogOpener.h"
 #include "NodeSelectorDelegates.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorProxyModel.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
-#include "RenameNodeDialog.h"
 #include "RequestListenerManager.h"
 #include "TokenizableItems/TokenPropertySetter.h"
 #include "ui_NodeSelectorTreeViewWidget.h"
@@ -27,6 +24,7 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     mProxyModel(nullptr),
     mModel(nullptr),
     mNavigation(MegaSyncApp->getMegaApi()),
+    mNodeActions(MegaSyncApp->getMegaApi()),
     mMegaApi(MegaSyncApp->getMegaApi()),
     mSelectType(mode),
     mManuallyResizedColumn(false),
@@ -80,6 +78,8 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     // emptyFolderPage can accept drops if "enableDragAndDrop" is called with true
     ui->emptyFolderPage->setAcceptDrops(false);
     ui->emptyPage->setAcceptDrops(false);
+
+    mNodeActions.setDialogParent(Utilities::getTopParent<QDialog>(ui->tMegaFolders));
 }
 
 NodeSelectorTreeViewWidget::~NodeSelectorTreeViewWidget()
@@ -95,6 +95,7 @@ void NodeSelectorTreeViewWidget::init()
     ui->tMegaFolders->loadingView().setDelayTimeToShowInMs(150);
     mProxyModel = createProxyModel();
     mModel = createModel();
+    mNodeActions.setModel(mModel.get());
     // Regardless the type of treeviewwidget, the empty icon always use icon-secondary token
     ui->emptyIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("icon-secondary"));
     ui->emptyIcon->setIcon(getEmptyIcon());
@@ -756,151 +757,19 @@ void NodeSelectorTreeViewWidget::selectionHasChanged(const QModelIndexList& sele
 
 void NodeSelectorTreeViewWidget::onRenameClicked()
 {
-    auto node = std::unique_ptr<MegaNode>(mMegaApi->getNodeByHandle(getSelectedNodeHandle()));
-    int access = mMegaApi->getAccess(node.get());
-    // This is for an extra protection as we don´t show the rename action if one of this conditions
-    // are not met
-    if (!node || node->isTakenDown() || access < MegaShare::ACCESS_FULL ||
-        !node->isNodeKeyDecrypted())
-    {
-        return;
-    }
-
-    QPointer<RenameRemoteNodeDialog> dialog(new RenameRemoteNodeDialog(std::move(node), this));
-    dialog->init();
-    DialogOpener::showDialog(dialog);
+    mNodeActions.renameNode(getSelectedNodeHandle());
 }
 
 void NodeSelectorTreeViewWidget::onDeleteClicked(const QList<mega::MegaHandle>& handles,
                                                  bool permanently,
                                                  bool showConfirmationMessageBox)
 {
-    if (handles.isEmpty())
-    {
-        return;
-    }
-
-    auto getNode = [this](mega::MegaHandle handle) -> std::shared_ptr<mega::MegaNode>
-    {
-        auto node = std::shared_ptr<MegaNode>(mMegaApi->getNodeByHandle(handle));
-
-        // This is for an extra protection as we don´t show the rename action if oxne of this
-        // conditions are not met
-        if (!node || !node->isNodeKeyDecrypted())
-        {
-            return nullptr;
-        }
-
-        return node;
-    };
-
-    if (showConfirmationMessageBox)
-    {
-        MessageDialogInfo msgInfo;
-        msgInfo.parent = Utilities::getTopParent<QDialog>(ui->tMegaFolders);
-        msgInfo.buttons = QMessageBox::Yes | QMessageBox::No;
-        msgInfo.defaultButton = QMessageBox::Yes;
-        msgInfo.finishFunc = [this, handles, permanently](QPointer<MessageDialogResult> msg)
-        {
-            if (msg->result() == QMessageBox::Yes)
-            {
-                mModel->deleteNodes(handles, permanently);
-            }
-        };
-
-        if (permanently)
-        {
-            msgInfo.descriptionText = tr("You cannot undo this action");
-        }
-        else
-        {
-            msgInfo.descriptionText = tr(
-                "Any shared files or folders will no longer be accessible to the people you shared "
-                "them with. You can still access these items in the Rubbish bin, restore, and "
-                "share "
-                "them.");
-        }
-
-        auto type(Utilities::getHandlesType(handles));
-
-        if (permanently)
-        {
-            msgInfo.buttonsText.insert(QMessageBox::Yes, tr("Delete"));
-            msgInfo.buttonsText.insert(QMessageBox::No, tr("Cancel"));
-
-            if (type == Utilities::HandlesType::FILES)
-            {
-                msgInfo.titleText =
-                    tr("You are about to permanently delete %n file. Would you like to proceed?",
-                       "",
-                       static_cast<int>(handles.size()));
-            }
-            else if (type == Utilities::HandlesType::FOLDERS)
-            {
-                msgInfo.titleText =
-                    tr("You are about to permanently delete %n folder. Would you like to proceed?",
-                       "",
-                       static_cast<int>(handles.size()));
-            }
-            else
-            {
-                msgInfo.titleText =
-                    tr("You are about to permanently delete %n items. Would you like to proceed?",
-                       "",
-                       static_cast<int>(handles.size()));
-            }
-        }
-        else
-        {
-            msgInfo.buttonsText.insert(QMessageBox::Yes, tr("Move"));
-            msgInfo.buttonsText.insert(QMessageBox::No, tr("Don’t move"));
-
-            auto node = getNode(static_cast<mega::MegaHandle>(handles.first()));
-            if (handles.size() == 1 && node)
-            {
-                msgInfo.titleText =
-                    tr("Move %1 to Rubbish bin?").arg(MegaNodeNames::getNodeName(node.get()));
-            }
-            else
-            {
-                msgInfo.titleText =
-                    tr("Move %n items to Rubbish bin?", "", static_cast<int>(handles.size()));
-            }
-        }
-
-        MessageDialogOpener::warning(msgInfo);
-    }
-    else
-    {
-        mModel->deleteNodes(handles, permanently);
-    }
+    mNodeActions.deleteNodes(handles, permanently, showConfirmationMessageBox);
 }
 
 void NodeSelectorTreeViewWidget::onLeaveShareClicked(const QList<mega::MegaHandle>& handles)
 {
-    if (handles.isEmpty())
-    {
-        return;
-    }
-
-    MessageDialogInfo msgInfo;
-    msgInfo.parent = Utilities::getTopParent<QDialog>(ui->tMegaFolders);
-    msgInfo.buttons = QMessageBox::Yes | QMessageBox::No;
-    msgInfo.defaultButton = QMessageBox::Yes;
-    msgInfo.buttonsText.insert(QMessageBox::Yes, tr("Leave"));
-    msgInfo.buttonsText.insert(QMessageBox::No, tr("Don’t leave"));
-    msgInfo.titleText = tr("Leave this shared folder?", "", static_cast<int>(handles.size()));
-    msgInfo.descriptionText = tr("If you leave the folder, you will not be able to see it again.",
-                                 "",
-                                 static_cast<int>(handles.size()));
-    msgInfo.finishFunc = [this, handles](QPointer<MessageDialogResult> msg)
-    {
-        if (msg->result() == QMessageBox::Yes)
-        {
-            mModel->deleteNodes(handles, true);
-        }
-    };
-    MessageDialogOpener::warning(msgInfo);
+    mNodeActions.leaveShare(handles);
 }
 
 NodeSelectorTreeViewWidget::NodeState
@@ -1700,5 +1569,5 @@ QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelInde
 
 void NodeSelectorTreeViewWidget::onGenMEGALinkClicked(const QList<mega::MegaHandle>& handles)
 {
-    MegaSyncApp->exportNodes(handles);
+    mNodeActions.exportLinks(handles);
 }
