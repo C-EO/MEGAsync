@@ -4,6 +4,7 @@
 #include "ButtonIconManager.h"
 #include "megaapi.h"
 #include "NodeSelectorModel.h"
+#include "NodeSelectorModelUpdateCoordinator.h"
 #include "NodeSelectorNavigation.h"
 #include "NodeSelectorNodeActions.h"
 #include "NodeSelectorSelectTypes.h"
@@ -95,8 +96,6 @@ public:
     bool canGoBack() const;
     bool canGoForward() const;
     bool shouldShowNavigationButtons() const;
-    bool isNewFolderButtonVisible() const;
-    bool isNewFolderButtonEnabled() const;
 
     void dropIntoRootIndex(QDropEvent* event);
     void goBack();
@@ -183,6 +182,7 @@ protected:
     Ui::NodeSelectorTreeViewWidget* ui;
     std::shared_ptr<NodeSelectorProxyModel> mProxyModel;
     std::unique_ptr<NodeSelectorModel> mModel;
+    std::unique_ptr<NodeSelectorModelUpdateCoordinator> mModelUpdateCoordinator;
     NodeSelectorNavigation mNavigation;
     NodeSelectorNodeActions mNodeActions;
     mega::MegaApi* mMegaApi;
@@ -209,7 +209,6 @@ private slots:
     void onSectionResized();
     void onUiBlocked(bool state);
     void processCachedNodesUpdated();
-    void removeItemByHandle(mega::MegaHandle handle);
     void onItemsMoved();
     void onNodesAdded(const QList<QPointer<NodeSelectorModelItem>>& itemsAdded);
 
@@ -246,8 +245,6 @@ private:
     void selectionHasChanged(const QModelIndexList& selected);
 
     void checkOkButton(const QModelIndexList& selected);
-    bool shouldUpdateImmediately();
-    bool areThereNodesToUpdate();
 
     // Expand and select
     void expandPendingIndexes();
@@ -265,35 +262,6 @@ private:
     bool mUiBlocked;
     bool mWasEmpty;
     bool mNewFolderButtonVisible = true;
-
-    struct UpdateNodesInfo
-    {
-        UpdateNodesInfo(mega::MegaNode* node, const QModelIndex& index):
-            parentHandle(node->getParentHandle()),
-            handle(node->getHandle()),
-            node(std::shared_ptr<mega::MegaNode>(node->copy())),
-            index(index)
-        {}
-
-        UpdateNodesInfo() {}
-
-        mega::MegaHandle parentHandle = mega::INVALID_HANDLE;
-        mega::MegaHandle handle = mega::INVALID_HANDLE;
-        std::shared_ptr<mega::MegaNode> node;
-        QModelIndex index;
-    };
-
-    void updateNode(const UpdateNodesInfo& info, bool scrollTo = false);
-
-    // Update Containers
-    QList<UpdateNodesInfo> mRenamedNodesByHandle;
-    QList<UpdateNodesInfo> mUpdatedNodes;
-    QMultiMap<mega::MegaHandle, UpdateNodesInfo> mAddedNodesByParentHandle;
-    QMap<mega::MegaHandle, UpdateNodesInfo> mUpdatedNodesBeforeAdded;
-    QList<UpdateNodesInfo> mRemovedNodes;
-    QList<UpdateNodesInfo> mRemoveMovedNodes;
-    QList<UpdateNodesInfo> mUpdatedButInvisibleNodes;
-    QList<UpdateNodesInfo> mMergeSourceFolderRemoved;
 
     // Select when moving finished
     QSet<mega::MegaHandle> mMovedHandlesToSelect;
