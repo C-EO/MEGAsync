@@ -28,19 +28,22 @@ Item {
     readonly property int verticalAddSyncButtonSeparator: 16
     readonly property int leftPaddingAddSyncButton: 12
     readonly property int rightPaddingAddSyncButton: 16
+    readonly property int maxSyncListSize: 390
+    readonly property int issueLabelPixelSize: 12
+    readonly property int issuePartHeigh: 58
+    readonly property int switchButtonSeparator: 12
 
-    Column {
+    ColumnLayout {
         id: content
 
         anchors.fill: parent
         anchors.topMargin: defaultTopMargin
-        width: parent.width
         spacing: syncTableSpacing
 
         Row {
             id: syncsColumnsLabels
 
-            width: parent.width
+            Layout.preferredWidth: parent.width
             rightPadding: syncTablePadding
             leftPadding: rightPadding
 
@@ -67,36 +70,42 @@ Item {
         Rectangle {
             id: syncsUnderLineTitle
 
-            width: parent.width
-            height: Constants.dividerThickness
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: Constants.dividerThickness
             color: ColorTheme.borderStrong
         }
 
         ListView {
             id: syncList
 
-            height: listViewOfSyncItems
-            width: parent.width
+            Layout.preferredHeight: Math.min(contentHeight, maxSyncListSize)
+            Layout.minimumHeight: listViewOfSyncItems
+            Layout.preferredWidth: parent.width
             model: syncSettingsModel
             delegate: syncComponent
             spacing: syncTableSpacing
+            interactive: contentHeight > maxSyncListSize
+            clip: true
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
+            }
         }
 
         Rectangle {
             id: syncsUnderLineTable
 
-            width: parent.width
-            height: Constants.dividerThickness
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: Constants.dividerThickness
             color: ColorTheme.borderStrong
         }
 
         Item {
-            height: verticalAddSyncButtonSeparator
-            width: parent.width
+            Layout.preferredHeight: verticalAddSyncButtonSeparator
+            Layout.preferredWidth: parent.width
         }
 
         Row {
-            width: parent.width
+            Layout.preferredWidth: parent.width
             layoutDirection: Qt.RightToLeft
 
             PrimaryButton {
@@ -115,13 +124,14 @@ Item {
         }
 
         Item {
-            height: 145
-            width: parent.width
+            Layout.fillHeight: true
+            Layout.preferredWidth: parent.width
         }
 
         RowLayout {
-            width: parent.width
-            height: 58
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: issuePartHeigh
+            Layout.maximumHeight: issuePartHeigh
             spacing: 0
 
             ColumnLayout {
@@ -135,7 +145,7 @@ Item {
                     id: title
 
                     text: qsTr("Automatic sync issue resolution")
-                    font.pixelSize: 12
+                    font.pixelSize: issueLabelPixelSize
                     font.weight: Font.DemiBold
                     elide: Text.ElideRight
                     Layout.fillWidth: true
@@ -148,7 +158,7 @@ Item {
                     manageHover: true
                     underlineLink: true
                     rawText: qsTr("MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]")
-                    font.pixelSize: 12
+                    font.pixelSize: issueLabelPixelSize
                     font.weight: Font.Normal
                     elide: Text.ElideRight
                     width: parent.width
@@ -162,17 +172,13 @@ Item {
                 spacing: 0
                 RowLayout {
                     spacing: 0
-
                     Item {
                         Layout.fillWidth: true
-                        Layout.minimumWidth: 12
+                        Layout.minimumWidth: switchButtonSeparator
                     }
 
-                    Rectangle {
-                        id: swith
-                        Layout.preferredWidth: 40
-                        Layout.preferredHeight: 20
-                        color: "red"
+                    SwitchButton {
+                        id: fixIssue
                     }
                 }
 
