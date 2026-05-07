@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import common 1.0
@@ -106,9 +107,77 @@ Item {
                 icons.position: Icon.Position.LEFT
                 leftPadding: leftPaddingAddSyncButton
                 rightPadding: rightPaddingAddSyncButton
-                width: contentRow.implicitWidth
+                width: implicitWidth
                 onClicked: {
                     syncSettings.addSync();
+                }
+            }
+        }
+
+        Item {
+            height: 145
+            width: parent.width
+        }
+
+        RowLayout {
+            width: parent.width
+            height: 58
+            spacing: 0
+
+            ColumnLayout {
+                spacing: 4
+
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.leftMargin: syncItemHoritzontalPadding
+
+                Text {
+                    id: title
+
+                    text: qsTr("Automatic sync issue resolution")
+                    font.pixelSize: 12
+                    font.weight: Font.DemiBold
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                }
+
+                RichText {
+                    id: description
+
+                    manageMouse: true
+                    manageHover: true
+                    underlineLink: true
+                    rawText: qsTr("MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]")
+                    font.pixelSize: 12
+                    font.weight: Font.Normal
+                    elide: Text.ElideRight
+                    width: parent.width
+                    url: serviceUrlsAccess.getCreateSyncHelpUrl()
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+            }
+
+            ColumnLayout {
+                spacing: 0
+                RowLayout {
+                    spacing: 0
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 12
+                    }
+
+                    Rectangle {
+                        id: swith
+                        Layout.preferredWidth: 40
+                        Layout.preferredHeight: 20
+                        color: "red"
+                    }
+                }
+
+                Item {
+                    Layout.fillHeight: true
                 }
             }
         }
