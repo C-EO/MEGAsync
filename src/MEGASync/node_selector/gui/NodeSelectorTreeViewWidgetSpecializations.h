@@ -57,7 +57,6 @@ public:
 
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
-    void setTitleText(const QString& nodeName) override;
 
 private:
     QString getRootText() override;
@@ -142,7 +141,7 @@ private slots:
 
 private:
     void checkSearchButtonsVisibility();
-    void changeColumnsVisibility(NodeSelectorModelItemSearch::Type type);
+    void changeColumnsVisibility(TabType type);
     void resetChipsVisibility();
     void expandSearchResults();
     QString getRootText() override;
@@ -151,10 +150,6 @@ private:
     QIcon getEmptyIcon() override;
     EmptyLabelInfo getEmptyLabel() override;
 
-    bool newFolderBtnCanBeVisisble() override
-    {
-        return false;
-    }
     bool mHasRows;
     QString mSearchStr;
     bool mNewSearch;
@@ -201,11 +196,6 @@ private:
     bool isSelectionReadOnly(const QModelIndexList&) override
     {
         return true;
-    }
-
-    bool newFolderBtnCanBeVisisble() override
-    {
-        return false;
     }
 
     bool mShowEmptyView = true;

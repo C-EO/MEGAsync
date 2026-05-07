@@ -8,6 +8,8 @@
 #include <QFrame>
 #include <QGraphicsDropShadowEffect>
 #include <QItemSelection>
+#include <QMap>
+#include <QPixmap>
 #include <QTimer>
 
 #include <memory>
@@ -22,6 +24,7 @@ class NodeSelectorTreeViewWidgetBackups;
 class NodeSelectorTreeViewWidgetSearch;
 class NodeSelectorTreeViewWidgetRubbish;
 class DuplicatedNodeDialog;
+class QPushButton;
 struct ConflictTypes;
 
 struct MessageInfo;
@@ -72,6 +75,7 @@ protected:
     void addBackupsView();
     std::shared_ptr<mega::MegaNode> getSelectedNode();
     void initSpecialisedWidgets();
+    void createActionButtons();
     bool eventFilter(QObject* obj, QEvent* event) override;
 
     virtual void onRequestFinish(mega::MegaApi* api,
@@ -115,12 +119,11 @@ protected:
     Ui::NodeSelector* ui;
     SelectTypeSPtr mSelectType;
 
+    QMap<uint, QPushButton*> mButtons;
+
 protected slots:
 
-    virtual void onCustomButtonClicked(uint id)
-    {
-        Q_UNUSED(id)
-    }
+    virtual void onCustomButtonClicked(uint id);
 
     virtual void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int actionType);
     virtual void onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& handles, int type);
@@ -158,11 +161,26 @@ private slots:
     void onbNewFolderClicked();
 
 private:
-    QModelIndex getParentIncomingShareByIndex(QModelIndex idx);
-    void applyHeaderState(const NodeSelectorTreeViewWidget::HeaderState& state);
-    void syncHeaderButtons(NodeSelectorTreeViewWidget* wid);
-    void clearHeaderButtons();
+    struct IncomingShareHeaderInfo
+    {
+        QPixmap folderIcon;
+        QPixmap userIcon;
+        QPixmap accessIcon;
+        QString accessLabel;
+        QString folderName;
+        QString userName;
+        QString userEmail;
+        int accessType = -1;
+    };
+
+    QModelIndex getParentIncomingShareByIndex(QModelIndex idx) const;
+    QString folderNameForWidget(NodeSelectorTreeViewWidget* wid) const;
+    IncomingShareHeaderInfo incomingInfoForWidget(NodeSelectorTreeViewWidget* wid) const;
+    void applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid);
+    void applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid);
+    void applyHeaderButtonsState(NodeSelectorTreeViewWidget* wid);
     void refreshHeader(NodeSelectorTreeViewWidget* wid);
+    void refreshHeaderButtons(NodeSelectorTreeViewWidget* wid);
 
     virtual void onOkButtonClicked() = 0;
     void shortCutConnects(int ignoreThis);
@@ -188,7 +206,8 @@ private:
 
     // Selection changed signal
     QMetaObject::Connection mSelectionChangedConnection;
-    QMetaObject::Connection mHeaderStateConnection;
+    QMetaObject::Connection mViewStateConnection;
+    QMetaObject::Connection mViewButtonsStateConnection;
 };
 
 #endif // NODESELECTOR_H

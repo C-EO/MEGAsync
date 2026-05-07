@@ -99,7 +99,7 @@ void NodeRequester::requestNodeAndCreateChildren(NodeSelectorModelItem* item,
     }
 }
 
-void NodeRequester::search(const QString& text, NodeSelectorModelItemSearch::Types typesAllowed)
+void NodeRequester::search(const QString& text, TabTypes typesAllowed)
 {
     if (text.isEmpty())
     {
@@ -122,7 +122,7 @@ void NodeRequester::search(const QString& text, NodeSelectorModelItemSearch::Typ
                                           mega::MegaApi::ORDER_NONE,
                                           mCancelToken.get()));
     QList<NodeSelectorModelItem*> items;
-    mSearchedTypes = NodeSelectorModelItemSearch::Type::NONE;
+    mSearchedTypes = TabType::NONE;
 
     for (int i = 0; i < nodeList->size(); i++)
     {
@@ -147,7 +147,7 @@ void NodeRequester::search(const QString& text, NodeSelectorModelItemSearch::Typ
 }
 
 void NodeRequester::addSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes,
-                                      NodeSelectorModelItemSearch::Types typesAllowed)
+                                      TabTypes typesAllowed)
 {
     QList<NodeSelectorModelItem*> items;
     foreach(auto node, nodes)
@@ -191,11 +191,10 @@ void NodeRequester::appendRootItems(const QList<NodeSelectorModelItem*>& items)
     emit rootItemsAdded();
 }
 
-NodeSelectorModelItem*
-    NodeRequester::createSearchItem(mega::MegaNode* node,
-                                    NodeSelectorModelItemSearch::Types typesAllowed)
+NodeSelectorModelItem* NodeRequester::createSearchItem(mega::MegaNode* node,
+                                                       TabTypes::Types typesAllowed)
 {
-    NodeSelectorModelItemSearch::Types type = NodeSelectorModelSearch::calculateSearchType(node);
+    TabTypes type = NodeSelectorModelSearch::calculateSearchType(node);
 
     if ((typesAllowed & type) && canCreateSearchItem(node))
     {
@@ -206,16 +205,15 @@ NodeSelectorModelItem*
     return nullptr;
 }
 
-NodeSelectorModelItemSearch*
-    NodeRequester::createSearchTreeItem(mega::MegaNode* node,
-                                        NodeSelectorModelItemSearch::Types type)
+NodeSelectorModelItemSearch* NodeRequester::createSearchTreeItem(mega::MegaNode* node,
+                                                                 TabTypes type)
 {
     auto nodeUptr = std::unique_ptr<mega::MegaNode>(node->copy());
     auto item = new NodeSelectorModelItemSearch(std::move(nodeUptr), type);
     if (item->isValid())
     {
         connect(item,
-                &NodeSelectorModelItemSearch::typeChanged,
+                &NodeSelectorModelItemSearch::tabTypeChanged,
                 this,
                 &NodeRequester::onSearchItemTypeChanged);
         return item;
@@ -255,9 +253,8 @@ bool NodeRequester::canCreateSearchItem(mega::MegaNode* node)
     return true;
 }
 
-QList<std::shared_ptr<mega::MegaNode>>
-    NodeRequester::createSearchPath(mega::MegaNode* node,
-                                    NodeSelectorModelItemSearch::Types type) const
+QList<std::shared_ptr<mega::MegaNode>> NodeRequester::createSearchPath(mega::MegaNode* node,
+                                                                       TabTypes type) const
 {
     QList<std::shared_ptr<mega::MegaNode>> path;
 
@@ -274,7 +271,7 @@ QList<std::shared_ptr<mega::MegaNode>>
 
 void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
                                   const QList<std::shared_ptr<mega::MegaNode>>& path,
-                                  NodeSelectorModelItemSearch::Types type)
+                                  TabTypes type)
 {
     if (path.isEmpty())
     {
@@ -297,7 +294,7 @@ void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
                 if (auto searchItem = dynamic_cast<NodeSelectorModelItemSearch*>(existingItem))
                 {
                     connect(searchItem,
-                            &NodeSelectorModelItemSearch::typeChanged,
+                            &NodeSelectorModelItemSearch::tabTypeChanged,
                             this,
                             &NodeRequester::onSearchItemTypeChanged);
                 }
@@ -355,23 +352,22 @@ NodeSelectorModelItem* NodeRequester::findSearchChild(NodeSelectorModelItem* par
     return nullptr;
 }
 
-bool NodeRequester::isSearchRootNode(mega::MegaNode* node,
-                                     NodeSelectorModelItemSearch::Types type) const
+bool NodeRequester::isSearchRootNode(mega::MegaNode* node, TabTypes type) const
 {
     auto isNode = [node](const std::shared_ptr<mega::MegaNode>& rootNode)
     {
         return rootNode && node && rootNode->getHandle() == node->getHandle();
     };
 
-    if (type.testFlag(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE))
+    if (type.testFlag(TabType::CLOUD_DRIVE))
     {
         return isNode(MegaSyncApp->getRootNode());
     }
-    if (type.testFlag(NodeSelectorModelItemSearch::Type::BACKUP))
+    if (type.testFlag(TabType::BACKUP))
     {
         return isNode(MegaSyncApp->getVaultNode());
     }
-    if (type.testFlag(NodeSelectorModelItemSearch::Type::RUBBISH))
+    if (type.testFlag(TabType::RUBBISH))
     {
         return isNode(MegaSyncApp->getRubbishNode());
     }
@@ -692,7 +688,7 @@ bool NodeRequester::showFiles() const
     return mShowFiles.load();
 }
 
-const NodeSelectorModelItemSearch::Types& NodeRequester::searchedTypes() const
+const TabTypes& NodeRequester::searchedTypes() const
 {
     return mSearchedTypes;
 }
@@ -718,7 +714,7 @@ void NodeRequester::abort()
     mAborted = true;
 }
 
-void NodeRequester::onSearchItemTypeChanged(NodeSelectorModelItemSearch::Types type)
+void NodeRequester::onSearchItemTypeChanged(TabTypes type)
 {
     mSearchedTypes |= type;
 }
@@ -2166,6 +2162,7 @@ void NodeSelectorModel::onSyncStateChanged(std::shared_ptr<SyncSettings> sync)
 void NodeSelectorModel::onRootItemAdded()
 {
     endInsertRows();
+    emit modelModified();
 }
 
 void NodeSelectorModel::beginRootItemsInsertion(int first, int last)
@@ -3183,8 +3180,7 @@ QPair<QIcon, QString> NodeSelectorModel::getFolderIcon(NodeSelectorModelItem* it
                 {
                     auto searchItem = dynamic_cast<NodeSelectorModelItemSearch*>(item);
 
-                    if ((searchItem &&
-                         searchItem->getType() & NodeSelectorModelItemSearch::Type::BACKUP) ||
+                    if ((searchItem && searchItem->getType() & TabType::BACKUP) ||
                         item->getStatus() == NodeSelectorModelItem::Status::BACKUP)
                     {
                         if (item->isDeviceFolder())

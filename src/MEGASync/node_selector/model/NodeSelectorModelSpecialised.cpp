@@ -467,13 +467,12 @@ void NodeSelectorModelBackups::onRootItemCreated()
     }
 }
 
-NodeSelectorModelSearch::NodeSelectorModelSearch(NodeSelectorModelItemSearch::Types allowedTypes,
-                                                 QObject* parent):
+NodeSelectorModelSearch::NodeSelectorModelSearch(TabTypes allowedTabTypes, QObject* parent):
     NodeSelectorModel(parent),
-    mAllowedTypes(allowedTypes),
+    mallowedTabTypes(allowedTabTypes),
     mDeviceNamesRequest(UserAttributes::DeviceNames::requestDeviceNames())
 {
-    qRegisterMetaType<NodeSelectorModelItemSearch::Types>("NodeSelectorModelItemSearch::Types");
+    qRegisterMetaType<TabTypes>("TabTypes");
 }
 
 void NodeSelectorModelSearch::firstLoad()
@@ -503,7 +502,7 @@ void NodeSelectorModelSearch::searchByText(const QString& text)
 {
     mNodeRequesterWorker->restartSearch();
     addRootItems();
-    emit searchNodes(text, mAllowedTypes);
+    emit searchNodes(text, mallowedTabTypes);
 }
 
 void NodeSelectorModelSearch::stopSearch()
@@ -575,7 +574,7 @@ bool NodeSelectorModelSearch::rootNodeUpdated(mega::MegaNode* node)
                 QList<std::shared_ptr<mega::MegaNode>> nodes;
                 emit requestAddSearchRootItem(nodes
                                                   << std::shared_ptr<mega::MegaNode>(node->copy()),
-                                              mAllowedTypes);
+                                              mallowedTabTypes);
             }
             else
             {
@@ -674,31 +673,30 @@ void NodeSelectorModelSearch::onRootItemsCreated()
     }
 }
 
-const NodeSelectorModelItemSearch::Types& NodeSelectorModelSearch::searchedTypes() const
+const TabTypes& NodeSelectorModelSearch::searchedTypes() const
 {
     return mNodeRequesterWorker->searchedTypes();
 }
 
-NodeSelectorModelItemSearch::Types
-    NodeSelectorModelSearch::calculateSearchType(mega::MegaNode* node)
+TabTypes NodeSelectorModelSearch::calculateSearchType(mega::MegaNode* node)
 {
-    NodeSelectorModelItemSearch::Types type;
+    TabTypes type;
 
     if (MegaSyncApp->getMegaApi()->isInCloud(node))
     {
-        type = NodeSelectorModelItemSearch::Type::CLOUD_DRIVE;
+        type = TabType::CLOUD_DRIVE;
     }
     else if (MegaSyncApp->getMegaApi()->isInVault(node))
     {
-        type = NodeSelectorModelItemSearch::Type::BACKUP;
+        type = TabType::BACKUP;
     }
     else if (MegaSyncApp->getMegaApi()->isInRubbish(node))
     {
-        type = NodeSelectorModelItemSearch::Type::RUBBISH;
+        type = TabType::RUBBISH;
     }
     else
     {
-        type = NodeSelectorModelItemSearch::Type::INCOMING_SHARE;
+        type = TabType::INCOMING_SHARE;
     }
 
     return type;

@@ -407,12 +407,11 @@ NodeSelectorProxyModelSearch::NodeSelectorProxyModelSearch(
     std::shared_ptr<NodeSelectorProxyModel> mainProxyModel,
     QObject* parent):
     NodeSelectorProxyModel(parent),
-    mMode(NodeSelectorModelItemSearch::Type::NONE),
+    mMode(TabType::NONE),
     mMainProxyModel(mainProxyModel)
 {}
 
-void NodeSelectorProxyModelSearch::setMode(NodeSelectorModelItemSearch::Types mode,
-                                           bool forceFilter)
+void NodeSelectorProxyModelSearch::setMode(TabTypes mode, bool forceFilter)
 {
     if (mMode == mode)
     {
@@ -434,7 +433,7 @@ void NodeSelectorProxyModelSearch::setMode(NodeSelectorModelItemSearch::Types mo
 
 bool NodeSelectorProxyModelSearch::canBeDeleted() const
 {
-    if (mMode & NodeSelectorModelItemSearch::Type::BACKUP)
+    if (mMode & TabType::BACKUP)
     {
         return false;
     }
@@ -456,7 +455,7 @@ Qt::ItemFlags NodeSelectorProxyModelSearch::flags(const QModelIndex& index) cons
 bool NodeSelectorProxyModelSearch::filterAcceptsRow(int sourceRow,
                                                     const QModelIndex& sourceParent) const
 {
-    if (mMode == static_cast<int>(NodeSelectorModelItemSearch::Type::NONE))
+    if (mMode == TabType::NONE)
     {
         return true;
     }

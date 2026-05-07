@@ -31,14 +31,12 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     mManuallyResizedColumn(false),
     mResizeEventsReceived(0),
     first(true),
-    mUiBlocked(false)
+    mUiBlocked(false),
+    mWasEmpty(true)
 {
     ui->setupUi(this);
     setFocusProxy(ui->tMegaFolders);
     ui->searchButtonsWidget->setVisible(false);
-
-    checkBackForwardButtons();
-    addCustomButtons(this);
 
     connect(&ui->tMegaFolders->loadingView(),
             &ViewLoadingSceneBase::sceneVisibilityChange,
@@ -106,6 +104,7 @@ void NodeSelectorTreeViewWidget::init()
 
     ui->tMegaFolders->setSortingEnabled(true);
     ui->tMegaFolders->setAllowContextMenu(mSelectType->isContextMenuAllowed());
+    ui->tMegaFolders->setAllowNewFolderContextMenuItem(mSelectType->hasNewFolderButton());
     ui->tMegaFolders->viewport()->installEventFilter(this);
 
     mProxyModel->setSourceModel(mModel.get());
@@ -176,13 +175,11 @@ bool NodeSelectorTreeViewWidget::event(QEvent* event)
     if (event->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        updateCurrentTitle();
-
         if (mSelectType)
         {
             mSelectType->updateCustomButtonsText(this);
         }
-
+        notifyViewStateChanged();
         initEmptyMessages();
 
         if (mModel && mProxyModel && mSelectType)
@@ -312,18 +309,29 @@ NodeSelectorProxyModel* NodeSelectorTreeViewWidget::getProxyModel()
     return mProxyModel.get();
 }
 
-NodeSelectorTreeViewWidget::HeaderState NodeSelectorTreeViewWidget::getHeaderState() const
+bool NodeSelectorTreeViewWidget::canGoBack() const
 {
-    auto state = mHeaderState;
-    state.canGoBack = state.canGoBack && !mUiBlocked;
-    state.canGoForward = state.canGoForward && !mUiBlocked;
-    state.newFolderEnabled = state.newFolderEnabled && state.newFolderVisible && !mUiBlocked;
-    return state;
+    return !mNavigationInfo.backwardHandles.isEmpty();
 }
 
-const QMap<uint, QPushButton*>& NodeSelectorTreeViewWidget::customButtons() const
+bool NodeSelectorTreeViewWidget::canGoForward() const
 {
-    return mCustomButtons;
+    return !mNavigationInfo.forwardHandles.isEmpty();
+}
+
+bool NodeSelectorTreeViewWidget::shouldShowNavigationButtons() const
+{
+    return !mNavigationInfo.backwardHandles.isEmpty() || !mNavigationInfo.forwardHandles.isEmpty();
+}
+
+bool NodeSelectorTreeViewWidget::isNewFolderButtonVisible() const
+{
+    return mNewFolderButtonVisible;
+}
+
+bool NodeSelectorTreeViewWidget::isNewFolderButtonEnabled() const
+{
+    return mNewFolderButtonVisible && !mUiBlocked;
 }
 
 bool NodeSelectorTreeViewWidget::isInRootView() const
@@ -348,11 +356,6 @@ void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)
                                                QAbstractItemView::NoDragDrop);
 }
 
-void NodeSelectorTreeViewWidget::setTitle(const QString& title)
-{
-    setTitleText(title);
-}
-
 void NodeSelectorTreeViewWidget::goBack()
 {
     if (!mNavigationInfo.backwardHandles.isEmpty() && !mUiBlocked)
@@ -367,20 +370,6 @@ void NodeSelectorTreeViewWidget::goForward()
     {
         onGoForwardClicked();
     }
-}
-
-void NodeSelectorTreeViewWidget::requestNewFolder()
-{
-    if (getHeaderState().newFolderEnabled)
-    {
-        emit newFolderRequested();
-    }
-}
-
-void NodeSelectorTreeViewWidget::setTitleText(const QString& nodeName)
-{
-    mHeaderState.folderName = nodeName;
-    notifyHeaderStateChanged();
 }
 
 void NodeSelectorTreeViewWidget::mousePressEvent(QMouseEvent* event)
@@ -467,7 +456,6 @@ void NodeSelectorTreeViewWidget::onSectionResized()
 
 void NodeSelectorTreeViewWidget::checkViewOnModelChange()
 {
-    checkBackForwardButtons();
     setEmptyFolderPage();
 }
 
@@ -532,7 +520,17 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
         connect(ui->tMegaFolders,
                 &NodeSelectorTreeView::newFolderClicked,
                 this,
-                &NodeSelectorTreeViewWidget::onbNewFolderClicked);
+                [this]()
+                {
+                    emit onCustomButtonClicked(SelectType::ButtonId::NewFolder);
+                });
+        connect(ui->tMegaFolders,
+                &NodeSelectorTreeView::uploadClicked,
+                this,
+                [this]()
+                {
+                    emit onCustomButtonClicked(SelectType::ButtonId::Upload);
+                });
         connect(ui->tMegaFolders,
                 &NodeSelectorTreeView::getMegaLinkClicked,
                 this,
@@ -550,7 +548,6 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
                 this,
                 &NodeSelectorTreeViewWidget::onSectionResized);
 
-        mSelectType->makeViewCustomConnections(ui->tMegaFolders, this);
         makeCustomConnections();
 
         setRootIndex(mModel->hasTopRootIndex() ? mProxyModel->index(0, 0) : QModelIndex());
@@ -576,7 +573,6 @@ void NodeSelectorTreeViewWidget::onGoBackClicked()
     QModelIndex indexToGo = getIndexFromHandle(mNavigationInfo.backwardHandles.last());
 
     setRootIndex(indexToGo);
-    checkBackForwardButtons();
 
     if (rootIndex.isValid())
     {
@@ -628,8 +624,6 @@ void NodeSelectorTreeViewWidget::onGoForwardClicked()
     QModelIndex indexToGo = getIndexFromHandle(mNavigationInfo.forwardHandles.last());
     mNavigationInfo.forwardHandles.removeLast();
     setRootIndex(indexToGo);
-    checkBackForwardButtons();
-
     selectionHasChanged(ui->tMegaFolders->selectedRows());
 }
 
@@ -658,11 +652,6 @@ QModelIndex NodeSelectorTreeViewWidget::getRootIndexFromIndex(const QModelIndex&
     return parentIndex;
 }
 
-void NodeSelectorTreeViewWidget::onbNewFolderClicked()
-{
-    requestNewFolder();
-}
-
 bool NodeSelectorTreeViewWidget::isAllowedToEnterInIndex(const QModelIndex& idx)
 {
     return mSelectType->isAllowedToNavigateInside(idx);
@@ -685,39 +674,6 @@ void NodeSelectorTreeViewWidget::onItemDoubleClick(const QModelIndex& index)
     mNavigationInfo.removeFromForward(mProxyModel->getHandle(index));
 
     setRootIndex(index);
-    checkBackForwardButtons();
-}
-
-void NodeSelectorTreeViewWidget::checkButtonsVisibility()
-{
-    mSelectType->newFolderButtonVisibility(this);
-}
-
-void NodeSelectorTreeViewWidget::addCustomButtons(NodeSelectorTreeViewWidget* wdg)
-{
-    mCustomButtons = mSelectType->addCustomButtons(wdg);
-    foreach(auto& id, mCustomButtons.keys())
-    {
-        auto button = mCustomButtons.value(id);
-        if (button)
-        {
-            connect(button,
-                    &QPushButton::clicked,
-                    this,
-                    [this, id]()
-                    {
-                        emit onCustomButtonClicked(id);
-                    });
-        }
-    }
-}
-
-void NodeSelectorTreeViewWidget::setIncomingInfoData(const IncomingInfoData& data,
-                                                     bool showIncomingInfo)
-{
-    mHeaderState.incomingInfo = data;
-    mHeaderState.showIncomingInfo = showIncomingInfo;
-    notifyHeaderStateChanged();
 }
 
 std::shared_ptr<NodeSelectorProxyModel> NodeSelectorTreeViewWidget::createProxyModel()
@@ -769,11 +725,6 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
     if (!state)
     {
         selectionHasChanged(ui->tMegaFolders->selectedRows());
-        checkBackForwardButtons();
-    }
-    else
-    {
-        notifyHeaderStateChanged();
     }
 }
 
@@ -791,13 +742,27 @@ void NodeSelectorTreeViewWidget::onSelectionChanged(const QItemSelection& select
 
 void NodeSelectorTreeViewWidget::onModelModified()
 {
-    mSelectType->selectionHasChanged(this);
+    const bool rootDeleted =
+        !ui->tMegaFolders->rootIndex().isValid() && !mNavigationInfo.backwardHandles.isEmpty();
+
+    if (rootDeleted)
+    {
+        emit viewStateChanged();
+        return;
+    }
+
+    const bool nowEmpty = (mProxyModel->rowCount(getCurrentRootIndex()) == 0);
+    if (nowEmpty != mWasEmpty)
+    {
+        mWasEmpty = nowEmpty;
+        setEmptyFolderPage();
+        emit viewButtonsStateChanged();
+    }
 }
 
 void NodeSelectorTreeViewWidget::selectionHasChanged(const QModelIndexList& selected)
 {
     emit selectionIsCorrect(mSelectType->okButtonEnabled(this, selected));
-    mSelectType->selectionHasChanged(this);
 }
 
 void NodeSelectorTreeViewWidget::onRenameClicked()
@@ -1193,23 +1158,6 @@ bool NodeSelectorTreeViewWidget::areThereNodesToUpdate()
            !mMergeSourceFolderRemoved.isEmpty();
 }
 
-void NodeSelectorTreeViewWidget::updateRootTitle()
-{
-    setTitleText(getRootText());
-}
-
-void NodeSelectorTreeViewWidget::updateCurrentTitle()
-{
-    const auto rootIndex = ui->tMegaFolders->rootIndex();
-    if (!rootIndex.isValid())
-    {
-        updateRootTitle();
-        return;
-    }
-
-    setTitleText(rootIndex.data(Qt::DisplayRole).toString());
-}
-
 void NodeSelectorTreeViewWidget::expandPendingIndexes()
 {
     auto indexesToBeExpanded = mModel->needsToBeExpanded();
@@ -1419,8 +1367,6 @@ void NodeSelectorTreeViewWidget::removeItemByHandle(mega::MegaHandle handle)
                 mNavigationInfo.forwardHandles.removeLast();
             }
 
-            checkBackForwardButtons();
-
             mProxyModel->deleteNode(proxyIndex);
             mNavigationInfo.remove(handle);
         }
@@ -1584,7 +1530,7 @@ void NodeSelectorTreeViewWidget::updateNode(const UpdateNodesInfo& info, bool sc
     {
         if (proxyIndex.isValid() && ui->tMegaFolders->rootIndex() == proxyIndex)
         {
-            setTitleText(proxyIndex.data(Qt::DisplayRole).toString());
+            notifyViewStateChanged();
         }
     }
 
@@ -1634,13 +1580,6 @@ void NodeSelectorTreeViewWidget::dropIntoRootIndex(QDropEvent* event)
     }
 }
 
-void NodeSelectorTreeViewWidget::setNewFolderButtonVisibility(bool state)
-{
-    mHeaderState.newFolderVisible = state;
-    ui->tMegaFolders->setAllowNewFolderContextMenuItem(state);
-    notifyHeaderStateChanged();
-}
-
 void NodeSelectorTreeViewWidget::setSelectedNodeHandle(const MegaHandle& selectedHandle)
 {
     if (selectedHandle == INVALID_HANDLE || mModel->rowCount() == 0)
@@ -1654,7 +1593,7 @@ void NodeSelectorTreeViewWidget::setSelectedNodeHandle(const MegaHandle& selecte
 
     mProxyModel->setExpandMapped(true);
 
-    auto topIndex(mProxyModel->mapFromSource(mModel->getTopRootIndex()));
+    auto topIndex(mProxyModel->getTopRootIndex());
 
     setRootIndex(topIndex);
     mModel->selectIndexesByHandleAsync(QSet<mega::MegaHandle>() << node->getHandle());
@@ -1682,18 +1621,14 @@ bool NodeSelectorTreeViewWidget::containsTakenDownSelected() const
     return ui->tMegaFolders->containsTakenDownItem(ui->tMegaFolders->selectedRows());
 }
 
-void NodeSelectorTreeViewWidget::checkBackForwardButtons()
+void NodeSelectorTreeViewWidget::notifyViewStateChanged()
 {
-    mHeaderState.showNavigation =
-        !mNavigationInfo.backwardHandles.isEmpty() || !mNavigationInfo.forwardHandles.isEmpty();
-    mHeaderState.canGoBack = !mNavigationInfo.backwardHandles.isEmpty();
-    mHeaderState.canGoForward = !mNavigationInfo.forwardHandles.isEmpty();
-    notifyHeaderStateChanged();
+    emit viewStateChanged();
 }
 
-void NodeSelectorTreeViewWidget::notifyHeaderStateChanged()
+void NodeSelectorTreeViewWidget::notifyButtonsStateChanged()
 {
-    emit headerStateChanged();
+    emit viewButtonsStateChanged();
 }
 
 void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
@@ -1711,8 +1646,6 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
                                                    QItemSelectionModel::ClearAndSelect);
     }
 
-    checkButtonsVisibility();
-
     // Remove in case the rootindex is in the backward list
     auto indexHandleToRemove(getHandleByIndex(node_column_idx));
     auto handlePos(mNavigationInfo.backwardHandles.indexOf(indexHandleToRemove));
@@ -1725,7 +1658,7 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
 
     onRootIndexChanged(node_column_idx);
     setEmptyFolderPage();
-    updateCurrentTitle();
+    notifyViewStateChanged();
 }
 
 QIcon NodeSelectorTreeViewWidget::getEmptyIcon()
@@ -1735,8 +1668,8 @@ QIcon NodeSelectorTreeViewWidget::getEmptyIcon()
 
 void NodeSelectorTreeViewWidget::setEmptyFolderPage()
 {
-    auto currentRootIndex(ui->tMegaFolders->rootIndex());
-    auto topRootIndex(mModel->hasTopRootIndex() ? mProxyModel->index(0, 0) : QModelIndex());
+    auto currentRootIndex(getCurrentRootIndex());
+    auto topRootIndex(mProxyModel->getTopRootIndex());
 
     // If we are inside a folder, show the "Empty folder" page.
     if (currentRootIndex != topRootIndex && mProxyModel->rowCount(currentRootIndex) == 0)
@@ -1860,334 +1793,4 @@ void NodeSelectorTreeViewWidget::Navigation::clear()
 {
     backwardHandles.clear();
     forwardHandles.clear();
-}
-
-bool SelectType::okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected)
-{
-    return std::none_of(
-        selected.cbegin(),
-        selected.cend(),
-        [](const QModelIndex& index)
-        {
-            return index.data(toInt(NodeSelectorModelRoles::IS_TAKEN_DOWN_ROLE)).toBool();
-        });
-}
-
-bool SelectType::isAllowedToNavigateInside(const QModelIndex& index)
-{
-    auto item = NodeSelectorModel::getItemByIndex(index);
-    if (!item)
-    {
-        return false;
-    }
-    return !(item->getNode()->isFile() || item->isCloudDrive() || item->isRubbishBin() ||
-             item->isTakenDown());
-}
-
-void SelectType::newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg)
-{
-    if (wdg->newFolderBtnCanBeVisisble())
-    {
-        wdg->setNewFolderButtonVisibility(!wdg->isEmpty() && !wdg->isCurrentRootIndexReadOnly() &&
-                                          !wdg->isCurrentSelectionReadOnly());
-    }
-}
-
-bool SelectType::cloudDriveIsCurrentRootIndex(NodeSelectorTreeViewWidget* wdg)
-{
-    auto rootItem = wdg->rootItem();
-    return rootItem && rootItem->isCloudDrive();
-}
-
-QPushButton* SelectType::createCustomButton(const QString& type,
-                                            const QString& text,
-                                            const QString& iconFile)
-{
-    auto button(new TokenizableButton());
-    button->setText(text);
-    button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    QIcon icon;
-    icon.addFile(iconFile, QSize(16, 16), QIcon::Mode::Normal, QIcon::State::Off);
-    button->setIcon(icon);
-    button->setProperty("type", type);
-    button->setProperty("dimension", QLatin1String("small"));
-    return button;
-}
-
-std::shared_ptr<NodeSelectorProxyModel> SelectType::createProxyModel()
-{
-    return std::make_shared<NodeSelectorProxyModel>();
-}
-
-void DownloadType::init(NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->setNewFolderButtonVisibility(false);
-    wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    wdg->mModel->showFiles(true);
-    wdg->mModel->showReadOnlyFolders(true);
-}
-
-void DownloadType::newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->setNewFolderButtonVisibility(false);
-}
-
-bool DownloadType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
-{
-    return SelectType::okButtonEnabled(wdg, selected) &&
-           (!selected.isEmpty() || cloudDriveIsCurrentRootIndex(wdg));
-}
-
-NodeSelectorModelItemSearch::Types DownloadType::allowedTypes()
-{
-    return NodeSelectorModelItemSearch::Type::CLOUD_DRIVE |
-           NodeSelectorModelItemSearch::Type::INCOMING_SHARE |
-           NodeSelectorModelItemSearch::Type::BACKUP;
-}
-
-void SyncType::init(NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->mModel->setSyncSetupMode(true);
-    wdg->mModel->showFiles(false);
-    wdg->mModel->showReadOnlyFolders(false);
-}
-
-bool SyncType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
-{
-    if (selected.size() == 1 && SelectType::okButtonEnabled(wdg, selected))
-    {
-        bool isSyncable =
-            selected.first().data(toInt(NodeSelectorModelRoles::IS_SYNCABLE_FOLDER_ROLE)).toBool();
-        bool isFile = selected.first().data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool();
-        return isSyncable && !isFile;
-    }
-
-    return false;
-}
-
-NodeSelectorModelItemSearch::Types SyncType::allowedTypes()
-{
-    return NodeSelectorModelItemSearch::Type::CLOUD_DRIVE |
-           NodeSelectorModelItemSearch::Type::INCOMING_SHARE;
-}
-
-SelectType::EmptyFolderPageInfo SyncType::getEmptyFolderPageInfo()
-{
-    EmptyFolderPageInfo info;
-    info.title = NodeSelectorTreeViewWidget::tr("No folders to select");
-    info.description = NodeSelectorTreeViewWidget::tr("Only folders can be synced");
-    info.icon = Utilities::getIcon(QLatin1String("synced-folder"), Utilities::AttributeType::NONE);
-    info.descriptionLabelFontSize = QLatin1String("body-1");
-    info.iconTokenized = false;
-    return info;
-}
-
-std::shared_ptr<NodeSelectorProxyModel> SyncType::createProxyModel()
-{
-    return std::make_shared<NodeSelectorProxyModelSync>();
-}
-
-bool SyncType::isAllowedToNavigateInside(const QModelIndex& index)
-{
-    if (!SelectType::isAllowedToNavigateInside(index))
-    {
-        return false;
-    }
-    auto item = NodeSelectorModel::getItemByIndex(index);
-    return !(item->getStatus() == NodeSelectorModelItem::Status::SYNC ||
-             item->getStatus() == NodeSelectorModelItem::Status::SYNC_CHILD);
-}
-
-void StreamType::init(NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->setNewFolderButtonVisibility(false);
-    wdg->mModel->showFiles(true);
-    wdg->mModel->showReadOnlyFolders(true);
-}
-
-void StreamType::newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->setNewFolderButtonVisibility(false);
-}
-
-bool StreamType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
-{
-    if (selected.size() == 1 && SelectType::okButtonEnabled(wdg, selected))
-    {
-        return selected.first().data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool();
-    }
-
-    return false;
-}
-
-NodeSelectorModelItemSearch::Types StreamType::allowedTypes()
-{
-    return NodeSelectorModelItemSearch::Type::CLOUD_DRIVE |
-           NodeSelectorModelItemSearch::Type::INCOMING_SHARE |
-           NodeSelectorModelItemSearch::Type::BACKUP;
-}
-
-std::shared_ptr<NodeSelectorProxyModel> StreamType::createProxyModel()
-{
-    return std::make_shared<NodeSelectorProxyModelStream>();
-}
-
-void UploadType::init(NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->mModel->showFiles(false);
-    wdg->mModel->showReadOnlyFolders(false);
-}
-
-bool UploadType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
-{
-    auto itemsSelected(selected.size());
-    if (itemsSelected < 2)
-    {
-        return itemsSelected == 1 ? SelectType::okButtonEnabled(wdg, selected) &&
-                                        !selected.first()
-                                             .data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE))
-                                             .toBool() :
-                                    !wdg->isCurrentRootIndexReadOnly();
-    }
-
-    return false;
-}
-
-NodeSelectorModelItemSearch::Types UploadType::allowedTypes()
-{
-    return NodeSelectorModelItemSearch::Type::CLOUD_DRIVE |
-           NodeSelectorModelItemSearch::Type::INCOMING_SHARE;
-}
-
-//////////////////////////////////////////////////////////////////
-void CloudDriveType::init(NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->setNewFolderButtonVisibility(false);
-    wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    wdg->mModel->showFiles(true);
-    wdg->mModel->showReadOnlyFolders(true);
-}
-
-NodeSelectorModelItemSearch::Types CloudDriveType::allowedTypes()
-{
-    return NodeSelectorModelItemSearch::Type::CLOUD_DRIVE |
-           NodeSelectorModelItemSearch::Type::INCOMING_SHARE |
-           NodeSelectorModelItemSearch::Type::BACKUP | NodeSelectorModelItemSearch::Type::RUBBISH;
-}
-
-bool CloudDriveType::footerVisible() const
-{
-    return false;
-}
-
-void CloudDriveType::makeViewCustomConnections(NodeSelectorTreeView* view,
-                                               NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->connect(view,
-                 &NodeSelectorTreeView::uploadClicked,
-                 wdg,
-                 [wdg]()
-                 {
-                     emit wdg->onCustomButtonClicked(ButtonId::Upload);
-                 });
-}
-
-bool CloudDriveType::okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList&)
-{
-    return false;
-}
-
-QMap<uint, QPushButton*> CloudDriveType::addCustomButtons(NodeSelectorTreeViewWidget* wdg)
-{
-    auto& buttons = mCustomButtons[wdg];
-    if (buttons.isEmpty())
-    {
-        auto uploadButton =
-            createCustomButton(QLatin1String("ghost"),
-                               getCustomButtonText(ButtonId::Upload),
-                               Utilities::getPixmapName(QLatin1String("arrow-up"),
-                                                        Utilities::AttributeType::SMALL |
-                                                            Utilities::AttributeType::THIN |
-                                                            Utilities::AttributeType::OUTLINE));
-
-        buttons.insert(ButtonId::Upload, uploadButton);
-
-        auto clearRubbishButton =
-            createCustomButton(QLatin1String("ghost"),
-                               getCustomButtonText(ButtonId::ClearRubbish),
-                               Utilities::getPixmapName(QLatin1String("x"),
-                                                        Utilities::AttributeType::SMALL |
-                                                            Utilities::AttributeType::THIN |
-                                                            Utilities::AttributeType::OUTLINE));
-        buttons.insert(ButtonId::ClearRubbish, clearRubbishButton);
-        clearRubbishButton->hide();
-    }
-
-    return buttons;
-}
-
-void CloudDriveType::updateCustomButtonsText(NodeSelectorTreeViewWidget* wdg)
-{
-    auto& buttons = mCustomButtons[wdg];
-    if (!buttons.isEmpty())
-    {
-        for (auto it = buttons.keyValueBegin(); it != buttons.keyValueEnd(); ++it)
-        {
-            it->second->setText(getCustomButtonText(it->first));
-        }
-    }
-}
-
-void CloudDriveType::newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg)
-{
-    SelectType::newFolderButtonVisibility(wdg);
-}
-
-QString CloudDriveType::getCustomButtonText(uint buttonId) const
-{
-    switch (buttonId)
-    {
-        case ButtonId::Upload:
-        {
-            return MegaApplication::tr("Upload");
-        }
-        case ButtonId::ClearRubbish:
-        {
-            return NodeSelectorTreeViewWidget::tr("Empty Rubbish bin");
-        }
-        default:
-        {
-            return QString();
-        }
-    }
-}
-
-void CloudDriveType::selectionHasChanged(NodeSelectorTreeViewWidget* wdg)
-{
-    auto buttons = mCustomButtons.value(wdg);
-
-    auto rubbishWidget = dynamic_cast<NodeSelectorTreeViewWidgetRubbish*>(wdg);
-
-    if (rubbishWidget)
-    {
-        buttons.value(ButtonId::Upload)->setVisible(false);
-        buttons.value(ButtonId::ClearRubbish)->setVisible(!rubbishWidget->isEmpty());
-    }
-    else
-    {
-        buttons.value(ButtonId::ClearRubbish)->setVisible(false);
-        buttons.value(ButtonId::Upload)->setVisible(!wdg->isCurrentRootIndexReadOnly());
-    }
-}
-
-//////////////////
-bool MoveBackupType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg,
-                                     const QModelIndexList& selected)
-{
-    return selected.size() == 1 && SelectType::okButtonEnabled(wdg, selected);
-}
-
-NodeSelectorModelItemSearch::Types MoveBackupType::allowedTypes()
-{
-    return NodeSelectorModelItemSearch::Type::CLOUD_DRIVE;
 }

@@ -14,9 +14,7 @@
 NodeSelectorTreeViewWidgetCloudDrive::NodeSelectorTreeViewWidgetCloudDrive(SelectTypeSPtr mode,
                                                                            QWidget* parent):
     NodeSelectorTreeViewWidget(mode, parent)
-{
-    setTitle(MegaNodeNames::getCloudDriveName());
-}
+{}
 
 void NodeSelectorTreeViewWidgetCloudDrive::setShowEmptyView(bool newShowEmptyView)
 {
@@ -40,8 +38,7 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetCloudDrive::createM
 
 void NodeSelectorTreeViewWidgetCloudDrive::setViewPage()
 {
-    auto rootIndex = mModel->index(0, 0);
-    if (mModel->rowCount(rootIndex) == 0 && showEmptyView())
+    if (mProxyModel->rowCount(getCurrentRootIndex()) == 0 && showEmptyView())
     {
         ui->stackedWidget->setCurrentWidget(ui->emptyPage);
     }
@@ -106,13 +103,7 @@ NodeSelectorTreeViewWidgetIncomingShares::NodeSelectorTreeViewWidgetIncomingShar
     SelectTypeSPtr mode,
     QWidget* parent):
     NodeSelectorTreeViewWidget(mode, parent)
-{
-    IncomingInfoData data;
-    data.folderName = MegaNodeNames::getIncomingSharesName();
-    data.folderIcon = getEmptyIcon().pixmap(32, 32);
-    setIncomingInfoData(data, true);
-    setTitle(MegaNodeNames::getIncomingSharesName());
-}
+{}
 
 bool NodeSelectorTreeViewWidgetIncomingShares::isNodeCompatibleWithModel(mega::MegaNode* node)
 {
@@ -124,14 +115,6 @@ bool NodeSelectorTreeViewWidgetIncomingShares::isNodeCompatibleWithModel(mega::M
     auto access(Utilities::getNodeAccess(node));
 
     return access != mega::MegaShare::ACCESS_OWNER && access != mega::MegaShare::ACCESS_UNKNOWN;
-}
-
-void NodeSelectorTreeViewWidgetIncomingShares::setTitleText(const QString& nodeName)
-{
-    auto incomingInfo(mHeaderState.incomingInfo);
-    incomingInfo.folderName = nodeName;
-    setIncomingInfoData(incomingInfo, true);
-    NodeSelectorTreeViewWidget::setTitleText(nodeName);
 }
 
 QString NodeSelectorTreeViewWidgetIncomingShares::getRootText()
@@ -160,31 +143,6 @@ void NodeSelectorTreeViewWidgetIncomingShares::onRootIndexChanged(const QModelIn
     ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ADDED_DATE);
 
     NodeSelectorTreeViewWidget::onRootIndexChanged(idx);
-
-    // Fill Incoming info
-    IncomingInfoData incomingInfo;
-    incomingInfo.folderName = idx.isValid() ? idx.data(Qt::DisplayRole).toString() : getRootText();
-    incomingInfo.folderIcon =
-        (idx.isValid() ? qvariant_cast<QPixmap>(idx.data(Qt::DecorationRole)) :
-                         getEmptyIcon().pixmap(32, 32));
-
-    QModelIndex in_share_idx = getParentIncomingShareByIndex(idx);
-    auto item(NodeSelectorModel::getItemByIndex(in_share_idx));
-    if (in_share_idx.isValid() && item)
-    {
-        in_share_idx = in_share_idx.sibling(in_share_idx.row(), NodeSelectorModel::Column::USER);
-        incomingInfo.userIcon = qvariant_cast<QPixmap>(in_share_idx.data(Qt::DecorationRole));
-
-        in_share_idx = in_share_idx.sibling(in_share_idx.row(), NodeSelectorModel::Column::ACCESS);
-        incomingInfo.accessIcon = qvariant_cast<QPixmap>(in_share_idx.data(Qt::DecorationRole));
-        incomingInfo.accessLabel = in_share_idx.data(Qt::DisplayRole).toString();
-        incomingInfo.accessType =
-            in_share_idx.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
-        incomingInfo.userEmail = item->getOwnerEmail();
-        incomingInfo.userName = item->getOwnerName();
-    }
-
-    setIncomingInfoData(incomingInfo, true);
 }
 
 bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentRootIndexReadOnly()
@@ -261,8 +219,6 @@ NodeSelectorTreeViewWidgetBackups::NodeSelectorTreeViewWidgetBackups(SelectTypeS
                                                                      QWidget* parent):
     NodeSelectorTreeViewWidget(mode, parent)
 {
-    setTitle(MegaNodeNames::getBackupsName());
-
     // Monitor Device Names changes and update the title if the current folder is a Device Folder
     auto deviceNamesRequest = UserAttributes::DeviceNames::requestDeviceNames();
     connect(deviceNamesRequest.get(),
@@ -274,7 +230,7 @@ NodeSelectorTreeViewWidgetBackups::NodeSelectorTreeViewWidgetBackups(SelectTypeS
                 auto* item = NodeSelectorModel::getItemByIndex(rootIndex);
                 if (item && item->isDeviceFolder())
                 {
-                    setTitleText(rootIndex.data(Qt::DisplayRole).toString());
+                    notifyViewStateChanged();
                 }
             });
 }
@@ -322,16 +278,15 @@ NodeSelectorTreeViewWidgetSearch::NodeSelectorTreeViewWidgetSearch(SelectTypeSPt
     mNewSearch(true)
 
 {
-    auto setTypeToTabSelector = [](TabSelector* tab, NodeSelectorModelItemSearch::Type type)
+    auto setTypeToTabSelector = [](TabSelector* tab, TabType type)
     {
         tab->setProperty(TAB_TYPE, static_cast<int>(type));
     };
 
-    setTypeToTabSelector(ui->cloudDriveSearch, NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
-    setTypeToTabSelector(ui->incomingSharesSearch,
-                         NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
-    setTypeToTabSelector(ui->backupsSearch, NodeSelectorModelItemSearch::Type::BACKUP);
-    setTypeToTabSelector(ui->rubbishSearch, NodeSelectorModelItemSearch::Type::RUBBISH);
+    setTypeToTabSelector(ui->cloudDriveSearch, TabType::CLOUD_DRIVE);
+    setTypeToTabSelector(ui->incomingSharesSearch, TabType::INCOMING_SHARE);
+    setTypeToTabSelector(ui->backupsSearch, TabType::BACKUP);
+    setTypeToTabSelector(ui->rubbishSearch, TabType::RUBBISH);
 
     connect(ui->cloudDriveSearch,
             &TabSelector::clicked,
@@ -362,9 +317,6 @@ void NodeSelectorTreeViewWidgetSearch::search(const QString& text)
 
     mNewSearch = true;
     mSearchStr = text;
-
-    // Reset it and wait for the updated text
-    setTitleText(QString());
 
     ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
     setStyleSheet(styleSheet());
@@ -424,21 +376,17 @@ void NodeSelectorTreeViewWidgetSearch::resetMovingNumber()
 
 void NodeSelectorTreeViewWidgetSearch::checkSearchButtonsVisibility()
 {
-    NodeSelectorModelItemSearch::Types searchedTypes = NodeSelectorModelItemSearch::Type::NONE;
+    TabTypes searchedTypes = TabType::NONE;
     auto searchModel = dynamic_cast<NodeSelectorModelSearch*>(mModel.get());
     if (searchModel)
     {
         searchedTypes = searchModel->searchedTypes();
     }
 
-    ui->backupsSearch->setVisible(
-        searchedTypes.testFlag(NodeSelectorModelItemSearch::Type::BACKUP));
-    ui->incomingSharesSearch->setVisible(
-        searchedTypes.testFlag(NodeSelectorModelItemSearch::Type::INCOMING_SHARE));
-    ui->cloudDriveSearch->setVisible(
-        searchedTypes.testFlag(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE));
-    ui->rubbishSearch->setVisible(
-        searchedTypes.testFlag(NodeSelectorModelItemSearch::Type::RUBBISH));
+    ui->backupsSearch->setVisible(searchedTypes.testFlag(TabType::BACKUP));
+    ui->incomingSharesSearch->setVisible(searchedTypes.testFlag(TabType::INCOMING_SHARE));
+    ui->cloudDriveSearch->setVisible(searchedTypes.testFlag(TabType::CLOUD_DRIVE));
+    ui->rubbishSearch->setVisible(searchedTypes.testFlag(TabType::RUBBISH));
 }
 
 bool NodeSelectorTreeViewWidgetSearch::isNodeCompatibleWithModel(mega::MegaNode* node)
@@ -486,32 +434,32 @@ NodeSelectorTreeViewWidget::NodeState
 void NodeSelectorTreeViewWidgetSearch::onBackupsSearchClicked()
 {
     auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(NodeSelectorModelItemSearch::Type::BACKUP);
-    changeColumnsVisibility(NodeSelectorModelItemSearch::Type::BACKUP);
+    proxy_model->setMode(TabType::BACKUP);
+    changeColumnsVisibility(TabType::BACKUP);
     expandSearchResults();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onRubbishSearchClicked()
 {
     auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(NodeSelectorModelItemSearch::Type::RUBBISH);
-    changeColumnsVisibility(NodeSelectorModelItemSearch::Type::RUBBISH);
+    proxy_model->setMode(TabType::RUBBISH);
+    changeColumnsVisibility(TabType::RUBBISH);
     expandSearchResults();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onIncomingSharesSearchClicked()
 {
     auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
-    changeColumnsVisibility(NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
+    proxy_model->setMode(TabType::INCOMING_SHARE);
+    changeColumnsVisibility(TabType::INCOMING_SHARE);
     expandSearchResults();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onCloudDriveSearchClicked()
 {
     auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
-    changeColumnsVisibility(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
+    proxy_model->setMode(TabType::CLOUD_DRIVE);
+    changeColumnsVisibility(TabType::CLOUD_DRIVE);
     expandSearchResults();
 }
 
@@ -522,8 +470,7 @@ void NodeSelectorTreeViewWidgetSearch::onItemDoubleClick(const QModelIndex& inde
     emit nodeDoubleClicked(node, true);
 }
 
-void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(
-    NodeSelectorModelItemSearch::Type type)
+void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(TabType type)
 {
     bool hideUserColumn(true);
     bool hideAccessColumn(true);
@@ -531,19 +478,19 @@ void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(
 
     switch (type)
     {
-        case NodeSelectorModelItemSearch::Type::BACKUP:
-        case NodeSelectorModelItemSearch::Type::CLOUD_DRIVE:
+        case TabType::BACKUP:
+        case TabType::CLOUD_DRIVE:
         {
             hideAddedDate = false;
             break;
         }
-        case NodeSelectorModelItemSearch::Type::INCOMING_SHARE:
+        case TabType::INCOMING_SHARE:
         {
             hideUserColumn = false;
             hideAccessColumn = false;
             break;
         }
-        case NodeSelectorModelItemSearch::Type::RUBBISH:
+        case TabType::RUBBISH:
         default:
             break;
     }
@@ -577,18 +524,18 @@ void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
         checkSearchButtonsVisibility();
 
         // Get the searched types returned by the SDK
-        NodeSelectorModelItemSearch::Types searchedTypes = NodeSelectorModelItemSearch::Type::NONE;
+        TabTypes searchedTypes = TabType::NONE;
         auto searchModel = dynamic_cast<NodeSelectorModelSearch*>(mModel.get());
         if (searchModel)
         {
             searchedTypes = searchModel->searchedTypes();
         }
 
-        NodeSelectorModelItemSearch::Type tabSelected(NodeSelectorModelItemSearch::Type::NONE);
+        TabType tabSelected(TabType::NONE);
         // Set the model and the tab selector
-        auto setMode = [this, searchedTypes, &tabSelected](NodeSelectorModelItemSearch::Type type)
+        auto setMode = [this, searchedTypes, &tabSelected](TabType type)
         {
-            if (tabSelected != NodeSelectorModelItemSearch::Type::NONE)
+            if (tabSelected != TabType::NONE)
             {
                 return;
             }
@@ -630,10 +577,10 @@ void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
         };
 
         // Only one will be set, in this order
-        setMode(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
-        setMode(NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
-        setMode(NodeSelectorModelItemSearch::Type::BACKUP);
-        setMode(NodeSelectorModelItemSearch::Type::RUBBISH);
+        setMode(TabType::CLOUD_DRIVE);
+        setMode(TabType::INCOMING_SHARE);
+        setMode(TabType::BACKUP);
+        setMode(TabType::RUBBISH);
 
         mNewSearch = false;
 
@@ -660,7 +607,7 @@ QString NodeSelectorTreeViewWidgetSearch::getRootText()
 std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel()
 {
     auto model = std::unique_ptr<NodeSelectorModelSearch>(
-        new NodeSelectorModelSearch(getSelectType()->allowedTypes()));
+        new NodeSelectorModelSearch(getSelectType()->allowedTabTypes()));
 
     connect(model.get(),
             &NodeSelectorModelSearch::nodeTypeHasChanged,
@@ -673,17 +620,17 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel
     connect(model.get(),
             &QAbstractItemModel::rowsInserted,
             this,
-            &NodeSelectorTreeViewWidgetSearch::updateRootTitle);
+            &NodeSelectorTreeViewWidget::notifyButtonsStateChanged);
 
     connect(model.get(),
             &QAbstractItemModel::rowsRemoved,
             this,
-            &NodeSelectorTreeViewWidgetSearch::updateRootTitle);
+            &NodeSelectorTreeViewWidget::notifyButtonsStateChanged);
 
     connect(model.get(),
             &QAbstractItemModel::modelReset,
             this,
-            &NodeSelectorTreeViewWidgetSearch::updateRootTitle);
+            &NodeSelectorTreeViewWidget::notifyButtonsStateChanged);
 
     return model;
 }
@@ -727,9 +674,7 @@ void NodeSelectorTreeViewWidgetSearch::setViewPage()
 NodeSelectorTreeViewWidgetRubbish::NodeSelectorTreeViewWidgetRubbish(SelectTypeSPtr mode,
                                                                      QWidget* parent):
     NodeSelectorTreeViewWidget(mode, parent)
-{
-    setTitle(MegaNodeNames::getRubbishName());
-}
+{}
 
 void NodeSelectorTreeViewWidgetRubbish::setShowEmptyView(bool newShowEmptyView)
 {

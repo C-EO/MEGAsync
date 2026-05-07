@@ -93,7 +93,7 @@ public:
     void cancelCurrentRequest();
     void restartSearch();
 
-    const NodeSelectorModelItemSearch::Types& searchedTypes() const;
+    const TabTypes& searchedTypes() const;
 
     bool showFiles() const;
 
@@ -101,13 +101,12 @@ public:
 
 public slots:
     void requestNodeAndCreateChildren(NodeSelectorModelItem* item, const QModelIndex& parentIndex);
-    void search(const QString& text, NodeSelectorModelItemSearch::Types typesAllowed);
+    void search(const QString& text, TabTypes typesAllowed);
     void createCloudDriveRootItem();
     void createIncomingSharesRootItems(std::shared_ptr<mega::MegaNodeList> nodeList);
     void createRubbishRootItems();
     void addIncomingSharesRootItem(std::shared_ptr<mega::MegaNode> node);
-    void addSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes,
-                           NodeSelectorModelItemSearch::Types typesAllowed);
+    void addSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes, TabTypes typesAllowed);
     void createBackupRootItems(mega::MegaHandle backupsHandle);
 
     void removeRootItem(NodeSelectorModelItem* item);
@@ -132,26 +131,25 @@ signals:
     void nodesAdded(QList<QPointer<NodeSelectorModelItem>> item);
 
 private slots:
-    void onSearchItemTypeChanged(NodeSelectorModelItemSearch::Types type);
+    void onSearchItemTypeChanged(TabTypes type);
 
 private:
     bool isAborted();
-    NodeSelectorModelItem* createSearchItem(mega::MegaNode* node,
-                                            NodeSelectorModelItemSearch::Types typesAllowed);
     void appendRootItems(const QList<NodeSelectorModelItem*>& items);
-    NodeSelectorModelItemSearch* createSearchTreeItem(mega::MegaNode* node,
-                                                      NodeSelectorModelItemSearch::Types type);
+
+    NodeSelectorModelItem* createSearchItem(mega::MegaNode* node, TabTypes typesAllowed);
+    NodeSelectorModelItemSearch* createSearchTreeItem(mega::MegaNode* node, TabTypes type);
     bool canCreateSearchItem(mega::MegaNode* node);
-    QList<std::shared_ptr<mega::MegaNode>>
-        createSearchPath(mega::MegaNode* node, NodeSelectorModelItemSearch::Types type) const;
+    QList<std::shared_ptr<mega::MegaNode>> createSearchPath(mega::MegaNode* node,
+                                                            TabTypes type) const;
     void addSearchPath(QList<NodeSelectorModelItem*>& items,
                        const QList<std::shared_ptr<mega::MegaNode>>& path,
-                       NodeSelectorModelItemSearch::Types type);
+                       TabTypes type);
     NodeSelectorModelItem* findSearchItem(const QList<NodeSelectorModelItem*>& items,
                                           mega::MegaHandle handle) const;
     NodeSelectorModelItem* findSearchChild(NodeSelectorModelItem* parent,
                                            mega::MegaHandle handle) const;
-    bool isSearchRootNode(mega::MegaNode* node, NodeSelectorModelItemSearch::Types type) const;
+    bool isSearchRootNode(mega::MegaNode* node, TabTypes type) const;
 
     std::atomic<bool> mShowFiles{true};
     std::atomic<bool> mShowReadOnlyFolders{true};
@@ -164,7 +162,7 @@ private:
     mutable QMutex mDataMutex;
     mutable QMutex mSearchMutex;
     std::shared_ptr<mega::MegaCancelToken> mCancelToken;
-    NodeSelectorModelItemSearch::Types mSearchedTypes;
+    TabTypes mSearchedTypes;
 };
 
 class AddNodesQueue: public QObject

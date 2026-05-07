@@ -333,7 +333,7 @@ void CloudDriveNodeSelector::sendStats()
 
 void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
 {
-    if (id == CloudDriveType::Upload)
+    if (id == SelectType::Upload)
     {
         MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
             AppStatsEvents::EventType::CLOUD_DRIVE_UPLOAD_CLICKED);
@@ -353,7 +353,7 @@ void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
             }
         }
     }
-    else if (id == CloudDriveType::ClearRubbish)
+    else if (id == SelectType::ClearRubbish)
     {
         MessageDialogInfo msgInfo;
         msgInfo.parent = this;
@@ -377,6 +377,8 @@ void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
         };
         MessageDialogOpener::warning(msgInfo);
     }
+
+    NodeSelector::onCustomButtonClicked(id);
 }
 
 void CloudDriveNodeSelector::onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int type)

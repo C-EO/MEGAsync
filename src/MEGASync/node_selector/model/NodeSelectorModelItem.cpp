@@ -530,12 +530,12 @@ bool NodeSelectorModelItem::isInVault() const
 }
 
 NodeSelectorModelItemSearch::NodeSelectorModelItemSearch(std::unique_ptr<mega::MegaNode> node,
-                                                         Types type,
+                                                         TabTypes type,
                                                          NodeSelectorModelItem* parentItem):
     NodeSelectorModelItem(std::move(node), false, parentItem),
     mType(type)
 {
-    if (mType & NodeSelectorModelItemSearch::Type::INCOMING_SHARE)
+    if (mType & TabType::INCOMING_SHARE)
     {
         auto user = std::unique_ptr<mega::MegaUser>(
             MegaSyncApp->getMegaApi()->getUserFromInShare(mNode.get(), true));
@@ -543,18 +543,16 @@ NodeSelectorModelItemSearch::NodeSelectorModelItemSearch(std::unique_ptr<mega::M
     }
 
     calculateSyncStatus();
-
-    qRegisterMetaType<Types>("Types");
 }
 
 NodeSelectorModelItemSearch::~NodeSelectorModelItemSearch() {}
 
-void NodeSelectorModelItemSearch::setType(Types type)
+void NodeSelectorModelItemSearch::setType(TabTypes type)
 {
     if (mType != type)
     {
         mType = type;
-        emit typeChanged(type);
+        emit tabTypeChanged(type);
     }
 }
 
@@ -565,12 +563,12 @@ int NodeSelectorModelItemSearch::getNumChildren()
 
 bool NodeSelectorModelItemSearch::isMyBackupsFolder() const
 {
-    return mType.testFlag(NodeSelectorModelItemSearch::Type::BACKUP) && parent() == nullptr;
+    return mType.testFlag(TabType::BACKUP) && parent() == nullptr;
 }
 
 bool NodeSelectorModelItemSearch::isDeviceFolder() const
 {
-    if (!mType.testFlag(NodeSelectorModelItemSearch::Type::BACKUP))
+    if (!mType.testFlag(TabType::BACKUP))
     {
         return false;
     }
@@ -581,7 +579,7 @@ bool NodeSelectorModelItemSearch::isDeviceFolder() const
 
 bool NodeSelectorModelItemSearch::isBackupFolder() const
 {
-    if (!mType.testFlag(NodeSelectorModelItemSearch::Type::BACKUP))
+    if (!mType.testFlag(TabType::BACKUP))
     {
         return false;
     }

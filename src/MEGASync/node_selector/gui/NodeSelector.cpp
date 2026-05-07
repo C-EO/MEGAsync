@@ -112,7 +112,6 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     connect(ui->bOk, &QPushButton::clicked, this, &NodeSelector::confirmSelection);
     connect(ui->bCancel, &QPushButton::clicked, this, &NodeSelector::reject);
 
-    connect(ui->bNewFolder, &QPushButton::clicked, this, &NodeSelector::onbNewFolderClicked);
     connect(ui->bBack,
             &QPushButton::clicked,
             this,
@@ -154,6 +153,7 @@ NodeSelector::~NodeSelector()
 
 void NodeSelector::init()
 {
+    createActionButtons();
     createSpecialisedWidgets();
     addSearch();
     initSpecialisedWidgets();
@@ -255,10 +255,7 @@ void NodeSelector::onUiIsBlocked(bool state)
         ui->bOk->setDisabled(true);
     }
 
-    if (auto wid = getCurrentTreeViewWidget())
-    {
-        applyHeaderState(wid->getHeaderState());
-    }
+    ui->header->setDisabled(state);
 }
 
 void NodeSelector::onSelectionChanged(bool state)
@@ -266,20 +263,106 @@ void NodeSelector::onSelectionChanged(bool state)
     ui->bOk->setEnabled(state);
 }
 
-void NodeSelector::applyHeaderState(const NodeSelectorTreeViewWidget::HeaderState& state)
+QString NodeSelector::folderNameForWidget(NodeSelectorTreeViewWidget* wid) const
 {
-    ui->navigationButtons->setVisible(state.showNavigation);
-    ui->bBack->setEnabled(state.canGoBack);
-    ui->bForward->setEnabled(state.canGoForward);
+    if (!wid)
+    {
+        return QString();
+    }
 
-    ui->lFolderName->setText(state.folderName);
-    ui->incomingInfo->setVisible(state.showIncomingInfo);
-    ui->lFolderName->setVisible(!state.showIncomingInfo);
+    if (wid == mSearchWidget)
+    {
+        return QString();
+    }
 
-    ui->bNewFolder->setVisible(state.newFolderVisible);
-    ui->bNewFolder->setEnabled(state.newFolderEnabled);
+    const auto rootIndex = wid->getCurrentRootIndex();
+    if (rootIndex.isValid())
+    {
+        return rootIndex.data(Qt::DisplayRole).toString();
+    }
 
-    const auto& incomingInfo = state.incomingInfo;
+    switch (ui->stackedWidget->indexOf(wid))
+    {
+        case CLOUD_DRIVE:
+            return MegaNodeNames::getCloudDriveName();
+        case SHARES:
+            return MegaNodeNames::getIncomingSharesName();
+        case BACKUPS:
+            return MegaNodeNames::getBackupsName();
+        case RUBBISH:
+            return MegaNodeNames::getRubbishName();
+        case SEARCH:
+            return QString();
+        default:
+            return QString();
+    }
+}
+
+NodeSelector::IncomingShareHeaderInfo
+    NodeSelector::incomingInfoForWidget(NodeSelectorTreeViewWidget* wid) const
+{
+    IncomingShareHeaderInfo incomingInfo;
+
+    if (!wid)
+    {
+        return incomingInfo;
+    }
+
+    const auto rootIndex = wid->getCurrentRootIndex();
+    incomingInfo.folderName = rootIndex.isValid() ? rootIndex.data(Qt::DisplayRole).toString() :
+                                                    MegaNodeNames::getIncomingSharesName();
+    incomingInfo.folderIcon =
+        rootIndex.isValid() ?
+            qvariant_cast<QPixmap>(rootIndex.data(Qt::DecorationRole)) :
+            Utilities::getIcon(QLatin1String("folder-users"),
+                               Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
+                                   Utilities::AttributeType::OUTLINE)
+                .pixmap(32, 32);
+
+    auto inShareIndex = getParentIncomingShareByIndex(rootIndex);
+    auto item = NodeSelectorModel::getItemByIndex(inShareIndex);
+    if (inShareIndex.isValid() && item)
+    {
+        inShareIndex = inShareIndex.sibling(inShareIndex.row(), NodeSelectorModel::Column::USER);
+        incomingInfo.userIcon = qvariant_cast<QPixmap>(inShareIndex.data(Qt::DecorationRole));
+
+        inShareIndex = inShareIndex.sibling(inShareIndex.row(), NodeSelectorModel::Column::ACCESS);
+        incomingInfo.accessIcon = qvariant_cast<QPixmap>(inShareIndex.data(Qt::DecorationRole));
+        incomingInfo.accessLabel = inShareIndex.data(Qt::DisplayRole).toString();
+        incomingInfo.accessType =
+            inShareIndex.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
+        incomingInfo.userEmail = item->getOwnerEmail();
+        incomingInfo.userName = item->getOwnerName();
+    }
+
+    return incomingInfo;
+}
+
+void NodeSelector::applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid)
+{
+    if (!wid)
+    {
+        return;
+    }
+
+    ui->navigationButtons->setVisible(wid->shouldShowNavigationButtons());
+    ui->bBack->setEnabled(wid->canGoBack());
+    ui->bForward->setEnabled(wid->canGoForward());
+}
+
+void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
+{
+    if (!wid)
+    {
+        return;
+    }
+
+    const auto showIncomingInfo = (wid == mIncomingSharesWidget);
+    ui->lFolderName->setText(folderNameForWidget(wid));
+    ui->incomingInfo->setVisible(showIncomingInfo);
+    ui->lFolderName->setVisible(!showIncomingInfo);
+
+    const auto incomingInfo = incomingInfoForWidget(wid);
     ui->sh_folderIcon->setIcon(incomingInfo.folderIcon);
     ui->sh_folderName->setText(incomingInfo.folderName);
     ui->sh_userIcon->setIcon(incomingInfo.userIcon);
@@ -322,36 +405,25 @@ void NodeSelector::applyHeaderState(const NodeSelectorTreeViewWidget::HeaderStat
     ui->sh_accessContainer->setStyleSheet(ui->sh_accessContainer->styleSheet());
 }
 
-void NodeSelector::clearHeaderButtons()
+void NodeSelector::applyHeaderButtonsState(NodeSelectorTreeViewWidget* wid)
 {
-    for (int index = ui->customButtonsLayout->count() - 1; index >= 0; --index)
-    {
-        auto item = ui->customButtonsLayout->itemAt(index);
-        auto button = item ? qobject_cast<QPushButton*>(item->widget()) : nullptr;
-        if (button && button != ui->bNewFolder)
-        {
-            ui->customButtonsLayout->removeWidget(button);
-            button->hide();
-        }
-    }
-}
-
-void NodeSelector::syncHeaderButtons(NodeSelectorTreeViewWidget* wid)
-{
-    clearHeaderButtons();
     if (!wid)
     {
         return;
     }
 
-    for (auto button: wid->customButtons())
+    mSelectType->checkActionButtonsVisibility(wid);
+}
+
+void NodeSelector::refreshHeaderButtons(NodeSelectorTreeViewWidget* wid)
+{
+    if (!wid || wid != getCurrentTreeViewWidget())
     {
-        if (button)
-        {
-            button->show();
-            ui->customButtonsLayout->insertWidget(0, button);
-        }
+        return;
     }
+
+    applyHeaderButtonsState(wid);
+    applyNavigationButtonsState(wid);
 }
 
 void NodeSelector::refreshHeader(NodeSelectorTreeViewWidget* wid)
@@ -361,8 +433,30 @@ void NodeSelector::refreshHeader(NodeSelectorTreeViewWidget* wid)
         return;
     }
 
-    syncHeaderButtons(wid);
-    applyHeaderState(wid->getHeaderState());
+    applyHeaderButtonsState(wid);
+    applyNavigationButtonsState(wid);
+    applyHeaderFolderInfoState(wid);
+}
+
+QModelIndex NodeSelector::getParentIncomingShareByIndex(QModelIndex idx) const
+{
+    while (idx.isValid())
+    {
+        if (auto item = NodeSelectorModel::getItemByIndex(idx))
+        {
+            if (item->getNode()->isInShare())
+            {
+                return idx;
+            }
+            idx = idx.parent();
+        }
+        else
+        {
+            idx = idx.parent();
+        }
+    }
+
+    return QModelIndex();
 }
 
 void NodeSelector::showDefaultUploadOption(bool show)
@@ -431,7 +525,7 @@ void NodeSelector::onfShowSearchHidden()
 
     if (getCurrentTreeViewWidget() == mSearchWidget)
     {
-        onOptionSelected(CLOUD_DRIVE);
+        onbShowCloudDriveClicked();
     }
 }
 
@@ -677,6 +771,28 @@ void NodeSelector::showNotFoundNodeMessageBox()
     MessageDialogOpener::warning(msgInfo);
 }
 
+void NodeSelector::createActionButtons()
+{
+    // Create buttons
+    auto buttons = mSelectType->addActionButtons();
+
+    for (auto it = buttons.cbegin(); it != buttons.cend(); ++it)
+    {
+        if (it.value())
+        {
+            connect(it.value(),
+                    &QPushButton::clicked,
+                    this,
+                    [this, id = it.key()]()
+                    {
+                        onCustomButtonClicked(id);
+                    });
+        }
+
+        ui->customButtonsLayout->addWidget(it.value());
+    }
+}
+
 void NodeSelector::initSpecialisedWidgets()
 {
     NodeSelectorModel* model(nullptr);
@@ -865,7 +981,8 @@ void NodeSelector::onCurrentWidgetChanged(int index)
 {
     if (auto wid = dynamic_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
     {
-        disconnect(mHeaderStateConnection);
+        disconnect(mViewStateConnection);
+        disconnect(mViewButtonsStateConnection);
 
         if (mNodeToBeSelected)
         {
@@ -876,23 +993,26 @@ void NodeSelector::onCurrentWidgetChanged(int index)
 
         wid->treeViewWidgetSelected();
 
-        mSelectType->selectionHasChanged(wid);
-
         disconnect(mSelectionChangedConnection);
         mSelectionChangedConnection = connect(wid,
                                               &NodeSelectorTreeViewWidget::selectionIsCorrect,
                                               this,
                                               &NodeSelector::onSelectionChanged,
                                               Qt::UniqueConnection);
-        mHeaderStateConnection = connect(
-            wid,
-            &NodeSelectorTreeViewWidget::headerStateChanged,
-            this,
-            [this, wid]()
-            {
-                refreshHeader(wid);
-            },
-            Qt::UniqueConnection);
+        mViewStateConnection = connect(wid,
+                                       &NodeSelectorTreeViewWidget::viewStateChanged,
+                                       this,
+                                       [this, wid]()
+                                       {
+                                           refreshHeader(wid);
+                                       });
+        mViewButtonsStateConnection = connect(wid,
+                                              &NodeSelectorTreeViewWidget::viewButtonsStateChanged,
+                                              this,
+                                              [this, wid]()
+                                              {
+                                                  refreshHeaderButtons(wid);
+                                              });
 
         refreshHeader(wid);
         onSelectionChanged(wid->isSelectionCorrect());
@@ -967,4 +1087,12 @@ void NodeSelector::addRubbish()
     mRubbishWidget = new NodeSelectorTreeViewWidgetRubbish(mSelectType);
     mRubbishWidget->setObjectName(QString::fromUtf8("Rubbish"));
     ui->stackedWidget->addWidget(mRubbishWidget);
+}
+
+void NodeSelector::onCustomButtonClicked(uint id)
+{
+    if (id == CloudDriveType::NewFolder)
+    {
+        onbNewFolderClicked();
+    }
 }
