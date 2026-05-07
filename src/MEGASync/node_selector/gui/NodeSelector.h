@@ -101,7 +101,10 @@ protected:
                                bool blockTarget);
 
     // Create specialised widgets
-    virtual void createSpecialisedWidgets() = 0;
+    void createSpecialisedWidgets();
+    void addWidgetForTabType(TabType type);
+
+    virtual void afterWidgetsCreated() {}
 
     virtual void onLanguageChangeEvent() {}
     void addCloudDrive();

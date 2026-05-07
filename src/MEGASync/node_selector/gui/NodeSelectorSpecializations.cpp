@@ -23,14 +23,6 @@ UploadNodeSelector::UploadNodeSelector(QWidget* parent):
     NodeSelector(SelectTypeSPtr(new UploadType), parent)
 {}
 
-void UploadNodeSelector::createSpecialisedWidgets()
-{
-    ui->fBackups->hide();
-    addCloudDrive();
-    mCloudDriveWidget->setShowEmptyView(true);
-    addIncomingShares();
-}
-
 void UploadNodeSelector::onOkButtonClicked()
 {
     auto node = getSelectedNode();
@@ -66,13 +58,6 @@ DownloadNodeSelector::DownloadNodeSelector(QWidget* parent):
     NodeSelector(SelectTypeSPtr(new DownloadType), parent)
 {
     setWindowTitle(tr("Download"));
-}
-
-void DownloadNodeSelector::createSpecialisedWidgets()
-{
-    addCloudDrive();
-    addIncomingShares();
-    addBackups();
 }
 
 void DownloadNodeSelector::onOkButtonClicked()
@@ -138,14 +123,6 @@ SyncNodeSelector::SyncNodeSelector(QWidget* parent):
     NodeSelector(SelectTypeSPtr(new SyncType), parent)
 {}
 
-void SyncNodeSelector::createSpecialisedWidgets()
-{
-    ui->fBackups->hide();
-    addCloudDrive();
-    mCloudDriveWidget->setShowEmptyView(true);
-    addIncomingShares();
-}
-
 bool SyncNodeSelector::isFullSync()
 {
     auto syncsList = SyncInfo::instance()->getSyncSettingsByType(SyncInfo::SyncType::TYPE_TWOWAY);
@@ -208,13 +185,6 @@ StreamNodeSelector::StreamNodeSelector(QWidget* parent):
     NodeSelector(SelectTypeSPtr(new StreamType), parent)
 {}
 
-void StreamNodeSelector::createSpecialisedWidgets()
-{
-    addCloudDrive();
-    addIncomingShares();
-    addBackups();
-}
-
 void StreamNodeSelector::onOkButtonClicked()
 {
     auto node = getSelectedNode();
@@ -249,7 +219,6 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
     mDragBackDrop = new QWidget(this);
     mDragBackDrop->hide();
 
-    ui->fRubbish->show();
     setAcceptDrops(true);
 
 #ifndef Q_OS_MACOS
@@ -267,13 +236,8 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
     sendStats();
 }
 
-void CloudDriveNodeSelector::createSpecialisedWidgets()
+void CloudDriveNodeSelector::afterWidgetsCreated()
 {
-    addCloudDrive();
-    addIncomingShares();
-    addBackups();
-    addRubbish();
-
     enableDragAndDrop(true);
 }
 
@@ -649,16 +613,7 @@ void CloudDriveNodeSelector::selectTabs(const HandlesByTab& tabsInfo)
 ////////////////////////////////
 MoveBackupNodeSelector::MoveBackupNodeSelector(QWidget* parent):
     NodeSelector(SelectTypeSPtr(new MoveBackupType), parent)
-{
-    ui->fBackups->hide();
-    ui->fIncomingShares->hide();
-}
-
-void MoveBackupNodeSelector::createSpecialisedWidgets()
-{
-    addCloudDrive();
-    mCloudDriveWidget->setShowEmptyView(true);
-}
+{}
 
 void MoveBackupNodeSelector::onOkButtonClicked()
 {

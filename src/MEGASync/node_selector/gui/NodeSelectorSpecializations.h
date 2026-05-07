@@ -10,9 +10,6 @@ class UploadNodeSelector: public NodeSelector
 public:
     explicit UploadNodeSelector(QWidget* parent = 0);
 
-protected:
-    void createSpecialisedWidgets() override;
-
 private:
     void onOkButtonClicked() override;
 };
@@ -23,9 +20,6 @@ class DownloadNodeSelector: public NodeSelector
 
 public:
     explicit DownloadNodeSelector(QWidget* parent = 0);
-
-protected:
-    void createSpecialisedWidgets() override;
 
 private:
     void onOkButtonClicked() override;
@@ -38,9 +32,6 @@ class SyncNodeSelector: public NodeSelector
 public:
     explicit SyncNodeSelector(QWidget* parent = 0);
 
-protected:
-    void createSpecialisedWidgets() override;
-
 private:
     void onOkButtonClicked() override;
     bool isFullSync();
@@ -52,9 +43,6 @@ class StreamNodeSelector: public NodeSelector
 
 public:
     explicit StreamNodeSelector(QWidget* parent = 0);
-
-protected:
-    void createSpecialisedWidgets() override;
 
 private:
     void onOkButtonClicked() override;
@@ -73,7 +61,7 @@ public:
     static void sendStats();
 
 protected:
-    void createSpecialisedWidgets() override;
+    void afterWidgetsCreated() override;
     void onLanguageChangeEvent() override;
 
 protected slots:
@@ -121,9 +109,6 @@ class MoveBackupNodeSelector: public NodeSelector
 
 public:
     explicit MoveBackupNodeSelector(QWidget* parent = 0);
-
-protected:
-    void createSpecialisedWidgets() override;
 
 private:
     void onOkButtonClicked() override;

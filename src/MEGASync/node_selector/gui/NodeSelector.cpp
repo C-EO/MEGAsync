@@ -83,7 +83,6 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     connect(ui->fSearch, &TabSelector::hidden, this, &NodeSelector::onfShowSearchHidden);
 
     ui->wSearch->hide();
-    ui->fRubbish->hide();
 
     updateNodeSelectorTabs();
     onOptionSelected(CLOUD_DRIVE);
@@ -1042,6 +1041,64 @@ void NodeSelector::onNodesUpdate(mega::MegaApi* api, mega::MegaNodeList* nodes)
             {
                 wid->onNodesUpdate(api, nodes);
             }
+        }
+    }
+}
+
+void NodeSelector::createSpecialisedWidgets()
+{
+    const QList<QPair<TabType, TabSelector*>> tabOrder = {
+        {TabType::CLOUD_DRIVE, ui->fCloudDrive},
+        {TabType::INCOMING_SHARE, ui->fIncomingShares},
+        {TabType::BACKUP, ui->fBackups},
+        {TabType::RUBBISH, ui->fRubbish},
+    };
+
+    auto allowed = mSelectType->allowedTabTypes();
+
+    for (const auto& [type, button]: tabOrder)
+    {
+        if (allowed & type)
+        {
+            button->show();
+            addWidgetForTabType(type);
+        }
+        else
+        {
+            button->hide();
+        }
+    }
+
+    afterWidgetsCreated();
+}
+
+void NodeSelector::addWidgetForTabType(TabType type)
+{
+    switch (type)
+    {
+        case TabType::CLOUD_DRIVE:
+        {
+            addCloudDrive();
+            break;
+        }
+        case TabType::INCOMING_SHARE:
+        {
+            addIncomingShares();
+            break;
+        }
+        case TabType::BACKUP:
+        {
+            addBackups();
+            break;
+        }
+        case TabType::RUBBISH:
+        {
+            addRubbish();
+            break;
+        }
+        default:
+        {
+            break;
         }
     }
 }
