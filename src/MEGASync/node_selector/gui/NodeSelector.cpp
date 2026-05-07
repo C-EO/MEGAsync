@@ -481,6 +481,14 @@ bool NodeSelector::event(QEvent* event)
         resetButtonsText();
         updateNodeSelectorTabs();
         onLanguageChangeEvent();
+        if (auto widg = getCurrentTreeViewWidget())
+        {
+            if (mSelectType)
+            {
+                mSelectType->updateCustomButtonsText(widg);
+            }
+            refreshHeader(widg);
+        }
     }
 
     return QDialog::event(event);

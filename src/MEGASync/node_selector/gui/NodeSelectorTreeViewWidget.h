@@ -4,6 +4,7 @@
 #include "ButtonIconManager.h"
 #include "megaapi.h"
 #include "NodeSelectorModel.h"
+#include "NodeSelectorNavigation.h"
 #include "NodeSelectorSelectTypes.h"
 #include "NodeSelectorTabTypes.h"
 #include "QTMegaListener.h"
@@ -32,19 +33,6 @@ class NodeSelectorTreeViewWidget;
 class NodeSelectorTreeViewWidget: public QWidget
 {
     Q_OBJECT
-
-    struct Navigation
-    {
-        QList<mega::MegaHandle> forwardHandles = QList<mega::MegaHandle>();
-        QList<mega::MegaHandle> backwardHandles = QList<mega::MegaHandle>();
-
-        void removeFromForward(const mega::MegaHandle& handle);
-        void remove(const mega::MegaHandle& handle);
-
-        void appendToBackward(const mega::MegaHandle& handle);
-        void appendToForward(const mega::MegaHandle& handle);
-        void clear();
-    };
 
 public:
     static const int LOADING_VIEW_THRESSHOLD;
@@ -194,7 +182,7 @@ protected:
     Ui::NodeSelectorTreeViewWidget* ui;
     std::shared_ptr<NodeSelectorProxyModel> mProxyModel;
     std::unique_ptr<NodeSelectorModel> mModel;
-    Navigation mNavigationInfo;
+    NodeSelectorNavigation mNavigation;
     mega::MegaApi* mMegaApi;
     SelectTypeSPtr mSelectType;
 
@@ -215,8 +203,6 @@ private slots:
     void onRenameClicked();
     void onGenMEGALinkClicked(const QList<mega::MegaHandle>& handles);
     virtual void onItemDoubleClick(const QModelIndex& index);
-    void onGoForwardClicked();
-    void onGoBackClicked();
     void onRemoveIndexFromGoBack(const QModelIndex& index);
     void onSectionResized();
     void onUiBlocked(bool state);

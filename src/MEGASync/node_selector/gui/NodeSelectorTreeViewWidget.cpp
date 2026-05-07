@@ -26,6 +26,7 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     ui(new Ui::NodeSelectorTreeViewWidget),
     mProxyModel(nullptr),
     mModel(nullptr),
+    mNavigation(MegaSyncApp->getMegaApi()),
     mMegaApi(MegaSyncApp->getMegaApi()),
     mSelectType(mode),
     mManuallyResizedColumn(false),
@@ -175,11 +176,6 @@ bool NodeSelectorTreeViewWidget::event(QEvent* event)
     if (event->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        if (mSelectType)
-        {
-            mSelectType->updateCustomButtonsText(this);
-        }
-        notifyViewStateChanged();
         initEmptyMessages();
 
         if (mModel && mProxyModel && mSelectType)
@@ -311,17 +307,17 @@ NodeSelectorProxyModel* NodeSelectorTreeViewWidget::getProxyModel()
 
 bool NodeSelectorTreeViewWidget::canGoBack() const
 {
-    return !mNavigationInfo.backwardHandles.isEmpty();
+    return mNavigation.canGoBack();
 }
 
 bool NodeSelectorTreeViewWidget::canGoForward() const
 {
-    return !mNavigationInfo.forwardHandles.isEmpty();
+    return mNavigation.canGoForward();
 }
 
 bool NodeSelectorTreeViewWidget::shouldShowNavigationButtons() const
 {
-    return !mNavigationInfo.backwardHandles.isEmpty() || !mNavigationInfo.forwardHandles.isEmpty();
+    return mNavigation.shouldShowNavigationButtons();
 }
 
 bool NodeSelectorTreeViewWidget::isNewFolderButtonVisible() const
@@ -358,29 +354,51 @@ void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)
 
 void NodeSelectorTreeViewWidget::goBack()
 {
-    if (!mNavigationInfo.backwardHandles.isEmpty() && !mUiBlocked)
+    if (mUiBlocked)
     {
-        onGoBackClicked();
+        return;
+    }
+
+    const auto targetHandle = mNavigation.goBack(getHandleByIndex(ui->tMegaFolders->rootIndex()));
+    if (!targetHandle.has_value())
+    {
+        return;
+    }
+
+    const auto rootIndex = ui->tMegaFolders->rootIndex();
+    setRootIndex(getIndexFromHandle(*targetHandle));
+
+    if (rootIndex.isValid())
+    {
+        selectIndex(rootIndex, true, true);
     }
 }
 
 void NodeSelectorTreeViewWidget::goForward()
 {
-    if (!mNavigationInfo.forwardHandles.isEmpty() && !mUiBlocked)
+    if (mUiBlocked)
     {
-        onGoForwardClicked();
+        return;
     }
+
+    const auto targetHandle =
+        mNavigation.goForward(getHandleByIndex(ui->tMegaFolders->rootIndex()));
+    if (!targetHandle.has_value())
+    {
+        return;
+    }
+
+    setRootIndex(getIndexFromHandle(*targetHandle));
+    selectionHasChanged(ui->tMegaFolders->selectedRows());
 }
 
 void NodeSelectorTreeViewWidget::mousePressEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::BackButton && !mNavigationInfo.backwardHandles.isEmpty() &&
-        !mUiBlocked)
+    if (event->button() == Qt::BackButton && mNavigation.canGoBack() && !mUiBlocked)
     {
         goBack();
     }
-    else if (event->button() == Qt::ForwardButton && !mNavigationInfo.forwardHandles.isEmpty() &&
-             !mUiBlocked)
+    else if (event->button() == Qt::ForwardButton && mNavigation.canGoForward() && !mUiBlocked)
     {
         goForward();
     }
@@ -562,24 +580,6 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
     checkViewOnModelChange();
 }
 
-void NodeSelectorTreeViewWidget::onGoBackClicked()
-{
-    auto rootIndex(ui->tMegaFolders->rootIndex());
-    auto rootIndexHandle(getHandleByIndex(rootIndex));
-    if (rootIndexHandle != mega::INVALID_HANDLE)
-    {
-        mNavigationInfo.appendToForward(rootIndexHandle);
-    }
-    QModelIndex indexToGo = getIndexFromHandle(mNavigationInfo.backwardHandles.last());
-
-    setRootIndex(indexToGo);
-
-    if (rootIndex.isValid())
-    {
-        selectIndex(rootIndex, true, true);
-    }
-}
-
 void NodeSelectorTreeViewWidget::onRemoveIndexFromGoBack(const QModelIndex& indexToRemove)
 {
     if (indexToRemove.isValid())
@@ -596,7 +596,7 @@ void NodeSelectorTreeViewWidget::onRemoveIndexFromGoBack(const QModelIndex& inde
             else
             {
                 setRootIndex(mModel->hasTopRootIndex() ? mProxyModel->index(0, 0) : QModelIndex());
-                mNavigationInfo.backwardHandles.clear();
+                mNavigation.clearBackward();
             }
         };
 
@@ -609,22 +609,12 @@ void NodeSelectorTreeViewWidget::onRemoveIndexFromGoBack(const QModelIndex& inde
             // If the index is in the list of backward handles
             // set the parent as root index and remove the parent from the list of backward handles
             auto indexHandleToRemove(getHandleByIndex(indexToRemove));
-            auto handlePos(mNavigationInfo.backwardHandles.indexOf(indexHandleToRemove));
-            if (handlePos >= 0)
+            if (mNavigation.hasBackwardHandle(indexHandleToRemove))
             {
                 changeRootIndex(indexToRemove);
             }
         }
     }
-}
-
-void NodeSelectorTreeViewWidget::onGoForwardClicked()
-{
-    mNavigationInfo.appendToBackward(getHandleByIndex(ui->tMegaFolders->rootIndex()));
-    QModelIndex indexToGo = getIndexFromHandle(mNavigationInfo.forwardHandles.last());
-    mNavigationInfo.forwardHandles.removeLast();
-    setRootIndex(indexToGo);
-    selectionHasChanged(ui->tMegaFolders->selectedRows());
 }
 
 MegaHandle NodeSelectorTreeViewWidget::getHandleByIndex(const QModelIndex& idx)
@@ -670,8 +660,8 @@ void NodeSelectorTreeViewWidget::onItemDoubleClick(const QModelIndex& index)
         return;
     }
 
-    mNavigationInfo.appendToBackward(getHandleByIndex(ui->tMegaFolders->rootIndex()));
-    mNavigationInfo.removeFromForward(mProxyModel->getHandle(index));
+    mNavigation.onNavigateInto(getHandleByIndex(ui->tMegaFolders->rootIndex()),
+                               mProxyModel->getHandle(index));
 
     setRootIndex(index);
 }
@@ -742,8 +732,7 @@ void NodeSelectorTreeViewWidget::onSelectionChanged(const QItemSelection& select
 
 void NodeSelectorTreeViewWidget::onModelModified()
 {
-    const bool rootDeleted =
-        !ui->tMegaFolders->rootIndex().isValid() && !mNavigationInfo.backwardHandles.isEmpty();
+    const bool rootDeleted = !ui->tMegaFolders->rootIndex().isValid() && mNavigation.canGoBack();
 
     if (rootDeleted)
     {
@@ -1362,13 +1351,8 @@ void NodeSelectorTreeViewWidget::removeItemByHandle(mega::MegaHandle handle)
 
             onRemoveIndexFromGoBack(proxyIndex);
 
-            if (mNavigationInfo.forwardHandles.contains(handle))
-            {
-                mNavigationInfo.forwardHandles.removeLast();
-            }
-
             mProxyModel->deleteNode(proxyIndex);
-            mNavigationInfo.remove(handle);
+            mNavigation.onHandleRemoved(handle);
         }
     }
 }
@@ -1647,14 +1631,7 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
     }
 
     // Remove in case the rootindex is in the backward list
-    auto indexHandleToRemove(getHandleByIndex(node_column_idx));
-    auto handlePos(mNavigationInfo.backwardHandles.indexOf(indexHandleToRemove));
-    if (handlePos >= 0)
-    {
-        auto it = mNavigationInfo.backwardHandles.begin();
-        std::advance(it, handlePos);
-        mNavigationInfo.backwardHandles.erase(it, mNavigationInfo.backwardHandles.end());
-    }
+    mNavigation.onRootChanged(getHandleByIndex(node_column_idx));
 
     onRootIndexChanged(node_column_idx);
     setEmptyFolderPage();
@@ -1724,73 +1701,4 @@ QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelInde
 void NodeSelectorTreeViewWidget::onGenMEGALinkClicked(const QList<mega::MegaHandle>& handles)
 {
     MegaSyncApp->exportNodes(handles);
-}
-
-void NodeSelectorTreeViewWidget::Navigation::removeFromForward(const mega::MegaHandle& handle)
-{
-    if (forwardHandles.isEmpty())
-        return;
-
-    auto megaApi = MegaSyncApp->getMegaApi();
-    auto p_node = std::unique_ptr<mega::MegaNode>(megaApi->getNodeByHandle(handle));
-
-    QMap<MegaHandle, MegaHandle> parentHandles;
-    while (p_node)
-    {
-        MegaHandle actualHandle = p_node->getHandle();
-        p_node.reset(megaApi->getParentNode(p_node.get()));
-        MegaHandle parentHandle = INVALID_HANDLE;
-        if (p_node)
-            parentHandle = p_node->getHandle();
-        parentHandles.insert(parentHandle, actualHandle);
-    }
-
-    p_node.reset(megaApi->getNodeByHandle(forwardHandles.last()));
-    QMap<MegaHandle, MegaHandle> actualListParentHandles;
-    while (p_node)
-    {
-        MegaHandle actualHandle = p_node->getHandle();
-        p_node.reset(megaApi->getParentNode(p_node.get()));
-        MegaHandle parentHandle = INVALID_HANDLE;
-        if (p_node)
-            parentHandle = p_node->getHandle();
-        actualListParentHandles.insert(parentHandle, actualHandle);
-    }
-
-    for (auto it = actualListParentHandles.begin(); it != actualListParentHandles.end(); ++it)
-    {
-        if (parentHandles.contains(it.key()))
-        {
-            forwardHandles.clear();
-            return;
-        }
-    }
-}
-
-void NodeSelectorTreeViewWidget::Navigation::remove(const mega::MegaHandle& handle)
-{
-    backwardHandles.removeAll(handle);
-    int forwardPos = static_cast<int>(forwardHandles.indexOf(handle));
-    for (int i = 0; i <= forwardPos; i++)
-    {
-        forwardHandles.removeFirst();
-    }
-}
-
-void NodeSelectorTreeViewWidget::Navigation::appendToBackward(const mega::MegaHandle& handle)
-{
-    if (!backwardHandles.contains(handle))
-        backwardHandles.append(handle);
-}
-
-void NodeSelectorTreeViewWidget::Navigation::appendToForward(const mega::MegaHandle& handle)
-{
-    if (!forwardHandles.contains(handle))
-        forwardHandles.append(handle);
-}
-
-void NodeSelectorTreeViewWidget::Navigation::clear()
-{
-    backwardHandles.clear();
-    forwardHandles.clear();
 }
