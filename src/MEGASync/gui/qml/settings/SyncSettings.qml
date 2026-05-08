@@ -35,11 +35,27 @@ Item {
     readonly property int switchButtonSeparator: 12
 
     ColumnLayout {
+        id: noDataModelContentLayout
+
+        visible: syncSettingsModel.rowCount() === 0
+        anchors.fill: parent
+        anchors.topMargin: defaultTopMargin
+        spacing: syncTableSpacing
+
+        Rectangle {
+            color: "red"
+            width: 50
+            height: 50
+        }
+    }
+
+    ColumnLayout {
         id: content
 
         anchors.fill: parent
         anchors.topMargin: defaultTopMargin
         spacing: syncTableSpacing
+        visible: syncSettingsModel.rowCount() > 0
 
         Row {
             id: syncsColumnsLabels
