@@ -156,15 +156,43 @@ void NodeRowDelegate::paint(QPainter* painter,
 
 QPixmap NodeRowDelegate::paintForDrag(const QModelIndex& index, QAbstractItemView* view) const
 {
+    if (!view || !index.isValid())
+    {
+        return {};
+    }
+
     QRect rect = view->visualRect(index);
+    if (!rect.isValid() || rect.isEmpty())
+    {
+        QStyleOptionViewItem fallbackOption;
+        fallbackOption.initFrom(view);
+        fallbackOption.widget = view;
+        initStyleOption(&fallbackOption, index);
+
+        const auto hint = sizeHint(fallbackOption, index);
+        if (!hint.isValid() || hint.isEmpty())
+        {
+            return {};
+        }
+
+        rect = QRect(QPoint(0, 0), hint);
+    }
+
     // Limit the width to 400px max
-    rect.setWidth(std::min(rect.width(), 400));
+    rect.setWidth(std::max(1, std::min(rect.width(), 400)));
+    rect.setHeight(std::max(1, rect.height()));
+
     QPixmap pixmap(rect.size());
     pixmap.fill(Qt::transparent);
+    if (pixmap.isNull())
+    {
+        return {};
+    }
 
     QStyleOptionViewItem option;
     option.initFrom(view);
     option.widget = view;
+    initStyleOption(&option, index);
     option.rect = QRect(0, 0, rect.width(), rect.height());
     option.decorationPosition = QStyleOptionViewItem::Left;
     option.decorationAlignment = Qt::AlignCenter;
@@ -174,6 +202,10 @@ QPixmap NodeRowDelegate::paintForDrag(const QModelIndex& index, QAbstractItemVie
         view->style()->styleHint(QStyle::SH_ItemView_ShowDecorationSelected, nullptr, view);
 
     QPainter painter(&pixmap);
+    if (!painter.isActive())
+    {
+        return {};
+    }
 
     QPainterPath path;
     auto backgroundRect(option.rect);

@@ -1073,10 +1073,17 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
     mModel->setCurrentRootIndex(mProxyModel->mapToSource(node_column_idx));
     ui->tMegaFolders->setRootIndex(node_column_idx);
     ui->tMegaFolders->setRootIndexReadOnly(isCurrentRootIndexReadOnly());
-    if (ui->tMegaFolders->rootIndex().isValid())
+    if (auto selectionModel = ui->tMegaFolders->selectionModel())
     {
-        ui->tMegaFolders->selectionModel()->select(ui->tMegaFolders->rootIndex(),
-                                                   QItemSelectionModel::ClearAndSelect);
+        selectionModel->clearSelection();
+
+        auto currentIndex = ui->tMegaFolders->rootIndex();
+        if (mProxyModel->rowCount(currentIndex) > 0)
+        {
+            currentIndex = mProxyModel->index(0, NodeSelectorModel::Column::NODE, currentIndex);
+        }
+
+        selectionModel->setCurrentIndex(currentIndex, QItemSelectionModel::NoUpdate);
     }
 
     // Remove in case the rootindex is in the backward list
@@ -1120,6 +1127,10 @@ void NodeSelectorTreeViewWidget::setEmptyFolderPage()
     if (ui->stackedWidget->currentWidget() != ui->treeViewPage)
     {
         ui->stackedWidget->currentWidget()->setFocus(Qt::OtherFocusReason);
+    }
+    else
+    {
+        ui->tMegaFolders->setFocus(Qt::OtherFocusReason);
     }
 }
 
