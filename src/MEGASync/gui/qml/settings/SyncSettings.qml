@@ -193,6 +193,9 @@ Item {
         }
     }
 
+    /*
+      sync elements in the list.
+    */
     Component {
         id: syncComponent
 

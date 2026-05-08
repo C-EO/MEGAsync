@@ -127,7 +127,7 @@ QtObject {
 
     readonly property url folder_search_small_thin_outline: "qrc:/folder-search_small_thin_outline.svg"
     readonly property url sync_01_small_thin_outline: "qrc:/sync-01_small_thin_outline.svg"
-
+    readonly property url check_medium_regular_solid: "qrc:/check_medium_regular_solid.svg"
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //   Standard Icons

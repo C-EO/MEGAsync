@@ -124,5 +124,6 @@
         <file alias="tag-01-medium-thin-outline.svg">images/themed/tokenizable/tag-01-medium-thin-outline.svg</file>
         <file alias="folder-search_small_thin_outline.svg">images/qml/folder-search_small_thin_outline.svg</file>
         <file alias="sync-01_small_thin_outline.svg">images/qml/sync-01_small_thin_outline.svg</file>
+        <file alias="check_medium_regular_solid.svg">images/qml/check_medium_regular_solid.svg</file>
     </qresource>
 </RCC>
