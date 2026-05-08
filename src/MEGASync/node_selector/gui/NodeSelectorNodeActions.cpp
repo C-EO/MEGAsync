@@ -103,7 +103,7 @@ void NodeSelectorNodeActions::deleteNodes(const QList<mega::MegaHandle>& handles
                     "NodeSelectorTreeViewWidget",
                     "You are about to permanently delete %n file. Would you like to proceed?",
                     nullptr,
-                    static_cast<int>(handles.size()));
+                    int(handles.size()));
             }
             else if (type == Utilities::HandlesType::FOLDERS)
             {
@@ -111,7 +111,7 @@ void NodeSelectorNodeActions::deleteNodes(const QList<mega::MegaHandle>& handles
                     "NodeSelectorTreeViewWidget",
                     "You are about to permanently delete %n folder. Would you like to proceed?",
                     nullptr,
-                    static_cast<int>(handles.size()));
+                    int(handles.size()));
             }
             else
             {
@@ -119,7 +119,7 @@ void NodeSelectorNodeActions::deleteNodes(const QList<mega::MegaHandle>& handles
                     "NodeSelectorTreeViewWidget",
                     "You are about to permanently delete %n items. Would you like to proceed?",
                     nullptr,
-                    static_cast<int>(handles.size()));
+                    int(handles.size()));
             }
         }
         else
@@ -143,7 +143,7 @@ void NodeSelectorNodeActions::deleteNodes(const QList<mega::MegaHandle>& handles
                 msgInfo.titleText = QCoreApplication::translate("NodeSelectorTreeViewWidget",
                                                                 "Move %n items to Rubbish bin?",
                                                                 nullptr,
-                                                                static_cast<int>(handles.size()));
+                                                                int(handles.size()));
             }
         }
 
@@ -173,13 +173,13 @@ void NodeSelectorNodeActions::leaveShare(const QList<mega::MegaHandle>& handles)
         QCoreApplication::translate("NodeSelectorTreeViewWidget", "Don\u2019t leave"));
     msgInfo.titleText = QCoreApplication::translate("NodeSelectorTreeViewWidget",
                                                     "Leave this shared folder?",
-                                                    nullptr,
-                                                    static_cast<int>(handles.size()));
+                                                    "",
+                                                    int(handles.size()));
     msgInfo.descriptionText = QCoreApplication::translate(
         "NodeSelectorTreeViewWidget",
         "If you leave the folder, you will not be able to see it again.",
-        nullptr,
-        static_cast<int>(handles.size()));
+        "",
+        int(handles.size()));
     msgInfo.finishFunc = [model = mModel, handles](QPointer<MessageDialogResult> msg)
     {
         if (msg->result() == QMessageBox::Yes)

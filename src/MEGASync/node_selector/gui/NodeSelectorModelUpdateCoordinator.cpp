@@ -1,5 +1,6 @@
 #include "NodeSelectorModelUpdateCoordinator.h"
 
+#include "NodeSelectorMergeTargetUtils.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorProxyModel.h"
 #include "NodeSelectorTreeView.h"
@@ -99,10 +100,10 @@ bool NodeSelectorModelUpdateCoordinator::onNodesUpdate(mega::MegaNodeList* nodes
                                 mRemoveMovedNodes.append(UpdateNodesInfo(node, index));
                             }
 
-                            if (mMergeTargetFolders.isEmpty() ||
-                                mMergeTargetFolders.key(node->getParentHandle(),
-                                                        mega::INVALID_HANDLE) ==
-                                    mega::INVALID_HANDLE)
+                            if (!NodeSelectorMergeTargetUtils::isNodeInsideMergeTargetSubtree(
+                                    mMegaApi,
+                                    mMergeTargetFolders,
+                                    node))
                             {
                                 mUpdatedButInvisibleNodes.append(UpdateNodesInfo(node, index));
                             }

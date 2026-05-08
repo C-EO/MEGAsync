@@ -4894,30 +4894,9 @@ Enter a different name.</translation>
         <translation>Empty Rubbish bin</translation>
     </message>
     <message>
-        <source>Folder is empty</source>
-        <translatorcomment>Message on the view when there are no items in a folder. SNC-5804</translatorcomment>
-        <translation>Folder is empty</translation>
-    </message>
-    <message numerus="yes">
-        <source>If you leave the folder, you will not be able to see it again.</source>
-        <translatorcomment>Body of the confirmation messagebox to leave an inshared folder. CON-1255</translatorcomment>
-        <translation>
-            <numerusform>If you leave the folder, you will not be able to see it again.</numerusform>
-            <numerusform>If you leave these folders, you will not be able to see them again.</numerusform>
-        </translation>
-    </message>
-    <message>
         <source>Leave</source>
         <translatorcomment>Button text to accept the confirm messagebox when leaving a inshared folder</translatorcomment>
         <translation>Leave</translation>
-    </message>
-    <message numerus="yes">
-        <source>Leave this shared folder?</source>
-        <translatorcomment>Title of the confirmation messagebox to leave an inshared folder. CON-1255</translatorcomment>
-        <translation>
-            <numerusform>Leave this shared folder?</numerusform>
-            <numerusform>Leave these shared folders?</numerusform>
-        </translation>
     </message>
     <message>
         <source>Move</source>
@@ -4928,19 +4907,6 @@ Enter a different name.</translation>
         <source>Move %1 to Rubbish bin?</source>
         <translatorcomment>Main text of the confirmation messagebox to move a single item (file or folder) pto the rubbish bin. %1 is the name of the item to delete. CON-334</translatorcomment>
         <translation>Move %1 to Rubbish bin?</translation>
-    </message>
-    <message numerus="yes">
-        <source>Move %n items to Rubbish bin?</source>
-        <translatorcomment>Main text of the confirmation messagebox to move some items (files or folders) pto the rubbish bin. %n is the number of items to delete. CON-334</translatorcomment>
-        <translation>
-            <numerusform>Move %n item to Rubbish bin?</numerusform>
-            <numerusform>Move %n items to Rubbish bin?</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>New folder</source>
-        <translatorcomment>Button label to create a New folder at your MEGA cloud drive. Keep capital letters. String as short as possible.</translatorcomment>
-        <translation>New folder</translation>
     </message>
     <message>
         <source>No folders to select</source>
@@ -4953,9 +4919,24 @@ Enter a different name.</translation>
         <translation>OK</translation>
     </message>
     <message>
+        <source>You cannot undo this action</source>
+        <translatorcomment>Second part of the messagebox text when the user is about to remove permanently a node. SAT-426</translatorcomment>
+        <translation>You cannot undo this action</translation>
+    </message>
+    <message>
+        <source>No folders to select</source>
+        <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Only folders can be synced</source>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
-        <translation>Only folders can be synced</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder is empty</source>
+        <translatorcomment>Message on the view when there are no items in a folder. SNC-5804</translatorcomment>
+        <translation>Folder is empty</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -4981,11 +4962,38 @@ Enter a different name.</translation>
             <numerusform>You are about to permanently delete %n items. Would you like to proceed?</numerusform>
         </translation>
     </message>
-    <message>
-        <source>You cannot undo this action</source>
-        <translatorcomment>Second part of the messagebox text when the user is about to remove permanently a node. SAT-426</translatorcomment>
-        <translation>You cannot undo this action</translation>
+    <message numerus="yes">
+        <source>Move %n items to Rubbish bin?</source>
+        <translatorcomment>Main text of the confirmation messagebox to move some items (files or folders) pto the rubbish bin. %n is the number of items to delete. CON-334</translatorcomment>
+        <translation>
+            <numerusform>Move %n item to Rubbish bin?</numerusform>
+            <numerusform>Move %n items to Rubbish bin?</numerusform>
+        </translation>
     </message>
+    <message numerus="yes">
+        <source>Leave this shared folder?</source>
+        <translatorcomment>Title of the confirmation messagebox to leave an inshared folder. CON-1255</translatorcomment>
+        <translation>
+            <numerusform>Leave this shared folder?</numerusform>
+            <numerusform>Leave these shared folders?</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>If you leave the folder, you will not be able to see it again.</source>
+        <translatorcomment>Body of the confirmation messagebox to leave an inshared folder. CON-1255</translatorcomment>
+        <translation>
+            <numerusform>If you leave the folder, you will not be able to see it again.</numerusform>
+            <numerusform>If you leave these folders, you will not be able to see them again.</numerusform>
+        </translation>
+    </message>
+<<<<<<< HEAD
+=======
+    <message>
+        <source>New Folder</source>
+        <translatorcomment>Button label to create a New folder at your MEGA cloud drive. Keep capital letters. String as short as possible.</translatorcomment>
+        <translation>New folder</translation>
+    </message>
+>>>>>>> 5abd12cdd (Create selection class)
 </context>
 <context>
     <name>NodeSelectorTreeViewWidgetBackups</name>

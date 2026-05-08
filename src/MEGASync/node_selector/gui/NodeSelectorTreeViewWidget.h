@@ -7,6 +7,7 @@
 #include "NodeSelectorModelUpdateCoordinator.h"
 #include "NodeSelectorNavigation.h"
 #include "NodeSelectorNodeActions.h"
+#include "NodeSelectorSelectionCoordinator.h"
 #include "NodeSelectorSelectTypes.h"
 #include "NodeSelectorTabTypes.h"
 #include "QTMegaListener.h"
@@ -101,11 +102,7 @@ public:
     void goBack();
     void goForward();
 
-    struct NewFolderInfo
-    {
-        mega::MegaHandle handle = mega::INVALID_HANDLE;
-        bool recentlyAdded = false;
-    };
+    using NewFolderInfo = NodeSelectorSelectionCoordinator::NewFolderInfo;
 
     void setNewFolderInfo(const NewFolderInfo& newNewFolderInfo);
 
@@ -182,6 +179,7 @@ protected:
     Ui::NodeSelectorTreeViewWidget* ui;
     std::shared_ptr<NodeSelectorProxyModel> mProxyModel;
     std::unique_ptr<NodeSelectorModel> mModel;
+    std::unique_ptr<NodeSelectorSelectionCoordinator> mSelectionCoordinator;
     std::unique_ptr<NodeSelectorModelUpdateCoordinator> mModelUpdateCoordinator;
     NodeSelectorNavigation mNavigation;
     NodeSelectorNodeActions mNodeActions;
@@ -209,8 +207,6 @@ private slots:
     void onSectionResized();
     void onUiBlocked(bool state);
     void processCachedNodesUpdated();
-    void onItemsMoved();
-    void onNodesAdded(const QList<QPointer<NodeSelectorModelItem>>& itemsAdded);
 
 private:
     bool mManuallyResizedColumn;
@@ -246,10 +242,6 @@ private:
 
     void checkOkButton(const QModelIndexList& selected);
 
-    // Expand and select
-    void expandPendingIndexes();
-    void resetMoveNodesToSelect();
-
     // Empty messages
     void initEmptyMessages();
 
@@ -263,19 +255,10 @@ private:
     bool mWasEmpty;
     bool mNewFolderButtonVisible = true;
 
-    // Select when moving finished
-    QSet<mega::MegaHandle> mMovedHandlesToSelect;
-
     // Containers used to ignore specific nodes updates
-    QSet<mega::MegaHandle> mParentOfRestoredNodes;
-    QMultiHash<SourceHandle, TargetHandle> mMergeTargetFolders;
     QSet<mega::MegaHandle> mNodesToBeReplaced;
 
     QTimer mNodesUpdateTimer;
-
-    void checkNewFolderAdded(QPointer<NodeSelectorModelItem> item);
-
-    NewFolderInfo mNewFolderInfo;
 
     friend class DownloadType;
     friend class SyncType;
