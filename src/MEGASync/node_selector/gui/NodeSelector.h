@@ -23,6 +23,7 @@ class NodeSelectorTreeViewWidgetIncomingShares;
 class NodeSelectorTreeViewWidgetBackups;
 class NodeSelectorTreeViewWidgetSearch;
 class NodeSelectorTreeViewWidgetRubbish;
+class IncomingShareHeaderWidget;
 class DuplicatedNodeDialog;
 class QPushButton;
 struct ConflictTypes;
@@ -168,21 +169,7 @@ private slots:
     void onbNewFolderClicked();
 
 private:
-    struct IncomingShareHeaderInfo
-    {
-        QPixmap folderIcon;
-        QPixmap userIcon;
-        QPixmap accessIcon;
-        QString accessLabel;
-        QString folderName;
-        QString userName;
-        QString userEmail;
-        int accessType = -1;
-    };
-
-    QModelIndex getParentIncomingShareByIndex(QModelIndex idx) const;
     QString folderNameForWidget(NodeSelectorTreeViewWidget* wid) const;
-    IncomingShareHeaderInfo incomingInfoForWidget(NodeSelectorTreeViewWidget* wid) const;
     void applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid);
     void applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid);
     void applyHeaderButtonsState(NodeSelectorTreeViewWidget* wid);

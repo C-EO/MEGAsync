@@ -360,7 +360,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <height>16777215</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,2,0,0,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,1,0,0">
          <property name="spacing">
           <number>4</number>
          </property>
@@ -530,288 +530,13 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="incomingInfo" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>6</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QWidget" name="sh_folderNameInfo" native="true">
-              <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0,0">
-               <property name="spacing">
-                <number>8</number>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="IconLabel" name="sh_folderIcon">
-                 <property name="minimumSize">
-                  <size>
-                   <width>32</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>32</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string notr="true"/>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>32</width>
-                   <height>32</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="ElidingLabel" name="sh_folderName">
-                 <property name="text">
-                  <string notr="true"/>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QWidget" name="sh_accessContainer" native="true">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>18</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>18</height>
-                  </size>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">#sh_accessContainer[access = &quot;2&quot;]
-{
-background-color: #CFFCDB; /*colorToken.notification-success*/
-color: #007C3E; /*colorToken.text-success*/
-}
-
-#sh_accessContainer[access = &quot;1&quot;]
-{
-background-color: #DFF4FE; /*colorToken.notification-info*/
-color: #0078A4; /*colorToken.text-info*/
-}
-
-#sh_accessContainer[access = &quot;0&quot;]
-{
-background-color: #E4E4E5; /*colorToken.surface-3*/
-color: #616366; /*colorToken.text-secondary*/
-}</string>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_7">
-                  <property name="spacing">
-                   <number>1</number>
-                  </property>
-                  <property name="leftMargin">
-                   <number>4</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>3</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>4</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>3</number>
-                  </property>
-                  <item>
-                   <widget class="IconLabel" name="sh_accessIcon">
-                    <property name="minimumSize">
-                     <size>
-                      <width>12</width>
-                      <height>12</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>12</width>
-                      <height>12</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string notr="true"/>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="../../../gui/Resources_common.qrc">
-                      <normaloff>:/star_small_thin_outline</normaloff>:/star_small_thin_outline</iconset>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>12</width>
-                      <height>12</height>
-                     </size>
-                    </property>
-                    <property name="normal_off" stdset="0">
-                     <string notr="true">text-success</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="sh_accessLabel">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="text">
-                     <string notr="true"/>
-                    </property>
-                    <property name="font-size" stdset="0">
-                     <string notr="true">caption</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_7">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="shareeInfo" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_4">
-               <property name="spacing">
-                <number>4</number>
-               </property>
-               <property name="leftMargin">
-                <number>5</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item alignment="Qt::AlignLeft">
-                <widget class="IconLabel" name="sh_userIcon">
-                 <property name="minimumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string notr="true"/>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="ElidingLabel" name="sh_userName">
-                 <property name="text">
-                  <string notr="true"/>
-                 </property>
-                 <property name="font-size" stdset="0">
-                  <string notr="true">caption</string>
-                 </property>
-                 <property name="semibold" stdset="0">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="sh_separator">
-                 <property name="text">
-                  <string notr="true">∙</string>
-                 </property>
-                 <property name="font-size" stdset="0">
-                  <string notr="true">caption</string>
-                 </property>
-                </widget>
-               </item>
-               <item alignment="Qt::AlignLeft">
-                <widget class="QLabel" name="sh_userEmail">
-                 <property name="text">
-                  <string notr="true"/>
-                 </property>
-                 <property name="font-size" stdset="0">
-                  <string notr="true">caption</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
+          <widget class="IncomingShareHeaderWidget" name="incomingShareWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
           </widget>
          </item>
          <item>
@@ -992,14 +717,14 @@ color: #616366; /*colorToken.text-secondary*/
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ElidingLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/ElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>TokenizableToolButton</class>
    <extends>QToolButton</extends>
    <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
-  </customwidget>
-  <customwidget>
-   <class>IconLabel</class>
-   <extends>QToolButton</extends>
-   <header>tokenizer/TokenizableItems/IconLabel.h</header>
   </customwidget>
   <customwidget>
    <class>TabSelector</class>
@@ -1008,14 +733,15 @@ color: #616366; /*colorToken.text-secondary*/
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ElidingLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/ElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>SearchLineEdit</class>
    <extends>QFrame</extends>
    <header>SearchLineEdit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>IncomingShareHeaderWidget</class>
+   <extends>QWidget</extends>
+   <header>IncomingShareHeaderWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

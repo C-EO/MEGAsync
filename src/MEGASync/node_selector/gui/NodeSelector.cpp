@@ -2,6 +2,7 @@
 
 #include "DialogOpener.h"
 #include "DuplicatedNodeDialog.h"
+#include "IncomingShareHeaderWidget.h"
 #include "megaapi.h"
 #include "MegaApplication.h"
 #include "MegaNodeNames.h"
@@ -18,6 +19,7 @@
 #include "ViewLoadingScene.h"
 
 #include <QKeyEvent>
+#include <QLayout>
 #include <QMessageBox>
 #include <QPointer>
 #include <QShortcut>
@@ -25,8 +27,6 @@
 #include <optional>
 
 using namespace mega;
-
-constexpr auto ACCESS_PROPERTY = "access";
 
 NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     QDialog(parent),
@@ -133,7 +133,7 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
             });
     connect(ui->leSearchTool, &SearchLineEdit::search, this, &NodeSelector::onSearch);
 
-    ui->incomingInfo->hide();
+    ui->incomingShareWidget->hide();
 
     resize(1024, 720);
     setMinimumSize(760, 400);
@@ -301,46 +301,6 @@ QString NodeSelector::folderNameForWidget(NodeSelectorTreeViewWidget* wid) const
     }
 }
 
-NodeSelector::IncomingShareHeaderInfo
-    NodeSelector::incomingInfoForWidget(NodeSelectorTreeViewWidget* wid) const
-{
-    IncomingShareHeaderInfo incomingInfo;
-
-    if (!wid)
-    {
-        return incomingInfo;
-    }
-
-    const auto rootIndex = wid->getCurrentRootIndex();
-    incomingInfo.folderName = rootIndex.isValid() ? rootIndex.data(Qt::DisplayRole).toString() :
-                                                    MegaNodeNames::getIncomingSharesName();
-    incomingInfo.folderIcon =
-        rootIndex.isValid() ?
-            qvariant_cast<QPixmap>(rootIndex.data(Qt::DecorationRole)) :
-            Utilities::getIcon(QLatin1String("folder-users"),
-                               Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                   Utilities::AttributeType::OUTLINE)
-                .pixmap(32, 32);
-
-    auto inShareIndex = getParentIncomingShareByIndex(rootIndex);
-    auto item = NodeSelectorModel::getItemByIndex(inShareIndex);
-    if (inShareIndex.isValid() && item)
-    {
-        inShareIndex = inShareIndex.sibling(inShareIndex.row(), NodeSelectorModel::Column::USER);
-        incomingInfo.userIcon = qvariant_cast<QPixmap>(inShareIndex.data(Qt::DecorationRole));
-
-        inShareIndex = inShareIndex.sibling(inShareIndex.row(), NodeSelectorModel::Column::ACCESS);
-        incomingInfo.accessIcon = qvariant_cast<QPixmap>(inShareIndex.data(Qt::DecorationRole));
-        incomingInfo.accessLabel = inShareIndex.data(Qt::DisplayRole).toString();
-        incomingInfo.accessType =
-            inShareIndex.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
-        incomingInfo.userEmail = item->getOwnerEmail();
-        incomingInfo.userName = item->getOwnerName();
-    }
-
-    return incomingInfo;
-}
-
 void NodeSelector::applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid)
 {
     if (!wid)
@@ -360,52 +320,20 @@ void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
         return;
     }
 
-    const auto showIncomingInfo = (wid == mIncomingSharesWidget);
+    const auto incomingInfo = wid->incomingShareHeaderData();
+    const auto showIncomingInfo = incomingInfo.has_value();
     ui->lFolderName->setText(folderNameForWidget(wid));
-    ui->incomingInfo->setVisible(showIncomingInfo);
+    ui->incomingShareWidget->setVisible(showIncomingInfo);
     ui->lFolderName->setVisible(!showIncomingInfo);
 
-    const auto incomingInfo = incomingInfoForWidget(wid);
-    ui->sh_folderIcon->setIcon(incomingInfo.folderIcon);
-    ui->sh_folderName->setText(incomingInfo.folderName);
-    ui->sh_userIcon->setIcon(incomingInfo.userIcon);
-    ui->sh_accessIcon->setIcon(incomingInfo.accessIcon);
-    ui->sh_accessLabel->setText(incomingInfo.accessLabel);
-    ui->sh_userName->setText(incomingInfo.userName);
-    ui->sh_userEmail->setText(incomingInfo.userEmail);
-
-    const auto hasAccessInfo = !incomingInfo.accessLabel.isEmpty();
-    const auto hasOwnerInfo = !incomingInfo.userName.isEmpty() || !incomingInfo.userEmail.isEmpty();
-    const auto showSeparator =
-        !incomingInfo.userName.isEmpty() && !incomingInfo.userEmail.isEmpty();
-
-    ui->sh_accessContainer->setVisible(hasAccessInfo);
-    ui->shareeInfo->setVisible(hasOwnerInfo);
-    ui->sh_userIcon->setVisible(hasOwnerInfo);
-    ui->sh_separator->setVisible(showSeparator);
-
-    ui->sh_accessContainer->setProperty(ACCESS_PROPERTY, incomingInfo.accessType);
-    if (incomingInfo.accessType == mega::MegaShare::ACCESS_FULL)
+    if (incomingInfo)
     {
-        ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
-                                       QLatin1String("support-success"));
-    }
-    else if (incomingInfo.accessType == mega::MegaShare::ACCESS_READ)
-    {
-        ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
-                                       QLatin1String("text-secondary"));
-    }
-    else if (incomingInfo.accessType == mega::MegaShare::ACCESS_READWRITE)
-    {
-        ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-info"));
+        ui->incomingShareWidget->setData(*incomingInfo);
     }
     else
     {
-        ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
-                                       QLatin1String("text-secondary"));
+        ui->incomingShareWidget->clear();
     }
-
-    ui->sh_accessContainer->setStyleSheet(ui->sh_accessContainer->styleSheet());
 }
 
 void NodeSelector::applyHeaderButtonsState(NodeSelectorTreeViewWidget* wid)
@@ -439,27 +367,6 @@ void NodeSelector::refreshHeader(NodeSelectorTreeViewWidget* wid)
     applyHeaderButtonsState(wid);
     applyNavigationButtonsState(wid);
     applyHeaderFolderInfoState(wid);
-}
-
-QModelIndex NodeSelector::getParentIncomingShareByIndex(QModelIndex idx) const
-{
-    while (idx.isValid())
-    {
-        if (auto item = NodeSelectorModel::getItemByIndex(idx))
-        {
-            if (item->getNode()->isInShare())
-            {
-                return idx;
-            }
-            idx = idx.parent();
-        }
-        else
-        {
-            idx = idx.parent();
-        }
-    }
-
-    return QModelIndex();
 }
 
 void NodeSelector::showDefaultUploadOption(bool show)

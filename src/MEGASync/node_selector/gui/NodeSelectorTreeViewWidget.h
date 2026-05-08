@@ -2,6 +2,7 @@
 #define NODESELECTORTREEVIEWWIDGET_H
 
 #include "ButtonIconManager.h"
+#include "IncomingShareHeaderWidget.h"
 #include "megaapi.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorModelUpdateCoordinator.h"
@@ -20,6 +21,7 @@
 #include <QWidget>
 
 #include <memory>
+#include <optional>
 
 class NodeSelectorProxyModel;
 class NodeSelectorModel;
@@ -69,7 +71,7 @@ public:
 
     void abort();
     NodeSelectorModelItem* rootItem();
-    QModelIndex getCurrentRootIndex();
+    QModelIndex getCurrentRootIndex() const;
     NodeSelectorProxyModel* getProxyModel();
     bool isInRootView() const;
     bool isEmpty() const;
@@ -106,6 +108,11 @@ public:
 
     void setNewFolderInfo(const NewFolderInfo& newNewFolderInfo);
 
+    virtual std::optional<IncomingShareHeaderData> incomingShareHeaderData() const
+    {
+        return std::nullopt;
+    }
+
 public slots:
     virtual void checkViewOnModelChange();
     void setLoadingSceneVisible(bool visible);
@@ -127,7 +134,7 @@ protected:
     bool event(QEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
     void selectionChanged(const QModelIndexList& selected);
-    QModelIndex getParentIncomingShareByIndex(QModelIndex idx);
+    QModelIndex getParentIncomingShareByIndex(QModelIndex idx) const;
 
     SelectTypeSPtr getSelectType()
     {

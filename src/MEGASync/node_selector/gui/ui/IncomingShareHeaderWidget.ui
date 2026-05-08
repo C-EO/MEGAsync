@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>IncomingShareHeaderWidget</class>
+ <widget class="QWidget" name="IncomingShareHeaderWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>480</width>
+    <height>66</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+    <horstretch>1</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string notr="true"/>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#accessContainer
+{
+border-radius: 4px;
+}
+
+
+#accessContainer[access=&quot;2&quot;]
+{
+background-color: #CFFCDB; /*colorToken.notification-success*/
+color: #007C3E; /*colorToken.text-success*/
+
+}
+
+#accessContainer[access=&quot;1&quot;]
+{
+background-color: #DFF4FE; /*colorToken.notification-info*/
+color: #0078A4; /*colorToken.text-info*/
+}
+
+#accessContainer[access=&quot;0&quot;]
+{
+background-color: #E4E4E5; /*colorToken.surface-3*/
+color: #616366; /*colorToken.text-secondary*/
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>6</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="folderLayout">
+     <property name="spacing">
+      <number>8</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="IconLabel" name="folderIcon">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ElidingLabel" name="folderName">
+       <property name="font-size" stdset="0">
+        <string notr="true">body-2</string>
+       </property>
+       <property name="bold" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="accessContainer">
+       <property name="access" stdset="0">
+        <number>-1</number>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>18</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>18</height>
+        </size>
+       </property>
+       <layout class="QHBoxLayout" name="accessLayout">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>3</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>3</number>
+        </property>
+        <item>
+         <widget class="IconLabel" name="accessIcon">
+          <property name="minimumSize">
+           <size>
+            <width>12</width>
+            <height>12</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>12</width>
+            <height>12</height>
+           </size>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>12</width>
+            <height>12</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="accessLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font-size" stdset="0">
+           <string notr="true">caption</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="folderSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QWidget" name="shareeInfo">
+     <layout class="QHBoxLayout" name="shareeLayout">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="IconLabel" name="userIcon">
+        <property name="minimumSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ElidingLabel" name="userName">
+        <property name="font-size" stdset="0">
+         <string notr="true">caption</string>
+        </property>
+        <property name="semibold" stdset="0">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="separator">
+        <property name="text">
+         <string notr="true">·</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ElidingLabel" name="userEmail">
+        <property name="font-size" stdset="0">
+         <string notr="true">caption</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="shareeSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>IconLabel</class>
+   <extends>QToolButton</extends>
+   <header>tokenizer/TokenizableItems/IconLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElidingLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/ElidedLabel.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

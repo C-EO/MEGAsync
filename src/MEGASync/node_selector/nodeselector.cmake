@@ -10,6 +10,7 @@ set(DESKTOP_APP_NODE_SELECTOR_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNavigation.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorModelUpdateCoordinator.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorMergeTargetUtils.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/IncomingShareHeaderWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNodeActions.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSelectionCoordinator.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeViewWidget.h
@@ -32,6 +33,7 @@ set(DESKTOP_APP_NODE_SELECTOR_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeView.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNavigation.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorModelUpdateCoordinator.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/IncomingShareHeaderWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNodeActions.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSelectionCoordinator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeViewWidget.cpp
@@ -45,6 +47,7 @@ set(DESKTOP_APP_NODE_SELECTOR_SOURCES
 set(DESKTOP_APP_NODE_SELECTOR_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelectorTreeViewWidget.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelectorLoadingDelegate.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/IncomingShareHeaderWidget.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelector.ui
 )
 

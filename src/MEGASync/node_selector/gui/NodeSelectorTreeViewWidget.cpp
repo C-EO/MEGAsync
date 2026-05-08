@@ -193,8 +193,6 @@ void NodeSelectorTreeViewWidget::init()
     initEmptyMessages();
 
     ui->tMegaFolders->setSortingEnabled(true);
-    ui->tMegaFolders->setAllowContextMenu(mSelectType->isContextMenuAllowed());
-    ui->tMegaFolders->setAllowNewFolderContextMenuItem(mSelectType->hasNewFolderButton());
     ui->tMegaFolders->viewport()->installEventFilter(this);
 
     mProxyModel->setSourceModel(mModel.get());
@@ -358,15 +356,6 @@ void NodeSelectorTreeViewWidget::clearSelection()
     ui->tMegaFolders->clearSelection();
 }
 
-bool NodeSelectorTreeViewWidget::isSelectionCorrect()
-{
-    if (ui->tMegaFolders->selectionModel())
-    {
-        return mSelectType->okButtonEnabled(this, ui->tMegaFolders->selectedRows());
-    }
-    return false;
-}
-
 void NodeSelectorTreeViewWidget::abort()
 {
     mModel->abort();
@@ -384,7 +373,7 @@ NodeSelectorModelItem* NodeSelectorTreeViewWidget::rootItem()
     return mModel->getItemByIndex(rootIndex);
 }
 
-QModelIndex NodeSelectorTreeViewWidget::getCurrentRootIndex()
+QModelIndex NodeSelectorTreeViewWidget::getCurrentRootIndex() const
 {
     return ui->tMegaFolders->rootIndex();
 }
@@ -628,7 +617,7 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
                 this,
                 &NodeSelectorTreeViewWidget::onSectionResized);
 
-        makeCustomConnections();
+        makeViewConnections();
 
         setRootIndex(mModel->hasTopRootIndex() ? mProxyModel->index(0, 0) : QModelIndex());
 
@@ -1139,7 +1128,7 @@ NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidget::getEmptyL
     return EmptyLabelInfo();
 }
 
-QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelIndex idx)
+QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelIndex idx) const
 {
     while (idx.isValid())
     {

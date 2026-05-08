@@ -57,6 +57,7 @@ public:
 
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
+    std::optional<IncomingShareHeaderData> incomingShareHeaderData() const override;
 
 private:
     QString getRootText() override;

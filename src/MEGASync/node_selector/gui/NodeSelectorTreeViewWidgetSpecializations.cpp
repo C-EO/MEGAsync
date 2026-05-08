@@ -117,6 +117,38 @@ bool NodeSelectorTreeViewWidgetIncomingShares::isNodeCompatibleWithModel(mega::M
     return access != mega::MegaShare::ACCESS_OWNER && access != mega::MegaShare::ACCESS_UNKNOWN;
 }
 
+std::optional<IncomingShareHeaderData>
+    NodeSelectorTreeViewWidgetIncomingShares::incomingShareHeaderData() const
+{
+    const auto rootIndex = getCurrentRootIndex();
+    if (!rootIndex.isValid())
+    {
+        return std::nullopt;
+    }
+
+    IncomingShareHeaderData incomingInfo;
+    incomingInfo.folderName = rootIndex.data(Qt::DisplayRole).toString();
+    incomingInfo.folderIcon = qvariant_cast<QPixmap>(rootIndex.data(Qt::DecorationRole));
+
+    auto inShareIndex = getParentIncomingShareByIndex(rootIndex);
+    auto item = NodeSelectorModel::getItemByIndex(inShareIndex);
+    if (inShareIndex.isValid() && item)
+    {
+        inShareIndex = inShareIndex.sibling(inShareIndex.row(), NodeSelectorModel::Column::USER);
+        incomingInfo.userIcon = qvariant_cast<QPixmap>(inShareIndex.data(Qt::DecorationRole));
+
+        inShareIndex = inShareIndex.sibling(inShareIndex.row(), NodeSelectorModel::Column::ACCESS);
+        incomingInfo.accessIcon = qvariant_cast<QPixmap>(inShareIndex.data(Qt::DecorationRole));
+        incomingInfo.accessLabel = inShareIndex.data(Qt::DisplayRole).toString();
+        incomingInfo.accessType =
+            inShareIndex.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
+        incomingInfo.userEmail = item->getOwnerEmail();
+        incomingInfo.userName = item->getOwnerName();
+    }
+
+    return incomingInfo;
+}
+
 QString NodeSelectorTreeViewWidgetIncomingShares::getRootText()
 {
     return MegaNodeNames::getIncomingSharesName();
