@@ -29,7 +29,7 @@ public:
     }
 
     virtual bool isAllowedToNavigateInside(const QModelIndex& index);
-    virtual void init(NodeSelectorTreeViewWidget* wdg) = 0;
+    virtual void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) = 0;
     virtual bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected);
 
     virtual bool hasNewFolderButton() const
@@ -93,7 +93,7 @@ class DownloadType: public SelectType
 {
 public:
     explicit DownloadType() = default;
-    void init(NodeSelectorTreeViewWidget* wdg) override;
+    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
 };
@@ -103,7 +103,7 @@ class SyncType: public SelectType
 public:
     explicit SyncType() = default;
     bool isAllowedToNavigateInside(const QModelIndex& index) override;
-    void init(NodeSelectorTreeViewWidget* wdg) override;
+    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
     EmptyFolderPageInfo getEmptyFolderPageInfo() override;
@@ -114,7 +114,7 @@ class StreamType: public SelectType
 {
 public:
     explicit StreamType() = default;
-    void init(NodeSelectorTreeViewWidget* wdg) override;
+    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
@@ -124,7 +124,7 @@ class UploadType: public SelectType
 {
 public:
     explicit UploadType() = default;
-    void init(NodeSelectorTreeViewWidget* wdg) override;
+    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
 
@@ -144,7 +144,7 @@ public:
         return true;
     }
 
-    void init(NodeSelectorTreeViewWidget* wdg) override;
+    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     QMap<uint, QPushButton*> addActionButtons() override;
     void checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
                                      uint buttonId,

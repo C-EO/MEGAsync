@@ -192,8 +192,6 @@ void NodeSelectorTreeViewWidget::init()
 
     initEmptyMessages();
 
-    mSelectType->init(this);
-
     ui->tMegaFolders->setSortingEnabled(true);
     ui->tMegaFolders->setAllowContextMenu(mSelectType->isContextMenuAllowed());
     ui->tMegaFolders->setAllowNewFolderContextMenuItem(mSelectType->hasNewFolderButton());

@@ -74,7 +74,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void addBackupsView();
     std::shared_ptr<mega::MegaNode> getSelectedNode();
-    void connectSpecialisedWidgets(NodeSelectorTreeViewWidget* wid);
+    void initSpecialisedWidgets(NodeSelectorTreeViewWidget* wid);
     void createActionButtons();
     bool eventFilter(QObject* obj, QEvent* event) override;
 

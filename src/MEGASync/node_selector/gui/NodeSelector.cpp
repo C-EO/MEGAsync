@@ -804,7 +804,7 @@ void NodeSelector::createActionButtons()
     }
 }
 
-void NodeSelector::connectSpecialisedWidgets(NodeSelectorTreeViewWidget* viewContainer)
+void NodeSelector::initSpecialisedWidgets(NodeSelectorTreeViewWidget* viewContainer)
 {
     if (viewContainer)
     {
@@ -901,6 +901,8 @@ void NodeSelector::connectSpecialisedWidgets(NodeSelectorTreeViewWidget* viewCon
                         this,
                         &NodeSelector::onShowDuplicatedNodeDialog);
                 });
+
+        mSelectType->initTreeViewWidget(viewContainer);
     }
 }
 
@@ -1124,7 +1126,7 @@ void NodeSelector::addCloudDrive()
 {
     mCloudDriveWidget = new NodeSelectorTreeViewWidgetCloudDrive(mSelectType);
     mCloudDriveWidget->init();
-    connectSpecialisedWidgets(mCloudDriveWidget);
+    initSpecialisedWidgets(mCloudDriveWidget);
     mCloudDriveWidget->setObjectName(QString::fromUtf8("CloudDrive"));
     ui->stackedWidget->addWidget(mCloudDriveWidget);
 }
@@ -1133,7 +1135,7 @@ void NodeSelector::addIncomingShares()
 {
     mIncomingSharesWidget = new NodeSelectorTreeViewWidgetIncomingShares(mSelectType);
     mIncomingSharesWidget->init();
-    connectSpecialisedWidgets(mIncomingSharesWidget);
+    initSpecialisedWidgets(mIncomingSharesWidget);
     mIncomingSharesWidget->setObjectName(QString::fromUtf8("IncomingShares"));
     ui->stackedWidget->addWidget(mIncomingSharesWidget);
 }
@@ -1142,7 +1144,7 @@ void NodeSelector::addBackups()
 {
     mBackupsWidget = new NodeSelectorTreeViewWidgetBackups(mSelectType);
     mBackupsWidget->init();
-    connectSpecialisedWidgets(mBackupsWidget);
+    initSpecialisedWidgets(mBackupsWidget);
     mBackupsWidget->setObjectName(QString::fromUtf8("Backups"));
     ui->stackedWidget->addWidget(mBackupsWidget);
 }
@@ -1151,7 +1153,7 @@ void NodeSelector::addSearch()
 {
     mSearchWidget = new NodeSelectorTreeViewWidgetSearch(mSelectType);
     mSearchWidget->init();
-    connectSpecialisedWidgets(mSearchWidget);
+    initSpecialisedWidgets(mSearchWidget);
     mSearchWidget->setObjectName(QString::fromUtf8("Search"));
     connect(mSearchWidget,
             &NodeSelectorTreeViewWidgetSearch::nodeDoubleClicked,
@@ -1168,7 +1170,7 @@ void NodeSelector::addRubbish()
 {
     mRubbishWidget = new NodeSelectorTreeViewWidgetRubbish(mSelectType);
     mRubbishWidget->init();
-    connectSpecialisedWidgets(mRubbishWidget);
+    initSpecialisedWidgets(mRubbishWidget);
     mRubbishWidget->setObjectName(QString::fromUtf8("Rubbish"));
     ui->stackedWidget->addWidget(mRubbishWidget);
 }

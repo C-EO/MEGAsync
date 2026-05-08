@@ -135,7 +135,7 @@ QPushButton* SelectType::createButton(const QString& type,
 ///////////////////////SELECT TYPE//////////////////////////////
 
 ///////////////////////SYNC TYPE//////////////////////////////
-void SyncType::init(NodeSelectorTreeViewWidget* wdg)
+void SyncType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
     wdg->mModel->setSyncSetupMode(true);
     wdg->mModel->showFiles(false);
@@ -190,7 +190,7 @@ bool SyncType::isAllowedToNavigateInside(const QModelIndex& index)
 ///////////////////////SYNC TYPE//////////////////////////////
 
 ///////////////////////STREAM TYPE//////////////////////////////
-void StreamType::init(NodeSelectorTreeViewWidget* wdg)
+void StreamType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
     wdg->mModel->showFiles(true);
     wdg->mModel->showReadOnlyFolders(true);
@@ -219,7 +219,7 @@ std::shared_ptr<NodeSelectorProxyModel> StreamType::createProxyModel()
 ///////////////////////STREAM TYPE//////////////////////////////
 
 ///////////////////////UPLOAD TYPE//////////////////////////////
-void UploadType::init(NodeSelectorTreeViewWidget* wdg)
+void UploadType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
     wdg->mModel->showFiles(false);
     wdg->mModel->showReadOnlyFolders(false);
@@ -250,7 +250,7 @@ TabTypes UploadType::allowedTabTypes()
 ///////////////////////UPLOAD TYPE//////////////////////////////
 
 ///////////////////////DOWNLOAD TYPE//////////////////////////////
-void DownloadType::init(NodeSelectorTreeViewWidget* wdg)
+void DownloadType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
     wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
     wdg->mModel->showFiles(true);
@@ -271,7 +271,7 @@ TabTypes DownloadType::allowedTabTypes()
 ///////////////////////DOWNLOAD TYPE//////////////////////////////
 
 ///////////////////////CLOUD DRIVE TYPE//////////////////////////////
-void CloudDriveType::init(NodeSelectorTreeViewWidget* wdg)
+void CloudDriveType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
     wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
     wdg->mModel->showFiles(true);
