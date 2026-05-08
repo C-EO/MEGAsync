@@ -741,10 +741,16 @@ std::shared_ptr<NodeSelectorProxyModel> NodeSelectorTreeViewWidget::createProxyM
 
 void NodeSelectorTreeViewWidget::setLoadingSceneVisible(bool blockUi)
 {
+    if (blockUi && ui->stackedWidget->currentWidget() != ui->treeViewPage)
+    {
+        ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+    }
+
     ui->tMegaFolders->loadingView().toggleLoadingScene(blockUi);
 
     if (!blockUi)
     {
+        setEmptyFolderPage();
         mSelectionCoordinator->expandPendingIndexes();
         mSelectionCoordinator->selectPendingIndexes();
     }
@@ -967,6 +973,11 @@ bool NodeSelectorTreeViewWidget::increaseMovingNodes(int number)
 bool NodeSelectorTreeViewWidget::decreaseMovingNodes(int number)
 {
     return mModel->moveProcessedByNumber(number);
+}
+
+void NodeSelectorTreeViewWidget::finishMovingNodes()
+{
+    mModel->finishMovingNodes();
 }
 
 bool NodeSelectorTreeViewWidget::areItemsAboutToBeMovedFromHere(mega::MegaHandle firstHandleMoved)

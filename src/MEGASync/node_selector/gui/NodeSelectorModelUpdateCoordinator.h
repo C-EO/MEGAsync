@@ -114,7 +114,6 @@ private:
     QList<UpdateNodesInfo> mRemovedNodes;
     QList<UpdateNodesInfo> mRemoveMovedNodes;
     QList<UpdateNodesInfo> mUpdatedButInvisibleNodes;
-    QList<UpdateNodesInfo> mMergeSourceFolderRemoved;
 };
 
 #endif // NODESELECTORMODELUPDATECOORDINATOR_H

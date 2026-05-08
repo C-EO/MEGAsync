@@ -848,6 +848,11 @@ void NodeSelector::initSpecialisedWidgets()
                     &NodeSelector::onItemsAboutToBeMovedFailed);
 
             connect(model,
+                    &NodeSelectorModel::itemRequestsFinished,
+                    this,
+                    &NodeSelector::onItemRequestsFinished);
+
+            connect(model,
                     &NodeSelectorModel::itemsAboutToBeRestored,
                     this,
                     &NodeSelector::onItemsAboutToBeRestored);
@@ -861,6 +866,11 @@ void NodeSelector::initSpecialisedWidgets()
                     &NodeSelectorModel::itemsAboutToBeMerged,
                     this,
                     &NodeSelector::onItemsAboutToBeMerged);
+
+            connect(model,
+                    &NodeSelectorModel::itemMergeFinished,
+                    this,
+                    &NodeSelector::onItemMergeFinished);
 
             connect(model,
                     &NodeSelectorModel::itemsAboutToBeMergedFailed,
@@ -988,6 +998,8 @@ void NodeSelector::onCurrentWidgetChanged(int index)
 {
     if (auto wid = dynamic_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
     {
+        onOptionSelected(index);
+
         disconnect(mViewStateConnection);
         disconnect(mViewButtonsStateConnection);
 

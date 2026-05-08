@@ -131,12 +131,16 @@ protected slots:
     virtual void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int actionType);
     virtual void onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& handles, int type);
 
+    virtual void onItemRequestsFinished(int actionType) {}
+
     virtual void onItemsAboutToBeRestored(const QSet<mega::MegaHandle>&) {}
 
     virtual void onItemAboutToBeReplaced(mega::MegaHandle) {}
 
     virtual void onItemsAboutToBeMerged(const QList<std::shared_ptr<NodeSelectorMergeInfo>>&, int)
     {}
+
+    virtual void onItemMergeFinished(mega::MegaHandle, mega::MegaHandle, int) {}
 
     virtual void onItemsAboutToBeMergedFailed(const QList<std::shared_ptr<NodeSelectorMergeInfo>>&,
                                               int)

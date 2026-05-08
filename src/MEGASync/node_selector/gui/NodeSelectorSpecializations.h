@@ -68,12 +68,17 @@ protected slots:
     void onCustomButtonClicked(uint id) override;
     void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int type) override;
     void onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& handles, int type) override;
+    void onItemRequestsFinished(int actionType) override;
     void onItemsAboutToBeRestored(const QSet<mega::MegaHandle>& targetHandles) override;
 
     void onItemAboutToBeReplaced(mega::MegaHandle handle) override;
 
     void onItemsAboutToBeMerged(const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,
                                 int actionType) override;
+
+    void onItemMergeFinished(mega::MegaHandle sourceHandle,
+                             mega::MegaHandle targetHandle,
+                             int actionType) override;
 
     void onItemsAboutToBeMergedFailed(
         const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,

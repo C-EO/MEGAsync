@@ -81,6 +81,7 @@ public:
 
     bool increaseMovingNodes(int number);
     bool decreaseMovingNodes(int number);
+    void finishMovingNodes();
     bool areItemsAboutToBeMovedFromHere(mega::MegaHandle firstHandleMoved);
 
     mega::MegaHandle getHandleByIndex(const QModelIndex& idx);

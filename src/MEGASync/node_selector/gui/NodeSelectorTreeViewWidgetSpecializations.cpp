@@ -371,7 +371,7 @@ void NodeSelectorTreeViewWidgetSearch::treeViewWidgetSelected()
 
 void NodeSelectorTreeViewWidgetSearch::resetMovingNumber()
 {
-    mModel->moveProcessedByNumber(mModel->getMoveRequestsCounter());
+    mModel->finishMovingNodes();
 }
 
 void NodeSelectorTreeViewWidgetSearch::checkSearchButtonsVisibility()

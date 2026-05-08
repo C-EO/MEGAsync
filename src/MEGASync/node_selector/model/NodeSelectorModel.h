@@ -6,6 +6,7 @@
 #include "MegaApplication.h"
 #include "MessageDialogData.h"
 #include "NodeSelectorModelItem.h"
+#include "NodeSelectorOperationTracker.h"
 #include "Utilities.h"
 
 #include <QAbstractItemModel>
@@ -13,7 +14,6 @@
 #include <QList>
 #include <QPointer>
 #include <QQueue>
-#include <QReadWriteLock>
 
 #include <memory>
 #include <optional>
@@ -300,10 +300,11 @@ public:
     bool increaseMovingNodes(int number);
     bool isMovingNodes() const;
     bool moveProcessedByNumber(int number);
+    void finishMovingNodes();
 
     int getMoveRequestsCounter()
     {
-        return mMoveRequestsCounter;
+        return mOperationTracker.pendingMoveItems();
     }
 
     // Copy logic
@@ -446,10 +447,14 @@ signals:
     void itemsMoved();
     void itemsAboutToBeMoved(const QList<mega::MegaHandle> handles, int actionType);
     void itemsAboutToBeMovedFailed(const QList<mega::MegaHandle> handles, int actionType);
+    void itemRequestsFinished(int actionType);
     void itemsAboutToBeRestored(const QSet<mega::MegaHandle>& targetFolders);
     void itemAboutToBeReplaced(mega::MegaHandle replacedHandle);
     void itemsAboutToBeMerged(const QList<std::shared_ptr<NodeSelectorMergeInfo>>& targetFolders,
                               int actionType);
+    void itemMergeFinished(mega::MegaHandle sourceHandle,
+                           mega::MegaHandle targetHandle,
+                           int actionType);
     void itemsAboutToBeMergedFailed(
         const QList<std::shared_ptr<NodeSelectorMergeInfo>>& targetFolders,
         int actionType);
@@ -457,6 +462,10 @@ signals:
 
 protected:
     void beginRemoveRowsAsync(const mega::MegaHandle& handle);
+    MessageDialogInfo buildFailedRequestMessage(
+        int requestType,
+        const QList<mega::MegaHandle>& failedHandles,
+        NodeSelectorOperationTracker::FinishedRequestGroup finishedRequestGroup) const;
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     Qt::DropActions supportedDropActions() const override;
@@ -521,31 +530,11 @@ private:
     QThread* mNodeRequesterThread;
     bool mIsBeingModified; // Used to know if the model is being modified in order to avoid nesting
                            // beginInsertRows and any other begin* methods
-    bool mIsProcessingMoves; // Used to know if the user moved nodes
+    bool mIsProcessingMoves; // Used to avoid duplicate move completion notifications
     bool mAcceptDragAndDrop;
-
-    // Variables related to move (including moving to rubbish bin or remove)
-    QReadWriteLock mRequestCounterLock;
-
-    struct RequestsBeingProcessed
-    {
-        int type = -1;
-        int counter = 0;
-
-        void clear()
-        {
-            type = -1;
-            counter = 0;
-        }
-    };
-
-    RequestsBeingProcessed mRequestsBeingProcessed;
-    void initRequestsBeingProcessed(int type, int counter);
-    int requestFinished();
+    NodeSelectorOperationTracker mOperationTracker;
 
     QList<mega::MegaHandle> mExpectedNodesUpdates;
-    QMultiMap<mega::MegaHandle, int> mRequestFailedByHandle;
-    MovedItemsTypes mMovedItemsType;
 
     // Move nodes
     bool checkMoveProcessing();
@@ -557,8 +546,6 @@ private:
     void processMergeQueue(MoveActionType type);
     std::optional<NodeSelectorMergeInfo::RestoreMergeType>
         checkForFoldersToMergeWhenRestoring(std::shared_ptr<ConflictTypes> conflicts);
-
-    int mMoveRequestsCounter;
 
     // If the model is being modified, queue the nodes to add or to remove
     AddNodesQueue mAddNodesQueue;

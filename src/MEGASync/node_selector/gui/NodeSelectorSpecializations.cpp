@@ -356,6 +356,14 @@ void CloudDriveNodeSelector::onItemsAboutToBeMovedFailed(const QList<mega::MegaH
     checkMovingItems(handles, type, NodeSelector::IncreaseOrDecrease::DECREASE);
 }
 
+void CloudDriveNodeSelector::onItemRequestsFinished(int actionType)
+{
+    if (actionType == MoveActionType::DELETE_RUBBISH && mRubbishWidget->isUiBlocked())
+    {
+        mRubbishWidget->finishMovingNodes();
+    }
+}
+
 void CloudDriveNodeSelector::onItemsAboutToBeRestored(const QSet<mega::MegaHandle>& handles)
 {
     auto tabsInfo(getTabs(handles.values()));
@@ -391,6 +399,34 @@ void CloudDriveNodeSelector::onItemsAboutToBeMerged(
     int actionType)
 {
     performMergeAction(mergesInfo, actionType, NodeSelector::IncreaseOrDecrease::INCREASE);
+}
+
+void CloudDriveNodeSelector::onItemMergeFinished(mega::MegaHandle sourceHandle,
+                                                 mega::MegaHandle targetHandle,
+                                                 int)
+{
+    const auto targetTabsInfo(getTabs(QList<mega::MegaHandle>() << targetHandle));
+
+    auto finishMergeInWidget =
+        [sourceHandle, targetHandle](const QList<mega::MegaHandle>& targetHandlesByTab,
+                                     NodeSelectorTreeViewWidget* wid)
+    {
+        if (!wid || !targetHandlesByTab.contains(targetHandle))
+        {
+            return;
+        }
+
+        QMultiHash<NodeSelectorTreeViewWidget::SourceHandle,
+                   NodeSelectorTreeViewWidget::TargetHandle>
+            merges;
+        merges.insert(sourceHandle, targetHandle);
+
+        wid->decreaseMovingNodes(1);
+        wid->resetMergeFolderHandles(merges);
+    };
+
+    finishMergeInWidget(targetTabsInfo.cloudDriveNodes, mCloudDriveWidget);
+    finishMergeInWidget(targetTabsInfo.incomingSharedNodes, mIncomingSharesWidget);
 }
 
 void CloudDriveNodeSelector::onItemsAboutToBeMergedFailed(

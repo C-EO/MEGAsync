@@ -133,7 +133,7 @@ void NodeSelectorSelectionCoordinator::selectPendingIndexes()
 
 void NodeSelectorSelectionCoordinator::resetMoveNodesToSelect()
 {
-    if (mModel->getMoveRequestsCounter() == 0)
+    if (!mModel->isMovingNodes())
     {
         mMovedHandlesToSelect.clear();
     }

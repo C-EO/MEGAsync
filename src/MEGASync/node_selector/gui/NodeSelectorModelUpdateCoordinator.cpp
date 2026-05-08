@@ -42,12 +42,6 @@ bool NodeSelectorModelUpdateCoordinator::onNodesUpdate(mega::MegaNodeList* nodes
 
         if (node->getParentHandle() != mega::INVALID_HANDLE)
         {
-            if (node->getChanges() & mega::MegaNode::CHANGE_TYPE_REMOVED &&
-                (!mMergeTargetFolders.isEmpty() && mMergeTargetFolders.contains(node->getHandle())))
-            {
-                mMergeSourceFolderRemoved.append(UpdateNodesInfo(node, QModelIndex()));
-            }
-
             const auto index = mModel->findIndexByNodeHandle(node->getHandle(), QModelIndex());
             const auto existenceType = static_cast<NodeState>(mGetNodeState(index, node));
 
@@ -216,19 +210,6 @@ void NodeSelectorModelUpdateCoordinator::processCachedNodesUpdated()
             mUpdatedButInvisibleNodes.clear();
         }
 
-        if (!mModel->isBeingModified() && !mMergeSourceFolderRemoved.isEmpty())
-        {
-            for (const auto& info: std::as_const(mMergeSourceFolderRemoved))
-            {
-                if (info.handle != mega::INVALID_HANDLE)
-                {
-                    moveProcessedCounter++;
-                }
-            }
-
-            mMergeSourceFolderRemoved.clear();
-        }
-
         if (!mModel->isBeingModified())
         {
             foreach(auto& parentHandle, mAddedNodesByParentHandle.uniqueKeys())
@@ -253,7 +234,20 @@ void NodeSelectorModelUpdateCoordinator::processCachedNodesUpdated()
 
                 if (!mModel->addNodes(addedNodes, parentIndex))
                 {
-                    mModel->moveProcessedByNumber(static_cast<int>(addedNodes.size()));
+                    auto processedNodes = 0;
+
+                    for (const auto& addedNode: std::as_const(addedNodes))
+                    {
+                        if (!NodeSelectorMergeTargetUtils::isNodeInsideMergeTargetSubtree(
+                                mMegaApi,
+                                mMergeTargetFolders,
+                                addedNode.get()))
+                        {
+                            processedNodes++;
+                        }
+                    }
+
+                    mModel->moveProcessedByNumber(processedNodes);
                 }
 
                 const auto proxyParentIndex = mProxyModel->mapFromSource(parentIndex);
@@ -275,8 +269,7 @@ bool NodeSelectorModelUpdateCoordinator::hasPendingUpdates() const
 {
     return !mUpdatedNodes.isEmpty() || !mRemovedNodes.isEmpty() ||
            !mRenamedNodesByHandle.isEmpty() || !mAddedNodesByParentHandle.isEmpty() ||
-           !mRemoveMovedNodes.isEmpty() || !mUpdatedButInvisibleNodes.isEmpty() ||
-           !mMergeSourceFolderRemoved.isEmpty();
+           !mRemoveMovedNodes.isEmpty() || !mUpdatedButInvisibleNodes.isEmpty();
 }
 
 bool NodeSelectorModelUpdateCoordinator::shouldUpdateImmediately(int immediateThreshold) const
@@ -307,11 +300,6 @@ bool NodeSelectorModelUpdateCoordinator::shouldUpdateImmediately(int immediateTh
         return true;
     }
     totalSize += mUpdatedButInvisibleNodes.size();
-    if (totalSize > immediateThreshold)
-    {
-        return true;
-    }
-    totalSize += mMergeSourceFolderRemoved.size();
     if (totalSize > immediateThreshold)
     {
         return true;
