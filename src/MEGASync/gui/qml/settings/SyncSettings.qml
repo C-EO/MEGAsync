@@ -182,7 +182,12 @@ Item {
 
                     SwitchButton {
                         id: fixIssue
-                        text: ""
+
+                        checked: syncSettings.automaticSyncIssueResolverEnabled
+
+                        onCheckedChanged: {
+                            syncSettings.automaticSyncIssueResolverEnabled = checked;
+                        }
                     }
                 }
 

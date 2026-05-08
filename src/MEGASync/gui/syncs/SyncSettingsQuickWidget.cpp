@@ -3,10 +3,13 @@
 #include "CreateRemoveSyncsManager.h"
 #include "Platform.h"
 #include "QmlManager.h"
+#include "StalledIssuesModel.h"
+#include "StatsEventHandler.h"
 #include "SyncSettingsModel.h"
 
 SyncSettingsQuickWidget::SyncSettingsQuickWidget(QWidget* parent):
-    MegaQuickWidget(parent)
+    MegaQuickWidget(parent),
+    mAutomaticSyncIssueResolverEnabled(Preferences::instance()->isStalledIssueSmartModeActivated())
 {
     setResizeMode(QQuickWidget::SizeRootObjectToView);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -29,4 +32,34 @@ void SyncSettingsQuickWidget::exploreLocalSync(const QString& localFolder) const
 void SyncSettingsQuickWidget::addSync() const
 {
     CreateRemoveSyncsManager::addSync(SyncInfo::SyncOrigin::SETTINGS_ORIGIN);
+}
+
+bool SyncSettingsQuickWidget::getAutomaticSyncIssueResolverEnabled() const
+{
+    return mAutomaticSyncIssueResolverEnabled;
+}
+
+void SyncSettingsQuickWidget::setAutomaticSyncIssueResolverEnabled(bool enable)
+{
+    if (mAutomaticSyncIssueResolverEnabled != enable)
+    {
+        if (enable)
+        {
+            Preferences::instance()->setStalledIssuesMode(
+                Preferences::StalledIssuesModeType::Smart);
+            MegaSyncApp->getStalledIssuesModel()->updateActiveStalledIssues();
+            MegaSyncApp->getStatsEventHandler()->sendEvent(
+                AppStatsEvents::EventType::SETTINGS_ISSUE_RESOLUTION_SMART);
+        }
+        else
+        {
+            Preferences::instance()->setStalledIssuesMode(
+                Preferences::StalledIssuesModeType::Advance);
+            MegaSyncApp->getStatsEventHandler()->sendEvent(
+                AppStatsEvents::EventType::SETTINGS_ISSUE_RESOLUTION_ADVANCED);
+        }
+
+        mAutomaticSyncIssueResolverEnabled = enable;
+        emit automaticSyncIssueResolverEnabledChanged();
+    }
 }
