@@ -17,6 +17,63 @@ Switch {
     readonly property int defaultWidth: 40
     readonly property int borderWidth: 2
 
+    function getBackgroundColor() {
+        var color = ColorTheme.surface1
+
+        if (root.checked) {
+            if (root.pressed) {
+                color = ColorTheme.buttonPrimaryPressed
+            }
+            else if (root.hovered) {
+                color = ColorTheme.buttonPrimaryHover
+            }
+            else if (!root.enabled) {
+                color = ColorTheme.buttonDisabled
+            }
+            else {
+                color = ColorTheme.buttonPrimary
+            }
+        }
+
+        return color;
+    }
+
+    function getBackgroundBorderColor() {
+        if (root.pressed) {
+            return ColorTheme.buttonPrimaryPressed
+        }
+        else if (root.hovered) {
+            return ColorTheme.buttonPrimaryHover
+        }
+        else if (!root.enabled) {
+            return ColorTheme.buttonDisabled
+        }
+        else {
+            return ColorTheme.buttonPrimary;
+        }
+    }
+
+    function getHandleColor() {
+        var color = ColorTheme.surface1
+
+        if (!root.checked) {
+            if (root.pressed) {
+                return ColorTheme.buttonPrimaryPressed
+            }
+            else if (root.hovered) {
+                color = ColorTheme.buttonPrimaryHover
+            }
+            else if (!root.enabled) {
+                return ColorTheme.buttonDisabled;
+            }
+            else {
+                color = ColorTheme.buttonPrimary
+            }
+        }
+
+        return color;
+    }
+
     indicator: Rectangle {
         id: background
 
@@ -25,8 +82,8 @@ Switch {
         x: root.leftPadding
         y: parent.height / 2 - height / 2
         radius: height / 2
-        color: root.checked ? ColorTheme.buttonPrimary : ColorTheme.surface1
-        border.color: ColorTheme.buttonPrimary
+        color: getBackgroundColor()
+        border.color: getBackgroundBorderColor();
         border.width: borderWidth
 
         Rectangle {
@@ -37,17 +94,38 @@ Switch {
             width: root.checked ? parent.height - parent.border.width * 2 : parent.height - parent.border.width * 2 - borderSpacing * 2
             height: width
             radius: height / 2.0
-            color: root.checked ? ColorTheme.surface1 : ColorTheme.buttonPrimary
+            color: getHandleColor()
             border.color: color
+
+            Behavior on x {
+                NumberAnimation {
+                    duration: 100
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
+            Behavior on y {
+                NumberAnimation {
+                    duration: 100
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
+            Behavior on width {
+                NumberAnimation {
+                    duration: 100
+                    easing.type: Easing.InOutQuad
+                }
+            }
 
             SvgImage {
                 id: tickImage
 
                 anchors.fill: parent
                 anchors.margins: tickImageMarginsToHandle
-                color: ColorTheme.iconPrimary
+                color: getBackgroundColor() // tick color is exactly the same as the background color.
                 source: Images.check_medium_regular_solid
-                sourceSize: Qt.size(check_image_size, check_image_size)
+                sourceSize: Qt.size(root.check_image_size, root.check_image_size)
                 visible: root.checked
             }
         }
