@@ -38,6 +38,15 @@ bool SelectType::okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexL
         });
 }
 
+void SelectType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
+{
+    wdg->ui->tMegaFolders->setAllowContextMenu(isContextMenuAllowed());
+    wdg->ui->tMegaFolders->setAllowNewFolderContextMenuItem(hasNewFolderButton());
+
+    wdg->mModel->showFiles(true);
+    wdg->mModel->showReadOnlyFolders(true);
+}
+
 QMap<uint, QPushButton*> SelectType::addActionButtons()
 {
     if (hasNewFolderButton())
@@ -137,6 +146,8 @@ QPushButton* SelectType::createButton(const QString& type,
 ///////////////////////SYNC TYPE//////////////////////////////
 void SyncType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
+    SelectType::initTreeViewWidget(wdg);
+
     wdg->mModel->setSyncSetupMode(true);
     wdg->mModel->showFiles(false);
     wdg->mModel->showReadOnlyFolders(false);
@@ -190,12 +201,6 @@ bool SyncType::isAllowedToNavigateInside(const QModelIndex& index)
 ///////////////////////SYNC TYPE//////////////////////////////
 
 ///////////////////////STREAM TYPE//////////////////////////////
-void StreamType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
-{
-    wdg->mModel->showFiles(true);
-    wdg->mModel->showReadOnlyFolders(true);
-}
-
 bool StreamType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
 {
     if (selected.size() == 1 && SelectType::okButtonEnabled(wdg, selected))
@@ -252,9 +257,9 @@ TabTypes UploadType::allowedTabTypes()
 ///////////////////////DOWNLOAD TYPE//////////////////////////////
 void DownloadType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
+    SelectType::initTreeViewWidget(wdg);
+
     wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    wdg->mModel->showFiles(true);
-    wdg->mModel->showReadOnlyFolders(true);
 }
 
 bool DownloadType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
@@ -273,9 +278,9 @@ TabTypes DownloadType::allowedTabTypes()
 ///////////////////////CLOUD DRIVE TYPE//////////////////////////////
 void CloudDriveType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
+    SelectType::initTreeViewWidget(wdg);
+
     wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    wdg->mModel->showFiles(true);
-    wdg->mModel->showReadOnlyFolders(true);
 }
 
 TabTypes CloudDriveType::allowedTabTypes()

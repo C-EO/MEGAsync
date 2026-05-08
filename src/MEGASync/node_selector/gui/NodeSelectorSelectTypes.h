@@ -29,7 +29,7 @@ public:
     }
 
     virtual bool isAllowedToNavigateInside(const QModelIndex& index);
-    virtual void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) = 0;
+    virtual void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg);
     virtual bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected);
 
     virtual bool hasNewFolderButton() const
@@ -114,7 +114,6 @@ class StreamType: public SelectType
 {
 public:
     explicit StreamType() = default;
-    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;

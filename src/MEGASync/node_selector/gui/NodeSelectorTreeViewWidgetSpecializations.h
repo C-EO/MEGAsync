@@ -168,7 +168,7 @@ public:
 
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
-    void makeCustomConnections() override;
+    void makeViewConnections() override;
 
 private:
     QString getRootText() override;

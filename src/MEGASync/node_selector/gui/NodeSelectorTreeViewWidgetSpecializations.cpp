@@ -402,7 +402,7 @@ QModelIndex NodeSelectorTreeViewWidgetSearch::getAddedNodeParent(mega::MegaHandl
     return QModelIndex();
 }
 
-void NodeSelectorTreeViewWidgetSearch::makeCustomConnections()
+void NodeSelectorTreeViewWidgetSearch::makeViewConnections()
 {
     connect(ui->tMegaFolders,
             &NodeSelectorTreeView::restoreClicked,
@@ -692,7 +692,7 @@ bool NodeSelectorTreeViewWidgetRubbish::isNodeCompatibleWithModel(mega::MegaNode
     return MegaSyncApp->getMegaApi()->isInRubbish(node);
 }
 
-void NodeSelectorTreeViewWidgetRubbish::makeCustomConnections()
+void NodeSelectorTreeViewWidgetRubbish::makeViewConnections()
 {
     connect(ui->tMegaFolders,
             &NodeSelectorTreeView::restoreClicked,

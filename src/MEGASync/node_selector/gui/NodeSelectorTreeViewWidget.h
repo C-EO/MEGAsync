@@ -66,7 +66,6 @@ public:
     virtual void treeViewWidgetSelected() {}
 
     void clearSelection();
-    bool isSelectionCorrect();
 
     void abort();
     NodeSelectorModelItem* rootItem();
@@ -142,7 +141,7 @@ protected:
         return true;
     }
 
-    virtual void makeCustomConnections() {}
+    virtual void makeViewConnections() {}
 
     virtual bool isNodeCompatibleWithModel(mega::MegaNode*)
     {
