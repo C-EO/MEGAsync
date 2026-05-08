@@ -74,7 +74,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void addBackupsView();
     std::shared_ptr<mega::MegaNode> getSelectedNode();
-    void initSpecialisedWidgets();
+    void connectSpecialisedWidgets(NodeSelectorTreeViewWidget* wid);
     void createActionButtons();
     bool eventFilter(QObject* obj, QEvent* event) override;
 
@@ -164,7 +164,7 @@ private slots:
     void performNodeSelection();
     void onSearch(const QString& text);
     void onUiIsBlocked(bool state);
-    void onSelectionChanged(bool state);
+    void onSelectionChanged();
     void onbNewFolderClicked();
 
 private:

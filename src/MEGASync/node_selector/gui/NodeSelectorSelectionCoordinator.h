@@ -41,9 +41,7 @@ public:
         std::function<void()> clearSelection;
         std::function<void(const QModelIndex&)> onItemDoubleClick;
         std::function<void()> setRootIndexToTop;
-        std::function<void(const QModelIndexList&)> selectionHasChanged;
-        std::function<void(std::function<void()>)> withSelectionSilenced;
-        std::function<void()> onSelectionChanged;
+        std::function<void(std::function<bool()>)> withSelectionSilenced;
     };
 
     NodeSelectorSelectionCoordinator(mega::MegaApi* megaApi, Objects objects, Policy policy);
@@ -78,9 +76,7 @@ private:
     std::function<void()> mClearSelection;
     std::function<void(const QModelIndex&)> mOnItemDoubleClick;
     std::function<void()> mSetRootIndexToTop;
-    std::function<void(const QModelIndexList&)> mSelectionHasChanged;
-    std::function<void(std::function<void()>)> mWithSelectionSilenced;
-    std::function<void()> mOnSelectionChanged;
+    std::function<void(std::function<bool()>)> mWithSelectionSilenced;
 
     QSet<mega::MegaHandle> mMovedHandlesToSelect;
     QSet<mega::MegaHandle> mParentOfRestoredNodes;

@@ -120,25 +120,21 @@ void NodeSelectorTreeViewWidget::init()
             {
                 setRootIndex(mProxyModel->getTopRootIndex());
             },
-            [this](const QModelIndexList& selected)
-            {
-                selectionHasChanged(selected);
-            },
-            [this](std::function<void()> fn)
+            [this](std::function<bool()> selectionOperation)
             {
                 disconnect(ui->tMegaFolders->selectionModel(),
                            &QItemSelectionModel::selectionChanged,
                            this,
                            &NodeSelectorTreeViewWidget::onSelectionChanged);
-                fn();
+                const bool shouldNotify = selectionOperation();
                 connect(ui->tMegaFolders->selectionModel(),
                         &QItemSelectionModel::selectionChanged,
                         this,
                         &NodeSelectorTreeViewWidget::onSelectionChanged);
-            },
-            [this]()
-            {
-                onSelectionChanged(QItemSelection(), QItemSelection());
+                if (shouldNotify)
+                {
+                    onSelectionChanged(QItemSelection(), QItemSelection());
+                }
             },
         });
 
@@ -475,7 +471,7 @@ void NodeSelectorTreeViewWidget::goForward()
     }
 
     setRootIndex(getIndexFromHandle(*targetHandle));
-    selectionHasChanged(ui->tMegaFolders->selectedRows());
+    onSelectionHasChanged();
 }
 
 void NodeSelectorTreeViewWidget::mousePressEvent(QMouseEvent* event)
@@ -793,7 +789,7 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
 
     if (!state)
     {
-        selectionHasChanged(ui->tMegaFolders->selectedRows());
+        onSelectionHasChanged();
     }
 }
 
@@ -805,7 +801,7 @@ void NodeSelectorTreeViewWidget::onSelectionChanged(const QItemSelection& select
 
     if (!mUiBlocked)
     {
-        selectionHasChanged(ui->tMegaFolders->selectedRows());
+        onSelectionHasChanged();
     }
 }
 
@@ -828,9 +824,9 @@ void NodeSelectorTreeViewWidget::onModelModified()
     }
 }
 
-void NodeSelectorTreeViewWidget::selectionHasChanged(const QModelIndexList& selected)
+void NodeSelectorTreeViewWidget::onSelectionHasChanged()
 {
-    emit selectionIsCorrect(mSelectType->okButtonEnabled(this, selected));
+    emit selectionHasChanged();
 }
 
 void NodeSelectorTreeViewWidget::onRenameClicked()

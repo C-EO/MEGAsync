@@ -119,7 +119,7 @@ signals:
     void newFolderRequested();
     void viewReady();
     void uiIsBlocked(bool state);
-    void selectionIsCorrect(bool state);
+    void selectionHasChanged();
     void viewStateChanged();
     void viewButtonsStateChanged();
 
@@ -239,7 +239,7 @@ private:
         return false;
     }
 
-    void selectionHasChanged(const QModelIndexList& selected);
+    void onSelectionHasChanged();
 
     void checkOkButton(const QModelIndexList& selected);
 

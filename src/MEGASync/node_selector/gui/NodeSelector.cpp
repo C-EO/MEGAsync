@@ -155,7 +155,6 @@ void NodeSelector::init()
     createActionButtons();
     createSpecialisedWidgets();
     addSearch();
-    initSpecialisedWidgets();
     onCurrentWidgetChanged(ui->stackedWidget->currentIndex());
 
     mInitialised = true;
@@ -257,9 +256,14 @@ void NodeSelector::onUiIsBlocked(bool state)
     ui->header->setDisabled(state);
 }
 
-void NodeSelector::onSelectionChanged(bool state)
+void NodeSelector::onSelectionChanged()
 {
-    ui->bOk->setEnabled(state);
+    auto wid = getCurrentTreeViewWidget();
+    if (wid)
+    {
+        auto isSelectionCorrect = mSelectType->okButtonEnabled(wid, wid->getSelectedIndexes());
+        ui->bOk->setEnabled(isSelectionCorrect);
+    }
 }
 
 QString NodeSelector::folderNameForWidget(NodeSelectorTreeViewWidget* wid) const
@@ -800,110 +804,103 @@ void NodeSelector::createActionButtons()
     }
 }
 
-void NodeSelector::initSpecialisedWidgets()
+void NodeSelector::connectSpecialisedWidgets(NodeSelectorTreeViewWidget* viewContainer)
 {
-    NodeSelectorModel* model(nullptr);
-
-    for (int page = 0; page < ui->stackedWidget->count(); ++page)
+    if (viewContainer)
     {
-        auto viewContainer = getTreeViewWidget(page);
-        if (viewContainer)
-        {
-            viewContainer->init();
-            connect(viewContainer,
-                    &NodeSelectorTreeViewWidget::onCustomButtonClicked,
-                    this,
-                    &NodeSelector::onCustomButtonClicked,
-                    Qt::UniqueConnection);
-            connect(viewContainer,
-                    &NodeSelectorTreeViewWidget::uiIsBlocked,
-                    this,
-                    &NodeSelector::onUiIsBlocked,
-                    Qt::UniqueConnection);
-            connect(viewContainer,
-                    &NodeSelectorTreeViewWidget::enterKeyPressed,
-                    ui->bOk,
-                    &QPushButton::click,
-                    Qt::UniqueConnection);
-            connect(viewContainer,
-                    &NodeSelectorTreeViewWidget::newFolderRequested,
-                    this,
-                    &NodeSelector::onbNewFolderClicked,
-                    Qt::UniqueConnection);
-            connect(viewContainer,
-                    &NodeSelectorTreeViewWidget::viewReady,
-                    this,
-                    &NodeSelector::performNodeSelection);
+        connect(viewContainer,
+                &NodeSelectorTreeViewWidget::onCustomButtonClicked,
+                this,
+                &NodeSelector::onCustomButtonClicked,
+                Qt::UniqueConnection);
+        connect(viewContainer,
+                &NodeSelectorTreeViewWidget::uiIsBlocked,
+                this,
+                &NodeSelector::onUiIsBlocked,
+                Qt::UniqueConnection);
+        connect(viewContainer,
+                &NodeSelectorTreeViewWidget::enterKeyPressed,
+                ui->bOk,
+                &QPushButton::click,
+                Qt::UniqueConnection);
+        connect(viewContainer,
+                &NodeSelectorTreeViewWidget::newFolderRequested,
+                this,
+                &NodeSelector::onbNewFolderClicked,
+                Qt::UniqueConnection);
+        connect(viewContainer,
+                &NodeSelectorTreeViewWidget::viewReady,
+                this,
+                &NodeSelector::performNodeSelection);
 
-            model = viewContainer->getProxyModel()->getMegaModel();
+        auto model = viewContainer->getProxyModel()->getMegaModel();
 
-            connect(model,
-                    &NodeSelectorModel::itemsAboutToBeMoved,
-                    this,
-                    &NodeSelector::onItemsAboutToBeMoved);
+        connect(model,
+                &NodeSelectorModel::itemsAboutToBeMoved,
+                this,
+                &NodeSelector::onItemsAboutToBeMoved);
 
-            connect(model,
-                    &NodeSelectorModel::itemsAboutToBeMovedFailed,
-                    this,
-                    &NodeSelector::onItemsAboutToBeMovedFailed);
+        connect(model,
+                &NodeSelectorModel::itemsAboutToBeMovedFailed,
+                this,
+                &NodeSelector::onItemsAboutToBeMovedFailed);
 
-            connect(model,
-                    &NodeSelectorModel::itemRequestsFinished,
-                    this,
-                    &NodeSelector::onItemRequestsFinished);
+        connect(model,
+                &NodeSelectorModel::itemRequestsFinished,
+                this,
+                &NodeSelector::onItemRequestsFinished);
 
-            connect(model,
-                    &NodeSelectorModel::itemsAboutToBeRestored,
-                    this,
-                    &NodeSelector::onItemsAboutToBeRestored);
+        connect(model,
+                &NodeSelectorModel::itemsAboutToBeRestored,
+                this,
+                &NodeSelector::onItemsAboutToBeRestored);
 
-            connect(model,
-                    &NodeSelectorModel::itemAboutToBeReplaced,
-                    this,
-                    &NodeSelector::onItemAboutToBeReplaced);
+        connect(model,
+                &NodeSelectorModel::itemAboutToBeReplaced,
+                this,
+                &NodeSelector::onItemAboutToBeReplaced);
 
-            connect(model,
-                    &NodeSelectorModel::itemsAboutToBeMerged,
-                    this,
-                    &NodeSelector::onItemsAboutToBeMerged);
+        connect(model,
+                &NodeSelectorModel::itemsAboutToBeMerged,
+                this,
+                &NodeSelector::onItemsAboutToBeMerged);
 
-            connect(model,
-                    &NodeSelectorModel::itemMergeFinished,
-                    this,
-                    &NodeSelector::onItemMergeFinished);
+        connect(model,
+                &NodeSelectorModel::itemMergeFinished,
+                this,
+                &NodeSelector::onItemMergeFinished);
 
-            connect(model,
-                    &NodeSelectorModel::itemsAboutToBeMergedFailed,
-                    this,
-                    &NodeSelector::onItemsAboutToBeMergedFailed);
+        connect(model,
+                &NodeSelectorModel::itemsAboutToBeMergedFailed,
+                this,
+                &NodeSelector::onItemsAboutToBeMergedFailed);
 
-            connect(model,
-                    &NodeSelectorModel::showMessageBox,
-                    this,
-                    [this](MessageDialogInfo info)
-                    {
-                        info.parent = this;
-                        MessageDialogOpener::warning(info);
-                    });
+        connect(model,
+                &NodeSelectorModel::showMessageBox,
+                this,
+                [this](MessageDialogInfo info)
+                {
+                    info.parent = this;
+                    MessageDialogOpener::warning(info);
+                });
 
-            connect(model,
-                    &NodeSelectorModel::showDuplicatedNodeDialog,
-                    this,
-                    [this, model](std::shared_ptr<ConflictTypes> conflicts, MoveActionType type)
-                    {
-                        mDuplicatedModel = model;
-                        mDuplicatedConflicts = conflicts;
-                        mDuplicatedType = type;
+        connect(model,
+                &NodeSelectorModel::showDuplicatedNodeDialog,
+                this,
+                [this, model](std::shared_ptr<ConflictTypes> conflicts, MoveActionType type)
+                {
+                    mDuplicatedModel = model;
+                    mDuplicatedConflicts = conflicts;
+                    mDuplicatedType = type;
 
-                        auto checkUploadNameDialog = new DuplicatedNodeDialog(this);
-                        checkUploadNameDialog->setConflicts(conflicts);
+                    auto checkUploadNameDialog = new DuplicatedNodeDialog(this);
+                    checkUploadNameDialog->setConflicts(conflicts);
 
-                        DialogOpener::showDialog<DuplicatedNodeDialog, NodeSelector>(
-                            checkUploadNameDialog,
-                            this,
-                            &NodeSelector::onShowDuplicatedNodeDialog);
-                    });
-        }
+                    DialogOpener::showDialog<DuplicatedNodeDialog, NodeSelector>(
+                        checkUploadNameDialog,
+                        this,
+                        &NodeSelector::onShowDuplicatedNodeDialog);
+                });
     }
 }
 
@@ -1014,7 +1011,7 @@ void NodeSelector::onCurrentWidgetChanged(int index)
 
         disconnect(mSelectionChangedConnection);
         mSelectionChangedConnection = connect(wid,
-                                              &NodeSelectorTreeViewWidget::selectionIsCorrect,
+                                              &NodeSelectorTreeViewWidget::selectionHasChanged,
                                               this,
                                               &NodeSelector::onSelectionChanged,
                                               Qt::UniqueConnection);
@@ -1034,7 +1031,7 @@ void NodeSelector::onCurrentWidgetChanged(int index)
                                               });
 
         refreshHeader(wid);
-        onSelectionChanged(wid->isSelectionCorrect());
+        onSelectionChanged();
     }
 }
 
@@ -1126,6 +1123,8 @@ void NodeSelector::addWidgetForTabType(TabType type)
 void NodeSelector::addCloudDrive()
 {
     mCloudDriveWidget = new NodeSelectorTreeViewWidgetCloudDrive(mSelectType);
+    mCloudDriveWidget->init();
+    connectSpecialisedWidgets(mCloudDriveWidget);
     mCloudDriveWidget->setObjectName(QString::fromUtf8("CloudDrive"));
     ui->stackedWidget->addWidget(mCloudDriveWidget);
 }
@@ -1133,6 +1132,8 @@ void NodeSelector::addCloudDrive()
 void NodeSelector::addIncomingShares()
 {
     mIncomingSharesWidget = new NodeSelectorTreeViewWidgetIncomingShares(mSelectType);
+    mIncomingSharesWidget->init();
+    connectSpecialisedWidgets(mIncomingSharesWidget);
     mIncomingSharesWidget->setObjectName(QString::fromUtf8("IncomingShares"));
     ui->stackedWidget->addWidget(mIncomingSharesWidget);
 }
@@ -1140,6 +1141,8 @@ void NodeSelector::addIncomingShares()
 void NodeSelector::addBackups()
 {
     mBackupsWidget = new NodeSelectorTreeViewWidgetBackups(mSelectType);
+    mBackupsWidget->init();
+    connectSpecialisedWidgets(mBackupsWidget);
     mBackupsWidget->setObjectName(QString::fromUtf8("Backups"));
     ui->stackedWidget->addWidget(mBackupsWidget);
 }
@@ -1147,6 +1150,8 @@ void NodeSelector::addBackups()
 void NodeSelector::addSearch()
 {
     mSearchWidget = new NodeSelectorTreeViewWidgetSearch(mSelectType);
+    mSearchWidget->init();
+    connectSpecialisedWidgets(mSearchWidget);
     mSearchWidget->setObjectName(QString::fromUtf8("Search"));
     connect(mSearchWidget,
             &NodeSelectorTreeViewWidgetSearch::nodeDoubleClicked,
@@ -1162,6 +1167,8 @@ void NodeSelector::addSearch()
 void NodeSelector::addRubbish()
 {
     mRubbishWidget = new NodeSelectorTreeViewWidgetRubbish(mSelectType);
+    mRubbishWidget->init();
+    connectSpecialisedWidgets(mRubbishWidget);
     mRubbishWidget->setObjectName(QString::fromUtf8("Rubbish"));
     ui->stackedWidget->addWidget(mRubbishWidget);
 }

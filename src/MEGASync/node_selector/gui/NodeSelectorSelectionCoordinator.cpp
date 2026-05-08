@@ -18,9 +18,7 @@ NodeSelectorSelectionCoordinator::NodeSelectorSelectionCoordinator(mega::MegaApi
     mClearSelection(std::move(policy.clearSelection)),
     mOnItemDoubleClick(std::move(policy.onItemDoubleClick)),
     mSetRootIndexToTop(std::move(policy.setRootIndexToTop)),
-    mSelectionHasChanged(std::move(policy.selectionHasChanged)),
-    mWithSelectionSilenced(std::move(policy.withSelectionSilenced)),
-    mOnSelectionChanged(std::move(policy.onSelectionChanged))
+    mWithSelectionSilenced(std::move(policy.withSelectionSilenced))
 {}
 
 void NodeSelectorSelectionCoordinator::setParentOfRestoredNodes(
@@ -101,11 +99,10 @@ void NodeSelectorSelectionCoordinator::selectPendingIndexes()
         return;
     }
 
-    bool allSelected = true;
-
     mWithSelectionSilenced(
-        [&]()
+        [&]() -> bool
         {
+            bool allSelected = true;
             for (const auto& item: indexesToBeSelected)
             {
                 auto handle = item.first;
@@ -123,12 +120,8 @@ void NodeSelectorSelectionCoordinator::selectPendingIndexes()
                     }
                 }
             }
+            return allSelected;
         });
-
-    if (allSelected)
-    {
-        mOnSelectionChanged();
-    }
 }
 
 void NodeSelectorSelectionCoordinator::resetMoveNodesToSelect()
@@ -202,7 +195,6 @@ void NodeSelectorSelectionCoordinator::checkNewFolderAdded(QPointer<NodeSelector
     {
         auto newFolderIndex(mProxyModel->getIndexFromHandle(mNewFolderInfo.handle));
         mOnItemDoubleClick(newFolderIndex);
-        mSelectionHasChanged(QModelIndexList() << newFolderIndex);
 
         mNewFolderInfo.handle = mega::INVALID_HANDLE;
         mNewFolderInfo.recentlyAdded = false;
