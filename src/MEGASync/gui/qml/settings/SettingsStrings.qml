@@ -29,4 +29,6 @@ QtObject {
     readonly property string tableSyncsNameColumn: qsTr("Synced folders")
     readonly property string tableSyncsStatusColumn: qsTr("Status")
     readonly property string addSync: qsTr("Add sync")
+    readonly property string titleNoSync: qsTr("No syncs set up")
+    readonly property string descriptionNoSync: qsTr("Add a sync to keep folders up to date ")
 }

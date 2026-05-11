@@ -34,18 +34,83 @@ Item {
     readonly property int issuePartSpacing: 4
     readonly property int switchButtonSeparator: 12
 
+    readonly property int noSyncsTopMargin: 128
+    readonly property int megaDevicesImageSize: 120
+    readonly property int titleNoSyncPixelSize: 20
+    readonly property int descriptionNoSyncPixelSize: 16
+    readonly property int noSyncUnderImageSpace: 24
+    readonly property int noSyncTextsSpacing: 8
+    readonly property int noSyncAboveButtonSpacing: 48
+
     ColumnLayout {
         id: noDataModelContentLayout
 
         visible: syncSettingsModel.rowCount() === 0
-        anchors.fill: parent
-        anchors.topMargin: defaultTopMargin
-        spacing: syncTableSpacing
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 0
 
-        Rectangle {
-            color: "red"
-            width: 50
-            height: 50
+        Item {
+            Layout.preferredHeight: noSyncsTopMargin
+            Layout.preferredWidth: parent.width
+        }
+
+        SvgImage {
+            id: megaDevices
+
+            source: Images.megaDevices
+            sourceSize: Qt.size(megaDevicesImageSize, megaDevicesImageSize)
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        Item {
+            Layout.preferredHeight: noSyncUnderImageSpace
+            Layout.preferredWidth: parent.width
+        }
+
+        Text {
+            id: noSyncTitle
+
+            text: SettingsStrings.titleNoSync
+            font.pixelSize: root.titleNoSyncPixelSize
+            font.weight: Font.DemiBold
+            elide: Text.ElideRight
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        Item {
+            Layout.preferredHeight: noSyncTextsSpacing
+            Layout.preferredWidth: parent.width
+        }
+
+        Text {
+            id: noSyncDescription
+
+            text: SettingsStrings.descriptionNoSync
+            font.pixelSize: root.descriptionNoSyncPixelSize
+            font.weight: Font.Normal
+            elide: Text.ElideRight
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        Item {
+            Layout.preferredHeight: noSyncAboveButtonSpacing
+            Layout.preferredWidth: parent.width
+        }
+
+        PrimaryButton {
+            id: noSyncAddSyncButton
+
+            text: SettingsStrings.addSync
+            icons.source: Images.plus
+            icons.position: Icon.Position.LEFT
+            leftPadding: leftPaddingAddSyncButton
+            rightPadding: rightPaddingAddSyncButton
+            width: implicitWidth
+            onClicked: {
+                syncSettings.addSync();
+            }
+            Layout.alignment: Qt.AlignHCenter
         }
     }
 
