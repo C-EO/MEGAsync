@@ -13,11 +13,79 @@ SyncSettingsModel::SyncSettingsModel(QObject* parent):
     mList = mSyncInfo->getSyncSettingsByType(mega::MegaSync::SyncType::TYPE_TWOWAY);
 }
 
-void SyncSettingsModel::insertSync(std::shared_ptr<SyncSettings> sync) {}
+void SyncSettingsModel::insertSync(std::shared_ptr<SyncSettings> sync)
+{
+    if (sync->getType() != mega::MegaSync::SyncType::TYPE_TWOWAY)
+    {
+        return;
+    }
 
-void SyncSettingsModel::updateSyncStats(std::shared_ptr<::mega::MegaSyncStats> stats) {}
+    auto foundSyncIt = std::find_if(mList.cbegin(),
+                                    mList.cend(),
+                                    [&sync](auto& listSync)
+                                    {
+                                        return (sync == listSync);
+                                    });
 
-void SyncSettingsModel::removeSync(std::shared_ptr<SyncSettings> sync) {}
+    if (foundSyncIt != mList.cend())
+    {
+        auto row = std::distance(mList.cbegin(), foundSyncIt);
+        sendDataChanged(static_cast<int>(row));
+    }
+    else
+    {
+        beginInsertRows(QModelIndex(),
+                        static_cast<int>(mList.size()),
+                        static_cast<int>(mList.size()));
+        mList.append(sync);
+        endInsertRows();
+    }
+}
+
+void SyncSettingsModel::sendDataChanged(int row)
+{
+    const auto modelIndex = index(row, 0, QModelIndex());
+
+    emit dataChanged(modelIndex,
+                     modelIndex,
+                     QVector<int>() << Role::FolderRole << Role::StatusRole);
+}
+
+void SyncSettingsModel::updateSyncStats(std::shared_ptr<::mega::MegaSyncStats> stats)
+{
+    auto foundSyncIt = std::find_if(mList.cbegin(),
+                                    mList.cend(),
+                                    [&stats](auto& listSync)
+                                    {
+                                        return (stats->getBackupId() == listSync->backupId());
+                                    });
+
+    if (foundSyncIt != mList.cend())
+    {
+        auto row = std::distance(mList.cbegin(), foundSyncIt);
+        sendDataChanged(static_cast<int>(row));
+    }
+}
+
+void SyncSettingsModel::removeSync(std::shared_ptr<SyncSettings> sync)
+{
+    auto foundSyncIt = std::find_if(mList.cbegin(),
+                                    mList.cend(),
+                                    [&sync](auto& listSync)
+                                    {
+                                        return (sync == listSync);
+                                    });
+
+    if (foundSyncIt != mList.cend())
+    {
+        auto row = std::distance(mList.cbegin(), foundSyncIt);
+        auto pos = static_cast<int>(row);
+
+        beginRemoveRows(QModelIndex(), pos, pos);
+        mList.removeOne((*foundSyncIt));
+        endRemoveRows();
+    }
+}
 
 QHash<int, QByteArray> SyncSettingsModel::roleNames() const
 {

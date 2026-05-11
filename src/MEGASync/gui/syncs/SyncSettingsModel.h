@@ -39,6 +39,7 @@ private:
     QList<std::shared_ptr<SyncSettings>> mList;
 
     QString getState(std::shared_ptr<SyncSettings> sync) const;
+    void sendDataChanged(int row);
 };
 
 #endif // SYNC_SETTINGS_MODEL_H

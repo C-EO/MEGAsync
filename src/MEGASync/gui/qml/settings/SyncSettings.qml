@@ -45,7 +45,7 @@ Item {
     ColumnLayout {
         id: noDataModelContentLayout
 
-        visible: syncSettingsModel.rowCount() === 0
+        visible: syncList.count === 0
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 0
@@ -120,7 +120,7 @@ Item {
         anchors.fill: parent
         anchors.topMargin: defaultTopMargin
         spacing: syncTableSpacing
-        visible: syncSettingsModel.rowCount() > 0
+        visible: syncList.count > 0
 
         Row {
             id: syncsColumnsLabels
