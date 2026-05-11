@@ -152,6 +152,7 @@ bool NodeSelectorModelIncomingShares::rootNodeUpdated(mega::MegaNode* node)
                 if (mNodeRequesterWorker->isIncomingShareCompatible(node))
                 {
                     updateRow(folderIndex);
+                    emit incomingShareInfoChanged(node->getHandle());
                 }
                 else
                 {

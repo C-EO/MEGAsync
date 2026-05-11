@@ -133,7 +133,7 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
             });
     connect(ui->leSearchTool, &SearchLineEdit::search, this, &NodeSelector::onSearch);
 
-    ui->incomingShareWidget->hide();
+    ui->incomingShareHeaderWidget->hide();
 
     resize(1024, 720);
     setMinimumSize(760, 400);
@@ -323,16 +323,16 @@ void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
     const auto incomingInfo = wid->incomingShareHeaderData();
     const auto showIncomingInfo = incomingInfo.has_value();
     ui->lFolderName->setText(folderNameForWidget(wid));
-    ui->incomingShareWidget->setVisible(showIncomingInfo);
+    ui->incomingShareHeaderWidget->setVisible(showIncomingInfo);
     ui->lFolderName->setVisible(!showIncomingInfo);
 
     if (incomingInfo)
     {
-        ui->incomingShareWidget->setData(*incomingInfo);
+        ui->incomingShareHeaderWidget->setData(*incomingInfo);
     }
     else
     {
-        ui->incomingShareWidget->clear();
+        ui->incomingShareHeaderWidget->clear();
     }
 }
 

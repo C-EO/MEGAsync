@@ -87,6 +87,7 @@ signals:
     void requestIncomingSharesRootCreation(std::shared_ptr<mega::MegaNodeList> nodes);
     void addIncomingSharesRoot(std::shared_ptr<mega::MegaNode> node);
     void deleteIncomingSharesRoot(std::shared_ptr<mega::MegaNode> node);
+    void incomingShareInfoChanged(mega::MegaHandle handle);
 
 private slots:
     void onRootItemsCreated();

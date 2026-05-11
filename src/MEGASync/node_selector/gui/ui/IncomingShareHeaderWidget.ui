@@ -111,9 +111,9 @@ color: #616366; /*colorToken.text-secondary*/
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="accessContainer">
+      <widget class="QWidget" name="accessContainer" native="true">
        <property name="access" stdset="0">
-        <number>-1</number>
+        <number>0</number>
        </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -182,6 +182,9 @@ color: #616366; /*colorToken.text-secondary*/
           <property name="font-size" stdset="0">
            <string notr="true">caption</string>
           </property>
+          <property name="text">
+           <string notr="true">Read only</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -203,7 +206,7 @@ color: #616366; /*colorToken.text-secondary*/
     </layout>
    </item>
    <item>
-    <widget class="QWidget" name="shareeInfo">
+    <widget class="QWidget" name="shareeInfo" native="true">
      <layout class="QHBoxLayout" name="shareeLayout">
       <property name="spacing">
        <number>4</number>

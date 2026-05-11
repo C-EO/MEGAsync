@@ -149,6 +149,41 @@ std::optional<IncomingShareHeaderData>
     return incomingInfo;
 }
 
+void NodeSelectorTreeViewWidgetIncomingShares::makeViewConnections()
+{
+    auto incomingSharesModel = qobject_cast<NodeSelectorModelIncomingShares*>(mModel.get());
+    if (!incomingSharesModel)
+    {
+        return;
+    }
+
+    connect(
+        incomingSharesModel,
+        &NodeSelectorModelIncomingShares::incomingShareInfoChanged,
+        this,
+        [this](mega::MegaHandle handle)
+        {
+            const auto rootIndex = getCurrentRootIndex();
+            if (!rootIndex.isValid())
+            {
+                return;
+            }
+
+            if (getHandleByIndex(rootIndex) == handle)
+            {
+                notifyViewStateChanged();
+                return;
+            }
+
+            const auto incomingShareIndex = getParentIncomingShareByIndex(rootIndex);
+            if (incomingShareIndex.isValid() && getHandleByIndex(incomingShareIndex) == handle)
+            {
+                notifyViewStateChanged();
+            }
+        },
+        Qt::UniqueConnection);
+}
+
 QString NodeSelectorTreeViewWidgetIncomingShares::getRootText()
 {
     return MegaNodeNames::getIncomingSharesName();

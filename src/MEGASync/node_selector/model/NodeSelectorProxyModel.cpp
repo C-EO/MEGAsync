@@ -455,7 +455,7 @@ Qt::ItemFlags NodeSelectorProxyModelSearch::flags(const QModelIndex& index) cons
 bool NodeSelectorProxyModelSearch::filterAcceptsRow(int sourceRow,
                                                     const QModelIndex& sourceParent) const
 {
-    if (mMode == TabType::NONE)
+    if (!mMode)
     {
         return true;
     }
