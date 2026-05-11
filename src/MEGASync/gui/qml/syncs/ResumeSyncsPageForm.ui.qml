@@ -22,7 +22,7 @@ Item {
 
     implicitHeight: mainLayout.height + Constants.defaultComponentSpacing
 
-    Column {
+    ColumnLayout {
         id: mainLayout
 
         anchors {
@@ -35,18 +35,17 @@ Item {
             id: imageItem
 
             source: Images.megaDevices
-            sourceSize: Qt.size(120, 120)
         }
 
         Item {
-            height: Constants.imageSpacing
-            width: parent.width
+            Layout.preferredHeight:  Constants.imageSpacing
+            Layout.preferredWidth: parent.width
         }
 
         Texts.Text {
             id: titleItem
 
-            width: parent.width
+            Layout.preferredWidth: parent.width
             text: SyncsStrings.finalStepSyncTitle
             font {
                 pixelSize: Texts.Text.Size.LARGE
@@ -56,14 +55,14 @@ Item {
         }
 
         Item {
-            height: Constants.defaultComponentSpacing
-            width: parent.width
+            Layout.preferredHeight: Constants.defaultComponentSpacing
+            Layout.preferredWidth: parent.width
         }
 
         Texts.SecondaryText {
             id: descriptionItem
 
-            width: parent.width
+            Layout.preferredWidth: parent.width
             text: SyncsStrings.finalStepSync
             font.pixelSize: Texts.Text.Size.MEDIUM
             wrapMode: Text.Wrap
@@ -72,13 +71,13 @@ Item {
         }
 
         Item {
-            height: root.textBottomSpacing
-            width: parent.width
+            Layout.preferredHeight: root.textBottomSpacing
+            Layout.preferredWidth: parent.width
         }
 
         Item { // trick: wrapper to avoid the anchoring colision (inside the footerbuttons) with the layout manager. that's the only purpose.
-            width: parent.width
-            height: footerButtonsItem.implicitHeight
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: footerButtonsItem.implicitHeight
 
             FooterButtons {
                 id: footerButtonsItem
@@ -97,8 +96,8 @@ Item {
         }
 
         Item {
-            height: Constants.defaultComponentSpacing
-            width: parent.width
+            Layout.preferredHeight: Constants.defaultComponentSpacing
+            Layout.preferredWidth: parent.width
         }
     }
 }
