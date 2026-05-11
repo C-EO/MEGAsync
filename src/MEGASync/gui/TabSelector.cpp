@@ -77,7 +77,7 @@ void TabSelector::setTitle(const QString& title)
 
 QString TabSelector::getTitle() const
 {
-    return ui->lTitle->text();
+    return mTitle;
 }
 
 void TabSelector::setIcon(const QIcon& icon)
@@ -163,6 +163,11 @@ bool TabSelector::isSelected() const
     return property(SELECTED).toBool();
 }
 
+bool TabSelector::isIconOnly() const
+{
+    return mIconOnly;
+}
+
 void TabSelector::setIconOnly(bool state)
 {
     if (mIconOnly == state)
@@ -181,9 +186,31 @@ void TabSelector::setIconOnly(bool state)
         ui->lIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         ui->lTitle->hide();
         ui->lCounter->hide();
-        ui->lClose->hide();
+        ui->lClose->setVisible(false);
         ui->lTitle->setText(QString());
     }
+}
+
+void TabSelector::setNormalOff(const QString& token)
+{
+    mNormalOff = token;
+    ui->lIcon->setProperty("normal_off", token);
+}
+
+QString TabSelector::getNormalOff() const
+{
+    return mNormalOff;
+}
+
+void TabSelector::setNormalOn(const QString& token)
+{
+    mNormalOn = token;
+    ui->lIcon->setProperty("normal_on", token);
+}
+
+QString TabSelector::getNormalOn() const
+{
+    return mNormalOn;
 }
 
 bool TabSelector::event(QEvent* event)

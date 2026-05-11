@@ -13,7 +13,6 @@
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
 #include "SearchLineEdit.h"
 #include "TabSelector.h"
-#include "TokenizableItems/TokenPropertySetter.h"
 #include "ui_NodeSelector.h"
 #include "Utilities.h"
 #include "ViewLoadingScene.h"
@@ -42,12 +41,6 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     ui->setupUi(this);
     ui->cbAlwaysUploadToLocation->hide();
 
-    TabSelector::applyActionToTabSelectors(ui->wLeftPaneNS,
-                                           [](TabSelector* tabSelector)
-                                           {
-                                               tabSelector->setIconOnly(true);
-                                           });
-
     connect(ui->stackedWidget,
             &QStackedWidget::currentChanged,
             this,
@@ -71,31 +64,9 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
             onCloudDriveTabDropped(event);
         });
 
-    TabSelector::applyActionToTabSelectors(ui->wLeftPaneNS,
-                                           [this](TabSelector* tabSelector)
-                                           {
-                                               if (tabSelector != ui->fBackups)
-                                               {
-                                                   tabSelector->setAcceptDrops(true);
-                                               }
-                                           });
-
     connect(ui->fSearch, &TabSelector::hidden, this, &NodeSelector::onfShowSearchHidden);
-
-    ui->wSearch->hide();
-
     updateNodeSelectorTabs();
     onOptionSelected(CLOUD_DRIVE);
-
-    // Left pane tokens
-    {
-        BaseTokens iconTokens;
-        iconTokens.setNormalOff(QLatin1String("icon-secondary"));
-        iconTokens.setNormalOn(QLatin1String("icon-primary"));
-        auto iconTokenSetter = std::make_shared<TokenPropertySetter>(iconTokens);
-
-        TabSelector::applyTokens(ui->wLeftPaneNS, iconTokenSetter);
-    }
 
     if (!mSelectType->footerVisible())
     {
@@ -322,7 +293,7 @@ void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
 
     const auto incomingInfo = wid->incomingShareHeaderData();
     const auto showIncomingInfo = incomingInfo.has_value();
-    ui->lFolderName->setText(folderNameForWidget(wid));
+
     ui->incomingShareHeaderWidget->setVisible(showIncomingInfo);
     ui->lFolderName->setVisible(!showIncomingInfo);
 
@@ -332,6 +303,7 @@ void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
     }
     else
     {
+        ui->lFolderName->setText(folderNameForWidget(wid));
         ui->incomingShareHeaderWidget->clear();
     }
 }

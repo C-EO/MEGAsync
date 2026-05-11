@@ -21,6 +21,9 @@ public:
     ~TabSelector();
 
     Q_PROPERTY(QString title MEMBER mTitle WRITE setTitle READ getTitle)
+    Q_PROPERTY(bool iconOnly WRITE setIconOnly READ isIconOnly)
+    Q_PROPERTY(QString normal_off WRITE setNormalOff READ getNormalOff)
+    Q_PROPERTY(QString normal_on WRITE setNormalOn READ getNormalOn)
     void setTitle(const QString& title);
     QString getTitle() const;
 
@@ -43,6 +46,13 @@ public:
     void toggleOffSiblings();
 
     void setIconOnly(bool state);
+    bool isIconOnly() const;
+
+    void setNormalOff(const QString& token);
+    QString getNormalOff() const;
+
+    void setNormalOn(const QString& token);
+    QString getNormalOn() const;
 
     void setIconTokens(const std::shared_ptr<TokenPropertySetter>& newIconTokens);
     void hideIcon();
@@ -83,6 +93,8 @@ private:
     bool mConnectedToDropEvent;
     bool mCloseButtonVisible;
     bool mIconOnly;
+    QString mNormalOff;
+    QString mNormalOn;
 };
 
 #endif // TABSELECTOR_H

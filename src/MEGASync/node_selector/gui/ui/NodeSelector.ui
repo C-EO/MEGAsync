@@ -93,8 +93,8 @@ background-color: #FFFFFF; /*colorToken.page-background*/
       <property name="bottomMargin">
        <number>24</number>
       </property>
-      <item>
-       <widget class="QGroupBox" name="wStorage">
+     <item>
+      <widget class="QGroupBox" name="wStorage">
         <property name="title">
          <string notr="true"/>
         </property>
@@ -139,13 +139,25 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/cloud_small_thin_outline</normaloff>
              <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
            </property>
+           <property name="iconOnly" stdset="0">
+            <bool>true</bool>
+           </property>
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
+           </property>
            <property name="class" stdset="0">
             <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="TabSelector" name="fIncomingShares" native="true">
+         <widget class="TabSelector" name="fIncomingShares" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -169,13 +181,25 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/folder-users_small_thin_outline</normaloff>
              <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
            </property>
+           <property name="iconOnly" stdset="0">
+            <bool>true</bool>
+           </property>
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
+           </property>
            <property name="class" stdset="0">
             <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="TabSelector" name="fBackups" native="true">
+         <widget class="TabSelector" name="fBackups" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -199,13 +223,22 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/devices_small_thin_outline</normaloff>
              <normalon>:/devices_small_thin_solid</normalon>:/devices_small_thin_outline</iconset>
            </property>
+           <property name="iconOnly" stdset="0">
+            <bool>true</bool>
+           </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
+           </property>
            <property name="class" stdset="0">
             <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="TabSelector" name="fRubbish" native="true">
+         <widget class="TabSelector" name="fRubbish" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -229,6 +262,18 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/trash_small_thin_outline</normaloff>
              <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
            </property>
+           <property name="iconOnly" stdset="0">
+            <bool>true</bool>
+           </property>
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
+           </property>
            <property name="class" stdset="0">
             <string notr="true">sidebar-icononly</string>
            </property>
@@ -238,9 +283,12 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="wSearch">
+      <widget class="QGroupBox" name="wSearch">
         <property name="title">
          <string notr="true"/>
+        </property>
+        <property name="visible">
+         <bool>false</bool>
         </property>
         <property name="type" stdset="0">
          <string notr="true">mega</string>
@@ -262,7 +310,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <number>4</number>
          </property>
          <item>
-          <widget class="TabSelector" name="fSearch" native="true">
+         <widget class="TabSelector" name="fSearch" native="true">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -280,11 +328,23 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/search_small_thin_outline</normaloff>
              <normalon>:/search_small_thin_solid</normalon>:/search_small_thin_outline</iconset>
            </property>
+           <property name="iconOnly" stdset="0">
+            <bool>true</bool>
+           </property>
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
            <property name="closeButtonVisible" stdset="0">
             <bool>true</bool>
            </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
+           </property>
            <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
+            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
