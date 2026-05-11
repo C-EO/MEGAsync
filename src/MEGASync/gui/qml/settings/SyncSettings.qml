@@ -7,6 +7,7 @@ import common 1.0
 import components.images 1.0
 import components.texts 1.0
 import components.buttons 1.0
+import components.menus 1.0
 
 import SyncSettingsModel 1.0
 
@@ -388,7 +389,149 @@ Item {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                // open menu
+                                const bottomRight = syncItem.mapToItem(menu.parent,
+                                                                       syncItem.width,
+                                                                       syncItem.height);
+                                const menuWidth = menu.width > 0 ? menu.width : menu.implicitWidth;
+                                menu.popup(bottomRight.x - menuWidth, bottomRight.y);
+                            }
+                        }
+                    }
+
+                    ContextMenu {
+                        id: menu
+
+                        onFocusChanged: {
+                            if(menu.activeFocus === false){
+                                menu.close();
+                            }
+                        }
+
+                        ContextMenuItem {
+                            id: openInMegaItem
+
+                            text: "open in mega"
+                            icon.source: Images.megaOutline
+                            onTriggered: {
+
+                            }
+                        }
+
+                        ContextMenuItem {
+                            id: showInFolder
+
+                            text: "show in folder"
+                            icon.source: Images.folderOpen
+                            onTriggered: {
+
+                            }
+                        }
+
+                        MenuSeparator {
+                            padding: 0
+                            topPadding: 4
+                            bottomPadding: 4
+
+                            contentItem: Rectangle {
+                                id: separatorRect
+
+                                implicitWidth: parent.width
+                                implicitHeight: 1
+                                color: ColorTheme.surface2
+                            }
+                        }
+
+                        ContextMenuItem {
+                            id: pauseItem
+
+                            text: "pause"
+                            //icon.source:
+                            onTriggered: {
+
+                            }
+                        }
+
+                        MenuSeparator {
+                            padding: 0
+                            topPadding: 4
+                            bottomPadding: 4
+
+                            contentItem: Rectangle {
+                                implicitWidth: parent.width
+                                implicitHeight: 1
+                                color: ColorTheme.surface2
+                            }
+                        }
+
+                        ContextMenuItem {
+                            id: manageExclusionsAction
+
+                            text: "exclusion"
+                            icon.source: Images.slashCircle
+                            onTriggered: {
+
+                            }
+                        }
+
+                        MenuSeparator {
+                            padding: 0
+                            topPadding: 4
+                            bottomPadding: 4
+
+                            contentItem: Rectangle {
+                                implicitWidth: parent.width
+                                implicitHeight: 1
+                                color: ColorTheme.surface2
+                            }
+                        }
+
+                        ContextMenuItem {
+                            id: quickRescanAction
+
+                            text: "quick rescan"
+                            icon.source: Images.searchHollow
+                            onTriggered: {
+
+                            }
+                        }
+
+                        ContextMenuItem {
+                            id: deepRescanAction
+
+                            text: "deep"
+                            icon.source: Images.searchFilled
+                            onTriggered: {
+                            }
+                        }
+
+                        ContextMenuItem {
+                            id: rebootAction
+
+                            text:  "reboot"
+                            icon.source: Images.power
+                            onTriggered: {
+                            }
+                        }
+
+                        MenuSeparator {
+                            padding: 0
+                            topPadding: 4
+                            bottomPadding: 4
+
+                            contentItem: Rectangle {
+                                implicitWidth: parent.width
+                                implicitHeight: 1
+                                color: ColorTheme.surface2
+                            }
+                        }
+
+                        ContextMenuItem {
+                            id: stopBackupAction
+
+                            text: "stop"
+                            icon.source: Images.minusCircle
+                            onTriggered: {
+
                             }
                         }
                     }
