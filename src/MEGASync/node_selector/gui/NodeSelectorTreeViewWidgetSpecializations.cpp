@@ -336,67 +336,90 @@ void NodeSelectorTreeViewWidgetBackups::onRootIndexChanged(const QModelIndex& id
 
 /////////////////////////////////////////////////////////////////
 
-const char* TAB_TYPE = "search_tab_type";
-
 NodeSelectorTreeViewWidgetSearch::NodeSelectorTreeViewWidgetSearch(SelectTypeSPtr mode,
                                                                    QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent),
-    mHasRows(false),
-    mNewSearch(true)
-
+    NodeSelectorTreeViewWidget(mode, parent)
 {
-    auto setTypeToTabSelector = [](TabSelector* tab, TabType type)
-    {
-        tab->setProperty(TAB_TYPE, static_cast<int>(type));
-    };
-
-    setTypeToTabSelector(ui->cloudDriveSearch, TabType::CLOUD_DRIVE);
-    setTypeToTabSelector(ui->incomingSharesSearch, TabType::INCOMING_SHARE);
-    setTypeToTabSelector(ui->backupsSearch, TabType::BACKUP);
-    setTypeToTabSelector(ui->rubbishSearch, TabType::RUBBISH);
+    mSearchController = std::make_unique<NodeSelectorSearchController>(ui);
 
     connect(ui->cloudDriveSearch,
             &TabSelector::clicked,
             this,
-            &NodeSelectorTreeViewWidgetSearch::onCloudDriveSearchClicked);
+            [this]()
+            {
+                onSearchTabClicked(TabType::CLOUD_DRIVE);
+            });
 
     connect(ui->incomingSharesSearch,
             &TabSelector::clicked,
             this,
-            &NodeSelectorTreeViewWidgetSearch::onIncomingSharesSearchClicked);
+            [this]()
+            {
+                onSearchTabClicked(TabType::INCOMING_SHARE);
+            });
 
     connect(ui->backupsSearch,
             &TabSelector::clicked,
             this,
-            &NodeSelectorTreeViewWidgetSearch::onBackupsSearchClicked);
+            [this]()
+            {
+                onSearchTabClicked(TabType::BACKUP);
+            });
 
     connect(ui->rubbishSearch,
             &TabSelector::clicked,
             this,
-            &NodeSelectorTreeViewWidgetSearch::onRubbishSearchClicked);
+            [this]()
+            {
+                onSearchTabClicked(TabType::RUBBISH);
+            });
 
     ui->tMegaFolders->loadingView().setDelayTimeToShowInMs(0);
 }
 
+void NodeSelectorTreeViewWidgetSearch::prepareForInitialDisplay()
+{
+    // The search view does not load content on startup. Pre-attaching the view avoids the
+    // first visible search having to build the tree view and delegates mid-transition.
+    setLoadingSceneVisible(false);
+    onExpandReady();
+}
+
+void NodeSelectorTreeViewWidgetSearch::setSearchScope(std::optional<TabType> scope)
+{
+    mSearchController->setSearchScope(scope);
+}
+
+void NodeSelectorTreeViewWidgetSearch::resetSearchState()
+{
+    if (auto model = searchModel())
+    {
+        model->stopSearch();
+    }
+
+    mSearchController->resetSearch();
+}
+
 void NodeSelectorTreeViewWidgetSearch::search(const QString& text)
 {
-    resetChipsVisibility();
-
-    mNewSearch = true;
-    mSearchStr = text;
-
-    ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+    mSearchController->beginSearch(text);
     setStyleSheet(styleSheet());
 
-    auto search_model = static_cast<NodeSelectorModelSearch*>(mModel.get());
-    search_model->searchByText(text);
+    if (auto model = searchModel())
+    {
+        model->setAllowedTabTypes(
+            mSearchController->allowedTypes(getSelectType()->allowedTabTypes()));
+        model->searchByText(text);
+    }
 }
 
 void NodeSelectorTreeViewWidgetSearch::stopSearch()
 {
-    auto search_model = static_cast<NodeSelectorModelSearch*>(mModel.get());
-    search_model->stopSearch();
-    mHasRows = false;
+    if (auto model = searchModel())
+    {
+        model->stopSearch();
+    }
+    mSearchController->stopSearch();
 }
 
 std::shared_ptr<NodeSelectorProxyModel> NodeSelectorTreeViewWidgetSearch::createProxyModel()
@@ -427,40 +450,14 @@ bool NodeSelectorTreeViewWidgetSearch::isSelectionReadOnly(const QModelIndexList
     return true;
 }
 
-void NodeSelectorTreeViewWidgetSearch::treeViewWidgetSelected()
-{
-    // By default, all visible the first time
-    if (ui->searchButtonsWidget->isHidden())
-    {
-        resetChipsVisibility();
-    }
-}
-
 void NodeSelectorTreeViewWidgetSearch::resetMovingNumber()
 {
     mModel->finishMovingNodes();
 }
 
-void NodeSelectorTreeViewWidgetSearch::checkSearchButtonsVisibility()
-{
-    TabTypes searchedTypes = TabType::NONE;
-    auto searchModel = dynamic_cast<NodeSelectorModelSearch*>(mModel.get());
-    if (searchModel)
-    {
-        searchedTypes = searchModel->searchedTypes();
-    }
-
-    ui->backupsSearch->setVisible(searchedTypes.testFlag(TabType::BACKUP));
-    ui->incomingSharesSearch->setVisible(searchedTypes.testFlag(TabType::INCOMING_SHARE));
-    ui->cloudDriveSearch->setVisible(searchedTypes.testFlag(TabType::CLOUD_DRIVE));
-    ui->rubbishSearch->setVisible(searchedTypes.testFlag(TabType::RUBBISH));
-}
-
 bool NodeSelectorTreeViewWidgetSearch::isNodeCompatibleWithModel(mega::MegaNode* node)
 {
-    auto nodeName(QString::fromUtf8(node->getName()));
-    auto containsText = nodeName.contains(mSearchStr, Qt::CaseInsensitive);
-    return containsText;
+    return mSearchController->matchesNodeName(node);
 }
 
 QModelIndex NodeSelectorTreeViewWidgetSearch::getAddedNodeParent(mega::MegaHandle parentHandle)
@@ -483,7 +480,7 @@ NodeSelectorTreeViewWidget::NodeState
 {
     NodeState result(NodeState::DOESNT_EXIST);
 
-    if (mHasRows && node)
+    if (mSearchController->hasRows() && node)
     {
         if (index.isValid())
         {
@@ -498,36 +495,19 @@ NodeSelectorTreeViewWidget::NodeState
     return result;
 }
 
-void NodeSelectorTreeViewWidgetSearch::onBackupsSearchClicked()
+void NodeSelectorTreeViewWidgetSearch::onSearchTabClicked(TabType type)
 {
-    auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(TabType::BACKUP);
-    changeColumnsVisibility(TabType::BACKUP);
-    expandSearchResults();
-}
-
-void NodeSelectorTreeViewWidgetSearch::onRubbishSearchClicked()
-{
-    auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(TabType::RUBBISH);
-    changeColumnsVisibility(TabType::RUBBISH);
-    expandSearchResults();
-}
-
-void NodeSelectorTreeViewWidgetSearch::onIncomingSharesSearchClicked()
-{
-    auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(TabType::INCOMING_SHARE);
-    changeColumnsVisibility(TabType::INCOMING_SHARE);
-    expandSearchResults();
-}
-
-void NodeSelectorTreeViewWidgetSearch::onCloudDriveSearchClicked()
-{
-    auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(TabType::CLOUD_DRIVE);
-    changeColumnsVisibility(TabType::CLOUD_DRIVE);
-    expandSearchResults();
+    mSearchController->activateMode(
+        type,
+        searchProxyModel(),
+        [this](TabType t)
+        {
+            changeColumnsVisibility(t);
+        },
+        [this]()
+        {
+            expandSearchResults();
+        });
 }
 
 void NodeSelectorTreeViewWidgetSearch::onItemDoubleClick(const QModelIndex& index)
@@ -558,6 +538,7 @@ void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(TabType type)
             break;
         }
         case TabType::RUBBISH:
+        case TabType::NONE:
         default:
             break;
     }
@@ -569,16 +550,6 @@ void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(TabType type)
     onRootIndexChanged(QModelIndex());
 }
 
-void NodeSelectorTreeViewWidgetSearch::resetChipsVisibility()
-{
-    ui->backupsSearch->setVisible(true);
-    ui->incomingSharesSearch->setVisible(true);
-    ui->cloudDriveSearch->setVisible(true);
-    ui->rubbishSearch->setVisible(true);
-
-    ui->searchButtonsWidget->setVisible(true);
-}
-
 void NodeSelectorTreeViewWidgetSearch::expandSearchResults()
 {
     ui->tMegaFolders->expandAll();
@@ -586,21 +557,15 @@ void NodeSelectorTreeViewWidgetSearch::expandSearchResults()
 
 void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
 {
-    if (mNewSearch)
-    {
-        checkSearchButtonsVisibility();
-
-        // Get the searched types returned by the SDK
-        TabTypes searchedTypes = TabType::NONE;
-        auto searchModel = dynamic_cast<NodeSelectorModelSearch*>(mModel.get());
-        if (searchModel)
+    mSearchController->handleExpandReady(
+        searchModel(),
+        searchProxyModel(),
+        ui->tMegaFolders->model() != nullptr,
+        [this]()
         {
-            searchedTypes = searchModel->searchedTypes();
-        }
-
-        TabType tabSelected(TabType::NONE);
-        // Set the model and the tab selector
-        auto setMode = [this, searchedTypes, &tabSelected](TabType type)
+        NodeSelectorTreeViewWidget::onExpandReady();
+        },
+        [this](TabType type)
         {
             if (tabSelected != TabType::NONE)
             {
@@ -727,14 +692,25 @@ void NodeSelectorTreeViewWidgetSearch::setViewPage()
 
     if (ui->tMegaFolders->model())
     {
-        mHasRows = ui->tMegaFolders->model()->rowCount() > 0;
-        if (!mHasRows && showEmptyView())
+        const bool hasRows = ui->tMegaFolders->model()->rowCount() > 0;
+        mSearchController->setHasRows(hasRows);
+        if (!hasRows && showEmptyView())
         {
             ui->stackedWidget->setCurrentWidget(ui->emptyPage);
             return;
         }
     }
     ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+}
+
+NodeSelectorModelSearch* NodeSelectorTreeViewWidgetSearch::searchModel() const
+{
+    return static_cast<NodeSelectorModelSearch*>(mModel.get());
+}
+
+NodeSelectorProxyModelSearch* NodeSelectorTreeViewWidgetSearch::searchProxyModel() const
+{
+    return static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
 }
 
 ///////////////////////

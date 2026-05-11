@@ -152,6 +152,7 @@ public:
     void createRootNodes() override;
     void searchByText(const QString& text);
     void stopSearch();
+    void setAllowedTabTypes(TabTypes allowedTypes);
     int rootItemsCount() const override;
     QModelIndex getTopRootIndex() const override;
     bool canFetchMore(const QModelIndex& parent) const override;

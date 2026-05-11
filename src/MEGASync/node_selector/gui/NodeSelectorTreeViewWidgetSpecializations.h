@@ -2,6 +2,7 @@
 #define NODESELECTORTREEVIEWWIDGETSPECIALIZATIONS_H
 
 #include "NodeSelectorProxyModel.h"
+#include "NodeSelectorSearchController.h"
 #include "NodeSelectorTreeViewWidget.h"
 
 #include <QLabel>
@@ -10,8 +11,11 @@
 #include <QWidget>
 
 #include <memory>
+#include <optional>
 
 class NodeSelectorModel;
+class NodeSelectorModelSearch;
+class NodeSelectorProxyModelSearch;
 class RestoreNodeManager;
 class TabSelector;
 
@@ -108,14 +112,15 @@ class NodeSelectorTreeViewWidgetSearch: public NodeSelectorTreeViewWidget
 
 public:
     explicit NodeSelectorTreeViewWidgetSearch(SelectTypeSPtr mode, QWidget* parent = nullptr);
+    void prepareForInitialDisplay();
+    void resetSearchState();
     void search(const QString& text);
     void stopSearch();
+    void setSearchScope(std::optional<TabType> scope);
     bool isCurrentRootIndexReadOnly() override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
 
     std::shared_ptr<RestoreNodeManager> getRestoreManager() const;
-
-    void treeViewWidgetSelected() override;
 
 public slots:
     void resetMovingNumber();
@@ -135,27 +140,21 @@ protected slots:
     NodeState getNodeOnModelState(const QModelIndex& index, mega::MegaNode* node) override;
 
 private slots:
-    void onBackupsSearchClicked();
-    void onIncomingSharesSearchClicked();
-    void onCloudDriveSearchClicked();
-    void onRubbishSearchClicked();
     void onItemDoubleClick(const QModelIndex& index) override;
 
 private:
-    void checkSearchButtonsVisibility();
+    void onSearchTabClicked(TabType type);
     void changeColumnsVisibility(TabType type);
-    void resetChipsVisibility();
     void expandSearchResults();
     QString getRootText() override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     QIcon getEmptyIcon() override;
     EmptyLabelInfo getEmptyLabel() override;
+    NodeSelectorModelSearch* searchModel() const;
+    NodeSelectorProxyModelSearch* searchProxyModel() const;
 
-    bool mHasRows;
-    QString mSearchStr;
-    bool mNewSearch;
-
+    std::unique_ptr<NodeSelectorSearchController> mSearchController;
     std::shared_ptr<RestoreNodeManager> mRestoreManager;
 };
 

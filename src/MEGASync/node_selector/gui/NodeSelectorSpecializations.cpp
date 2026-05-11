@@ -232,6 +232,12 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
     // Update last time opened
     Preferences::instance()->cloudDriveDialogOpened();
 
+    connect(ui->fSearch,
+            &TabSelector::clicked,
+            this,
+            &CloudDriveNodeSelector::onbShowSearchClicked);
+    connect(ui->fSearch, &TabSelector::hidden, this, &CloudDriveNodeSelector::onfShowSearchHidden);
+
     // Send stats in case we didn´t send them in the current hour
     sendStats();
 }
@@ -241,7 +247,40 @@ void CloudDriveNodeSelector::afterWidgetsCreated()
     enableDragAndDrop(true);
 }
 
+NodeSelector::ClearTypes CloudDriveNodeSelector::searchClearType() const
+{
+    return ClearType::CLEAR_ON_CLOSE_SEARCH_TAB;
+}
+
 void CloudDriveNodeSelector::onLanguageChangeEvent() {}
+
+void CloudDriveNodeSelector::handleSearch(const QString& text)
+{
+    ui->wSearch->show();
+    ui->fSearch->setTitle(text);
+    ui->fSearch->setSelected(true);
+
+    mSearchWidget->search(text);
+    onbShowSearchClicked();
+}
+
+void CloudDriveNodeSelector::handleSearchHidden()
+{
+    if (!ui->wSearch->isVisible())
+    {
+        return;
+    }
+
+    ui->wSearch->hide();
+    ui->fSearch->setTitle(QString());
+    ui->leSearchTool->onClearClicked();
+    mSearchWidget->stopSearch();
+
+    if (getCurrentTreeViewWidget() == mSearchWidget)
+    {
+        onbShowCloudDriveClicked();
+    }
+}
 
 void CloudDriveNodeSelector::enableDragAndDrop(bool enable)
 {
@@ -434,6 +473,19 @@ void CloudDriveNodeSelector::onItemsAboutToBeMergedFailed(
     int actionType)
 {
     performMergeAction(mergesInfo, actionType, NodeSelector::IncreaseOrDecrease::DECREASE);
+}
+
+void CloudDriveNodeSelector::onbShowSearchClicked()
+{
+    if (ui->fSearch->isVisible())
+    {
+        ui->stackedWidget->setCurrentWidget(mSearchWidget);
+    }
+}
+
+void CloudDriveNodeSelector::onfShowSearchHidden()
+{
+    handleSearchHidden();
 }
 
 void CloudDriveNodeSelector::performMergeAction(

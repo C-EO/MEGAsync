@@ -56,7 +56,6 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     connect(ui->fCloudDrive, &TabSelector::clicked, this, &NodeSelector::onbShowCloudDriveClicked);
     connect(ui->fBackups, &TabSelector::clicked, this, &NodeSelector::onbShowBackupsFolderClicked);
     connect(ui->fRubbish, &TabSelector::clicked, this, &NodeSelector::onbShowRubbishClicked);
-    connect(ui->fSearch, &TabSelector::clicked, this, &NodeSelector::onbShowSearchClicked);
 
     ui->fCloudDrive->connectToDropEvent(
         [this](std::shared_ptr<QDropEvent> event)
@@ -64,7 +63,6 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
             onCloudDriveTabDropped(event);
         });
 
-    connect(ui->fSearch, &TabSelector::hidden, this, &NodeSelector::onfShowSearchHidden);
     updateNodeSelectorTabs();
     onOptionSelected(CLOUD_DRIVE);
 
@@ -102,7 +100,18 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
                     wid->goForward();
                 }
             });
+
     connect(ui->leSearchTool, &SearchLineEdit::search, this, &NodeSelector::onSearch);
+    if (searchClearType() & ClearType::CLEAR_ON_CLEAR_SEARCH_LINE_EDIT)
+    {
+        connect(ui->leSearchTool,
+                &SearchLineEdit::cleared,
+                this,
+                [this]()
+                {
+                    clearCurrentTabSearch(false);
+                });
+    }
 
     ui->incomingShareHeaderWidget->hide();
 
@@ -148,12 +157,31 @@ void NodeSelector::updateNodeSelectorTabs()
 
 void NodeSelector::onSearch(const QString& text)
 {
-    ui->wSearch->show();
-    ui->fSearch->setTitle(text);
-    ui->fSearch->setSelected(true);
+    handleSearch(text);
+}
 
+void NodeSelector::handleSearch(const QString& text)
+{
+    if (!mSearchWidget)
+    {
+        return;
+    }
+
+    auto sourceTab = currentSearchSourceTab();
+    if (!sourceTab.has_value())
+    {
+        return;
+    }
+
+    mSearchSourceTab = sourceTab;
+    mSearchWidget->setSearchScope(tabTypeForItem(sourceTab.value()));
     mSearchWidget->search(text);
-    onbShowSearchClicked();
+    ui->stackedWidget->setCurrentWidget(mSearchWidget);
+}
+
+void NodeSelector::handleSearchHidden()
+{
+    clearCurrentTabSearch(true);
 }
 
 void NodeSelector::onbNewFolderClicked()
@@ -406,19 +434,6 @@ void NodeSelector::confirmSelection()
     onOkButtonClicked();
 }
 
-void NodeSelector::onfShowSearchHidden()
-{
-    ui->wSearch->hide();
-    ui->fSearch->setTitle(QString());
-    ui->leSearchTool->onClearClicked();
-    mSearchWidget->stopSearch();
-
-    if (getCurrentTreeViewWidget() == mSearchWidget)
-    {
-        onbShowCloudDriveClicked();
-    }
-}
-
 void NodeSelector::onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int)
 {
     performItemsToBeMoved(handles, IncreaseOrDecrease::INCREASE, true, true);
@@ -531,19 +546,19 @@ void NodeSelector::onCloudDriveTabDropped(std::shared_ptr<QDropEvent> event)
 
 void NodeSelector::onbShowCloudDriveClicked()
 {
-    ui->stackedWidget->setCurrentIndex(CLOUD_DRIVE);
+    showTab(CLOUD_DRIVE);
 }
 
 void NodeSelector::onbShowRubbishClicked()
 {
-    ui->stackedWidget->setCurrentIndex(RUBBISH);
+    showTab(RUBBISH);
 }
 
 void NodeSelector::onbShowIncomingSharesClicked()
 {
     if (ui->fIncomingShares->isVisible())
     {
-        ui->stackedWidget->setCurrentIndex(SHARES);
+        showTab(SHARES);
     }
 }
 
@@ -551,15 +566,7 @@ void NodeSelector::onbShowBackupsFolderClicked()
 {
     if (ui->fBackups->isVisible())
     {
-        ui->stackedWidget->setCurrentIndex(BACKUPS);
-    }
-}
-
-void NodeSelector::onbShowSearchClicked()
-{
-    if (ui->fSearch->isVisible())
-    {
-        ui->stackedWidget->setCurrentWidget(mSearchWidget);
+        showTab(BACKUPS);
     }
 }
 
@@ -589,6 +596,135 @@ void NodeSelector::resetButtonsText()
     // Done here to re-use contexts
     ui->bOk->setText(QCoreApplication::translate("NodeSelectorTreeViewWidget", "Ok"));
     ui->bCancel->setText(QCoreApplication::translate("NodeSelectorTreeViewWidget", "Cancel"));
+}
+
+TabType NodeSelector::tabTypeForItem(TabItem item) const
+{
+    switch (item)
+    {
+        case CLOUD_DRIVE:
+            return TabType::CLOUD_DRIVE;
+        case SHARES:
+            return TabType::INCOMING_SHARE;
+        case BACKUPS:
+            return TabType::BACKUP;
+        case RUBBISH:
+            return TabType::RUBBISH;
+        case SEARCH:
+        default:
+            return TabType::NONE;
+    }
+}
+
+void NodeSelector::showTab(TabItem item)
+{
+    if (auto wid = widgetForTab(item))
+    {
+        ui->stackedWidget->setCurrentWidget(wid);
+
+        if (item != TabItem::SEARCH && searchClearType() & ClearType::CLEAR_ON_TAB_CHANGE)
+        {
+            clearCurrentTabSearch(true);
+        }
+    }
+}
+
+NodeSelectorTreeViewWidget* NodeSelector::widgetForTab(TabItem item) const
+{
+    switch (item)
+    {
+        case CLOUD_DRIVE:
+            return mCloudDriveWidget;
+        case SHARES:
+            return mIncomingSharesWidget;
+        case BACKUPS:
+            return mBackupsWidget;
+        case RUBBISH:
+            return mRubbishWidget;
+        case SEARCH:
+            return mSearchWidget;
+        default:
+            return nullptr;
+    }
+}
+
+std::optional<NodeSelector::TabItem>
+    NodeSelector::tabItemForWidget(const NodeSelectorTreeViewWidget* wid) const
+{
+    if (wid == mCloudDriveWidget)
+    {
+        return CLOUD_DRIVE;
+    }
+
+    if (wid == mIncomingSharesWidget)
+    {
+        return SHARES;
+    }
+
+    if (wid == mBackupsWidget)
+    {
+        return BACKUPS;
+    }
+
+    if (wid == mRubbishWidget)
+    {
+        return RUBBISH;
+    }
+
+    if (wid == mSearchWidget)
+    {
+        return SEARCH;
+    }
+
+    return std::nullopt;
+}
+
+bool NodeSelector::isCurrentTabSearchActive() const
+{
+    return mSearchSourceTab.has_value() && ui->stackedWidget->currentWidget() == mSearchWidget;
+}
+
+std::optional<NodeSelector::TabItem> NodeSelector::currentSearchSourceTab() const
+{
+    if (mSearchSourceTab.has_value())
+    {
+        return mSearchSourceTab;
+    }
+
+    return tabItemForWidget(getCurrentTreeViewWidget());
+}
+
+void NodeSelector::clearCurrentTabSearchOnTabChanged()
+{
+    clearCurrentTabSearch(true);
+}
+
+void NodeSelector::clearCurrentTabSearch(bool clearLineEdit)
+{
+    if (!mSearchSourceTab.has_value())
+    {
+        return;
+    }
+
+    const auto sourceTab = mSearchSourceTab;
+    mSearchSourceTab.reset();
+
+    if (clearLineEdit)
+    {
+        ui->leSearchTool->onClearClicked();
+    }
+
+    ui->leSearchTool->showTextEntry(false, true);
+
+    if (mSearchWidget)
+    {
+        mSearchWidget->resetSearchState();
+    }
+
+    if (sourceTab.has_value() && ui->stackedWidget->currentWidget() == mSearchWidget)
+    {
+        showTab(sourceTab.value());
+    }
 }
 
 NodeSelectorTreeViewWidget* NodeSelector::getTreeViewWidget(int page) const
@@ -812,13 +948,13 @@ void NodeSelector::performNodeSelection()
         if (option.has_value())
         {
             auto optionValue(option.value());
-            if (ui->stackedWidget->currentIndex() == optionValue)
+            if (getCurrentTreeViewWidget() == widgetForTab(optionValue))
             {
-                onCurrentWidgetChanged(optionValue);
+                onCurrentWidgetChanged(ui->stackedWidget->currentIndex());
             }
             else
             {
-                onOptionSelected(optionValue);
+                showTab(optionValue);
             }
         }
 
@@ -876,7 +1012,13 @@ void NodeSelector::onCurrentWidgetChanged(int index)
 {
     if (auto wid = dynamic_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
     {
-        onOptionSelected(index);
+        if (searchHasOwnTab() || wid != mSearchWidget)
+        {
+            if (auto tabItem = tabItemForWidget(wid); tabItem.has_value())
+            {
+                onOptionSelected(static_cast<int>(tabItem.value()));
+            }
+        }
 
         disconnect(mViewStateConnection);
         disconnect(mViewButtonsStateConnection);
@@ -887,8 +1029,6 @@ void NodeSelector::onCurrentWidgetChanged(int index)
             wid->setSelectedNodeHandle(mNodeToBeSelected->getHandle());
             mNodeToBeSelected.reset();
         }
-
-        wid->treeViewWidgetSelected();
 
         disconnect(mSelectionChangedConnection);
         mSelectionChangedConnection = connect(wid,
@@ -935,7 +1075,7 @@ void NodeSelector::onNodesUpdate(mega::MegaApi* api, mega::MegaNodeList* nodes)
     {
         if (auto wid = dynamic_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
         {
-            if (wid != mSearchWidget || !ui->fSearch->isHidden())
+            if (wid != mSearchWidget || !ui->fSearch->isHidden() || isCurrentTabSearchActive())
             {
                 wid->onNodesUpdate(api, nodes);
             }
@@ -1001,6 +1141,11 @@ void NodeSelector::addWidgetForTabType(TabType type)
     }
 }
 
+NodeSelector::ClearTypes NodeSelector::searchClearType() const
+{
+    return (ClearType::CLEAR_ON_CLEAR_SEARCH_LINE_EDIT | ClearType::CLEAR_ON_TAB_CHANGE);
+}
+
 void NodeSelector::addCloudDrive()
 {
     mCloudDriveWidget = new NodeSelectorTreeViewWidgetCloudDrive(mSelectType);
@@ -1032,6 +1177,7 @@ void NodeSelector::addSearch()
 {
     mSearchWidget = new NodeSelectorTreeViewWidgetSearch(mSelectType);
     mSearchWidget->init();
+    mSearchWidget->prepareForInitialDisplay();
     initSpecialisedWidgets(mSearchWidget);
     mSearchWidget->setObjectName(QString::fromUtf8("Search"));
     connect(mSearchWidget,

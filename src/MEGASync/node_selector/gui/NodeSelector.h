@@ -55,6 +55,14 @@ public:
     };
     Q_ENUM(TabItem)
 
+    enum class ClearType
+    {
+        CLEAR_ON_CLOSE_SEARCH_TAB = 0x0,
+        CLEAR_ON_CLEAR_SEARCH_LINE_EDIT = 0x1,
+        CLEAR_ON_TAB_CHANGE = 0x2
+    };
+    Q_DECLARE_FLAGS(ClearTypes, ClearType)
+
     explicit NodeSelector(SelectTypeSPtr selectType, QWidget* parent = 0);
     ~NodeSelector();
 
@@ -107,6 +115,16 @@ protected:
 
     virtual void afterWidgetsCreated() {}
 
+    virtual ClearTypes searchClearType() const;
+
+    virtual bool searchHasOwnTab() const
+    {
+        return false;
+    }
+
+    virtual void handleSearch(const QString& text);
+    virtual void handleSearchHidden();
+
     virtual void onLanguageChangeEvent() {}
     void addCloudDrive();
     NodeSelectorTreeViewWidgetCloudDrive* mCloudDriveWidget;
@@ -154,12 +172,10 @@ protected slots:
     void onCloudDriveTabDropped(std::shared_ptr<QDropEvent> event);
 
 private slots:
-    void onbShowSearchClicked();
     void confirmSelection();
     void onbShowBackupsFolderClicked();
     void onbShowRubbishClicked();
     void updateNodeSelectorTabs();
-    void onfShowSearchHidden();
     void onCurrentWidgetChanged(int index);
     void onShowDuplicatedNodeDialog(QPointer<DuplicatedNodeDialog>);
     void performNodeSelection();
@@ -169,6 +185,14 @@ private slots:
     void onbNewFolderClicked();
 
 private:
+    TabType tabTypeForItem(TabItem item) const;
+    NodeSelectorTreeViewWidget* widgetForTab(TabItem item) const;
+    std::optional<TabItem> tabItemForWidget(const NodeSelectorTreeViewWidget* wid) const;
+    void showTab(TabItem item);
+    bool isCurrentTabSearchActive() const;
+    std::optional<TabItem> currentSearchSourceTab() const;
+    virtual void clearCurrentTabSearchOnTabChanged();
+    void clearCurrentTabSearch(bool clearLineEdit);
     QString folderNameForWidget(NodeSelectorTreeViewWidget* wid) const;
     void applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid);
     void applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid);
@@ -186,6 +210,7 @@ private:
 
     bool mManuallyResizedColumn;
     bool mInitialised;
+    std::optional<TabItem> mSearchSourceTab;
 
     std::shared_ptr<mega::MegaNode> mNodeToBeSelected;
 
@@ -203,5 +228,7 @@ private:
     QMetaObject::Connection mViewStateConnection;
     QMetaObject::Connection mViewButtonsStateConnection;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(NodeSelector::ClearTypes)
 
 #endif // NODESELECTOR_H

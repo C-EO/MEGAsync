@@ -511,6 +511,11 @@ void NodeSelectorModelSearch::stopSearch()
     mNodeRequesterWorker->restartSearch();
 }
 
+void NodeSelectorModelSearch::setAllowedTabTypes(TabTypes allowedTypes)
+{
+    mallowedTabTypes = allowedTypes;
+}
+
 int NodeSelectorModelSearch::rootItemsCount() const
 {
     return 0;

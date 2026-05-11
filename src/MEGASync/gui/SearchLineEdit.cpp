@@ -233,6 +233,11 @@ void SearchLineEdit::onTextChanged(const QString& text)
     {
         toggleClearButton(false);
     }
+
+    if (text.isEmpty())
+    {
+        emit cleared();
+    }
 }
 
 void SearchLineEdit::onSearchButtonClicked()

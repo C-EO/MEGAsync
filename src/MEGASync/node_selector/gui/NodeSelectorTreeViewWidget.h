@@ -65,8 +65,6 @@ public:
 
     void selectPendingIndexes();
 
-    virtual void treeViewWidgetSelected() {}
-
     void clearSelection();
 
     void abort();

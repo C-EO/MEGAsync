@@ -46,6 +46,7 @@ protected:
 
 signals:
     void search(const QString& text);
+    void cleared();
 
 public slots:
     void onClearClicked();

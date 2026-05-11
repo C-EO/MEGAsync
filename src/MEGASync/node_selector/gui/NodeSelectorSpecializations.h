@@ -62,6 +62,17 @@ public:
 
 protected:
     void afterWidgetsCreated() override;
+
+    bool searchHasOwnTab() const override
+    {
+        return true;
+    }
+
+    ClearTypes searchClearType() const override;
+
+    void handleSearch(const QString& text) override;
+    void handleSearchHidden() override;
+
     void onLanguageChangeEvent() override;
 
 protected slots:
@@ -83,6 +94,9 @@ protected slots:
     void onItemsAboutToBeMergedFailed(
         const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,
         int actionType) override;
+
+    void onbShowSearchClicked();
+    void onfShowSearchHidden();
 
 private:
     void performMergeAction(const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,
