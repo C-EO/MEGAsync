@@ -129,6 +129,16 @@ QtObject {
     readonly property url sync_01_small_thin_outline: "qrc:/sync-01_small_thin_outline.svg"
     readonly property url check_medium_regular_solid: "qrc:/check_medium_regular_solid.svg"
 
+    readonly property url file_ignore_small_thin_outline: "qrc:/file-ignore_small_thin_outline.svg"
+    readonly property url folder_small_thin_outline: "qrc:/folder_small_thin_outline.svg"
+    readonly property url mega_medium_thin_outline: "qrc:/mega_medium_thin_outline.svg"
+    readonly property url pause_thin_small_thin_outline: "qrc:/pause-thin_small_thin_outline.svg"
+    readonly property url rotate_cw_small_thin_outline: "qrc:/rotate-cw_small_thin_outline.svg"
+    readonly property url search_large_small_thin_outline: "qrc:/search-large_small_thin_outline.svg"
+    readonly property url trash_small_thin_outline: "qrc:/trash_small_thin_outline.svg"
+    readonly property url play_small_thin_outline: "qrc:/play_small_thin_outline.svg"
+    readonly property url lightbulb_small_thin_outline: "qrc:/lightbulb_small_thin_outline.svg"
+
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //   Standard Icons
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -125,5 +125,14 @@
         <file alias="folder-search_small_thin_outline.svg">images/qml/folder-search_small_thin_outline.svg</file>
         <file alias="sync-01_small_thin_outline.svg">images/qml/sync-01_small_thin_outline.svg</file>
         <file alias="check_medium_regular_solid.svg">images/qml/check_medium_regular_solid.svg</file>
+        <file alias="file-ignore_small_thin_outline.svg">images/qml/file-ignore_small_thin_outline.svg</file>
+        <file alias="folder_small_thin_outline.svg">images/qml/folder_small_thin_outline.svg</file>
+        <file alias="mega_medium_thin_outline.svg">images/qml/mega_medium_thin_outline.svg</file>
+        <file alias="pause-thin_small_thin_outline.svg">images/qml/pause-thin_small_thin_outline.svg</file>
+        <file alias="rotate-cw_small_thin_outline.svg">images/qml/rotate-cw_small_thin_outline.svg</file>
+        <file alias="search-large_small_thin_outline.svg">images/qml/search-large_small_thin_outline.svg</file>
+        <file alias="trash_small_thin_outline.svg">images/qml/trash_small_thin_outline.svg</file>
+        <file alias="play_small_thin_outline.svg">images/qml/play_small_thin_outline.svg</file>
+        <file alias="lightbulb_small_thin_outline.svg">images/qml/lightbulb_small_thin_outline.svg</file>
     </qresource>
 </RCC>

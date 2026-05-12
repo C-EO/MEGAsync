@@ -389,154 +389,106 @@ Item {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                const bottomRight = syncItem.mapToItem(menu.parent,
-                                                                       syncItem.width,
-                                                                       syncItem.height);
-                                const menuWidth = menu.width > 0 ? menu.width : menu.implicitWidth;
-                                menu.popup(bottomRight.x - menuWidth, bottomRight.y);
+                                menu.popup(syncItem.width - menu.width, syncItem.height)
                             }
                         }
                     }
+                }
+            }
 
-                    ContextMenu {
-                        id: menu
+            ContextMenu {
+                id: menu
 
-                        onFocusChanged: {
-                            if(menu.activeFocus === false){
-                                menu.close();
-                            }
-                        }
+                onFocusChanged: {
+                    if(menu.activeFocus === false){
+                        menu.close();
+                    }
+                }
 
-                        ContextMenuItem {
-                            id: openInMegaItem
+                ContextMenuItem {
+                    text: "Solve issues"
+                    icon.source: Images.lightbulb_small_thin_outline
+                    onTriggered: {
 
-                            text: "open in mega"
-                            icon.source: Images.megaOutline
-                            onTriggered: {
+                    }
+                }
 
-                            }
-                        }
+                MenuSeparator {
+                }
 
-                        ContextMenuItem {
-                            id: showInFolder
+                ContextMenuItem {
+                    text: "Show in folder"
+                    icon.source: Images.folder_small_thin_outline
+                    onTriggered: {
 
-                            text: "show in folder"
-                            icon.source: Images.folderOpen
-                            onTriggered: {
+                    }
+                }
 
-                            }
-                        }
+                ContextMenuItem {
+                    text: "Open in mega"
+                    icon.source: Images.mega_medium_thin_outline
+                    onTriggered: {
 
-                        MenuSeparator {
-                            padding: 0
-                            topPadding: 4
-                            bottomPadding: 4
+                    }
+                }
 
-                            contentItem: Rectangle {
-                                id: separatorRect
+                MenuSeparator {
+                }
 
-                                implicitWidth: parent.width
-                                implicitHeight: 1
-                                color: ColorTheme.surface2
-                            }
-                        }
+                ContextMenuItem {
+                    text: "Pause"
+                    icon.source: Images.pause_thin_small_thin_outline
+                    onTriggered: {
+                    }
+                }
 
-                        ContextMenuItem {
-                            id: pauseItem
+                ContextMenuItem {
+                    text: "Play"
+                    icon.source: Images.play_small_thin_outline
+                    onTriggered: {
+                    }
+                }
 
-                            text: "pause"
-                            //icon.source:
-                            onTriggered: {
+                MenuSeparator {
+                }
 
-                            }
-                        }
+                ContextMenuItem {
+                    text: "Manage exlusions"
+                    icon.source: Images.file_ignore_small_thin_outline
+                    onTriggered: {
+                    }
+                }
 
-                        MenuSeparator {
-                            padding: 0
-                            topPadding: 4
-                            bottomPadding: 4
+                MenuSeparator {
+                }
 
-                            contentItem: Rectangle {
-                                implicitWidth: parent.width
-                                implicitHeight: 1
-                                color: ColorTheme.surface2
-                            }
-                        }
+                ContextMenuItem {
+                    text: "Rescan"
+                    icon.source: Images.search_large_small_thin_outline
+                    onTriggered: {
+                    }
+                }
 
-                        ContextMenuItem {
-                            id: manageExclusionsAction
+                ContextMenuItem {
+                    text: "Reboot"
+                    icon.source: Images.rotate_cw_small_thin_outline
+                    onTriggered: {
+                    }
+                }
 
-                            text: "exclusion"
-                            icon.source: Images.slashCircle
-                            onTriggered: {
+                MenuSeparator {
+                }
 
-                            }
-                        }
-
-                        MenuSeparator {
-                            padding: 0
-                            topPadding: 4
-                            bottomPadding: 4
-
-                            contentItem: Rectangle {
-                                implicitWidth: parent.width
-                                implicitHeight: 1
-                                color: ColorTheme.surface2
-                            }
-                        }
-
-                        ContextMenuItem {
-                            id: quickRescanAction
-
-                            text: "quick rescan"
-                            icon.source: Images.searchHollow
-                            onTriggered: {
-
-                            }
-                        }
-
-                        ContextMenuItem {
-                            id: deepRescanAction
-
-                            text: "deep"
-                            icon.source: Images.searchFilled
-                            onTriggered: {
-                            }
-                        }
-
-                        ContextMenuItem {
-                            id: rebootAction
-
-                            text:  "reboot"
-                            icon.source: Images.power
-                            onTriggered: {
-                            }
-                        }
-
-                        MenuSeparator {
-                            padding: 0
-                            topPadding: 4
-                            bottomPadding: 4
-
-                            contentItem: Rectangle {
-                                implicitWidth: parent.width
-                                implicitHeight: 1
-                                color: ColorTheme.surface2
-                            }
-                        }
-
-                        ContextMenuItem {
-                            id: stopBackupAction
-
-                            text: "stop"
-                            icon.source: Images.minusCircle
-                            onTriggered: {
-
-                            }
-                        }
+                ContextMenuItem {
+                    text: "Remove synced folder"
+                    textColor: ColorTheme.textError
+                    imageColor: ColorTheme.textError
+                    icon.source: Images.trash_small_thin_outline
+                    onTriggered: {
                     }
                 }
             }
         }
     }
 }
+

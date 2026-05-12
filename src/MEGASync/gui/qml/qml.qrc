@@ -111,6 +111,7 @@
         <file>components/menus/ContextMenu.qml</file>
         <file>components/menus/Colors.qml</file>
         <file>components/menus/Sizes.qml</file>
+        <file>components/menus/MenuSeparator.qml</file>
         <file>onboard/qmldir</file>
         <file>onboard/LoginPage.qml</file>
         <file>onboard/LoginPageForm.ui.qml</file>
