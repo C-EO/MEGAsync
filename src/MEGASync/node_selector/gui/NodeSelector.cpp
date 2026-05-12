@@ -41,6 +41,12 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     ui->setupUi(this);
     ui->cbAlwaysUploadToLocation->hide();
 
+    if (!mSelectType->showOkAndCancelButtons())
+    {
+        ui->bOk->hide();
+        ui->bCancel->hide();
+    }
+
     connect(ui->stackedWidget,
             &QStackedWidget::currentChanged,
             this,
@@ -65,12 +71,6 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
 
     updateNodeSelectorTabs();
     onOptionSelected(CLOUD_DRIVE);
-
-    if (!mSelectType->footerVisible())
-    {
-        ui->footer->hide();
-        ui->wRightPaneNS->layout()->setContentsMargins(0, 0, 0, 14);
-    }
 
     resetButtonsText();
 
@@ -810,8 +810,13 @@ void NodeSelector::showNotFoundNodeMessageBox()
 
 void NodeSelector::createActionButtons()
 {
-    // Create buttons
-    auto buttons = mSelectType->addActionButtons();
+    const QMap<uint, QPushButton*> buttons{
+        {SelectType::ButtonId::Upload, ui->bUpload},
+        {SelectType::ButtonId::NewFolder, ui->bNewFolder},
+        {SelectType::ButtonId::ClearRubbish, ui->bClearRubbish},
+    };
+
+    mSelectType->setActionButtons(buttons);
 
     for (auto it = buttons.cbegin(); it != buttons.cend(); ++it)
     {
@@ -825,9 +830,9 @@ void NodeSelector::createActionButtons()
                         onCustomButtonClicked(id);
                     });
         }
-
-        ui->customButtonsLayout->addWidget(it.value());
     }
+
+    mSelectType->updateCustomButtonsText(nullptr);
 }
 
 void NodeSelector::initSpecialisedWidgets(NodeSelectorTreeViewWidget* viewContainer)

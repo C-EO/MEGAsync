@@ -5,7 +5,6 @@
 #include "NodeSelectorTreeView.h"
 #include "NodeSelectorTreeViewWidget.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
-#include "TokenizableItems/TokenizableButtons.h"
 #include "ui_NodeSelectorTreeViewWidget.h"
 
 #include <algorithm>
@@ -47,22 +46,9 @@ void SelectType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
     wdg->mModel->showReadOnlyFolders(true);
 }
 
-QMap<uint, QPushButton*> SelectType::addActionButtons()
+void SelectType::setActionButtons(const QMap<uint, QPushButton*>& buttons)
 {
-    if (hasNewFolderButton())
-    {
-        auto newFolder =
-            createButton(QLatin1String("ghost"),
-                         getCustomButtonText(ButtonId::NewFolder),
-                         Utilities::getPixmapName(QLatin1String("folder-plus-01"),
-                                                  Utilities::AttributeType::SMALL |
-                                                      Utilities::AttributeType::THIN |
-                                                      Utilities::AttributeType::OUTLINE));
-
-        mActionButtons.insert(ButtonId::NewFolder, newFolder);
-    }
-
-    return mActionButtons;
+    mActionButtons = buttons;
 }
 
 void SelectType::updateCustomButtonsText(NodeSelectorTreeViewWidget*)
@@ -82,7 +68,7 @@ QString SelectType::getCustomButtonText(uint buttonId) const
     {
         case ButtonId::NewFolder:
         {
-            return QCoreApplication::translate("NodeSelectorTreeViewWidget", "New Folder");
+            return QCoreApplication::translate("NodeSelectorTreeViewWidget", "Create folder");
         }
         default:
         {
@@ -111,7 +97,8 @@ void SelectType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
 {
     if (buttonId == SelectType::ButtonId::NewFolder)
     {
-        button->setVisible(!wdg->isEmpty() && !wdg->isCurrentRootIndexReadOnly() &&
+        button->setVisible(hasNewFolderButton() && !wdg->isEmpty() &&
+                           !wdg->isCurrentRootIndexReadOnly() &&
                            !wdg->isCurrentSelectionReadOnly());
     }
     else
@@ -124,21 +111,6 @@ bool SelectType::cloudDriveIsCurrentRootIndex(NodeSelectorTreeViewWidget* wdg)
 {
     auto rootItem = wdg->rootItem();
     return rootItem && rootItem->isCloudDrive();
-}
-
-QPushButton* SelectType::createButton(const QString& type,
-                                      const QString& text,
-                                      const QString& iconFile)
-{
-    auto button(new TokenizableButton());
-    button->setText(text);
-    button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    QIcon icon;
-    icon.addFile(iconFile, QSize(16, 16), QIcon::Mode::Normal, QIcon::State::Off);
-    button->setIcon(icon);
-    button->setProperty("type", type);
-    button->setProperty("dimension", QLatin1String("small"));
-    return button;
 }
 
 ///////////////////////SELECT TYPE//////////////////////////////
@@ -288,38 +260,9 @@ TabTypes CloudDriveType::allowedTabTypes()
     return TabType::CLOUD_DRIVE | TabType::INCOMING_SHARE | TabType::BACKUP | TabType::RUBBISH;
 }
 
-bool CloudDriveType::footerVisible() const
-{
-    return false;
-}
-
 bool CloudDriveType::okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList&)
 {
     return false;
-}
-
-QMap<uint, QPushButton*> CloudDriveType::addActionButtons()
-{
-    auto uploadButton = createButton(
-        QLatin1String("ghost"),
-        getCustomButtonText(ButtonId::Upload),
-        Utilities::getPixmapName(QLatin1String("arrow-up"),
-                                 Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                     Utilities::AttributeType::OUTLINE));
-
-    mActionButtons.insert(ButtonId::Upload, uploadButton);
-
-    auto clearRubbishButton = createButton(
-        QLatin1String("ghost"),
-        getCustomButtonText(ButtonId::ClearRubbish),
-        Utilities::getPixmapName(QLatin1String("x"),
-                                 Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                     Utilities::AttributeType::OUTLINE));
-    mActionButtons.insert(ButtonId::ClearRubbish, clearRubbishButton);
-
-    SelectType::addActionButtons();
-
-    return mActionButtons;
 }
 
 QString CloudDriveType::getCustomButtonText(uint buttonId) const

@@ -4816,11 +4816,6 @@ Enter a different name.</translation>
         <translation>Move to Rubbish bin</translation>
     </message>
     <message>
-        <source>New folder</source>
-        <translatorcomment>Contextual menu text that appears when we right click on an empty space (or empty folder) on node selector. It creates a new folder. SNC-5804</translatorcomment>
-        <translation>New folder</translation>
-    </message>
-    <message>
         <source>Paste</source>
         <translatorcomment>Contextual menu text that appears when we right click on a folder/file on node selector. It paste the copied nodes (files and folders). SAT-426</translatorcomment>
         <translation>Paste</translation>
@@ -4859,6 +4854,11 @@ Enter a different name.</translation>
         <source>Upload</source>
         <translatorcomment>Contextual menu text that appears when we right click on an empty space (or empty folder) on node selector. It uploads to the selected. SNC-5804</translatorcomment>
         <translation>Upload</translation>
+    </message>
+    <message>
+        <source>Create folder</source>
+        <translatorcomment>Contextual menu text that appears when we right click on an empty space (or empty folder) on node selector. It creates a new folder. SNC-6426</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4989,9 +4989,9 @@ Enter a different name.</translation>
 <<<<<<< HEAD
 =======
     <message>
-        <source>New Folder</source>
-        <translatorcomment>Button label to create a New folder at your MEGA cloud drive. Keep capital letters. String as short as possible.</translatorcomment>
-        <translation>New folder</translation>
+        <source>Create folder</source>
+        <translatorcomment>Button label to create a New folder at your MEGA cloud drive. Keep capital letters. String as short as possible. SNC-6426</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
 >>>>>>> 5abd12cdd (Create selection class)
 </context>

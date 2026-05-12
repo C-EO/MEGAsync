@@ -42,6 +42,11 @@ public:
         return false;
     }
 
+    virtual bool showOkAndCancelButtons() const
+    {
+        return true;
+    }
+
     enum ButtonId : uint
     {
         Upload,
@@ -49,7 +54,7 @@ public:
         ClearRubbish
     };
 
-    virtual QMap<uint, QPushButton*> addActionButtons();
+    void setActionButtons(const QMap<uint, QPushButton*>& buttons);
     virtual void updateCustomButtonsText(NodeSelectorTreeViewWidget*);
     virtual QString getCustomButtonText(uint buttonId) const;
     void checkActionButtonsVisibility(NodeSelectorTreeViewWidget* wdg);
@@ -58,11 +63,6 @@ public:
                                              QPushButton* button);
 
     virtual TabTypes allowedTabTypes() = 0;
-
-    virtual bool footerVisible() const
-    {
-        return true;
-    }
 
     struct EmptyFolderPageInfo
     {
@@ -88,8 +88,6 @@ public:
 
 protected:
     bool cloudDriveIsCurrentRootIndex(NodeSelectorTreeViewWidget* wdg);
-
-    QPushButton* createButton(const QString& type, const QString& text, const QString& iconFile);
 
     QMap<uint, QPushButton*> mActionButtons;
 };
@@ -149,7 +147,6 @@ public:
     }
 
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
-    QMap<uint, QPushButton*> addActionButtons() override;
     void checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
                                      uint buttonId,
                                      QPushButton* button) override;
@@ -161,9 +158,12 @@ public:
 
     bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
-    bool footerVisible() const override;
-
     bool flattenSearchResults() const override
+    {
+        return false;
+    }
+
+    bool showOkAndCancelButtons() const override
     {
         return false;
     }

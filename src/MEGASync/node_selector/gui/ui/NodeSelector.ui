@@ -93,8 +93,8 @@ background-color: #FFFFFF; /*colorToken.page-background*/
       <property name="bottomMargin">
        <number>24</number>
       </property>
-     <item>
-      <widget class="QGroupBox" name="wStorage">
+      <item>
+       <widget class="QGroupBox" name="wStorage">
         <property name="title">
          <string notr="true"/>
         </property>
@@ -134,15 +134,15 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <height>36</height>
             </size>
            </property>
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
            <property name="icon" stdset="0">
             <iconset resource="../../../gui/Resources_common.qrc">
              <normaloff>:/cloud_small_thin_outline</normaloff>
              <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
            </property>
            <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
-           <property name="acceptDrops">
             <bool>true</bool>
            </property>
            <property name="normal_off" stdset="0">
@@ -157,7 +157,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           </widget>
          </item>
          <item>
-         <widget class="TabSelector" name="fIncomingShares" native="true">
+          <widget class="TabSelector" name="fIncomingShares" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -176,15 +176,15 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <height>36</height>
             </size>
            </property>
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
            <property name="icon" stdset="0">
             <iconset resource="../../../gui/Resources_common.qrc">
              <normaloff>:/folder-users_small_thin_outline</normaloff>
              <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
            </property>
            <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
-           <property name="acceptDrops">
             <bool>true</bool>
            </property>
            <property name="normal_off" stdset="0">
@@ -199,7 +199,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           </widget>
          </item>
          <item>
-         <widget class="TabSelector" name="fBackups" native="true">
+          <widget class="TabSelector" name="fBackups" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -238,7 +238,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           </widget>
          </item>
          <item>
-         <widget class="TabSelector" name="fRubbish" native="true">
+          <widget class="TabSelector" name="fRubbish" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -257,15 +257,15 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <height>36</height>
             </size>
            </property>
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
            <property name="icon" stdset="0">
             <iconset resource="../../../gui/Resources_common.qrc">
              <normaloff>:/trash_small_thin_outline</normaloff>
              <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
            </property>
            <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
-           <property name="acceptDrops">
             <bool>true</bool>
            </property>
            <property name="normal_off" stdset="0">
@@ -283,12 +283,12 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        </widget>
       </item>
       <item>
-      <widget class="QGroupBox" name="wSearch">
-        <property name="title">
-         <string notr="true"/>
-        </property>
+       <widget class="QGroupBox" name="wSearch">
         <property name="visible">
          <bool>false</bool>
+        </property>
+        <property name="title">
+         <string notr="true"/>
         </property>
         <property name="type" stdset="0">
          <string notr="true">mega</string>
@@ -310,7 +310,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <number>4</number>
          </property>
          <item>
-         <widget class="TabSelector" name="fSearch" native="true">
+          <widget class="TabSelector" name="fSearch" native="true">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -323,15 +323,15 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <height>16777215</height>
             </size>
            </property>
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
            <property name="icon" stdset="0">
             <iconset resource="../../../gui/Resources_common.qrc">
              <normaloff>:/search_small_thin_outline</normaloff>
              <normalon>:/search_small_thin_solid</normalon>:/search_small_thin_outline</iconset>
            </property>
            <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
-           <property name="acceptDrops">
             <bool>true</bool>
            </property>
            <property name="closeButtonVisible" stdset="0">
@@ -420,7 +420,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <height>16777215</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,1,0,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,1,0">
          <property name="spacing">
           <number>4</number>
          </property>
@@ -600,33 +600,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="customButtonsContainer" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QHBoxLayout" name="customButtonsLayout">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-           </layout>
-          </widget>
-         </item>
-         <item>
           <widget class="SearchLineEdit" name="leSearchTool">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -692,6 +665,16 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <number>21</number>
          </property>
          <item>
+          <widget class="QCheckBox" name="cbAlwaysUploadToLocation">
+           <property name="text">
+            <string>Always upload to this destination</string>
+           </property>
+           <property name="type" stdset="0">
+            <string notr="true">mega</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QWidget" name="bLayout" native="true">
            <property name="maximumSize">
             <size>
@@ -716,13 +699,131 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <number>0</number>
             </property>
             <item>
-             <widget class="QCheckBox" name="cbAlwaysUploadToLocation">
-              <property name="text">
-               <string>Always upload to this destination</string>
+             <widget class="QWidget" name="customButtonsContainer" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-              <property name="type" stdset="0">
-               <string notr="true">mega</string>
-              </property>
+              <layout class="QHBoxLayout" name="customButtonsLayout">
+               <property name="spacing">
+                <number>8</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="TokenizableButton" name="bUpload">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string notr="true">Upload</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../gui/Resources_common.qrc">
+                   <normaloff>:/arrow-up_small_thin_outline</normaloff>:/arrow-up_small_thin_outline</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="type" stdset="0">
+                  <string notr="true">outline</string>
+                 </property>
+                 <property name="dimension" stdset="0">
+                  <string notr="true">medium</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="TokenizableButton" name="bNewFolder">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string notr="true">New Folder</string>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="type" stdset="0">
+                  <string notr="true">outline</string>
+                 </property>
+                 <property name="dimension" stdset="0">
+                  <string notr="true">medium</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="TokenizableButton" name="bClearRubbish">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string notr="true">Empty Rubbish bin</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../gui/Resources_common.qrc">
+                   <normaloff>:/x_small_thin_outline</normaloff>:/x_small_thin_outline</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="type" stdset="0">
+                  <string notr="true">outline</string>
+                 </property>
+                 <property name="dimension" stdset="0">
+                  <string notr="true">medium</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -756,7 +857,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                <string notr="true">secondary</string>
               </property>
               <property name="dimension" stdset="0">
-               <string notr="true">small</string>
+               <string notr="true">medium</string>
               </property>
              </widget>
             </item>
@@ -778,7 +879,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                <string notr="true">primary</string>
               </property>
               <property name="dimension" stdset="0">
-               <string notr="true">small</string>
+               <string notr="true">medium</string>
               </property>
              </widget>
             </item>
@@ -821,6 +922,11 @@ background-color: #FFFFFF; /*colorToken.page-background*/
    <extends>QWidget</extends>
    <header>IncomingShareHeaderWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TokenizableButton</class>
+   <extends>QPushButton</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h</header>
   </customwidget>
  </customwidgets>
  <resources>
