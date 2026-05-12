@@ -27,6 +27,7 @@ class NodeSelectorProxyModel;
 class NodeSelectorModel;
 class NodeSelectorModelItem;
 class NodeSelectorTreeView;
+class NodeSelectorDelegate;
 
 struct MessageInfo;
 
@@ -182,6 +183,8 @@ protected:
     };
 
     virtual EmptyLabelInfo getEmptyLabel();
+
+    virtual NodeSelectorDelegate* createItemDelegate(QObject* parent);
 
     Ui::NodeSelectorTreeViewWidget* ui;
     std::shared_ptr<NodeSelectorProxyModel> mProxyModel;

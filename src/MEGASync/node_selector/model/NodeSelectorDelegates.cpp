@@ -6,11 +6,13 @@
 #include "TokenParserWidgetManager.h"
 
 #include <QAbstractItemView>
+#include <QAbstractTextDocumentLayout>
 #include <QApplication>
 #include <QBitmap>
 #include <QFontMetrics>
 #include <QPainter>
 #include <QPainterPath>
+#include <QTextDocument>
 #include <QToolTip>
 
 NodeSelectorDelegate::NodeSelectorDelegate(QObject* parent):
@@ -31,34 +33,15 @@ void NodeSelectorDelegate::paint(QPainter* painter,
         pen.setWidth(1);
 
         // Text color
-        QColor textColor;
-
-        const auto isTakenDown(
-            index.data(toInt(NodeSelectorModelRoles::IS_TAKEN_DOWN_ROLE)).toBool());
-
-        if (isTakenDown)
-        {
-            textColor = TokenParserWidgetManager::instance()->getColor(QLatin1String("text-error"));
-
-            if (!index.flags().testFlag(Qt::ItemIsEnabled))
-            {
-                static constexpr double ALPHA_CORRECTION_FOR_ERROR_DISABLED = 0.5;
-                textColor.setAlphaF(ALPHA_CORRECTION_FOR_ERROR_DISABLED);
-            }
-        }
-        else if (!index.flags().testFlag(Qt::ItemIsEnabled))
-        {
-            textColor =
-                TokenParserWidgetManager::instance()->getColor(QLatin1String("text-disabled"));
-        }
-        else
-        {
-            textColor =
-                TokenParserWidgetManager::instance()->getColor(QLatin1String("text-primary"));
-        }
-
+        const auto isTakenDown =
+            index.data(toInt(NodeSelectorModelRoles::IS_TAKEN_DOWN_ROLE)).toBool();
+        const auto textColor = textColorForIndex(index, isTakenDown);
         auxOpt.palette.setBrush(QPalette::ColorRole::Text, textColor);
-        auxOpt.palette.setBrush(QPalette::ColorRole::HighlightedText, textColor);
+
+        if (!isTakenDown && index.flags().testFlag(Qt::ItemIsEnabled))
+        {
+            auxOpt.palette.setBrush(QPalette::ColorRole::HighlightedText, textColor);
+        }
 
         // Separator
         {
@@ -132,6 +115,28 @@ bool NodeSelectorDelegate::event(QEvent* event)
     }
 
     return QStyledItemDelegate::event(event);
+}
+
+QColor NodeSelectorDelegate::textColorForIndex(const QModelIndex& index, bool isTakenDown) const
+{
+    if (isTakenDown)
+    {
+        auto textColor =
+            TokenParserWidgetManager::instance()->getColor(QLatin1String("text-error"));
+
+        if (!index.flags().testFlag(Qt::ItemIsEnabled))
+        {
+            static constexpr double ALPHA_CORRECTION_FOR_ERROR_DISABLED = 0.5;
+            textColor.setAlphaF(ALPHA_CORRECTION_FOR_ERROR_DISABLED);
+        }
+
+        return textColor;
+    }
+    if (!index.flags().testFlag(Qt::ItemIsEnabled))
+    {
+        return TokenParserWidgetManager::instance()->getColor(QLatin1String("text-disabled"));
+    }
+    return TokenParserWidgetManager::instance()->getColor(QLatin1String("text-primary"));
 }
 
 const int NodeRowDelegate::MARGIN = 7;
@@ -273,4 +278,102 @@ void NodeRowDelegate::initStyleOption(QStyleOptionViewItem* option, const QModel
     {
         option->state &= ~QStyle::State_Enabled;
     }
+}
+
+NodeSearchRowDelegate::NodeSearchRowDelegate(QObject* parent):
+    NodeRowDelegate(parent)
+{}
+
+void NodeSearchRowDelegate::setSearchText(const QString& text)
+{
+    mSearchText = text;
+}
+
+void NodeSearchRowDelegate::paint(QPainter* painter,
+                                  const QStyleOptionViewItem& option,
+                                  const QModelIndex& index) const
+{
+    const bool isNodeColumn = index.column() == NodeSelectorModel::Column::NODE;
+    const QString display = index.data(Qt::DisplayRole).toString();
+    const bool shouldHighlight = isNodeColumn && !mSearchText.isEmpty() &&
+                                 display.contains(mSearchText, Qt::CaseInsensitive);
+
+    if (!shouldHighlight)
+    {
+        NodeRowDelegate::paint(painter, option, index);
+        return;
+    }
+
+    // Paint the row, without the text
+    mSuppressText = true;
+    NodeRowDelegate::paint(painter, option, index);
+    mSuppressText = false;
+
+    QStyleOptionViewItem optForRect(option);
+    NodeRowDelegate::initStyleOption(&optForRect, index);
+    const QWidget* widget = option.widget;
+    const QStyle* style = widget ? widget->style() : QApplication::style();
+    QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &optForRect, widget);
+    if (!textRect.isValid() || textRect.isEmpty())
+    {
+        return;
+    }
+
+    QFontMetrics fm(option.font);
+    QString shown = display;
+    if (fm.horizontalAdvance(display) > textRect.width())
+    {
+        shown = fm.elidedText(display, option.textElideMode, textRect.width());
+    }
+
+    QTextDocument doc;
+    doc.setDefaultFont(option.font);
+    doc.setDocumentMargin(0);
+    doc.setHtml(buildHighlightedHtml(shown, mSearchText));
+    doc.setTextWidth(textRect.width());
+
+    QAbstractTextDocumentLayout::PaintContext ctx;
+    ctx.palette = optForRect.palette;
+    const auto isTakenDown = index.data(toInt(NodeSelectorModelRoles::IS_TAKEN_DOWN_ROLE)).toBool();
+    ctx.palette.setColor(QPalette::Text, textColorForIndex(index, isTakenDown));
+    ctx.clip = QRectF(0, 0, textRect.width(), textRect.height());
+
+    painter->save();
+    const qreal yOffset = (textRect.height() - doc.size().height()) / 2.0;
+    painter->translate(textRect.topLeft() + QPointF(0, yOffset));
+    doc.documentLayout()->draw(painter, ctx);
+    painter->restore();
+}
+
+void NodeSearchRowDelegate::initStyleOption(QStyleOptionViewItem* option,
+                                            const QModelIndex& index) const
+{
+    NodeRowDelegate::initStyleOption(option, index);
+    if (mSuppressText)
+    {
+        option->text.clear();
+    }
+}
+
+QString NodeSearchRowDelegate::buildHighlightedHtml(const QString& display, const QString& search)
+{
+    QString result;
+    int cursor = 0;
+    while (cursor < display.size())
+    {
+        const int matchStart = display.indexOf(search, cursor, Qt::CaseInsensitive);
+        if (matchStart < 0)
+        {
+            result += display.mid(cursor).toHtmlEscaped();
+            break;
+        }
+
+        const QString beforeMatch = display.mid(cursor, matchStart - cursor);
+        const QString match = display.mid(matchStart, search.size());
+        result += beforeMatch.toHtmlEscaped();
+        result += QStringLiteral("<b>") + match.toHtmlEscaped() + QStringLiteral("</b>");
+
+        cursor = matchStart + search.size();
+    }
+    return result;
 }

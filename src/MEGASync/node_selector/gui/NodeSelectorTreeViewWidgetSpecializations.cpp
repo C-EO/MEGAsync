@@ -2,6 +2,7 @@
 
 #include "DeviceNames.h"
 #include "MegaNodeNames.h"
+#include "NodeSelectorDelegates.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorModelSpecialised.h"
 #include "NodeSelectorProxyModel.h"
@@ -405,6 +406,11 @@ void NodeSelectorTreeViewWidgetSearch::search(const QString& text)
     mSearchController->beginSearch(text);
     setStyleSheet(styleSheet());
 
+    if (mSearchDelegate)
+    {
+        mSearchDelegate->setSearchText(text);
+    }
+
     if (auto model = searchModel())
     {
         model->setAllowedTabTypes(
@@ -712,6 +718,13 @@ NodeSelectorModelSearch* NodeSelectorTreeViewWidgetSearch::searchModel() const
 NodeSelectorProxyModelSearch* NodeSelectorTreeViewWidgetSearch::searchProxyModel() const
 {
     return static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
+}
+
+NodeSelectorDelegate* NodeSelectorTreeViewWidgetSearch::createItemDelegate(QObject* parent)
+{
+    auto delegate = new NodeSearchRowDelegate(parent);
+    mSearchDelegate = delegate;
+    return delegate;
 }
 
 ///////////////////////

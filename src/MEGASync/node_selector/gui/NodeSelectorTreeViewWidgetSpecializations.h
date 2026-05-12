@@ -7,6 +7,7 @@
 
 #include <QLabel>
 #include <QModelIndex>
+#include <QPointer>
 #include <QToolButton>
 #include <QWidget>
 
@@ -16,6 +17,7 @@
 class NodeSelectorModel;
 class NodeSelectorModelSearch;
 class NodeSelectorProxyModelSearch;
+class NodeSearchRowDelegate;
 class RestoreNodeManager;
 class TabSelector;
 
@@ -151,11 +153,13 @@ private:
     std::unique_ptr<NodeSelectorModel> createModel() override;
     QIcon getEmptyIcon() override;
     EmptyLabelInfo getEmptyLabel() override;
+    NodeSelectorDelegate* createItemDelegate(QObject* parent) override;
     NodeSelectorModelSearch* searchModel() const;
     NodeSelectorProxyModelSearch* searchProxyModel() const;
 
     std::unique_ptr<NodeSelectorSearchController> mSearchController;
     std::shared_ptr<RestoreNodeManager> mRestoreManager;
+    QPointer<NodeSearchRowDelegate> mSearchDelegate;
 };
 
 class NodeSelectorTreeViewWidgetRubbish: public NodeSelectorTreeViewWidget

@@ -20,6 +20,7 @@ public:
 
 protected:
     bool event(QEvent* event) override;
+    virtual QColor textColorForIndex(const QModelIndex& index, bool isTakenDown) const;
 
 private:
     QModelIndex mLastHoverRow;
@@ -45,8 +46,29 @@ public:
 
     QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-private:
+protected:
     void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override;
+};
+
+class NodeSearchRowDelegate: public NodeRowDelegate
+{
+    Q_OBJECT
+
+public:
+    explicit NodeSearchRowDelegate(QObject* parent = nullptr);
+    void setSearchText(const QString& text);
+    void paint(QPainter* painter,
+               const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override;
+
+protected:
+    void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override;
+
+private:
+    static QString buildHighlightedHtml(const QString& display, const QString& search);
+
+    QString mSearchText;
+    mutable bool mSuppressText = false;
 };
 
 #endif // NODESELECTORDELEGATES_H

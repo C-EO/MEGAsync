@@ -560,7 +560,7 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
         ui->tMegaFolders->setExpandsOnDoubleClick(false);
         ui->tMegaFolders->header()->setDefaultAlignment(Qt::AlignLeft);
         ui->tMegaFolders->header()->setDefaultSectionSize(35);
-        ui->tMegaFolders->setItemDelegate(new NodeRowDelegate(ui->tMegaFolders));
+        ui->tMegaFolders->setItemDelegate(createItemDelegate(ui->tMegaFolders));
         ui->tMegaFolders->setTextElideMode(Qt::ElideMiddle);
 
         ui->tMegaFolders->sortByColumn(NodeSelectorModel::Column::NODE, Qt::AscendingOrder);
@@ -1126,6 +1126,11 @@ void NodeSelectorTreeViewWidget::setEmptyFolderPage()
 NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidget::getEmptyLabel()
 {
     return EmptyLabelInfo();
+}
+
+NodeSelectorDelegate* NodeSelectorTreeViewWidget::createItemDelegate(QObject* parent)
+{
+    return new NodeRowDelegate(parent);
 }
 
 QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelIndex idx) const
