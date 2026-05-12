@@ -210,8 +210,7 @@ void NodeRequester::appendRootItems(const QList<NodeSelectorModelItem*>& items)
     emit rootItemsAdded();
 }
 
-NodeSelectorModelItem* NodeRequester::createSearchItem(mega::MegaNode* node,
-                                                       TabTypes::Types typesAllowed)
+NodeSelectorModelItem* NodeRequester::createSearchItem(mega::MegaNode* node, TabTypes typesAllowed)
 {
     TabTypes type = NodeSelectorModelSearch::calculateSearchType(node);
 

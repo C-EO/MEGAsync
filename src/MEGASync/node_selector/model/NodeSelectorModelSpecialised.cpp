@@ -472,7 +472,7 @@ NodeSelectorModelSearch::NodeSelectorModelSearch(TabTypes allowedTabTypes,
                                                  bool flattenResults,
                                                  QObject* parent):
     NodeSelectorModel(parent),
-    mallowedTabTypes(allowedTabTypes),
+    mAllowedTabTypes(allowedTabTypes),
     mFlattenSearchResults(flattenResults),
     mDeviceNamesRequest(UserAttributes::DeviceNames::requestDeviceNames())
 {
@@ -506,7 +506,7 @@ void NodeSelectorModelSearch::searchByText(const QString& text)
 {
     mNodeRequesterWorker->restartSearch();
     addRootItems();
-    emit searchNodes(text, mallowedTabTypes, mFlattenSearchResults);
+    emit searchNodes(text, mAllowedTabTypes, mFlattenSearchResults);
 }
 
 void NodeSelectorModelSearch::stopSearch()
@@ -516,7 +516,7 @@ void NodeSelectorModelSearch::stopSearch()
 
 void NodeSelectorModelSearch::setAllowedTabTypes(TabTypes allowedTypes)
 {
-    mallowedTabTypes = allowedTypes;
+    mAllowedTabTypes = allowedTypes;
 }
 
 int NodeSelectorModelSearch::rootItemsCount() const
@@ -567,7 +567,7 @@ bool NodeSelectorModelSearch::addNodes(QList<std::shared_ptr<mega::MegaNode>> no
                                        const QModelIndex& parent)
 {
     Q_UNUSED(parent)
-    emit requestAddSearchRootItem(nodes, mAllowedTypes);
+    emit requestAddSearchRootItem(nodes, mAllowedTabTypes);
     return true;
 }
 
@@ -583,7 +583,7 @@ bool NodeSelectorModelSearch::rootNodeUpdated(mega::MegaNode* node)
                 QList<std::shared_ptr<mega::MegaNode>> nodes;
                 emit requestAddSearchRootItem(nodes
                                                   << std::shared_ptr<mega::MegaNode>(node->copy()),
-                                              mallowedTabTypes);
+                                              mAllowedTabTypes);
             }
             else
             {

@@ -379,7 +379,7 @@ QList<QPointer<NodeSelectorModelItem>>
     NodeSelectorModelItem::addNodes(QList<std::shared_ptr<MegaNode>> nodes)
 {
     auto items = buildNodes(nodes);
-    appendNodes(items);
+    initializeChildItems(items);
     return items;
 }
 

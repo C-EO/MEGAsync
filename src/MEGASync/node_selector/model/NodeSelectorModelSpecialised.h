@@ -194,7 +194,7 @@ private slots:
     void onRootItemsCreated();
 
 private:
-    TabTypes mallowedTabTypes;
+    TabTypes mAllowedTabTypes;
     bool mFlattenSearchResults;
     std::shared_ptr<const UserAttributes::DeviceNames> mDeviceNamesRequest;
 };
