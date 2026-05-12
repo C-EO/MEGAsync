@@ -97,8 +97,7 @@ void SelectType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
 {
     if (buttonId == SelectType::ButtonId::NewFolder)
     {
-        button->setVisible(hasNewFolderButton() && !wdg->isEmpty() &&
-                           !wdg->isCurrentRootIndexReadOnly() &&
+        button->setVisible(hasNewFolderButton() && !wdg->isCurrentRootIndexReadOnly() &&
                            !wdg->isCurrentSelectionReadOnly());
     }
     else
