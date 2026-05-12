@@ -140,6 +140,11 @@ QVariant SyncSettingsModel::data(const QModelIndex& index, int role) const
     }
 }
 
+std::shared_ptr<SyncSettings> SyncSettingsModel::getSync(int index) const
+{
+    return mList.at(index);
+}
+
 QString SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
 {
     QString s;

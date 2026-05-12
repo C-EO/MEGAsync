@@ -29,17 +29,18 @@ public:
     QHash<int, QByteArray> roleNames() const override;
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;
+    std::shared_ptr<SyncSettings> getSync(int index) const;
 
-    enum SyncRunningState
+    enum SyncStates
     {
         PENDING = ::mega::MegaSync::RUNSTATE_PENDING,
         LOADING = ::mega::MegaSync::RUNSTATE_LOADING,
         RUNNING = ::mega::MegaSync::RUNSTATE_RUNNING,
         SUSPENDED = ::mega::MegaSync::RUNSTATE_SUSPENDED,
-        RUNSTATE_DISABLED = ::mega::MegaSync::RUNSTATE_DISABLED,
+        DISABLED = ::mega::MegaSync::RUNSTATE_DISABLED,
     };
 
-    Q_ENUM(SyncRunningState)
+    Q_ENUM(SyncStates)
 
 private slots:
     void insertSync(std::shared_ptr<SyncSettings> sync);

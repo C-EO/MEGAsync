@@ -9,16 +9,15 @@
 
 SyncSettingsQuickWidget::SyncSettingsQuickWidget(QWidget* parent):
     MegaQuickWidget(parent),
-    mAutomaticSyncIssueResolverEnabled(Preferences::instance()->isStalledIssueSmartModeActivated())
+    mAutomaticSyncIssueResolverEnabled(Preferences::instance()->isStalledIssueSmartModeActivated()),
+    mSyncModel(new SyncSettingsModel(this))
 {
     setResizeMode(QQuickWidget::SizeRootObjectToView);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     qmlRegisterType<SyncSettingsModel>("SyncSettingsModel", 1, 0, "SyncSettingsModel");
 
-    QmlManager::instance()->setRootContextProperty(QStringLiteral("syncSettingsModel"),
-                                                   new SyncSettingsModel(this));
-
+    QmlManager::instance()->setRootContextProperty(QStringLiteral("syncSettingsModel"), mSyncModel);
     QmlManager::instance()->setRootContextProperty(QStringLiteral("syncSettings"), this);
 
     setSource(QString::fromUtf8("qrc:/settings/SyncSettings.qml"));
@@ -27,6 +26,11 @@ SyncSettingsQuickWidget::SyncSettingsQuickWidget(QWidget* parent):
 void SyncSettingsQuickWidget::exploreLocalSync(const QString& localFolder) const
 {
     Platform::getInstance()->showInFolder(localFolder);
+}
+
+void SyncSettingsQuickWidget::openInMega(int index) const
+{
+    Utilities::openInMega(mSyncModel->getSync(index)->getMegaHandle());
 }
 
 void SyncSettingsQuickWidget::addSync() const

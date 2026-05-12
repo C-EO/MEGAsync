@@ -2,6 +2,7 @@
 #define SYNC_SETTINGS_QUICK_WIDGET_H
 
 #include "MegaQuickWidget.h"
+#include "SyncSettingsModel.h"
 
 class SyncSettingsQuickWidget: public MegaQuickWidget
 {
@@ -14,6 +15,7 @@ class SyncSettingsQuickWidget: public MegaQuickWidget
 public:
     explicit SyncSettingsQuickWidget(QWidget* parent = nullptr);
 
+    Q_INVOKABLE void openInMega(int index) const;
     Q_INVOKABLE void exploreLocalSync(const QString& localFolder) const;
     Q_INVOKABLE void addSync() const;
 
@@ -25,6 +27,7 @@ signals:
 
 private:
     bool mAutomaticSyncIssueResolverEnabled;
+    SyncSettingsModel* mSyncModel;
 };
 
 #endif // SYNC_SETTINGS_QUICK_WIDGET_H

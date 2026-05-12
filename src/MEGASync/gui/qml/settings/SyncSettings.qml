@@ -293,7 +293,6 @@ Item {
             height: syncItemBackgroundHeight
             color: syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
             radius: syncItemBackgroundRadius
-            property int clickedSyncStatus
             property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
 
             MouseArea {
@@ -389,7 +388,6 @@ Item {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                syncItem.clickedSyncStatus = statusid
                                 menu.popup(syncItem.width - menu.width, syncItem.height)
                             }
                         }
@@ -407,7 +405,7 @@ Item {
                 }
 
                 ContextMenuItem {
-                    visible: syncItem.clickedSyncStatus === SyncSettingsModel.SUSPENDED
+                    visible: statusid === SyncSettingsModel.SUSPENDED
                     height: visible ? implicitHeight : 0
                     text: "Solve issues"
                     icon.source: Images.lightbulb_small_thin_outline
@@ -416,7 +414,7 @@ Item {
                 }
 
                 MenuSeparator {
-                    visible: syncItem.clickedSyncStatus === SyncSettingsModel.SUSPENDED
+                    visible: statusid === SyncSettingsModel.SUSPENDED
                     height: visible ? implicitHeight : 0
                 }
 
@@ -424,6 +422,7 @@ Item {
                     text: "Show in folder"
                     icon.source: Images.folder_small_thin_outline
                     onTriggered: {
+                        syncSettings.exploreLocalSync(folder);
                     }
                 }
 
@@ -431,6 +430,7 @@ Item {
                     text: "Open in mega"
                     icon.source: Images.mega_medium_thin_outline
                     onTriggered: {
+                        syncSettings.openInMega(index)
                     }
                 }
 
@@ -438,7 +438,7 @@ Item {
                 }
 
                 ContextMenuItem {
-                    visible: syncItem.clickedSyncStatus === SyncSettingsModel.RUNNING
+                    visible: statusid === SyncSettingsModel.RUNNING
                     height: visible ? implicitHeight : 0
                     text: "Pause"
                     icon.source: Images.pause_thin_small_thin_outline
@@ -447,7 +447,7 @@ Item {
                 }
 
                 ContextMenuItem {
-                    visible: syncItem.clickedSyncStatus === SyncSettingsModel.SUSPENDED
+                    visible: statusid === SyncSettingsModel.SUSPENDED
                     height: visible ? implicitHeight : 0
                     text: "Play"
                     icon.source: Images.play_small_thin_outline
