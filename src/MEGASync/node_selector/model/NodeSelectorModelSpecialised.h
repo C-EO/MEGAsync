@@ -171,6 +171,7 @@ public:
     bool canCopyNodes() const override;
 
     const TabTypes& searchedTypes() const;
+    int searchResultCount() const;
     static TabTypes calculateSearchType(mega::MegaNode* node);
 
     bool hasTopRootIndex() override

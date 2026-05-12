@@ -123,12 +123,14 @@ void NodeRequester::search(const QString& text, TabTypes typesAllowed, bool flat
                                           mCancelToken.get()));
     QList<NodeSelectorModelItem*> items;
     mSearchedTypes = TabType::NONE;
+    int validMatches = 0;
 
     for (int i = 0; i < nodeList->size(); i++)
     {
         auto type = NodeSelectorModelSearch::calculateSearchType(nodeList->get(i));
         if ((typesAllowed & type) && canCreateSearchItem(nodeList->get(i)))
         {
+            ++validMatches;
             if (flatten)
             {
                 mSearchedTypes |= type;
@@ -151,10 +153,16 @@ void NodeRequester::search(const QString& text, TabTypes typesAllowed, bool flat
     }
     else
     {
+        mLastSearchResultCount.store(validMatches);
         QMutexLocker d(&mDataMutex);
         mRootItems.append(items);
         emit searchItemsCreated();
     }
+}
+
+int NodeRequester::lastSearchResultCount() const
+{
+    return mLastSearchResultCount.load();
 }
 
 void NodeRequester::addSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes,

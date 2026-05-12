@@ -15,6 +15,7 @@
 #include <QPointer>
 #include <QQueue>
 
+#include <atomic>
 #include <memory>
 #include <optional>
 
@@ -94,6 +95,7 @@ public:
     void restartSearch();
 
     const TabTypes& searchedTypes() const;
+    int lastSearchResultCount() const;
 
     bool showFiles() const;
 
@@ -163,6 +165,7 @@ private:
     mutable QMutex mSearchMutex;
     std::shared_ptr<mega::MegaCancelToken> mCancelToken;
     TabTypes mSearchedTypes;
+    std::atomic<int> mLastSearchResultCount{0};
 };
 
 class AddNodesQueue: public QObject

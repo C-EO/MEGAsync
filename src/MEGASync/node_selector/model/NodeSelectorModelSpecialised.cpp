@@ -687,6 +687,11 @@ const TabTypes& NodeSelectorModelSearch::searchedTypes() const
     return mNodeRequesterWorker->searchedTypes();
 }
 
+int NodeSelectorModelSearch::searchResultCount() const
+{
+    return mNodeRequesterWorker->lastSearchResultCount();
+}
+
 TabTypes NodeSelectorModelSearch::calculateSearchType(mega::MegaNode* node)
 {
     TabTypes type;

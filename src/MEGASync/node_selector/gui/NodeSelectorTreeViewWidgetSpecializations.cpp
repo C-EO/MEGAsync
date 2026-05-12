@@ -637,9 +637,8 @@ void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
 
 QString NodeSelectorTreeViewWidgetSearch::getRootText()
 {
-    auto resultNumber(mModel->rowCount());
-    QString resultString(tr("%n result found", "", resultNumber));
-    return resultString;
+    const auto count = searchModel() ? searchModel()->searchResultCount() : 0;
+    return tr("%n result found", "", count);
 }
 
 std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel()
