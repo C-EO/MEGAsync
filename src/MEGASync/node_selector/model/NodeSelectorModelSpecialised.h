@@ -145,7 +145,9 @@ class NodeSelectorModelSearch: public NodeSelectorModel
     Q_OBJECT
 
 public:
-    explicit NodeSelectorModelSearch(TabTypes allowedType, QObject* parent = 0);
+    explicit NodeSelectorModelSearch(TabTypes allowedType,
+                                     bool flattenResults,
+                                     QObject* parent = 0);
     ~NodeSelectorModelSearch() = default;
 
     void firstLoad() override;
@@ -181,7 +183,7 @@ protected:
     bool showAccess(mega::MegaNode* node) const override;
 
 signals:
-    void searchNodes(const QString& text, TabTypes);
+    void searchNodes(const QString& text, TabTypes, bool flatten);
     void nodeTypeHasChanged();
     void requestAddSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes,
                                   TabTypes typesAllowed);
@@ -192,6 +194,7 @@ private slots:
 
 private:
     TabTypes mallowedTabTypes;
+    bool mFlattenSearchResults;
     std::shared_ptr<const UserAttributes::DeviceNames> mDeviceNamesRequest;
 };
 

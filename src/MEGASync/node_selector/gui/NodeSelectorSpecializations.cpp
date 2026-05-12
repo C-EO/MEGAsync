@@ -340,7 +340,8 @@ void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
     {
         MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
             AppStatsEvents::EventType::CLOUD_DRIVE_UPLOAD_CLICKED);
-        auto rootItem = getCurrentTreeViewWidget()->rootItem();
+        auto currentTreeWidget = getCurrentTreeViewWidget();
+        auto rootItem = currentTreeWidget ? currentTreeWidget->rootItem() : nullptr;
         if (rootItem)
         {
             auto node = rootItem->getNode();

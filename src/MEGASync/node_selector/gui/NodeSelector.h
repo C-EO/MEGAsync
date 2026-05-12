@@ -97,6 +97,7 @@ protected:
     NodeSelectorTreeViewWidget* getTreeViewWidget(int page) const;
     NodeSelectorTreeViewWidget* getTreeViewWidget(QObject* object) const;
     NodeSelectorTreeViewWidget* getCurrentTreeViewWidget() const;
+    NodeSelectorTreeViewWidget* getSearchAwareTargetWidget() const;
 
     enum class IncreaseOrDecrease
     {

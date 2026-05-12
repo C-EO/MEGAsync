@@ -101,7 +101,7 @@ public:
 
 public slots:
     void requestNodeAndCreateChildren(NodeSelectorModelItem* item, const QModelIndex& parentIndex);
-    void search(const QString& text, TabTypes typesAllowed);
+    void search(const QString& text, TabTypes typesAllowed, bool flatten);
     void createCloudDriveRootItem();
     void createIncomingSharesRootItems(std::shared_ptr<mega::MegaNodeList> nodeList);
     void createRubbishRootItems();

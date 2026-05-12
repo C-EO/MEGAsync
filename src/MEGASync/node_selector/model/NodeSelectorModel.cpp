@@ -99,7 +99,7 @@ void NodeRequester::requestNodeAndCreateChildren(NodeSelectorModelItem* item,
     }
 }
 
-void NodeRequester::search(const QString& text, TabTypes typesAllowed)
+void NodeRequester::search(const QString& text, TabTypes typesAllowed, bool flatten)
 {
     if (text.isEmpty())
     {
@@ -129,8 +129,19 @@ void NodeRequester::search(const QString& text, TabTypes typesAllowed)
         auto type = NodeSelectorModelSearch::calculateSearchType(nodeList->get(i));
         if ((typesAllowed & type) && canCreateSearchItem(nodeList->get(i)))
         {
-            auto path = createSearchPath(nodeList->get(i), type);
-            addSearchPath(items, path, type);
+            if (flatten)
+            {
+                mSearchedTypes |= type;
+                if (auto item = createSearchTreeItem(nodeList->get(i), type))
+                {
+                    items.append(item);
+                }
+            }
+            else
+            {
+                auto path = createSearchPath(nodeList->get(i), type);
+                addSearchPath(items, path, type);
+            }
         }
     }
 

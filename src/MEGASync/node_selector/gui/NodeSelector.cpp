@@ -186,7 +186,8 @@ void NodeSelector::handleSearchHidden()
 
 void NodeSelector::onbNewFolderClicked()
 {
-    auto sourceWidget = getCurrentTreeViewWidget();
+    auto sourceWidget = getSearchAwareTargetWidget();
+    const bool searchOnCurrentTab = isCurrentTabSearchActive();
 
     if (!sourceWidget)
     {
@@ -205,7 +206,7 @@ void NodeSelector::onbNewFolderClicked()
     dialog->init();
     DialogOpener::showDialog(
         dialog,
-        [this, dialog, sourceWidget]()
+        [this, dialog, sourceWidget, searchOnCurrentTab]()
         {
             auto newNode = dialog->getNewNode();
             // IF the dialog return a node, there are two scenarios:
@@ -214,6 +215,10 @@ void NodeSelector::onbNewFolderClicked()
             // exists. If so, select the existing folder
             if (newNode)
             {
+                if (searchOnCurrentTab)
+                {
+                    clearCurrentTabSearch(true);
+                }
                 sourceWidget->setNewFolderInfo({newNode->getHandle(), true});
 
                 // Focusing a widget whose top-level window is not the active
@@ -272,32 +277,14 @@ QString NodeSelector::folderNameForWidget(NodeSelectorTreeViewWidget* wid) const
         return QString();
     }
 
-    if (wid == mSearchWidget)
-    {
-        return QString();
-    }
-
     const auto rootIndex = wid->getCurrentRootIndex();
     if (rootIndex.isValid())
     {
         return rootIndex.data(Qt::DisplayRole).toString();
     }
 
-    switch (ui->stackedWidget->indexOf(wid))
-    {
-        case CLOUD_DRIVE:
-            return MegaNodeNames::getCloudDriveName();
-        case SHARES:
-            return MegaNodeNames::getIncomingSharesName();
-        case BACKUPS:
-            return MegaNodeNames::getBackupsName();
-        case RUBBISH:
-            return MegaNodeNames::getRubbishName();
-        case SEARCH:
-            return QString();
-        default:
-            return QString();
-    }
+    return isCurrentTabSearchActive() ? getSearchAwareTargetWidget()->getRootText() :
+                                        wid->getRootText();
 }
 
 void NodeSelector::applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid)
@@ -740,6 +727,22 @@ NodeSelectorTreeViewWidget* NodeSelector::getTreeViewWidget(QObject* object) con
 NodeSelectorTreeViewWidget* NodeSelector::getCurrentTreeViewWidget() const
 {
     return getTreeViewWidget(ui->stackedWidget->currentWidget());
+}
+
+NodeSelectorTreeViewWidget* NodeSelector::getSearchAwareTargetWidget() const
+{
+    auto currentWidget = getCurrentTreeViewWidget();
+    if (currentWidget != mSearchWidget || !isCurrentTabSearchActive())
+    {
+        return currentWidget;
+    }
+
+    if (auto sourceTab = currentSearchSourceTab(); sourceTab.has_value())
+    {
+        return widgetForTab(sourceTab.value());
+    }
+
+    return currentWidget;
 }
 
 MegaHandle NodeSelector::getSelectedNodeHandle()

@@ -639,7 +639,8 @@ QString NodeSelectorTreeViewWidgetSearch::getRootText()
 std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel()
 {
     auto model = std::unique_ptr<NodeSelectorModelSearch>(
-        new NodeSelectorModelSearch(getSelectType()->allowedTabTypes()));
+        new NodeSelectorModelSearch(getSelectType()->allowedTabTypes(),
+                                    getSelectType()->flattenSearchResults()));
 
     connect(model.get(),
             &NodeSelectorModelSearch::nodeTypeHasChanged,
@@ -652,17 +653,17 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel
     connect(model.get(),
             &QAbstractItemModel::rowsInserted,
             this,
-            &NodeSelectorTreeViewWidget::notifyButtonsStateChanged);
+            &NodeSelectorTreeViewWidget::notifyViewStateChanged);
 
     connect(model.get(),
             &QAbstractItemModel::rowsRemoved,
             this,
-            &NodeSelectorTreeViewWidget::notifyButtonsStateChanged);
+            &NodeSelectorTreeViewWidget::notifyViewStateChanged);
 
     connect(model.get(),
             &QAbstractItemModel::modelReset,
             this,
-            &NodeSelectorTreeViewWidget::notifyButtonsStateChanged);
+            &NodeSelectorTreeViewWidget::notifyViewStateChanged);
 
     return model;
 }

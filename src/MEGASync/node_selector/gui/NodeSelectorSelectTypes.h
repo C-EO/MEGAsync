@@ -37,6 +37,11 @@ public:
         return false;
     }
 
+    virtual bool flattenSearchResults() const
+    {
+        return false;
+    }
+
     enum ButtonId : uint
     {
         Upload,
@@ -157,6 +162,11 @@ public:
     bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
     bool footerVisible() const override;
+
+    bool flattenSearchResults() const override
+    {
+        return false;
+    }
 
 private:
     QString getCustomButtonText(uint buttonId) const override;

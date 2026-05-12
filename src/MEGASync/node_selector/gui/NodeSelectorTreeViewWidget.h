@@ -111,6 +111,8 @@ public:
         return std::nullopt;
     }
 
+    virtual QString getRootText() = 0;
+
 public slots:
     virtual void checkViewOnModelChange();
     void setLoadingSceneVisible(bool visible);
@@ -224,7 +226,6 @@ private:
     void setEmptyFolderPage();
 
     QModelIndex getIndexFromHandle(const mega::MegaHandle& handle);
-    virtual QString getRootText() = 0;
     virtual std::shared_ptr<NodeSelectorProxyModel> createProxyModel();
     virtual std::unique_ptr<NodeSelectorModel> createModel() = 0;
 

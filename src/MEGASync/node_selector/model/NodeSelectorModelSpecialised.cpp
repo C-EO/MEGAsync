@@ -468,9 +468,12 @@ void NodeSelectorModelBackups::onRootItemCreated()
     }
 }
 
-NodeSelectorModelSearch::NodeSelectorModelSearch(TabTypes allowedTabTypes, QObject* parent):
+NodeSelectorModelSearch::NodeSelectorModelSearch(TabTypes allowedTabTypes,
+                                                 bool flattenResults,
+                                                 QObject* parent):
     NodeSelectorModel(parent),
     mallowedTabTypes(allowedTabTypes),
+    mFlattenSearchResults(flattenResults),
     mDeviceNamesRequest(UserAttributes::DeviceNames::requestDeviceNames())
 {
     qRegisterMetaType<TabTypes>("TabTypes");
@@ -503,7 +506,7 @@ void NodeSelectorModelSearch::searchByText(const QString& text)
 {
     mNodeRequesterWorker->restartSearch();
     addRootItems();
-    emit searchNodes(text, mallowedTabTypes);
+    emit searchNodes(text, mallowedTabTypes, mFlattenSearchResults);
 }
 
 void NodeSelectorModelSearch::stopSearch()
