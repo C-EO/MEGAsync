@@ -89,7 +89,10 @@ void SyncSettingsModel::removeSync(std::shared_ptr<SyncSettings> sync)
 
 QHash<int, QByteArray> SyncSettingsModel::roleNames() const
 {
-    return {{NameRole, "name"}, {FolderRole, "folder"}, {StatusRole, "status"}};
+    return {{NameRole, "name"},
+            {FolderRole, "folder"},
+            {StatusRole, "status"},
+            {StatusId, "statusid"}};
 }
 
 int SyncSettingsModel::rowCount(const QModelIndex& parent) const
@@ -128,6 +131,9 @@ QVariant SyncSettingsModel::data(const QModelIndex& index, int role) const
 
         case StatusRole:
             return getState(sync);
+
+        case StatusId:
+            return sync->getRunState();
 
         default:
             return {};

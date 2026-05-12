@@ -18,7 +18,8 @@ class SyncSettingsModel: public QAbstractListModel
     {
         NameRole = Qt::UserRole + 1,
         FolderRole,
-        StatusRole
+        StatusRole,
+        StatusId
     };
 
 public:
@@ -28,6 +29,17 @@ public:
     QHash<int, QByteArray> roleNames() const override;
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;
+
+    enum SyncRunningState
+    {
+        PENDING = ::mega::MegaSync::RUNSTATE_PENDING,
+        LOADING = ::mega::MegaSync::RUNSTATE_LOADING,
+        RUNNING = ::mega::MegaSync::RUNSTATE_RUNNING,
+        SUSPENDED = ::mega::MegaSync::RUNSTATE_SUSPENDED,
+        RUNSTATE_DISABLED = ::mega::MegaSync::RUNSTATE_DISABLED,
+    };
+
+    Q_ENUM(SyncRunningState)
 
 private slots:
     void insertSync(std::shared_ptr<SyncSettings> sync);

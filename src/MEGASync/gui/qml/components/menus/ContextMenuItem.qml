@@ -31,6 +31,8 @@ Qml.MenuItem {
 
     width: parent.width
     height: sizes.itemHeight
+    implicitHeight: sizes.itemHeight
+
     leftPadding: sizes.horizontalPadding
     rightPadding: sizes.horizontalPadding
     topPadding: sizes.verticalPadding

@@ -293,7 +293,7 @@ Item {
             height: syncItemBackgroundHeight
             color: syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
             radius: syncItemBackgroundRadius
-
+            property int clickedSyncStatus
             property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
 
             MouseArea {
@@ -389,6 +389,7 @@ Item {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
+                                syncItem.clickedSyncStatus = statusid
                                 menu.popup(syncItem.width - menu.width, syncItem.height)
                             }
                         }
@@ -406,21 +407,23 @@ Item {
                 }
 
                 ContextMenuItem {
+                    visible: syncItem.clickedSyncStatus === SyncSettingsModel.SUSPENDED
+                    height: visible ? implicitHeight : 0
                     text: "Solve issues"
                     icon.source: Images.lightbulb_small_thin_outline
                     onTriggered: {
-
                     }
                 }
 
                 MenuSeparator {
+                    visible: syncItem.clickedSyncStatus === SyncSettingsModel.SUSPENDED
+                    height: visible ? implicitHeight : 0
                 }
 
                 ContextMenuItem {
                     text: "Show in folder"
                     icon.source: Images.folder_small_thin_outline
                     onTriggered: {
-
                     }
                 }
 
@@ -428,7 +431,6 @@ Item {
                     text: "Open in mega"
                     icon.source: Images.mega_medium_thin_outline
                     onTriggered: {
-
                     }
                 }
 
@@ -436,6 +438,8 @@ Item {
                 }
 
                 ContextMenuItem {
+                    visible: syncItem.clickedSyncStatus === SyncSettingsModel.RUNNING
+                    height: visible ? implicitHeight : 0
                     text: "Pause"
                     icon.source: Images.pause_thin_small_thin_outline
                     onTriggered: {
@@ -443,6 +447,8 @@ Item {
                 }
 
                 ContextMenuItem {
+                    visible: syncItem.clickedSyncStatus === SyncSettingsModel.SUSPENDED
+                    height: visible ? implicitHeight : 0
                     text: "Play"
                     icon.source: Images.play_small_thin_outline
                     onTriggered: {
