@@ -568,6 +568,7 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
 
         ui->tMegaFolders->header()->setVisible(true);
         ui->tMegaFolders->header()->setProperty("HeaderIconCenter", true);
+        ui->tMegaFolders->header()->setProperty("class", QLatin1String("new-design"));
 
         // those connects needs to be done after the model is set, do not move them
         connect(ui->tMegaFolders->selectionModel(),

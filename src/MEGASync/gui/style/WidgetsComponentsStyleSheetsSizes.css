@@ -127,6 +127,29 @@ subcontrol-position: center right;
 padding-right: 6px;
 }
 
+/*
+    Temporary rules. It will apply to all headers in a short future
+*/
+QHeaderView[class="new-design"]::section
+{
+padding-left: 16px;
+}
+
+QHeaderView[class="new-design"]::section:first
+{
+padding-left: 20px;
+}
+
+QHeaderView[class="new-design"]::up-arrow,
+QHeaderView[class="new-design"]::down-arrow
+{
+subcontrol-origin: padding;
+subcontrol-position: center left;
+padding-left: 2px;
+width: 14px;
+height: 14px;
+}
+
 
 /*
     QComboBox

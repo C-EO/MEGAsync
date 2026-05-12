@@ -159,6 +159,19 @@ QHeaderView::down-arrow
 image: url(:/spinbox_down_arrow);
 }
 
+/*
+    Temporary rules. It will apply to all headers in a short future
+*/
+QHeaderView[class="new-design"]::up-arrow
+{
+image: url(:/arrow-up_small_thin_outline_icon_secondary);
+}
+
+QHeaderView[class="new-design"]::down-arrow
+{
+image: url(:/arrow-down_small_thin_outline_icon_secondary);
+}
+
 
 /*
     QComboBox
