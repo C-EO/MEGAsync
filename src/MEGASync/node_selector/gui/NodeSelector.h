@@ -212,6 +212,7 @@ private:
     bool mManuallyResizedColumn;
     bool mInitialised;
     std::optional<TabItem> mSearchSourceTab;
+    QString mLastSearchText;
 
     std::shared_ptr<mega::MegaNode> mNodeToBeSelected;
 

@@ -173,9 +173,16 @@ void NodeSelector::handleSearch(const QString& text)
         return;
     }
 
-    mSearchSourceTab = sourceTab;
-    mSearchWidget->setSearchScope(tabTypeForItem(sourceTab.value()));
-    mSearchWidget->search(text);
+    const bool sameAsActiveSearch = isCurrentTabSearchActive() && text == mLastSearchText;
+
+    if (!sameAsActiveSearch)
+    {
+        mSearchSourceTab = sourceTab;
+        mLastSearchText = text;
+        mSearchWidget->setSearchScope(tabTypeForItem(sourceTab.value()));
+        mSearchWidget->search(text);
+    }
+
     ui->stackedWidget->setCurrentWidget(mSearchWidget);
 }
 
@@ -695,6 +702,7 @@ void NodeSelector::clearCurrentTabSearch(bool clearLineEdit)
 
     const auto sourceTab = mSearchSourceTab;
     mSearchSourceTab.reset();
+    mLastSearchText.clear();
 
     if (clearLineEdit)
     {

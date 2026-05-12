@@ -69,7 +69,6 @@ private:
 
     Ui::SearchLineEdit* ui;
     ButtonIconManager mButtonManager;
-    QString mOldString;
     QPointer<QDialog> mTopParent;
     Mode mMode;
 };
