@@ -628,6 +628,24 @@ background-color: #FFFFFF; /*colorToken.page-background*/
          </item>
          <item>
           <widget class="SearchLineEdit" name="leSearchTool">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>180</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>180</width>
+             <height>32</height>
+            </size>
+           </property>
            <property name="mode" stdset="0">
             <number>0</number>
            </property>

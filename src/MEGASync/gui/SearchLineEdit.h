@@ -35,6 +35,7 @@ public:
         ALWAYS_EXPANDED,
         EXPANDABLE
     };
+    Q_ENUM(Mode)
 
     void setMode(Mode mode);
 

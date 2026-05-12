@@ -47,7 +47,7 @@ border-radius: 16px;
   <property name="lineWidth" stdset="0">
    <number>0</number>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
    <property name="spacing">
     <number>8</number>
    </property>
@@ -93,7 +93,7 @@ border-radius: 16px;
    <item>
     <widget class="QWidget" name="searchContainer" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
