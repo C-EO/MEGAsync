@@ -19,7 +19,8 @@ class SyncSettingsModel: public QAbstractListModel
         NameRole = Qt::UserRole + 1,
         FolderRole,
         StatusRole,
-        StatusId
+        StatusId,
+        ErrorMessage
     };
 
 public:
@@ -38,6 +39,7 @@ public:
         RUNNING = ::mega::MegaSync::RUNSTATE_RUNNING,
         SUSPENDED = ::mega::MegaSync::RUNSTATE_SUSPENDED,
         DISABLED = ::mega::MegaSync::RUNSTATE_DISABLED,
+        ERROR,
     };
 
     Q_ENUM(SyncStates)
@@ -53,6 +55,8 @@ private:
 
     QString getState(std::shared_ptr<SyncSettings> sync) const;
     void sendDataChanged(int row);
+    SyncStates getStatusId(std::shared_ptr<SyncSettings> sync) const;
+    QString getErrorMessage(std::shared_ptr<SyncSettings> sync) const;
 };
 
 #endif // SYNC_SETTINGS_MODEL_H

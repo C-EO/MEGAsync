@@ -2,6 +2,8 @@
 
 #include "SyncInfo.h"
 
+#include <QCoreApplication>
+
 SyncSettingsModel::SyncSettingsModel(QObject* parent):
     QAbstractListModel(parent),
     mSyncInfo(SyncInfo::instance())
@@ -92,7 +94,8 @@ QHash<int, QByteArray> SyncSettingsModel::roleNames() const
     return {{NameRole, "name"},
             {FolderRole, "folder"},
             {StatusRole, "status"},
-            {StatusId, "statusid"}};
+            {StatusId, "statusid"},
+            {ErrorMessage, "error"}};
 }
 
 int SyncSettingsModel::rowCount(const QModelIndex& parent) const
@@ -133,11 +136,40 @@ QVariant SyncSettingsModel::data(const QModelIndex& index, int role) const
             return getState(sync);
 
         case StatusId:
-            return sync->getRunState();
+            return getStatusId(sync);
+
+        case ErrorMessage:
+            return getErrorMessage(sync);
 
         default:
             return {};
     }
+}
+
+QString SyncSettingsModel::getErrorMessage(std::shared_ptr<SyncSettings> sync) const
+{
+    QString errorMessage;
+    if (SyncStates::ERROR == getStatusId(sync))
+    {
+        std::unique_ptr<const char[]> syncErrorText(
+            mega::MegaSync::getMegaSyncErrorCode(sync->getError()));
+        QString toolTip;
+        errorMessage += QCoreApplication::translate("MegaSyncError", syncErrorText.get());
+    }
+
+    return errorMessage;
+}
+
+SyncSettingsModel::SyncStates
+    SyncSettingsModel::getStatusId(std::shared_ptr<SyncSettings> sync) const
+{
+    auto statusId = sync->getRunState();
+    if (statusId == ::mega::MegaSync::RUNSTATE_SUSPENDED && sync->getError())
+    {
+        statusId = SyncStates::ERROR;
+    }
+
+    return static_cast<SyncStates>(statusId);
 }
 
 std::shared_ptr<SyncSettings> SyncSettingsModel::getSync(int index) const
@@ -151,9 +183,12 @@ QString SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
     switch (sync->getRunState())
     {
         case ::mega::MegaSync::RUNSTATE_PENDING:
+            [[fallthrough]];
         case ::mega::MegaSync::RUNSTATE_LOADING:
+        {
             s = tr("Loading");
             break;
+        }
         case ::mega::MegaSync::RUNSTATE_SUSPENDED:
         {
             if (sync->getError())
@@ -167,8 +202,10 @@ QString SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
             break;
         }
         case ::mega::MegaSync::RUNSTATE_DISABLED:
+        {
             s = tr("Disabled");
             break;
+        }
         case ::mega::MegaSync::RUNSTATE_RUNNING:
         {
             auto it = mSyncInfo->mSyncStatsMap.find(sync->backupId());
@@ -188,6 +225,7 @@ QString SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
                     s = tr("Synced");
                 }
             }
+            break;
         }
     }
     return s;

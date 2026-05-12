@@ -5,6 +5,8 @@
 #include "QmlManager.h"
 #include "StalledIssuesModel.h"
 #include "StatsEventHandler.h"
+#include "SyncController.h"
+#include "SyncExclusions.h"
 #include "SyncSettingsModel.h"
 
 SyncSettingsQuickWidget::SyncSettingsQuickWidget(QWidget* parent):
@@ -41,6 +43,54 @@ void SyncSettingsQuickWidget::addSync() const
 bool SyncSettingsQuickWidget::getAutomaticSyncIssueResolverEnabled() const
 {
     return mAutomaticSyncIssueResolverEnabled;
+}
+
+void SyncSettingsQuickWidget::pauseSync(int index) const
+{
+    SyncController::instance().setSyncToSuspend(mSyncModel->getSync(index));
+}
+
+void SyncSettingsQuickWidget::resumeSync(int index) const
+{
+    SyncController::instance().setSyncToRun(mSyncModel->getSync(index));
+}
+
+void SyncSettingsQuickWidget::openExclusionsDialog(int index) const
+{
+    const auto& sync = mSyncModel->getSync(index);
+    QFileInfo syncDir(sync->getLocalFolder());
+    if (syncDir.exists())
+    {
+        QPointer<QmlDialogWrapper<SyncExclusions>> exclusions =
+            new QmlDialogWrapper<SyncExclusions>(this->parentWidget(), sync->getLocalFolder());
+
+        DialogOpener::showDialog(exclusions);
+    }
+    else
+    {
+        MessageDialogInfo msgInfo;
+        msgInfo.parent = this->parentWidget();
+        msgInfo.descriptionText = tr("Error opening megaignore file");
+        MessageDialogOpener::warning(msgInfo);
+    }
+}
+
+void SyncSettingsQuickWidget::remove(int index) const
+{
+    const auto& sync = mSyncModel->getSync(index);
+    CreateRemoveSyncsManager::removeSync(sync, this->parentWidget());
+}
+
+void SyncSettingsQuickWidget::rescan(int index) const
+{
+    const auto& sync = mSyncModel->getSync(index);
+    MegaSyncApp->getMegaApi()->rescanSync(sync->backupId(), true);
+}
+
+void SyncSettingsQuickWidget::reboot(int index) const
+{
+    const auto& sync = mSyncModel->getSync(index);
+    SyncController::instance().resetSync(sync, mega::MegaSync::SyncRunningState::RUNSTATE_DISABLED);
 }
 
 void SyncSettingsQuickWidget::setAutomaticSyncIssueResolverEnabled(bool enable)

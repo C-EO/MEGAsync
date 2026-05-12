@@ -291,7 +291,7 @@ Item {
 
             width: syncList.width
             height: syncItemBackgroundHeight
-            color: syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
+            color: statusid === SyncSettingsModel.ERROR ? ColorTheme.notificationError : syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
             radius: syncItemBackgroundRadius
             property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
 
@@ -324,12 +324,13 @@ Item {
 
                         text: name
                         anchors.verticalCenter: parent.verticalCenter
+                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
                     }
 
                     SvgImage {
                         id: folderSearchIcon
 
-                        color: ColorTheme.iconPrimary
+                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
                         source: Images.folder_search_small_thin_outline
                         sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                         visible: syncItemContainsMouse
@@ -358,7 +359,7 @@ Item {
                     SvgImage {
                         id: folderStatusIcon
 
-                        color: ColorTheme.iconPrimary
+                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
                         source: Images.sync_01_small_thin_outline
                         sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                     }
@@ -367,6 +368,7 @@ Item {
                         id: syncStatus
 
                         text: status
+                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
                     }
 
                     Item {
@@ -376,7 +378,7 @@ Item {
                     SvgImage {
                         id: menuIcon
 
-                        color: ColorTheme.iconPrimary
+                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
                         source: Images.threeDots
                         sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                         visible: syncItemContainsMouse
@@ -405,7 +407,7 @@ Item {
                 }
 
                 ContextMenuItem {
-                    visible: statusid === SyncSettingsModel.SUSPENDED
+                    visible: statusid === SyncSettingsModel.ERROR
                     height: visible ? implicitHeight : 0
                     text: "Solve issues"
                     icon.source: Images.lightbulb_small_thin_outline
@@ -414,7 +416,7 @@ Item {
                 }
 
                 MenuSeparator {
-                    visible: statusid === SyncSettingsModel.SUSPENDED
+                    visible: statusid === SyncSettingsModel.ERROR
                     height: visible ? implicitHeight : 0
                 }
 
@@ -430,7 +432,7 @@ Item {
                     text: "Open in mega"
                     icon.source: Images.mega_medium_thin_outline
                     onTriggered: {
-                        syncSettings.openInMega(index)
+                        syncSettings.openInMega(index);
                     }
                 }
 
@@ -443,25 +445,30 @@ Item {
                     text: "Pause"
                     icon.source: Images.pause_thin_small_thin_outline
                     onTriggered: {
+                        syncSettings.pauseSync(index);
                     }
                 }
 
                 ContextMenuItem {
                     visible: statusid === SyncSettingsModel.SUSPENDED
                     height: visible ? implicitHeight : 0
-                    text: "Play"
+                    text: "Resume"
                     icon.source: Images.play_small_thin_outline
                     onTriggered: {
+                        syncSettings.resumeSync(index);
                     }
                 }
 
                 MenuSeparator {
+                    visible: statusid === SyncSettingsModel.RUNNING || statusid === SyncSettingsModel.SUSPENDED
+                    height: visible ? implicitHeight : 0
                 }
 
                 ContextMenuItem {
                     text: "Manage exlusions"
                     icon.source: Images.file_ignore_small_thin_outline
                     onTriggered: {
+                        syncSettings.openExclusionsDialog(index);
                     }
                 }
 
@@ -469,20 +476,28 @@ Item {
                 }
 
                 ContextMenuItem {
+                    visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
+                    height: visible ? implicitHeight : 0
                     text: "Rescan"
                     icon.source: Images.search_large_small_thin_outline
                     onTriggered: {
+                        syncSettings.rescan(index);
                     }
                 }
 
                 ContextMenuItem {
+                    visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
+                    height: visible ? implicitHeight : 0
                     text: "Reboot"
                     icon.source: Images.rotate_cw_small_thin_outline
                     onTriggered: {
+                        syncSettings.reboot(index);
                     }
                 }
 
                 MenuSeparator {
+                    visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
+                    height: visible ? implicitHeight : 0
                 }
 
                 ContextMenuItem {
@@ -491,6 +506,7 @@ Item {
                     imageColor: ColorTheme.textError
                     icon.source: Images.trash_small_thin_outline
                     onTriggered: {
+                        syncSettings.remove(index);
                     }
                 }
             }

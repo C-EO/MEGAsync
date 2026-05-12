@@ -18,6 +18,12 @@ public:
     Q_INVOKABLE void openInMega(int index) const;
     Q_INVOKABLE void exploreLocalSync(const QString& localFolder) const;
     Q_INVOKABLE void addSync() const;
+    Q_INVOKABLE void pauseSync(int index) const;
+    Q_INVOKABLE void resumeSync(int index) const;
+    Q_INVOKABLE void openExclusionsDialog(int index) const;
+    Q_INVOKABLE void rescan(int index) const;
+    Q_INVOKABLE void reboot(int index) const;
+    Q_INVOKABLE void remove(int index) const;
 
     bool getAutomaticSyncIssueResolverEnabled() const;
     void setAutomaticSyncIssueResolverEnabled(bool enable);
