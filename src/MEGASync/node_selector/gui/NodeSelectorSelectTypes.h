@@ -42,7 +42,7 @@ public:
         return false;
     }
 
-    virtual bool showOkAndCancelButtons() const
+    virtual bool isFilePicker() const
     {
         return true;
     }
@@ -54,10 +54,10 @@ public:
         ClearRubbish
     };
 
-    void setActionButtons(const QMap<uint, QPushButton*>& buttons);
-    virtual void updateCustomButtonsText(NodeSelectorTreeViewWidget*);
+    virtual void updateActionButtonsText(QMap<uint, QPushButton*> buttons);
     virtual QString getCustomButtonText(uint buttonId) const;
-    void checkActionButtonsVisibility(NodeSelectorTreeViewWidget* wdg);
+    void checkActionButtonsVisibility(NodeSelectorTreeViewWidget* wdg,
+                                      QMap<uint, QPushButton*> buttons);
     virtual void checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
                                              uint buttonId,
                                              QPushButton* button);
@@ -88,8 +88,6 @@ public:
 
 protected:
     bool cloudDriveIsCurrentRootIndex(NodeSelectorTreeViewWidget* wdg);
-
-    QMap<uint, QPushButton*> mActionButtons;
 };
 
 class DownloadType: public SelectType
@@ -163,7 +161,7 @@ public:
         return false;
     }
 
-    bool showOkAndCancelButtons() const override
+    bool isFilePicker() const override
     {
         return false;
     }

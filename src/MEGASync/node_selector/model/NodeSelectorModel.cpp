@@ -2758,7 +2758,9 @@ QVariant NodeSelectorModel::getIcon(const QModelIndex& index, NodeSelectorModelI
             }
         }
         default:
+        {
             break;
+        }
     }
     return QVariant();
 }
@@ -2768,17 +2770,29 @@ QVariant NodeSelectorModel::getText(const QModelIndex& index, NodeSelectorModelI
     switch (index.column())
     {
         case Column::NODE:
+        {
             return getDisplayText(item);
+        }
         case Column::ADDED_DATE:
+        {
             return getAddedDateText(item);
+        }
         case Column::LAST_MODIFIED_DATE:
+        {
             return getLastModifiedDateText(item);
+        }
         case Column::ACCESS:
+        {
             return getAccessText(item);
+        }
         case Column::USER:
+        {
             return getUserText(item);
+        }
         default:
+        {
             break;
+        }
     }
     return {};
 }

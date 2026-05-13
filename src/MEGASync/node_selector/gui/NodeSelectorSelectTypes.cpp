@@ -44,18 +44,18 @@ void SelectType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 
     wdg->mModel->showFiles(true);
     wdg->mModel->showReadOnlyFolders(true);
-}
 
-void SelectType::setActionButtons(const QMap<uint, QPushButton*>& buttons)
-{
-    mActionButtons = buttons;
-}
-
-void SelectType::updateCustomButtonsText(NodeSelectorTreeViewWidget*)
-{
-    if (!mActionButtons.isEmpty())
+    if (isFilePicker())
     {
-        for (auto it = mActionButtons.keyValueBegin(); it != mActionButtons.keyValueEnd(); ++it)
+        wdg->ui->tMegaFolders->header()->setProperty("class", QLatin1String("new-design"));
+    }
+}
+
+void SelectType::updateActionButtonsText(QMap<uint, QPushButton*> buttons)
+{
+    if (!buttons.isEmpty())
+    {
+        for (auto it = buttons.keyValueBegin(); it != buttons.keyValueEnd(); ++it)
         {
             it->second->setText(getCustomButtonText(it->first));
         }
@@ -82,10 +82,11 @@ std::shared_ptr<NodeSelectorProxyModel> SelectType::createProxyModel()
     return std::make_shared<NodeSelectorProxyModel>();
 }
 
-void SelectType::checkActionButtonsVisibility(NodeSelectorTreeViewWidget* wdg)
+void SelectType::checkActionButtonsVisibility(NodeSelectorTreeViewWidget* wdg,
+                                              QMap<uint, QPushButton*> buttons)
 {
     // By default, all are hidden
-    for (auto it = mActionButtons.cbegin(); it != mActionButtons.cend(); ++it)
+    for (auto it = buttons.cbegin(); it != buttons.cend(); ++it)
     {
         checkActionButtonVisibility(wdg, it.key(), it.value());
     }
@@ -197,6 +198,8 @@ std::shared_ptr<NodeSelectorProxyModel> StreamType::createProxyModel()
 ///////////////////////UPLOAD TYPE//////////////////////////////
 void UploadType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
+    SelectType::initTreeViewWidget(wdg);
+
     wdg->mModel->showFiles(false);
     wdg->mModel->showReadOnlyFolders(false);
 }

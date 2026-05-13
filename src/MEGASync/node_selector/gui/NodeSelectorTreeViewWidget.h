@@ -17,6 +17,7 @@
 #include <QItemSelectionModel>
 #include <QMap>
 #include <QPersistentModelIndex>
+#include <QSet>
 #include <QTimer>
 #include <QWidget>
 
@@ -114,6 +115,9 @@ public:
 
     virtual QString getRootText() = 0;
 
+    void setColumnHidden(int column, bool hidden);
+    void setNonInteractiveColumns(const QSet<int>& columns);
+
 public slots:
     virtual void checkViewOnModelChange();
     void setLoadingSceneVisible(bool visible);
@@ -134,6 +138,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     bool event(QEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
+    void showEvent(QShowEvent* event) override;
     void selectionChanged(const QModelIndexList& selected);
     QModelIndex getParentIncomingShareByIndex(QModelIndex idx) const;
 
@@ -156,7 +161,7 @@ protected:
         return false;
     }
 
-    virtual void onRootIndexChanged(const QModelIndex& source_idx);
+    void onRootIndexChanged(const QModelIndex& source_idx);
     virtual QModelIndex getAddedNodeParent(mega::MegaHandle parentHandle);
     QModelIndex getRootIndexFromIndex(const QModelIndex& index);
     void selectIndex(const QModelIndex& index, bool setCurrent, bool exclusiveSelect = false);

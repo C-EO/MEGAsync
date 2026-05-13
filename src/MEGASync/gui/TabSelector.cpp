@@ -153,8 +153,12 @@ void TabSelector::setSelected(bool state)
             }
 
             toggleOffSiblings();
-            emit clicked();
         }
+    }
+
+    if (state)
+    {
+        emit clicked();
     }
 }
 

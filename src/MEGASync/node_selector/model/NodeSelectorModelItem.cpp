@@ -453,7 +453,9 @@ void NodeSelectorModelItem::calculateSyncStatus()
                     return;
                 }
                 default:
+                {
                     break;
+                }
             }
         }
     }

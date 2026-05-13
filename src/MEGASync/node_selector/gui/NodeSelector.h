@@ -111,31 +111,51 @@ protected:
                                bool blockTarget);
 
     // Create specialised widgets
-    void createSpecialisedWidgets();
-    void addWidgetForTabType(TabType type);
+    void createSpecialisedTreeViewWidgets();
+    NodeSelectorTreeViewWidget* addWidgetForTabType(TabType type);
 
-    virtual void afterWidgetsCreated() {}
+    virtual void specialisedTreeViewWidgetsCreated();
 
-    virtual ClearTypes searchClearType() const;
+    virtual void configureCloudDriveWidget() {}
 
-    virtual bool searchHasOwnTab() const
+    virtual void configureIncomingSharesWidget() {}
+
+    virtual void configureBackupsWidget() {}
+
+    virtual void configureRubbishWidget() {}
+
+    virtual void configureSearchWidget(TabType type)
     {
-        return false;
+        Q_UNUSED(type);
     }
 
-    virtual void handleSearch(const QString& text);
-    virtual void handleSearchHidden();
+    virtual ClearTypes searchClearType() const;
+    virtual bool searchHasOwnTab() const = 0;
+
+    virtual void handleSearch(const QString& /*text*/) {}
+
+    virtual void handleSearchHidden() {}
+
+    bool isCurrentTabSearchActive() const;
+    std::optional<TabItem> currentSearchSourceTab() const;
+    void clearCurrentTabSearch(bool clearLineEdit);
+    TabType tabTypeForItem(TabItem item) const;
+
+    std::optional<TabItem> mSearchSourceTab;
+    QString mLastSearchText;
 
     virtual void onLanguageChangeEvent() {}
-    void addCloudDrive();
+
+    NodeSelectorTreeViewWidget* addCloudDrive();
+    NodeSelectorTreeViewWidget* addIncomingShares();
+    NodeSelectorTreeViewWidget* addBackups();
+    NodeSelectorTreeViewWidget* addSearchTreeViewWidget();
+    NodeSelectorTreeViewWidget* addRubbish();
+
     NodeSelectorTreeViewWidgetCloudDrive* mCloudDriveWidget;
-    void addIncomingShares();
     NodeSelectorTreeViewWidgetIncomingShares* mIncomingSharesWidget;
-    void addBackups();
     NodeSelectorTreeViewWidgetBackups* mBackupsWidget;
-    void addSearch();
     NodeSelectorTreeViewWidgetSearch* mSearchWidget;
-    void addRubbish();
     NodeSelectorTreeViewWidgetRubbish* mRubbishWidget;
 
     mega::MegaApi* mMegaApi;
@@ -148,8 +168,13 @@ protected slots:
 
     virtual void onCustomButtonClicked(uint id);
 
-    virtual void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int actionType);
-    virtual void onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& handles, int type);
+    virtual void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& /*handles*/,
+                                       int /*actionType*/)
+    {}
+
+    virtual void onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& /*handles*/,
+                                             int /*type*/)
+    {}
 
     virtual void onItemRequestsFinished(int actionType) {}
 
@@ -177,7 +202,7 @@ private slots:
     void onbShowBackupsFolderClicked();
     void onbShowRubbishClicked();
     void updateNodeSelectorTabs();
-    void onCurrentWidgetChanged(int index);
+    void onCurrentTreeViewWidgetChanged(int index);
     void onShowDuplicatedNodeDialog(QPointer<DuplicatedNodeDialog>);
     void performNodeSelection();
     void onSearch(const QString& text);
@@ -186,14 +211,9 @@ private slots:
     void onbNewFolderClicked();
 
 private:
-    TabType tabTypeForItem(TabItem item) const;
     NodeSelectorTreeViewWidget* widgetForTab(TabItem item) const;
     std::optional<TabItem> tabItemForWidget(const NodeSelectorTreeViewWidget* wid) const;
     void showTab(TabItem item);
-    bool isCurrentTabSearchActive() const;
-    std::optional<TabItem> currentSearchSourceTab() const;
-    virtual void clearCurrentTabSearchOnTabChanged();
-    void clearCurrentTabSearch(bool clearLineEdit);
     QString folderNameForWidget(NodeSelectorTreeViewWidget* wid) const;
     void applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid);
     void applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid);
@@ -211,8 +231,6 @@ private:
 
     bool mManuallyResizedColumn;
     bool mInitialised;
-    std::optional<TabItem> mSearchSourceTab;
-    QString mLastSearchText;
 
     std::shared_ptr<mega::MegaNode> mNodeToBeSelected;
 

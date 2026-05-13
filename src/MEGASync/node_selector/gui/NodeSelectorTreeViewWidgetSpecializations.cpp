@@ -86,15 +86,6 @@ MegaHandle
     return mega::INVALID_HANDLE;
 }
 
-void NodeSelectorTreeViewWidgetCloudDrive::onRootIndexChanged(const QModelIndex& source_idx)
-{
-    Q_UNUSED(source_idx)
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::USER);
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ACCESS);
-
-    NodeSelectorTreeViewWidget::onRootIndexChanged(source_idx);
-}
-
 /////////////////////////////////////////////////////////////////
 /// \brief NodeSelectorTreeViewWidgetIncomingShares::NodeSelectorTreeViewWidgetIncomingShares
 /// \param mode
@@ -193,24 +184,6 @@ QString NodeSelectorTreeViewWidgetIncomingShares::getRootText()
 std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetIncomingShares::createModel()
 {
     return std::unique_ptr<NodeSelectorModelIncomingShares>(new NodeSelectorModelIncomingShares);
-}
-
-void NodeSelectorTreeViewWidgetIncomingShares::onRootIndexChanged(const QModelIndex& idx)
-{
-    if (idx.isValid())
-    {
-        ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::USER);
-        ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ACCESS);
-    }
-    else
-    {
-        ui->tMegaFolders->header()->showSection(NodeSelectorModel::Column::USER);
-        ui->tMegaFolders->header()->showSection(NodeSelectorModel::Column::ACCESS);
-    }
-
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ADDED_DATE);
-
-    NodeSelectorTreeViewWidget::onRootIndexChanged(idx);
 }
 
 bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentRootIndexReadOnly()
@@ -325,14 +298,6 @@ NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetBackups::ge
     EmptyLabelInfo info;
     info.description = tr("No backups");
     return info;
-}
-
-void NodeSelectorTreeViewWidgetBackups::onRootIndexChanged(const QModelIndex& idx)
-{
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::USER);
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ACCESS);
-
-    NodeSelectorTreeViewWidget::onRootIndexChanged(idx);
 }
 
 /////////////////////////////////////////////////////////////////
@@ -525,34 +490,7 @@ void NodeSelectorTreeViewWidgetSearch::onItemDoubleClick(const QModelIndex& inde
 
 void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(TabType type)
 {
-    bool hideUserColumn(true);
-    bool hideAccessColumn(true);
-    bool hideAddedDate(true);
-
-    switch (type)
-    {
-        case TabType::BACKUP:
-        case TabType::CLOUD_DRIVE:
-        {
-            hideAddedDate = false;
-            break;
-        }
-        case TabType::INCOMING_SHARE:
-        {
-            hideUserColumn = false;
-            hideAccessColumn = false;
-            break;
-        }
-        case TabType::RUBBISH:
-        case TabType::NONE:
-        default:
-            break;
-    }
-
-    ui->tMegaFolders->setColumnHidden(NodeSelectorModel::Column::USER, hideUserColumn);
-    ui->tMegaFolders->setColumnHidden(NodeSelectorModel::Column::ACCESS, hideAccessColumn);
-    ui->tMegaFolders->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, hideAddedDate);
-
+    emit searchTabTypeChanged(type);
     onRootIndexChanged(QModelIndex());
 }
 
@@ -798,13 +736,4 @@ NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetRubbish::ge
     EmptyLabelInfo info;
     info.description = tr("The Rubbish bin is empty");
     return info;
-}
-
-void NodeSelectorTreeViewWidgetRubbish::onRootIndexChanged(const QModelIndex& source_idx)
-{
-    Q_UNUSED(source_idx)
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::USER);
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ACCESS);
-
-    NodeSelectorTreeViewWidget::onRootIndexChanged(source_idx);
 }

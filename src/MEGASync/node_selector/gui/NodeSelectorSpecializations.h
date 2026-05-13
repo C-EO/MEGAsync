@@ -1,9 +1,10 @@
 #ifndef NODESELECTORSPECIALIZED_H
 #define NODESELECTORSPECIALIZED_H
 
+#include "FilePickerNodeSelector.h"
 #include "NodeSelector.h"
 
-class UploadNodeSelector: public NodeSelector
+class UploadNodeSelector: public FilePickerNodeSelector
 {
     Q_OBJECT
 
@@ -14,7 +15,7 @@ private:
     void onOkButtonClicked() override;
 };
 
-class DownloadNodeSelector: public NodeSelector
+class DownloadNodeSelector: public FilePickerNodeSelector
 {
     Q_OBJECT
 
@@ -25,7 +26,7 @@ private:
     void onOkButtonClicked() override;
 };
 
-class SyncNodeSelector: public NodeSelector
+class SyncNodeSelector: public FilePickerNodeSelector
 {
     Q_OBJECT
 
@@ -37,7 +38,7 @@ private:
     bool isFullSync();
 };
 
-class StreamNodeSelector: public NodeSelector
+class StreamNodeSelector: public FilePickerNodeSelector
 {
     Q_OBJECT
 
@@ -61,7 +62,7 @@ public:
     static void sendStats();
 
 protected:
-    void afterWidgetsCreated() override;
+    void specialisedTreeViewWidgetsCreated() override;
 
     bool searchHasOwnTab() const override
     {
@@ -72,6 +73,12 @@ protected:
 
     void handleSearch(const QString& text) override;
     void handleSearchHidden() override;
+
+    void configureCloudDriveWidget() override;
+    void configureIncomingSharesWidget() override;
+    void configureBackupsWidget() override;
+    void configureRubbishWidget() override;
+    void configureSearchWidget(TabType type) override;
 
     void onLanguageChangeEvent() override;
 
@@ -122,7 +129,7 @@ private:
 };
 
 //////////////////
-class MoveBackupNodeSelector: public NodeSelector
+class MoveBackupNodeSelector: public FilePickerNodeSelector
 {
     Q_OBJECT
 

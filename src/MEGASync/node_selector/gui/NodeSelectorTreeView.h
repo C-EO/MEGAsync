@@ -6,6 +6,7 @@
 #include "ViewLoadingScene.h"
 
 #include <QHeaderView>
+#include <QSet>
 #include <QShortcut>
 #include <QTreeView>
 
@@ -14,6 +15,24 @@
 class NodeSelectorProxyModel;
 class NodeSelectorModel;
 class MegaDelegateHoverManager;
+
+class NodeSelectorHeaderView: public QHeaderView
+{
+    Q_OBJECT
+
+public:
+    explicit NodeSelectorHeaderView(Qt::Orientation orientation, QWidget* parent = nullptr);
+
+    void setNonInteractiveSections(const QSet<int>& sections);
+
+protected:
+    void paintSection(QPainter* painter, const QRect& rect, int logicalIndex) const override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+
+private:
+    QSet<int> mNonInteractiveSections;
+};
 
 using namespace mega;
 

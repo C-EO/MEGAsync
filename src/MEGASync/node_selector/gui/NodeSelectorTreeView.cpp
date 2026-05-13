@@ -32,6 +32,8 @@ NodeSelectorTreeView::NodeSelectorTreeView(QWidget* parent):
     mRootIndexReadOnly(false),
     mMegaApi(MegaSyncApp->getMegaApi())
 {
+    setHeader(new NodeSelectorHeaderView(Qt::Horizontal, this));
+
     installEventFilter(this);
 
     // Copy paste actions
@@ -1327,4 +1329,90 @@ void NodeSelectorTreeView::selectFromMouseEvent(const QModelIndex& index,
     }
 
     sel->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// NodeSelectorHeaderView
+///////////////////////////////////////////////////////////////////////////////
+
+NodeSelectorHeaderView::NodeSelectorHeaderView(Qt::Orientation orientation, QWidget* parent):
+    QHeaderView(orientation, parent)
+{}
+
+void NodeSelectorHeaderView::setNonInteractiveSections(const QSet<int>& sections)
+{
+    if (mNonInteractiveSections != sections)
+    {
+        mNonInteractiveSections = sections;
+        viewport()->update();
+    }
+}
+
+void NodeSelectorHeaderView::paintSection(QPainter* painter,
+                                          const QRect& rect,
+                                          int logicalIndex) const
+{
+    if (!mNonInteractiveSections.contains(logicalIndex))
+    {
+        QHeaderView::paintSection(painter, rect, logicalIndex);
+        return;
+    }
+
+    if (!rect.isValid())
+    {
+        return;
+    }
+
+    QStyleOptionHeader opt;
+    initStyleOption(&opt);
+
+    opt.rect = rect;
+    opt.section = logicalIndex;
+    if (isEnabled())
+    {
+        opt.state |= QStyle::State_Enabled;
+    }
+    opt.state |= QStyle::State_Horizontal;
+    opt.text = QString();
+    opt.icon = QIcon();
+    opt.sortIndicator = QStyleOptionHeader::None;
+
+    if (count() == 1)
+    {
+        opt.position = QStyleOptionHeader::OnlyOneSection;
+    }
+    else if (logicalIndex == 0)
+    {
+        opt.position = QStyleOptionHeader::Beginning;
+    }
+    else if (logicalIndex == count() - 1)
+    {
+        opt.position = QStyleOptionHeader::End;
+    }
+    else
+    {
+        opt.position = QStyleOptionHeader::Middle;
+    }
+
+    style()->drawControl(QStyle::CE_Header, &opt, painter, this);
+}
+
+void NodeSelectorHeaderView::mousePressEvent(QMouseEvent* event)
+{
+    if (mNonInteractiveSections.contains(logicalIndexAt(event->pos())))
+    {
+        event->ignore();
+        return;
+    }
+    QHeaderView::mousePressEvent(event);
+}
+
+void NodeSelectorHeaderView::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (mNonInteractiveSections.contains(logicalIndexAt(event->pos())))
+    {
+        event->ignore();
+        return;
+    }
+    QHeaderView::mouseReleaseEvent(event);
 }

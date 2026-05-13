@@ -7,6 +7,7 @@
 #include "NodeSelectorModel.h"
 #include "NodeSelectorProxyModel.h"
 #include "NodeSelectorSelectionCoordinator.h"
+#include "NodeSelectorTreeView.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
 #include "RequestListenerManager.h"
 #include "TokenizableItems/TokenPropertySetter.h"
@@ -50,6 +51,7 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     auto iconTokensSetter = std::make_shared<TokenPropertySetter>(iconTokens);
     TabSelector::applyTokens(ui->searchButtonsWidget, iconTokensSetter);
 
+    // Set search tabs titles
     ui->cloudDriveSearch->setProperty("title", MegaNodeNames::getCloudDriveName());
     ui->backupsSearch->setProperty("title", MegaNodeNames::getBackupsName());
     ui->incomingSharesSearch->setProperty("title", MegaNodeNames::getIncomingSharesName());
@@ -568,7 +570,6 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
 
         ui->tMegaFolders->header()->setVisible(true);
         ui->tMegaFolders->header()->setProperty("HeaderIconCenter", true);
-        ui->tMegaFolders->header()->setProperty("class", QLatin1String("new-design"));
 
         // those connects needs to be done after the model is set, do not move them
         connect(ui->tMegaFolders->selectionModel(),
@@ -1132,6 +1133,30 @@ NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidget::getEmptyL
 NodeSelectorDelegate* NodeSelectorTreeViewWidget::createItemDelegate(QObject* parent)
 {
     return new NodeRowDelegate(parent);
+}
+
+void NodeSelectorTreeViewWidget::setColumnHidden(int column, bool hidden)
+{
+    if (ui->tMegaFolders->isColumnHidden(column) == hidden)
+    {
+        return;
+    }
+    ui->tMegaFolders->setColumnHidden(column, hidden);
+    updateColumnsWidth(true);
+}
+
+void NodeSelectorTreeViewWidget::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+    updateColumnsWidth(true);
+}
+
+void NodeSelectorTreeViewWidget::setNonInteractiveColumns(const QSet<int>& columns)
+{
+    if (auto header = qobject_cast<NodeSelectorHeaderView*>(ui->tMegaFolders->header()))
+    {
+        header->setNonInteractiveSections(columns);
+    }
 }
 
 QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelIndex idx) const

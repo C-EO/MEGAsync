@@ -35,7 +35,6 @@ protected:
 
 private:
     QString getRootText() override;
-    void onRootIndexChanged(const QModelIndex& idx) override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     void setViewPage() override;
     QIcon getEmptyIcon() override;
@@ -69,7 +68,6 @@ protected:
 private:
     QString getRootText() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
-    void onRootIndexChanged(const QModelIndex& idx) override;
     bool isCurrentRootIndexReadOnly() override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
     bool isCurrentSelectionReadOnly() override;
@@ -86,7 +84,6 @@ public:
 
 private:
     QString getRootText() override;
-    void onRootIndexChanged(const QModelIndex& idx) override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
 
     bool isCurrentRootIndexReadOnly() override
@@ -131,6 +128,7 @@ public slots:
 signals:
     void nodeDoubleClicked(std::shared_ptr<mega::MegaNode> node, bool goToInit);
     void searchCounterChanged();
+    void searchTabTypeChanged(TabType type);
 
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
@@ -177,7 +175,6 @@ protected:
 
 private:
     QString getRootText() override;
-    void onRootIndexChanged(const QModelIndex& idx) override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     void setViewPage() override;
     QIcon getEmptyIcon() override;

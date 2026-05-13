@@ -20,7 +20,7 @@
 #include <QPointer>
 
 UploadNodeSelector::UploadNodeSelector(QWidget* parent):
-    NodeSelector(SelectTypeSPtr(new UploadType), parent)
+    FilePickerNodeSelector(SelectTypeSPtr(new UploadType), parent)
 {}
 
 void UploadNodeSelector::onOkButtonClicked()
@@ -55,7 +55,7 @@ void UploadNodeSelector::onOkButtonClicked()
 
 /////////////////////////////////////////////////////////////
 DownloadNodeSelector::DownloadNodeSelector(QWidget* parent):
-    NodeSelector(SelectTypeSPtr(new DownloadType), parent)
+    FilePickerNodeSelector(SelectTypeSPtr(new DownloadType), parent)
 {
     setWindowTitle(tr("Download"));
 }
@@ -120,7 +120,7 @@ void DownloadNodeSelector::onOkButtonClicked()
 
 /////////////////////////////////////////////////////////////
 SyncNodeSelector::SyncNodeSelector(QWidget* parent):
-    NodeSelector(SelectTypeSPtr(new SyncType), parent)
+    FilePickerNodeSelector(SelectTypeSPtr(new SyncType), parent)
 {}
 
 bool SyncNodeSelector::isFullSync()
@@ -182,7 +182,7 @@ void SyncNodeSelector::onOkButtonClicked()
 
 /////////////////////////////////////////////////////////////
 StreamNodeSelector::StreamNodeSelector(QWidget* parent):
-    NodeSelector(SelectTypeSPtr(new StreamType), parent)
+    FilePickerNodeSelector(SelectTypeSPtr(new StreamType), parent)
 {}
 
 void StreamNodeSelector::onOkButtonClicked()
@@ -216,6 +216,9 @@ void StreamNodeSelector::onOkButtonClicked()
 CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
     NodeSelector(SelectTypeSPtr(new CloudDriveType), parent)
 {
+    ui->bOk->hide();
+    ui->bCancel->hide();
+
     mDragBackDrop = new QWidget(this);
     mDragBackDrop->hide();
 
@@ -242,9 +245,99 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
     sendStats();
 }
 
-void CloudDriveNodeSelector::afterWidgetsCreated()
+void CloudDriveNodeSelector::specialisedTreeViewWidgetsCreated()
 {
+    NodeSelector::specialisedTreeViewWidgetsCreated();
+
     enableDragAndDrop(true);
+
+    if (mSearchWidget)
+    {
+        connect(mSearchWidget,
+                &NodeSelectorTreeViewWidgetSearch::searchTabTypeChanged,
+                this,
+                &CloudDriveNodeSelector::configureSearchWidget);
+    }
+}
+
+void CloudDriveNodeSelector::configureCloudDriveWidget()
+{
+    if (!mCloudDriveWidget)
+    {
+        return;
+    }
+    mCloudDriveWidget->setColumnHidden(NodeSelectorModel::Column::USER, true);
+    mCloudDriveWidget->setColumnHidden(NodeSelectorModel::Column::ACCESS, true);
+}
+
+void CloudDriveNodeSelector::configureIncomingSharesWidget()
+{
+    if (!mIncomingSharesWidget)
+    {
+        return;
+    }
+    const bool insideShare = mIncomingSharesWidget->getCurrentRootIndex().isValid();
+    mIncomingSharesWidget->setColumnHidden(NodeSelectorModel::Column::USER, insideShare);
+    mIncomingSharesWidget->setColumnHidden(NodeSelectorModel::Column::ACCESS, insideShare);
+    mIncomingSharesWidget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, true);
+}
+
+void CloudDriveNodeSelector::configureBackupsWidget()
+{
+    if (!mBackupsWidget)
+    {
+        return;
+    }
+    mBackupsWidget->setColumnHidden(NodeSelectorModel::Column::USER, true);
+    mBackupsWidget->setColumnHidden(NodeSelectorModel::Column::ACCESS, true);
+}
+
+void CloudDriveNodeSelector::configureRubbishWidget()
+{
+    if (!mRubbishWidget)
+    {
+        return;
+    }
+    mRubbishWidget->setColumnHidden(NodeSelectorModel::Column::USER, true);
+    mRubbishWidget->setColumnHidden(NodeSelectorModel::Column::ACCESS, true);
+}
+
+void CloudDriveNodeSelector::configureSearchWidget(TabType type)
+{
+    if (!mSearchWidget)
+    {
+        return;
+    }
+
+    bool hideUserColumn(true);
+    bool hideAccessColumn(true);
+    bool hideAddedDate(true);
+
+    switch (type)
+    {
+        case TabType::BACKUP:
+        case TabType::CLOUD_DRIVE:
+        {
+            hideAddedDate = false;
+            break;
+        }
+        case TabType::INCOMING_SHARE:
+        {
+            hideUserColumn = false;
+            hideAccessColumn = false;
+            break;
+        }
+        case TabType::RUBBISH:
+        case TabType::NONE:
+        default:
+        {
+            break;
+        }
+    }
+
+    mSearchWidget->setColumnHidden(NodeSelectorModel::Column::USER, hideUserColumn);
+    mSearchWidget->setColumnHidden(NodeSelectorModel::Column::ACCESS, hideAccessColumn);
+    mSearchWidget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, hideAddedDate);
 }
 
 NodeSelector::ClearTypes CloudDriveNodeSelector::searchClearType() const
@@ -701,7 +794,7 @@ void CloudDriveNodeSelector::selectTabs(const HandlesByTab& tabsInfo)
 
 ////////////////////////////////
 MoveBackupNodeSelector::MoveBackupNodeSelector(QWidget* parent):
-    NodeSelector(SelectTypeSPtr(new MoveBackupType), parent)
+    FilePickerNodeSelector(SelectTypeSPtr(new MoveBackupType), parent)
 {}
 
 void MoveBackupNodeSelector::onOkButtonClicked()
