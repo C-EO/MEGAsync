@@ -295,6 +295,21 @@ Item {
             radius: syncItemBackgroundRadius
             property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
 
+            function getStatusSyncIcon(statusid)
+            {
+                switch(statusid)
+                {
+                    case SyncSettingsModel.ERROR:
+                        return Images.alert_circle_small_thin_outline;
+
+                    case SyncSettingsModel.SUSPENDED:
+                        return Images.pause_thin_small_thin_outline;
+
+                    default:
+                        return Images.sync_01_small_thin_outline;
+                }
+            }
+
             MouseArea {
                 id: syncItemMouseArea
 
@@ -360,7 +375,7 @@ Item {
                         id: folderStatusIcon
 
                         color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
-                        source: Images.sync_01_small_thin_outline
+                        source: getStatusSyncIcon(statusid)
                         sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                     }
 

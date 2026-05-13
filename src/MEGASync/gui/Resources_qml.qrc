@@ -134,5 +134,6 @@
         <file alias="trash_small_thin_outline.svg">images/qml/trash_small_thin_outline.svg</file>
         <file alias="play_small_thin_outline.svg">images/qml/play_small_thin_outline.svg</file>
         <file alias="lightbulb_small_thin_outline.svg">images/qml/lightbulb_small_thin_outline.svg</file>
+        <file alias="alert-circle_small_thin_outline.svg">images/qml/alert-circle_small_thin_outline.svg</file>
     </qresource>
 </RCC>

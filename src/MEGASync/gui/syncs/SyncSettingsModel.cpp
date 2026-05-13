@@ -50,7 +50,8 @@ void SyncSettingsModel::sendDataChanged(int row)
 
     emit dataChanged(modelIndex,
                      modelIndex,
-                     QVector<int>() << Role::FolderRole << Role::StatusRole);
+                     QVector<int>() << Role::FolderRole << Role::StatusRole << Role::StatusId
+                                    << Role::ErrorMessage << Role::NameRole);
 }
 
 void SyncSettingsModel::updateSyncStats(std::shared_ptr<::mega::MegaSyncStats> stats)
@@ -193,7 +194,7 @@ QString SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
         {
             if (sync->getError())
             {
-                s = tr("Stopped");
+                s = tr("Disabled");
             }
             else
             {
@@ -203,7 +204,7 @@ QString SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
         }
         case ::mega::MegaSync::RUNSTATE_DISABLED:
         {
-            s = tr("Disabled");
+            s = tr("Stopped");
             break;
         }
         case ::mega::MegaSync::RUNSTATE_RUNNING:
