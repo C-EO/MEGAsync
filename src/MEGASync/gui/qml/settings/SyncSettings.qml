@@ -297,7 +297,7 @@ Item {
             radius: syncItemBackgroundRadius
             height: content.implicitHeight
             width: syncList.width
-            color: statusid === SyncSettingsModel.ERROR ? ColorTheme.supportError : "transparent"
+            color: statusid === SyncSettingsModel.ERROR ? ColorTheme.notificationError : "transparent"
 
             ColumnLayout {
                 id: content
@@ -314,7 +314,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
                     Layout.preferredHeight: syncItemBackgroundHeight
-                    color: statusid === SyncSettingsModel.ERROR ? ColorTheme.notificationError : syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
+                    color: syncItem.syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
                     radius: syncItemBackgroundRadius
                     property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
 
