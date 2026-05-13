@@ -295,6 +295,12 @@ Item {
             radius: syncItemBackgroundRadius
             property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
 
+            Behavior on color {
+                ColorAnimation {
+                    duration: 200
+                }
+            }
+
             function getStatusSyncIcon(statusid)
             {
                 switch(statusid)
