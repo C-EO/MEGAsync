@@ -139,6 +139,7 @@ QtObject {
     readonly property url play_small_thin_outline: "qrc:/play_small_thin_outline.svg"
     readonly property url lightbulb_small_thin_outline: "qrc:/lightbulb_small_thin_outline.svg"
     readonly property url alert_circle_small_thin_outline: "qrc:/alert-circle_small_thin_outline.svg"
+    readonly property url pen_2_small_thin_outline: "qrc:/pen-2_small_thin_outline.svg"
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //   Standard Icons

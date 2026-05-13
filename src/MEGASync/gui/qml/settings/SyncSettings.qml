@@ -23,6 +23,7 @@ Item {
     readonly property int syncItemBackgroundRadius: 6
     readonly property int syncItemBackgroundHeight: 32
     readonly property int syncItemHoritzontalPadding: 12
+    readonly property int errorSyncItemHoritzontalPadding: 10
     readonly property int syncItemContentSpacing: 4
     readonly property int syncItemContentNameWidth: 404
     readonly property int folderSearchIconSize: 16
@@ -44,6 +45,8 @@ Item {
     readonly property int noSyncAboveButtonSpacing: 48
     readonly property int errorBorders: 2
     readonly property int backgroundColorAnimationTime: 200
+    readonly property int topErrorLabelMargin: 8
+    readonly property int errorLabelMargin: 10
 
     ColumnLayout {
         id: noDataModelContentLayout
@@ -348,8 +351,8 @@ Item {
                         id: syncRow
 
                         anchors.fill: parent
-                        anchors.leftMargin: syncItemHoritzontalPadding
-                        anchors.rightMargin: syncItemHoritzontalPadding
+                        anchors.leftMargin: (statusid === SyncSettingsModel.ERROR) ? errorSyncItemHoritzontalPadding : syncItemHoritzontalPadding
+                        anchors.rightMargin: anchors.leftMargin
                         spacing: syncItemContentSpacing
 
                         Row {
@@ -557,14 +560,51 @@ Item {
                     id: errorItem
 
                     visible: statusid === SyncSettingsModel.ERROR
-                    Layout.bottomMargin: statusid === SyncSettingsModel.ERROR ? root.errorBorders : 0
+                    Layout.bottomMargin: root.errorBorders
                     Layout.rightMargin: Layout.bottomMargin
                     Layout.leftMargin: Layout.bottomMargin
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
-                    Layout.preferredHeight: syncItemBackgroundHeight
-                    color: statusid === SyncSettingsModel.ERROR ? ColorTheme.notificationError : syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
+                    Layout.preferredHeight: errorInfo.implicitHeight
+                    color: ColorTheme.notificationError
                     radius: syncItemBackgroundRadius
+
+                    ColumnLayout {
+                        id: errorInfo
+
+                        anchors.fill: parent
+                        spacing: 4
+
+                        Text {
+                            id: errorLabel
+
+                            Layout.topMargin: root.topErrorLabelMargin
+                            Layout.rightMargin: root.errorLabelMargin
+                            Layout.leftMargin: root.errorLabelMargin
+                            Layout.fillWidth: true
+
+                            text: error
+                            font.pixelSize: issueLabelPixelSize
+                            font.weight: Font.Normal
+                            elide: Text.ElideRight
+                            color: ColorTheme.textError
+                        }
+
+                        PrimaryButton {
+                            id: action
+
+                            Layout.bottomMargin: root.errorLabelMargin
+                            Layout.topMargin: root.topErrorLabelMargin
+                            Layout.rightMargin: root.errorLabelMargin
+                            Layout.leftMargin: root.errorLabelMargin
+
+                            sizes: SmallSizes {}
+                            icons.source: Images.pen_2_small_thin_outline
+                            icons.position: Icon.Position.LEFT
+
+                            text: qsTr("Edit sync")
+                        }
+                    }
                 }
             }
         }
