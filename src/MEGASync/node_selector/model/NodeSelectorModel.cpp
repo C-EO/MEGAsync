@@ -287,9 +287,61 @@ QList<std::shared_ptr<mega::MegaNode>> NodeRequester::createSearchPath(mega::Meg
     return path;
 }
 
+void NodeRequester::addSearchPathItems(QList<std::shared_ptr<mega::MegaNode>> nodes,
+                                       TabTypes typesAllowed)
+{
+    // Adds a children, so we need to call beginChildRowsInsertion
+    auto appendChildren = [this](NodeSelectorModelItem* parentItem,
+                                 const QList<std::shared_ptr<mega::MegaNode>>& children)
+        -> QList<QPointer<NodeSelectorModelItem>>
+    {
+        if (!parentItem)
+        {
+            return {};
+        }
+        auto parentIndex =
+            mModel->findIndexByNodeHandle(parentItem->getNode()->getHandle(), QModelIndex());
+        if (!parentIndex.isValid())
+        {
+            return {};
+        }
+        return onAddNodesRequested(children, parentIndex, parentItem);
+    };
+
+    bool anyAdded = false;
+    foreach(auto node, nodes)
+    {
+        if (!canCreateSearchItem(node.get()))
+        {
+            continue;
+        }
+
+        TabTypes type = NodeSelectorModelSearch::calculateSearchType(node.get());
+        if (!(typesAllowed & type))
+        {
+            continue;
+        }
+
+        auto path = createSearchPath(node.get(), type);
+        if (path.isEmpty())
+        {
+            continue;
+        }
+
+        addSearchPath(mRootItems, path, type, appendChildren);
+        anyAdded = true;
+    }
+
+    if (anyAdded)
+    {
+        emit searchPathItemsAdded();
+    }
+}
+
 void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
                                   const QList<std::shared_ptr<mega::MegaNode>>& path,
-                                  TabTypes type)
+                                  TabTypes type,
+                                  AppendChildrenFn appendChildren)
 {
     if (path.isEmpty())
     {
@@ -307,7 +359,8 @@ void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
         {
             if (parentItem)
             {
-                const auto newItems = parentItem->addNodes({node});
+                const auto newItems = appendChildren ? appendChildren(parentItem, {node}) :
+                                                       parentItem->addNodes({node});
                 existingItem = newItems.isEmpty() ? nullptr : newItems.first().data();
                 if (auto searchItem = dynamic_cast<NodeSelectorModelItemSearch*>(existingItem))
                 {
@@ -322,7 +375,14 @@ void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
                 existingItem = createSearchTreeItem(node.get(), type);
                 if (existingItem)
                 {
-                    items.append(existingItem);
+                    if (appendChildren)
+                    {
+                        appendRootItems({existingItem});
+                    }
+                    else
+                    {
+                        items.append(existingItem);
+                    }
                 }
             }
         }
@@ -582,12 +642,13 @@ void NodeRequester::createBackupRootItems(mega::MegaHandle backupsHandle)
     }
 }
 
-void NodeRequester::onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> newNodes,
-                                        const QModelIndex& parentIndex,
-                                        NodeSelectorModelItem* parentItem)
+QList<QPointer<NodeSelectorModelItem>>
+    NodeRequester::onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> newNodes,
+                                       const QModelIndex& parentIndex,
+                                       NodeSelectorModelItem* parentItem)
 {
     lockDataMutex(true);
-    auto lastChild = parentItem->getNumChildren();
+    auto lastChild = parentItem->areChildrenInitialized() ? parentItem->getNumChildren() : 0;
     auto childrenItem = parentItem->buildNodes(newNodes);
     lockDataMutex(false);
 
@@ -601,7 +662,7 @@ void NodeRequester::onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> n
         {
             childItem->deleteLater();
         }
-        return;
+        return {};
     }
 
     QMetaObject::invokeMethod(mModel,
@@ -612,7 +673,7 @@ void NodeRequester::onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> n
                               Q_ARG(int, lastChild + childCount - 1));
 
     lockDataMutex(true);
-    parentItem->appendNodes(childrenItem);
+    parentItem->initializeChildItems(childrenItem);
     lockDataMutex(false);
 
     foreach(auto& childItem, childrenItem)
@@ -622,6 +683,7 @@ void NodeRequester::onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> n
     }
 
     emit nodesAdded(childrenItem);
+    return childrenItem;
 }
 
 void NodeRequester::removeItem(NodeSelectorModelItem* item)

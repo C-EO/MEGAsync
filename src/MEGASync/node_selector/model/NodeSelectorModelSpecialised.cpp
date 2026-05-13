@@ -489,6 +489,15 @@ void NodeSelectorModelSearch::firstLoad()
             &NodeSelectorModelSearch::requestAddSearchRootItem,
             mNodeRequesterWorker,
             &NodeRequester::addSearchRootItem);
+    connect(this,
+            &NodeSelectorModelSearch::requestAddSearchPathItems,
+            mNodeRequesterWorker,
+            &NodeRequester::addSearchPathItems);
+    connect(mNodeRequesterWorker,
+            &NodeRequester::searchPathItemsAdded,
+            this,
+            &NodeSelectorModelSearch::onSearchPathItemsAdded,
+            Qt::QueuedConnection);
     connect(mNodeRequesterWorker,
             &NodeRequester::searchItemsCreated,
             this,
@@ -505,6 +514,7 @@ void NodeSelectorModelSearch::createRootNodes()
 void NodeSelectorModelSearch::searchByText(const QString& text)
 {
     mNodeRequesterWorker->restartSearch();
+    mLastSearchText = text;
     addRootItems();
     emit searchNodes(text, mAllowedTabTypes, mFlattenSearchResults);
 }
@@ -566,8 +576,18 @@ QVariant NodeSelectorModelSearch::getDisplayText(NodeSelectorModelItem* item) co
 bool NodeSelectorModelSearch::addNodes(QList<std::shared_ptr<mega::MegaNode>> nodes,
                                        const QModelIndex& parent)
 {
-    Q_UNUSED(parent)
-    emit requestAddSearchRootItem(nodes, mAllowedTabTypes);
+    if (mFlattenSearchResults)
+    {
+        emit requestAddSearchRootItem(nodes, mAllowedTabTypes);
+        return true;
+    }
+
+    if (parent.isValid())
+    {
+        return NodeSelectorModel::addNodes(nodes, parent);
+    }
+
+    emit requestAddSearchPathItems(nodes, mAllowedTabTypes);
     return true;
 }
 
@@ -595,10 +615,10 @@ bool NodeSelectorModelSearch::rootNodeUpdated(mega::MegaNode* node)
     }
     else if (node->getChanges() & (MegaNode::CHANGE_TYPE_PARENT))
     {
-        auto index = findIndexByNodeHandle(node->getHandle(), QModelIndex());
-        if (index.isValid())
+        auto indexToChangeParent = findIndexByNodeHandle(node->getHandle(), QModelIndex());
+        if (indexToChangeParent.isValid())
         {
-            auto item = getItemByIndex(index);
+            auto item = getItemByIndex(indexToChangeParent);
             if (auto searchItem = dynamic_cast<NodeSelectorModelItemSearch*>(item))
             {
                 auto newType(calculateSearchType(node));
@@ -607,13 +627,53 @@ bool NodeSelectorModelSearch::rootNodeUpdated(mega::MegaNode* node)
                 if (newType != oldType)
                 {
                     searchItem->setType(newType);
-                    updateRow(index);
+                    updateRow(indexToChangeParent);
                     emit nodeTypeHasChanged();
                     if (isMovingNodes())
                     {
                         // The loading view is set, so reduce by one the processed move
                         moveProcessedByNumber(1);
                     }
+
+                    // Remove parents if needed
+                    if (!mFlattenSearchResults)
+                    {
+                        // Collect search-matching descendants BEFORE removing the subtree
+                        QList<std::shared_ptr<mega::MegaNode>> nodesToReadd;
+                        collectSearchMatchesInSubtree(indexToChangeParent, nodesToReadd);
+
+                        if (matchesCurrentSearch(node))
+                        {
+                            nodesToReadd.prepend(std::shared_ptr<mega::MegaNode>(node->copy()));
+                        }
+
+                        QList<mega::MegaHandle> handlesToRemove;
+                        handlesToRemove.append(node->getHandle());
+
+                        auto ancestorIndex = indexToChangeParent.parent();
+                        while (ancestorIndex.isValid())
+                        {
+                            auto ancestorItem = getItemByIndex(ancestorIndex);
+                            if (!ancestorItem || ancestorItem->getNumChildren() != 1 ||
+                                matchesCurrentSearch(ancestorItem->getNode().get()))
+                            {
+                                break;
+                            }
+                            handlesToRemove.append(ancestorItem->getNode()->getHandle());
+                            ancestorIndex = ancestorIndex.parent();
+                        }
+
+                        foreach(auto handle, handlesToRemove)
+                        {
+                            beginRemoveRowsAsync(handle);
+                        }
+
+                        if (!nodesToReadd.isEmpty())
+                        {
+                            emit requestAddSearchPathItems(nodesToReadd, mAllowedTabTypes);
+                        }
+                    }
+
                     return true;
                 }
             }
@@ -679,6 +739,46 @@ void NodeSelectorModelSearch::onRootItemsCreated()
     {
         rootItemsLoaded();
         emit levelsAdded(mIndexesToBeExpanded, true);
+    }
+}
+
+void NodeSelectorModelSearch::onSearchPathItemsAdded()
+{
+    emit levelsAdded({}, false);
+}
+
+bool NodeSelectorModelSearch::matchesCurrentSearch(mega::MegaNode* node) const
+{
+    if (!node || mLastSearchText.isEmpty())
+    {
+        return false;
+    }
+    return QString::fromUtf8(node->getName()).contains(mLastSearchText, Qt::CaseInsensitive);
+}
+
+void NodeSelectorModelSearch::collectSearchMatchesInSubtree(
+    const QModelIndex& parent,
+    QList<std::shared_ptr<mega::MegaNode>>& matches) const
+{
+    const auto rows = rowCount(parent);
+    for (int i = 0; i < rows; ++i)
+    {
+        const auto childIndex = index(i, 0, parent);
+        if (!childIndex.isValid())
+        {
+            continue;
+        }
+        auto childItem = getItemByIndex(childIndex);
+        if (!childItem)
+        {
+            continue;
+        }
+        auto childNode = childItem->getNode();
+        if (childNode && matchesCurrentSearch(childNode.get()))
+        {
+            matches.append(std::shared_ptr<mega::MegaNode>(childNode->copy()));
+        }
+        collectSearchMatchesInSubtree(childIndex, matches);
     }
 }
 

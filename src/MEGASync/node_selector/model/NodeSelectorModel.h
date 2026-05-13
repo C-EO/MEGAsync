@@ -16,6 +16,7 @@
 #include <QQueue>
 
 #include <atomic>
+#include <functional>
 #include <memory>
 #include <optional>
 
@@ -109,14 +110,16 @@ public slots:
     void createRubbishRootItems();
     void addIncomingSharesRootItem(std::shared_ptr<mega::MegaNode> node);
     void addSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes, TabTypes typesAllowed);
+    void addSearchPathItems(QList<std::shared_ptr<mega::MegaNode>> nodes, TabTypes typesAllowed);
     void createBackupRootItems(mega::MegaHandle backupsHandle);
 
     void removeRootItem(NodeSelectorModelItem* item);
     void removeRootItem(std::shared_ptr<mega::MegaNode> node);
 
-    void onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> newNodes,
-                             const QModelIndex& parentIndex,
-                             NodeSelectorModelItem* parentItem);
+    QList<QPointer<NodeSelectorModelItem>>
+        onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> newNodes,
+                            const QModelIndex& parentIndex,
+                            NodeSelectorModelItem* parentItem);
     void removeItem(NodeSelectorModelItem* item);
     void abort();
 
@@ -129,6 +132,7 @@ signals:
     void rootItemsDeleted();
     void megaBackupRootItemsCreated();
     void searchItemsCreated();
+    void searchPathItemsAdded();
     void nodeAdded(NodeSelectorModelItem* item);
     void nodesAdded(QList<QPointer<NodeSelectorModelItem>> item);
 
@@ -144,9 +148,14 @@ private:
     bool canCreateSearchItem(mega::MegaNode* node);
     QList<std::shared_ptr<mega::MegaNode>> createSearchPath(mega::MegaNode* node,
                                                             TabTypes type) const;
+    using AppendChildrenFn = std::function<QList<QPointer<NodeSelectorModelItem>>(
+        NodeSelectorModelItem*,
+        const QList<std::shared_ptr<mega::MegaNode>>&)>;
+
     void addSearchPath(QList<NodeSelectorModelItem*>& items,
                        const QList<std::shared_ptr<mega::MegaNode>>& path,
-                       TabTypes type);
+                       TabTypes type,
+                       AppendChildrenFn appendChildren = {});
     NodeSelectorModelItem* findSearchItem(const QList<NodeSelectorModelItem*>& items,
                                           mega::MegaHandle handle) const;
     NodeSelectorModelItem* findSearchChild(NodeSelectorModelItem* parent,

@@ -431,12 +431,6 @@ bool NodeSelectorTreeViewWidgetSearch::isNodeCompatibleWithModel(mega::MegaNode*
     return mSearchController->matchesNodeName(node);
 }
 
-QModelIndex NodeSelectorTreeViewWidgetSearch::getAddedNodeParent(mega::MegaHandle parentHandle)
-{
-    Q_UNUSED(parentHandle)
-    return QModelIndex();
-}
-
 void NodeSelectorTreeViewWidgetSearch::makeViewConnections()
 {
     connect(ui->tMegaFolders,

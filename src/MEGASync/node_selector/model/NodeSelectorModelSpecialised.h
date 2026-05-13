@@ -188,14 +188,22 @@ signals:
     void nodeTypeHasChanged();
     void requestAddSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes,
                                   TabTypes typesAllowed);
+    void requestAddSearchPathItems(QList<std::shared_ptr<mega::MegaNode>> nodes,
+                                   TabTypes typesAllowed);
     void requestDeleteSearchRootItem(std::shared_ptr<mega::MegaNode> node);
 
 private slots:
     void onRootItemsCreated();
+    void onSearchPathItemsAdded();
 
 private:
+    bool matchesCurrentSearch(mega::MegaNode* node) const;
+    void collectSearchMatchesInSubtree(const QModelIndex& parent,
+                                       QList<std::shared_ptr<mega::MegaNode>>& matches) const;
+
     TabTypes mAllowedTabTypes;
     bool mFlattenSearchResults;
+    QString mLastSearchText;
     std::shared_ptr<const UserAttributes::DeviceNames> mDeviceNamesRequest;
 };
 

@@ -132,6 +132,10 @@ void NodeSelectorSearchController::handleExpandReady(
     }
 
     ensureViewReady();
+    if (searchModel)
+    {
+        applySearchButtonsVisibility(searchModel->searchedTypes());
+    }
     expandResults();
 }
 
