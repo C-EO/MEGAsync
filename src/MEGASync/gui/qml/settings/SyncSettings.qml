@@ -42,6 +42,8 @@ Item {
     readonly property int noSyncUnderImageSpace: 24
     readonly property int noSyncTextsSpacing: 8
     readonly property int noSyncAboveButtonSpacing: 48
+    readonly property int errorBorders: 2
+    readonly property int backgroundColorAnimationTime: 200
 
     ColumnLayout {
         id: noDataModelContentLayout
@@ -287,248 +289,282 @@ Item {
         id: syncComponent
 
         Rectangle {
-            id: syncItem
+            id: syncItemBackground
 
-            width: syncList.width
-            height: syncItemBackgroundHeight
-            color: statusid === SyncSettingsModel.ERROR ? ColorTheme.notificationError : syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
             radius: syncItemBackgroundRadius
-            property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
+            height: content.implicitHeight
+            width: syncList.width
+            color: statusid === SyncSettingsModel.ERROR ? ColorTheme.supportError : "transparent"
 
-            Behavior on color {
-                ColorAnimation {
-                    duration: 200
-                }
-            }
-
-            function getStatusSyncIcon(statusid)
-            {
-                switch(statusid)
-                {
-                    case SyncSettingsModel.ERROR:
-                        return Images.alert_circle_small_thin_outline;
-
-                    case SyncSettingsModel.SUSPENDED:
-                        return Images.pause_thin_small_thin_outline;
-
-                    default:
-                        return Images.sync_01_small_thin_outline;
-                }
-            }
-
-            MouseArea {
-                id: syncItemMouseArea
+            ColumnLayout {
+                id: content
 
                 anchors.fill: parent
-                hoverEnabled: true
-                propagateComposedEvents: true
-            }
+                spacing: root.errorBorders
 
-            RowLayout {
-                id: syncRow
+                Rectangle {
+                    id: syncItem
 
-                anchors.fill: parent
-                anchors.leftMargin: syncItemHoritzontalPadding
-                anchors.rightMargin: syncItemHoritzontalPadding
-                spacing: syncItemContentSpacing
+                    Layout.topMargin: statusid === SyncSettingsModel.ERROR ? root.errorBorders : 0
+                    Layout.rightMargin: Layout.topMargin
+                    Layout.leftMargin: Layout.topMargin
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: syncItemBackgroundHeight
+                    color: statusid === SyncSettingsModel.ERROR ? ColorTheme.notificationError : syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
+                    radius: syncItemBackgroundRadius
+                    property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
 
-                Row {
-                    id: syncNameContent
-
-                    Layout.preferredHeight: parent.height
-                    Layout.preferredWidth: syncItemContentNameWidth
-                    width: syncItemContentNameWidth
-                    spacing: syncItemContentSpacing
-
-                    Text {
-                        id: syncName
-
-                        text: name
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: backgroundColorAnimationTime
+                        }
                     }
 
-                    SvgImage {
-                        id: folderSearchIcon
+                    function getStatusSyncIcon(statusid)
+                    {
+                        switch(statusid)
+                        {
+                            case SyncSettingsModel.ERROR:
+                                return Images.alert_circle_small_thin_outline;
 
-                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
-                        source: Images.folder_search_small_thin_outline
-                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
-                        visible: syncItemContainsMouse
-                        anchors.verticalCenter: parent.verticalCenter
+                            case SyncSettingsModel.SUSPENDED:
+                                return Images.pause_thin_small_thin_outline;
 
-                        MouseArea {
-                            id: folderSearchMouseArea
+                            default:
+                                return Images.sync_01_small_thin_outline;
+                        }
+                    }
 
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
+                    MouseArea {
+                        id: syncItemMouseArea
 
-                            onClicked: {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        propagateComposedEvents: true
+                    }
+
+                    RowLayout {
+                        id: syncRow
+
+                        anchors.fill: parent
+                        anchors.leftMargin: syncItemHoritzontalPadding
+                        anchors.rightMargin: syncItemHoritzontalPadding
+                        spacing: syncItemContentSpacing
+
+                        Row {
+                            id: syncNameContent
+
+                            Layout.preferredHeight: parent.height
+                            Layout.preferredWidth: syncItemContentNameWidth
+                            width: syncItemContentNameWidth
+                            spacing: syncItemContentSpacing
+
+                            Text {
+                                id: syncName
+
+                                text: name
+                                anchors.verticalCenter: parent.verticalCenter
+                                color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
+                            }
+
+                            SvgImage {
+                                id: folderSearchIcon
+
+                                color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
+                                source: Images.folder_search_small_thin_outline
+                                sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                                visible: syncItem.syncItemContainsMouse
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                MouseArea {
+                                    id: folderSearchMouseArea
+
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+
+                                    onClicked: {
+                                        syncSettings.exploreLocalSync(folder);
+                                    }
+                                }
+                            }
+                        }
+
+                        RowLayout {
+                            id: syncSatusContent
+
+                            spacing: syncItemContentSpacing
+                            Layout.fillWidth: true
+
+                            SvgImage {
+                                id: folderStatusIcon
+
+                                color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
+                                source: syncItem.getStatusSyncIcon(statusid)
+                                sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                            }
+
+                            Text {
+                                id: syncStatus
+
+                                text: status
+                                color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
+                            }
+
+                            Item {
+                                Layout.fillWidth: true
+                            }
+
+                            SvgImage {
+                                id: menuIcon
+
+                                color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
+                                source: Images.threeDots
+                                sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                                visible: syncItem.syncItemContainsMouse
+
+                                MouseArea {
+                                    id: menuIconMouseArea
+
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        menu.popup(syncItem.width - menu.width, syncItem.height)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    ContextMenu {
+                        id: menu
+
+                        onFocusChanged: {
+                            if(menu.activeFocus === false){
+                                menu.close();
+                            }
+                        }
+
+                        ContextMenuItem {
+                            visible: statusid === SyncSettingsModel.ERROR
+                            height: visible ? implicitHeight : 0
+                            text: "Solve issues"
+                            icon.source: Images.lightbulb_small_thin_outline
+                            onTriggered: {
+                            }
+                        }
+
+                        MenuSeparator {
+                            visible: statusid === SyncSettingsModel.ERROR
+                            height: visible ? implicitHeight : 0
+                        }
+
+                        ContextMenuItem {
+                            text: "Show in folder"
+                            icon.source: Images.folder_small_thin_outline
+                            onTriggered: {
                                 syncSettings.exploreLocalSync(folder);
                             }
                         }
-                    }
-                }
 
-                RowLayout {
-                    id: syncSatusContent
+                        ContextMenuItem {
+                            text: "Open in mega"
+                            icon.source: Images.mega_medium_thin_outline
+                            onTriggered: {
+                                syncSettings.openInMega(index);
+                            }
+                        }
 
-                    spacing: syncItemContentSpacing
-                    Layout.fillWidth: true
+                        MenuSeparator {
+                        }
 
-                    SvgImage {
-                        id: folderStatusIcon
+                        ContextMenuItem {
+                            visible: statusid === SyncSettingsModel.RUNNING
+                            height: visible ? implicitHeight : 0
+                            text: "Pause"
+                            icon.source: Images.pause_thin_small_thin_outline
+                            onTriggered: {
+                                syncSettings.pauseSync(index);
+                            }
+                        }
 
-                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
-                        source: getStatusSyncIcon(statusid)
-                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
-                    }
+                        ContextMenuItem {
+                            visible: statusid === SyncSettingsModel.SUSPENDED
+                            height: visible ? implicitHeight : 0
+                            text: "Resume"
+                            icon.source: Images.play_small_thin_outline
+                            onTriggered: {
+                                syncSettings.resumeSync(index);
+                            }
+                        }
 
-                    Text {
-                        id: syncStatus
+                        MenuSeparator {
+                            visible: statusid === SyncSettingsModel.RUNNING || statusid === SyncSettingsModel.SUSPENDED
+                            height: visible ? implicitHeight : 0
+                        }
 
-                        text: status
-                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
-                    }
+                        ContextMenuItem {
+                            text: "Manage exlusions"
+                            icon.source: Images.file_ignore_small_thin_outline
+                            onTriggered: {
+                                syncSettings.openExclusionsDialog(index);
+                            }
+                        }
 
-                    Item {
-                        Layout.fillWidth: true
-                    }
+                        MenuSeparator {
+                        }
 
-                    SvgImage {
-                        id: menuIcon
+                        ContextMenuItem {
+                            visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
+                            height: visible ? implicitHeight : 0
+                            text: "Rescan"
+                            icon.source: Images.search_large_small_thin_outline
+                            onTriggered: {
+                                syncSettings.rescan(index);
+                            }
+                        }
 
-                        color: statusid === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
-                        source: Images.threeDots
-                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
-                        visible: syncItemContainsMouse
+                        ContextMenuItem {
+                            visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
+                            height: visible ? implicitHeight : 0
+                            text: "Reboot"
+                            icon.source: Images.rotate_cw_small_thin_outline
+                            onTriggered: {
+                                syncSettings.reboot(index);
+                            }
+                        }
 
-                        MouseArea {
-                            id: menuIconMouseArea
+                        MenuSeparator {
+                            visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
+                            height: visible ? implicitHeight : 0
+                        }
 
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                menu.popup(syncItem.width - menu.width, syncItem.height)
+                        ContextMenuItem {
+                            text: "Remove synced folder"
+                            textColor: ColorTheme.textError
+                            imageColor: ColorTheme.textError
+                            icon.source: Images.trash_small_thin_outline
+                            onTriggered: {
+                                syncSettings.remove(index);
                             }
                         }
                     }
                 }
-            }
 
-            ContextMenu {
-                id: menu
+                Rectangle {
+                    id: errorItem
 
-                onFocusChanged: {
-                    if(menu.activeFocus === false){
-                        menu.close();
-                    }
-                }
-
-                ContextMenuItem {
                     visible: statusid === SyncSettingsModel.ERROR
-                    height: visible ? implicitHeight : 0
-                    text: "Solve issues"
-                    icon.source: Images.lightbulb_small_thin_outline
-                    onTriggered: {
-                    }
-                }
-
-                MenuSeparator {
-                    visible: statusid === SyncSettingsModel.ERROR
-                    height: visible ? implicitHeight : 0
-                }
-
-                ContextMenuItem {
-                    text: "Show in folder"
-                    icon.source: Images.folder_small_thin_outline
-                    onTriggered: {
-                        syncSettings.exploreLocalSync(folder);
-                    }
-                }
-
-                ContextMenuItem {
-                    text: "Open in mega"
-                    icon.source: Images.mega_medium_thin_outline
-                    onTriggered: {
-                        syncSettings.openInMega(index);
-                    }
-                }
-
-                MenuSeparator {
-                }
-
-                ContextMenuItem {
-                    visible: statusid === SyncSettingsModel.RUNNING
-                    height: visible ? implicitHeight : 0
-                    text: "Pause"
-                    icon.source: Images.pause_thin_small_thin_outline
-                    onTriggered: {
-                        syncSettings.pauseSync(index);
-                    }
-                }
-
-                ContextMenuItem {
-                    visible: statusid === SyncSettingsModel.SUSPENDED
-                    height: visible ? implicitHeight : 0
-                    text: "Resume"
-                    icon.source: Images.play_small_thin_outline
-                    onTriggered: {
-                        syncSettings.resumeSync(index);
-                    }
-                }
-
-                MenuSeparator {
-                    visible: statusid === SyncSettingsModel.RUNNING || statusid === SyncSettingsModel.SUSPENDED
-                    height: visible ? implicitHeight : 0
-                }
-
-                ContextMenuItem {
-                    text: "Manage exlusions"
-                    icon.source: Images.file_ignore_small_thin_outline
-                    onTriggered: {
-                        syncSettings.openExclusionsDialog(index);
-                    }
-                }
-
-                MenuSeparator {
-                }
-
-                ContextMenuItem {
-                    visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
-                    height: visible ? implicitHeight : 0
-                    text: "Rescan"
-                    icon.source: Images.search_large_small_thin_outline
-                    onTriggered: {
-                        syncSettings.rescan(index);
-                    }
-                }
-
-                ContextMenuItem {
-                    visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
-                    height: visible ? implicitHeight : 0
-                    text: "Reboot"
-                    icon.source: Images.rotate_cw_small_thin_outline
-                    onTriggered: {
-                        syncSettings.reboot(index);
-                    }
-                }
-
-                MenuSeparator {
-                    visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
-                    height: visible ? implicitHeight : 0
-                }
-
-                ContextMenuItem {
-                    text: "Remove synced folder"
-                    textColor: ColorTheme.textError
-                    imageColor: ColorTheme.textError
-                    icon.source: Images.trash_small_thin_outline
-                    onTriggered: {
-                        syncSettings.remove(index);
-                    }
+                    Layout.bottomMargin: statusid === SyncSettingsModel.ERROR ? root.errorBorders : 0
+                    Layout.rightMargin: Layout.bottomMargin
+                    Layout.leftMargin: Layout.bottomMargin
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: syncItemBackgroundHeight
+                    color: statusid === SyncSettingsModel.ERROR ? ColorTheme.notificationError : syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
+                    radius: syncItemBackgroundRadius
                 }
             }
         }
