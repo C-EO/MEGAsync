@@ -35,7 +35,6 @@ Item {
     readonly property int issuePartHeigh: 58
     readonly property int issuePartSpacing: 4
     readonly property int switchButtonSeparator: 12
-
     readonly property int noSyncsTopMargin: 128
     readonly property int megaDevicesImageSize: 120
     readonly property int titleNoSyncPixelSize: 20
@@ -47,6 +46,7 @@ Item {
     readonly property int backgroundColorAnimationTime: 200
     readonly property int topErrorLabelMargin: 8
     readonly property int errorLabelMargin: 10
+    readonly property int issueHandlerSpacing: 4
 
     ColumnLayout {
         id: noDataModelContentLayout
@@ -271,7 +271,6 @@ Item {
                         id: fixIssue
 
                         checked: syncSettings.automaticSyncIssueResolverEnabled
-
                         onCheckedChanged: {
                             syncSettings.automaticSyncIssueResolverEnabled = checked;
                         }
@@ -386,7 +385,6 @@ Item {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-
                                     onClicked: {
                                         syncSettings.exploreLocalSync(folder);
                                     }
@@ -453,7 +451,7 @@ Item {
                         ContextMenuItem {
                             visible: statusid === SyncSettingsModel.ERROR
                             height: visible ? implicitHeight : 0
-                            text: "Solve issues"
+                            text: qsTr("Solve issues")
                             icon.source: Images.lightbulb_small_thin_outline
                             onTriggered: {
                             }
@@ -465,7 +463,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: "Show in folder"
+                            text: qsTr("Show in folder")
                             icon.source: Images.folder_small_thin_outline
                             onTriggered: {
                                 syncSettings.exploreLocalSync(folder);
@@ -473,7 +471,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: "Open in mega"
+                            text: qsTr("Open in mega")
                             icon.source: Images.mega_medium_thin_outline
                             onTriggered: {
                                 syncSettings.openInMega(index);
@@ -486,7 +484,7 @@ Item {
                         ContextMenuItem {
                             visible: statusid === SyncSettingsModel.RUNNING
                             height: visible ? implicitHeight : 0
-                            text: "Pause"
+                            text: qsTr("Pause")
                             icon.source: Images.pause_thin_small_thin_outline
                             onTriggered: {
                                 syncSettings.pauseSync(index);
@@ -496,7 +494,7 @@ Item {
                         ContextMenuItem {
                             visible: statusid === SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
-                            text: "Resume"
+                            text: qsTr("Resume")
                             icon.source: Images.play_small_thin_outline
                             onTriggered: {
                                 syncSettings.resumeSync(index);
@@ -509,7 +507,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: "Manage exlusions"
+                            text: qsTr("Manage exlusions")
                             icon.source: Images.file_ignore_small_thin_outline
                             onTriggered: {
                                 syncSettings.openExclusionsDialog(index);
@@ -522,7 +520,7 @@ Item {
                         ContextMenuItem {
                             visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
-                            text: "Rescan"
+                            text: qsTr("Rescan")
                             icon.source: Images.search_large_small_thin_outline
                             onTriggered: {
                                 syncSettings.rescan(index);
@@ -532,7 +530,7 @@ Item {
                         ContextMenuItem {
                             visible: statusid !== SyncSettingsModel.ERROR && statusid !== SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
-                            text: "Reboot"
+                            text: qsTr("Reboot")
                             icon.source: Images.rotate_cw_small_thin_outline
                             onTriggered: {
                                 syncSettings.reboot(index);
@@ -545,7 +543,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: "Remove synced folder"
+                            text: qsTr("Remove synced folder")
                             textColor: ColorTheme.textError
                             imageColor: ColorTheme.textError
                             icon.source: Images.trash_small_thin_outline
@@ -573,7 +571,7 @@ Item {
                         id: errorInfo
 
                         anchors.fill: parent
-                        spacing: 4
+                        spacing: issueHandlerSpacing
 
                         Text {
                             id: errorLabel
@@ -582,8 +580,7 @@ Item {
                             Layout.rightMargin: root.errorLabelMargin
                             Layout.leftMargin: root.errorLabelMargin
                             Layout.fillWidth: true
-
-                            text: error
+                            text: "("+errorid+")"+error
                             font.pixelSize: issueLabelPixelSize
                             font.weight: Font.Normal
                             elide: Text.ElideRight
@@ -597,11 +594,9 @@ Item {
                             Layout.topMargin: root.topErrorLabelMargin
                             Layout.rightMargin: root.errorLabelMargin
                             Layout.leftMargin: root.errorLabelMargin
-
                             sizes: SmallSizes {}
                             icons.source: Images.pen_2_small_thin_outline
                             icons.position: Icon.Position.LEFT
-
                             text: qsTr("Edit sync")
                         }
                     }

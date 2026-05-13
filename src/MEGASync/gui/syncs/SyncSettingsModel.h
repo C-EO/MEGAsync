@@ -20,7 +20,8 @@ class SyncSettingsModel: public QAbstractListModel
         FolderRole,
         StatusRole,
         StatusId,
-        ErrorMessage
+        ErrorMessage,
+        ErrorId
     };
 
 public:
