@@ -26,6 +26,48 @@ Item {
     implicitHeight: errorInfo.implicitHeight
     implicitWidth: errorInfo.implicitWidth
 
+    function resetActionButtonsVisibility() {
+        actionRetry.visible = false;
+        actionGetMoreStorage.visible = false;
+        actionSetFolderPermissions.visible = false;
+        actionRemoveSyncedFolder.visible = false;
+        actionEnableSync.visible = false;
+        actionRestoreSyncedFolder.visible = false;
+    }
+
+    states: [
+        State {
+            when: root.errorId === 44
+
+            PropertyChanges {
+                target: actionRetry
+                visible: true
+            }
+        },
+
+        State {
+            when: root.errorId === 19
+
+            PropertyChanges {
+                target: actionRestoreSyncedFolder
+                visible: true
+            }
+        },
+
+        State {
+            when: root.errorId === 7
+
+            PropertyChanges {
+                target: actionEnableSync
+                visible: true
+            }
+        }
+    ]
+
+    onStateChanged: {
+        resetActionButtonsVisibility();
+    }
+
     ColumnLayout {
         id: errorInfo
 
@@ -84,7 +126,7 @@ Item {
             OutlineButton {
                 id: actionSetFolderPermissions
 
-                visible: true
+                visible: false
                 sizes: SmallSizes {}
                 text: SettingsStrings.solveIssueSetFolderPermissions
 
@@ -96,7 +138,7 @@ Item {
             PrimaryButton {
                 id: actionRemoveSyncedFolder
 
-                visible: true
+                visible: false
                 colors.background: ColorTheme.buttonError
                 sizes: SmallSizes {}
                 text: SettingsStrings.solveIssueRemoveSyncedFolder
@@ -110,7 +152,7 @@ Item {
             PrimaryButton {
                 id: actionEnableSync
 
-                visible: true
+                visible: false
                 sizes: SmallSizes {}
                 text: SettingsStrings.solveIssueEnableSync
                 icons.source: Images.power_small_thin_outline
@@ -123,7 +165,7 @@ Item {
             PrimaryButton {
                 id: actionRestoreSyncedFolder
 
-                visible: true
+                visible: false
                 sizes: SmallSizes {}
                 text: SettingsStrings.solveIssueRestoreFolder
                 icons.source: Images.trash_off_small_thin_outline

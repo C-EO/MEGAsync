@@ -51,7 +51,7 @@ void SyncSettingsModel::sendDataChanged(int row)
     emit dataChanged(modelIndex,
                      modelIndex,
                      QVector<int>() << Role::FolderRole << Role::StatusRole << Role::StatusId
-                                    << Role::ErrorMessage << Role::NameRole);
+                                    << Role::ErrorMessage << Role::NameRole << Role::ErrorId);
 }
 
 void SyncSettingsModel::updateSyncStats(std::shared_ptr<::mega::MegaSyncStats> stats)
