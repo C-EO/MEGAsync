@@ -67,6 +67,17 @@ void NodeSelectorDelegate::paint(QPainter* painter,
 #else
         auxOpt.rect.adjust(3, 0, -5, 0);
 #endif
+
+        // Reserve space on the right of the NODE column for the indicators
+        // (public-link icon and label dot) so the text gets elided in time.
+        if (index.column() == NodeSelectorModel::Column::NODE)
+        {
+            const int reserved = rightIndicatorsWidth(index);
+            if (reserved > 0)
+            {
+                auxOpt.rect.adjust(0, 0, -reserved, 0);
+            }
+        }
     }
 
     auxOpt.state.setFlag(QStyle::State_MouseOver, false);
@@ -74,6 +85,88 @@ void NodeSelectorDelegate::paint(QPainter* painter,
     auxOpt.state.setFlag(QStyle::State_HasFocus, false);
 
     QStyledItemDelegate::paint(painter, auxOpt, index);
+
+    if (!index.data(toInt(NodeSelectorModelRoles::EXTRA_ROW_ROLE)).toBool() &&
+        index.column() == NodeSelectorModel::Column::NODE)
+    {
+        paintRightIndicators(painter, option, index);
+    }
+}
+
+int NodeSelectorDelegate::rightIndicatorsWidth(const QModelIndex& index) const
+{
+    static constexpr int DOT_SIZE = 8;
+    static constexpr int LINK_ICON_SIZE = 16;
+    static constexpr int SPACING = 8;
+    static constexpr int RIGHT_PADDING = 12;
+
+    const QColor labelColor =
+        index.data(toInt(NodeSelectorModelRoles::LABEL_COLOR_ROLE)).value<QColor>();
+    const bool hasLink = index.data(toInt(NodeSelectorModelRoles::IS_EXPORTED_ROLE)).toBool();
+
+    int width = 0;
+    if (labelColor.isValid())
+    {
+        width += DOT_SIZE;
+    }
+    if (hasLink)
+    {
+        if (width > 0)
+        {
+            width += SPACING;
+        }
+        width += LINK_ICON_SIZE;
+    }
+    if (width > 0)
+    {
+        width += RIGHT_PADDING + SPACING;
+    }
+    return width;
+}
+
+void NodeSelectorDelegate::paintRightIndicators(QPainter* painter,
+                                                const QStyleOptionViewItem& option,
+                                                const QModelIndex& index) const
+{
+    static constexpr int DOT_SIZE = 8;
+    static constexpr int LINK_ICON_SIZE = 16;
+    static constexpr int SPACING = 8;
+    static constexpr int RIGHT_PADDING = 12;
+
+    const QColor labelColor =
+        index.data(toInt(NodeSelectorModelRoles::LABEL_COLOR_ROLE)).value<QColor>();
+    const bool hasLink = index.data(toInt(NodeSelectorModelRoles::IS_EXPORTED_ROLE)).toBool();
+
+    if (!labelColor.isValid() && !hasLink)
+    {
+        return;
+    }
+
+    const int centerY = option.rect.center().y();
+    int x = option.rect.right() - RIGHT_PADDING;
+
+    // Link icon (rightmost).
+    if (hasLink)
+    {
+        static const QIcon linkIcon(QStringLiteral(":/link_01_small_thin_outline"));
+        const QRect iconRect(x - LINK_ICON_SIZE,
+                             centerY - LINK_ICON_SIZE / 2,
+                             LINK_ICON_SIZE,
+                             LINK_ICON_SIZE);
+        linkIcon.paint(painter, iconRect);
+        x -= LINK_ICON_SIZE + SPACING;
+    }
+
+    // Label dot (left of the link icon).
+    if (labelColor.isValid())
+    {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setBrush(labelColor);
+        painter->setPen(Qt::NoPen);
+        painter->drawEllipse(QPointF(x - DOT_SIZE / 2.0, centerY), DOT_SIZE / 2.0, DOT_SIZE / 2.0);
+        painter->restore();
+    }
 }
 
 bool NodeSelectorDelegate::isHoverStateSet(const QModelIndex& index)

@@ -41,6 +41,8 @@ enum class NodeSelectorModelRoles
     NODE_ROLE,
     ICON_SIZE_ROLE,
     EXTRA_ROW_ROLE,
+    LABEL_COLOR_ROLE,
+    IS_EXPORTED_ROLE,
     last
 };
 

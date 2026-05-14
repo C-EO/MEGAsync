@@ -7,6 +7,7 @@
 #include "MegaNodeNames.h"
 #include "MergeMEGAFolders.h"
 #include "MyChatFilesFolder.h"
+#include "NodeSelectorLabelColors.h"
 #include "NodeSelectorModelSpecialised.h"
 #include "RequestListenerManager.h"
 #include "TokenParserWidgetManager.h"
@@ -1136,6 +1137,17 @@ QVariant NodeSelectorModel::data(const QModelIndex& index, int role) const
                 case toInt(NodeSelectorModelRoles::NODE_ROLE):
                 {
                     return QVariant::fromValue(item->getNode());
+                }
+                case toInt(NodeSelectorModelRoles::LABEL_COLOR_ROLE):
+                {
+                    auto node = item->getNode();
+                    return node ? NodeSelectorLabelColors::colorForLabel(node->getLabel()) :
+                                  QColor();
+                }
+                case toInt(NodeSelectorModelRoles::IS_EXPORTED_ROLE):
+                {
+                    auto node = item->getNode();
+                    return node && node->isExported();
                 }
                 case toInt(NodeRowDelegateRoles::INIT_ROLE):
                 {
@@ -2799,7 +2811,18 @@ QVariant NodeSelectorModel::getIcon(const QModelIndex& index, NodeSelectorModelI
             auto iconSize(data(index, toInt(NodeSelectorModelRoles::ICON_SIZE_ROLE)).toSize());
             auto info = getFolderIcon(item);
             auto pixmap = info.first.pixmap(iconSize);
-            if (!info.second.isEmpty() || isDisabled)
+
+            QColor labelColor;
+            if (!isDisabled && item->getNode())
+            {
+                labelColor = NodeSelectorLabelColors::colorForLabel(item->getNode()->getLabel());
+            }
+
+            if (labelColor.isValid())
+            {
+                pixmap = IconTokenizer::changePixmapColor(pixmap, labelColor).value_or(QPixmap());
+            }
+            else if (!info.second.isEmpty() || isDisabled)
             {
                 pixmap =
                     IconTokenizer::changePixmapColor(pixmap,
