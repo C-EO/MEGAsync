@@ -22,6 +22,24 @@ Item {
     readonly property int buttonActionSpacing: 8
     readonly property int buttonFocusBorder: 4
 
+    readonly property int k_LOCAL_PATH_TEMPORARY_UNAVAILABLE: 6 //
+    readonly property int k_LOCAL_PATH_UNAVAILABLE: 7 //
+    readonly property int k_REMOTE_NODE_NOT_FOUND: 8 //
+    readonly property int k_STORAGE_OVERQUOTA: 9 //
+    readonly property int k_LOCAL_FILESYSTEM_MISMATCH: 15 //
+    readonly property int k_REMOTE_NODE_INSIDE_RUBBISH: 20 //
+    readonly property int k_LOGGED_OUT: 26 //
+    readonly property int k_SYNC_CONFIG_WRITE_FAILURE: 31 //
+    readonly property int k_COULD_NOT_CREATE_IGNORE_FILE: 34 //
+    readonly property int k_SYNC_CONFIG_READ_FAILURE: 35 //
+    readonly property int k_UNKNOWN_DRIVE_PATH: 36 //
+    readonly property int k_NOTIFICATION_SYSTEM_UNAVAILABLE: 38 //
+    readonly property int k_UNABLE_TO_ADD_WATCH: 39 //
+    readonly property int k_UNABLE_TO_OPEN_DATABASE: 41
+    readonly property int k_INSUFFICIENT_DISK_SPACE: 42 //
+    readonly property int k_FAILURE_ACCESSING_PERSISTENT_STORAGE: 43 //
+    readonly property int k_MISMATCH_OF_ROOT_FSID: 44 //
+
     anchors.fill: parent
     implicitHeight: errorInfo.implicitHeight
     implicitWidth: errorInfo.implicitWidth
@@ -37,28 +55,80 @@ Item {
 
     states: [
         State {
-            when: root.errorId === 44
+            when: (errorId == k_LOCAL_PATH_TEMPORARY_UNAVAILABLE || errorId == k_LOCAL_PATH_UNAVAILABLE ||
+                   errorId == k_COULD_NOT_CREATE_IGNORE_FILE || errorId == k_NOTIFICATION_SYSTEM_UNAVAILABLE ||
+                   errorId == k_UNABLE_TO_ADD_WATCH || errorId == k_INSUFFICIENT_DISK_SPACE ||
+                   errorId == k_FAILURE_ACCESSING_PERSISTENT_STORAGE || errorId == k_MISMATCH_OF_ROOT_FSID)
 
             PropertyChanges {
                 target: actionRetry
                 visible: true
             }
         },
-
         State {
-            when: root.errorId === 19
+            when: errorId == k_REMOTE_NODE_NOT_FOUND
+
+            PropertyChanges {
+                target: actionRemoveSyncedFolder
+                visible: true
+            }
+        },
+        State {
+            when: errorId == k_STORAGE_OVERQUOTA
+
+            PropertyChanges {
+                target: actionGetMoreStorage
+                visible: true
+            }
+        },
+        State {
+            when: errorId == k_LOCAL_FILESYSTEM_MISMATCH
+
+            PropertyChanges {
+                target: actionStartNewSync
+                visible: true
+            }
+        },
+        State {
+            when: errorId == k_REMOTE_NODE_INSIDE_RUBBISH
 
             PropertyChanges {
                 target: actionRestoreSyncedFolder
                 visible: true
             }
         },
-
         State {
-            when: root.errorId === 7
+            when: errorId == k_LOGGED_OUT
 
             PropertyChanges {
                 target: actionEnableSync
+                visible: true
+            }
+        },
+        State {
+            when: errorId == k_SYNC_CONFIG_WRITE_FAILURE || errorId == k_SYNC_CONFIG_READ_FAILURE ||
+                  errorId == k_UNABLE_TO_OPEN_DATABASE
+
+            PropertyChanges {
+                target: actionRetry
+                visible: true
+            }
+
+            PropertyChanges {
+                target: actionSetFolderPermissions
+                visible: true
+            }
+        },
+        State {
+            when: errorId == k_UNKNOWN_DRIVE_PATH
+
+            PropertyChanges {
+                target: actionRetry
+                visible: true
+            }
+
+            PropertyChanges {
+                target: actionRemoveSyncedFolder
                 visible: true
             }
         }
@@ -131,7 +201,7 @@ Item {
                 text: SettingsStrings.solveIssueSetFolderPermissions
 
                 onClicked: {
-                    syncSettings.getMoreSpace();
+                    syncSettings.setFolderPermissions();
                 }
             }
 
@@ -172,6 +242,19 @@ Item {
                 icons.position: Icon.Position.LEFT
                 onClicked: {
                     syncSettings.restoreSyncedFolder(index);
+                }
+            }
+
+            PrimaryButton {
+                id: actionStartNewSync
+
+                visible: false
+                sizes: SmallSizes {}
+                text: SettingsStrings.solveIssueStartNewSync
+                icons.source: Images.sync_plus_small_thin_outline
+                icons.position: Icon.Position.LEFT
+                onClicked: {
+                    syncSettings.addNewSync();
                 }
             }
         }

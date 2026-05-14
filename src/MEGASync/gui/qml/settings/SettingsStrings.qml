@@ -54,5 +54,5 @@ QtObject {
     readonly property string solveIssueRemoveSyncedFolder: qsTr("Remove synced folder")
     readonly property string solveIssueEnableSync: qsTr("Enable sync")
     readonly property string solveIssueRestoreFolder: qsTr("Restore folder")
-
+    readonly property string solveIssueStartNewSync: qsTr("Start new sync")
 }
