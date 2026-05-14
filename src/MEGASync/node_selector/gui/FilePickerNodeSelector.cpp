@@ -100,6 +100,66 @@ void FilePickerNodeSelector::configureSearchWidget(TabType type)
     hideAllButNode(mSearchWidget);
 }
 
+void FilePickerNodeSelector::configureSidebar()
+{
+    static constexpr int COLLAPSED_SIDEBAR_WIDTH = 64;
+    static constexpr int COLLAPSED_TAB_HEIGHT = 36;
+
+    ui->wLeftPaneNS->setMinimumWidth(COLLAPSED_SIDEBAR_WIDTH);
+    ui->wLeftPaneNS->setMaximumWidth(COLLAPSED_SIDEBAR_WIDTH);
+
+    const auto collapseTab = [](TabSelector* tab)
+    {
+        if (!tab)
+        {
+            return;
+        }
+        tab->setIconOnly(true);
+        tab->setProperty("class", QLatin1String("sidebar-icononly"));
+        tab->setMinimumHeight(COLLAPSED_TAB_HEIGHT);
+        tab->setMaximumHeight(COLLAPSED_TAB_HEIGHT);
+        tab->style()->unpolish(tab);
+        tab->style()->polish(tab);
+    };
+
+    collapseTab(ui->fCloudDrive);
+    collapseTab(ui->fIncomingShares);
+    collapseTab(ui->fBackups);
+    collapseTab(ui->fRubbish);
+    collapseTab(ui->fSearch);
+
+    const auto applyHeaderStyle = [](TokenizableButton* btn)
+    {
+        if (!btn)
+        {
+            return;
+        }
+        btn->setIcon(QIcon());
+        btn->style()->unpolish(btn);
+        btn->style()->polish(btn);
+    };
+
+    for (auto* btn: {ui->bUpload, ui->bNewFolder, ui->bClearRubbish})
+    {
+        applyHeaderStyle(btn);
+    }
+
+    ui->wTop->setVisible(false);
+    ui->wSearch->setVisible(false);
+}
+
+void FilePickerNodeSelector::configureSearchTool()
+{
+    ui->leSearchTool->setMode(SearchLineEdit::Mode::ALWAYS_EXPANDED);
+
+    static constexpr int SEARCH_LINE_EDIT_FIXED_WIDTH = 188;
+    static constexpr int SEARCH_LINE_EDIT_FIXED_HEIGHT = 40;
+
+    ui->leSearchTool->setFixedSize(SEARCH_LINE_EDIT_FIXED_WIDTH, SEARCH_LINE_EDIT_FIXED_HEIGHT);
+
+    ui->headerLayout->addWidget(ui->leSearchTool);
+}
+
 void FilePickerNodeSelector::hideAllButNode(NodeSelectorTreeViewWidget* widget)
 {
     if (!widget)

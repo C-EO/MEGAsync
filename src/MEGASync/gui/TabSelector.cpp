@@ -72,7 +72,7 @@ TabSelector::~TabSelector()
 void TabSelector::setTitle(const QString& title)
 {
     mTitle = title;
-    ui->lTitle->setText(mIconOnly ? QString() : mTitle);
+    ui->lTitle->setText(mTitle);
 }
 
 QString TabSelector::getTitle() const
@@ -132,9 +132,10 @@ void TabSelector::setCounter(unsigned long long count)
     }
 }
 
-bool TabSelector::isEmpty()
+bool TabSelector::hasEmptyCount()
 {
-    return !ui->lCounter->isVisible();
+    auto currentValue(ui->lCounter->text().toULongLong());
+    return currentValue <= 0;
 }
 
 void TabSelector::setSelected(bool state)
@@ -183,15 +184,17 @@ void TabSelector::setIconOnly(bool state)
 
     if (mIconOnly)
     {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         layout()->setContentsMargins(0, 0, 0, 0);
-        layout()->setSpacing(0);
 
-        ui->lIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         ui->lTitle->hide();
         ui->lCounter->hide();
         ui->lClose->setVisible(false);
         ui->lTitle->setText(QString());
+    }
+    else
+    {
+        ui->lCounter->setVisible(hasEmptyCount());
+        ui->lTitle->show();
     }
 }
 

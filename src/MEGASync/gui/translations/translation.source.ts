@@ -4509,6 +4509,16 @@ Enter a different name.</translation>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>The item you selected has been removed. To reselect, close this window and try again.</translation>
     </message>
+    <message>
+        <source>Files</source>
+        <translatorcomment>Sidebar title. SNC.5804</translatorcomment>
+        <translation>Files</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translatorcomment>Search button header</translatorcomment>
+        <translation>Search</translation>
+    </message>
 </context>
 <context>
     <name>NodeSelectorModel</name>

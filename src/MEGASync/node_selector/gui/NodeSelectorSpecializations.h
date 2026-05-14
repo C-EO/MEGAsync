@@ -80,6 +80,11 @@ protected:
     void configureRubbishWidget() override;
     void configureSearchWidget(TabType type) override;
 
+    void configureSidebar() override;
+    void configureSearchTool() override;
+    void configureActionButtonsPlacement() override;
+    void configureFooterVisibility() override;
+
     void onLanguageChangeEvent() override;
 
 protected slots:

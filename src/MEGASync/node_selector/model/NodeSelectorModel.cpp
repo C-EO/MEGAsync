@@ -968,6 +968,19 @@ void NodeSelectorModel::executeRemoveExtraSpaceLogic(const QModelIndex& previous
 
 void NodeSelectorModel::executeAddExtraSpaceLogic(const QModelIndex& currentIndex)
 {
+    if (isBeingModified())
+    {
+        // Defer until the pending begin/endInsertRows is closed.
+        QMetaObject::invokeMethod(
+            this,
+            [this, currentIndex]()
+            {
+                executeAddExtraSpaceLogic(currentIndex);
+            },
+            Qt::QueuedConnection);
+        return;
+    }
+
     if (canDropMimeData())
     {
         NodeSelectorModelItem* item =

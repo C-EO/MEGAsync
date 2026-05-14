@@ -116,6 +116,11 @@ NodeSelector::~NodeSelector()
 
 void NodeSelector::init()
 {
+    configureSidebar();
+    configureSearchTool();
+    configureActionButtonsPlacement();
+    configureFooterVisibility();
+
     createActionButtons();
     createSpecialisedTreeViewWidgets();
     addSearchTreeViewWidget();

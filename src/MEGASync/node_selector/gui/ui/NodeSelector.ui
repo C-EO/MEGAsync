@@ -94,6 +94,95 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        <number>24</number>
       </property>
       <item>
+       <widget class="QWidget" name="wTop" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QWidget" name="wTitleContainer" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>16</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="title">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Files</string>
+              </property>
+              <property name="font-size" stdset="0">
+               <string notr="true">subtitle</string>
+              </property>
+              <property name="regular" stdset="0">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="SearchLineEdit" name="leSearchTool">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <widget class="QGroupBox" name="wStorage">
         <property name="title">
          <string notr="true"/>
@@ -142,17 +231,11 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/cloud_small_thin_outline</normaloff>
              <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
            </property>
-           <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
            <property name="normal_off" stdset="0">
             <string notr="true">icon-secondary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
@@ -184,17 +267,11 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/folder-users_small_thin_outline</normaloff>
              <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
            </property>
-           <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
            <property name="normal_off" stdset="0">
             <string notr="true">icon-secondary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
@@ -223,17 +300,11 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/devices_small_thin_outline</normaloff>
              <normalon>:/devices_small_thin_solid</normalon>:/devices_small_thin_outline</iconset>
            </property>
-           <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
            <property name="normal_off" stdset="0">
             <string notr="true">icon-secondary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
@@ -265,17 +336,11 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/trash_small_thin_outline</normaloff>
              <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
            </property>
-           <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
            <property name="normal_off" stdset="0">
             <string notr="true">icon-secondary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
@@ -288,7 +353,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
          <bool>false</bool>
         </property>
         <property name="title">
-         <string notr="true"/>
+         <string>Search</string>
         </property>
         <property name="type" stdset="0">
          <string notr="true">mega</string>
@@ -331,9 +396,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <normaloff>:/search_small_thin_outline</normaloff>
              <normalon>:/search_small_thin_solid</normalon>:/search_small_thin_outline</iconset>
            </property>
-           <property name="iconOnly" stdset="0">
-            <bool>true</bool>
-           </property>
            <property name="closeButtonVisible" stdset="0">
             <bool>true</bool>
            </property>
@@ -342,9 +404,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar-icononly</string>
            </property>
           </widget>
          </item>
@@ -420,7 +479,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <height>16777215</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,1,0">
+        <layout class="QHBoxLayout" name="headerLayout" stretch="0,1,1">
          <property name="spacing">
           <number>4</number>
          </property>
@@ -599,31 +658,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="SearchLineEdit" name="leSearchTool">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>180</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>180</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="mode" stdset="0">
-            <number>0</number>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -773,6 +807,10 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                  </property>
                  <property name="text">
                   <string notr="true">New Folder</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../gui/Resources_common.qrc">
+                   <normaloff>:/folder-plus-01_small_thin_outline</normaloff>:/folder-plus-01_small_thin_outline</iconset>
                  </property>
                  <property name="iconSize">
                   <size>

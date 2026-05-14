@@ -39,7 +39,7 @@ public:
     bool isCloseButtonVisible() const;
 
     void setCounter(unsigned long long count);
-    bool isEmpty();
+    bool hasEmptyCount();
 
     void setSelected(bool state);
     bool isSelected() const;

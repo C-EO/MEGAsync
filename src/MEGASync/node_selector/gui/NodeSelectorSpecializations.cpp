@@ -12,12 +12,16 @@
 #include "RequestListenerManager.h"
 #include "StatsEventHandler.h"
 #include "SyncInfo.h"
+#include "TabSelector.h"
 #include "TextDecorator.h"
+#include "tokenizer/TokenizableItems/TokenizableButtons.h"
 #include "ui_NodeSelector.h"
 #include "UploadToMegaDialog.h"
 
+#include <QBoxLayout>
 #include <QMessageBox>
 #include <QPointer>
+#include <QStyle>
 
 UploadNodeSelector::UploadNodeSelector(QWidget* parent):
     FilePickerNodeSelector(SelectTypeSPtr(new UploadType), parent)
@@ -338,6 +342,72 @@ void CloudDriveNodeSelector::configureSearchWidget(TabType type)
     mSearchWidget->setColumnHidden(NodeSelectorModel::Column::USER, hideUserColumn);
     mSearchWidget->setColumnHidden(NodeSelectorModel::Column::ACCESS, hideAccessColumn);
     mSearchWidget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, hideAddedDate);
+}
+
+void CloudDriveNodeSelector::configureSidebar()
+{
+    static constexpr int EXPANDED_SIDEBAR_WIDTH = 256;
+    static constexpr int EXPANDED_TAB_HEIGHT = 32;
+
+    ui->wLeftPaneNS->setMinimumWidth(EXPANDED_SIDEBAR_WIDTH);
+    ui->wLeftPaneNS->setMaximumWidth(EXPANDED_SIDEBAR_WIDTH);
+
+    const auto expandTab = [](TabSelector* tab)
+    {
+        if (!tab)
+        {
+            return;
+        }
+        tab->setIconOnly(false);
+        tab->setProperty("class", QLatin1String("sidebar"));
+        tab->setMinimumHeight(EXPANDED_TAB_HEIGHT);
+        tab->setMaximumHeight(EXPANDED_TAB_HEIGHT);
+        tab->style()->unpolish(tab);
+        tab->style()->polish(tab);
+    };
+
+    expandTab(ui->fCloudDrive);
+    expandTab(ui->fIncomingShares);
+    expandTab(ui->fBackups);
+    expandTab(ui->fRubbish);
+    expandTab(ui->fSearch);
+
+    resize(1024, 720);
+    setMinimumSize(792, 400);
+}
+
+void CloudDriveNodeSelector::configureSearchTool()
+{
+    // Search Line Edit
+    ui->leSearchTool->addCustomWidget(ui->wTitleContainer);
+    ui->leSearchTool->setMode(SearchLineEdit::Mode::EXPANDABLE);
+}
+
+void CloudDriveNodeSelector::configureActionButtonsPlacement()
+{
+    const auto applyHeaderStyle = [](TokenizableButton* btn)
+    {
+        if (!btn)
+        {
+            return;
+        }
+        btn->setProperty("type", QLatin1String("ghost"));
+        btn->setProperty("dimension", QLatin1String("small"));
+        btn->style()->unpolish(btn);
+        btn->style()->polish(btn);
+    };
+
+    for (auto* btn: {ui->bUpload, ui->bNewFolder, ui->bClearRubbish})
+    {
+        applyHeaderStyle(btn);
+        ui->headerLayout->addWidget(btn);
+    }
+}
+
+void CloudDriveNodeSelector::configureFooterVisibility()
+{
+    ui->footer->setVisible(false);
+    ui->wRightPaneNS->layout()->setContentsMargins(0, 0, 0, 14);
 }
 
 NodeSelector::ClearTypes CloudDriveNodeSelector::searchClearType() const

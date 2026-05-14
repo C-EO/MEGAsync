@@ -26,6 +26,9 @@ protected:
     void configureRubbishWidget() override;
     void configureSearchWidget(TabType type) override;
 
+    void configureSidebar() override;
+    void configureSearchTool() override;
+
 protected slots:
     void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int actionType) override;
     void onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& handles, int type) override;

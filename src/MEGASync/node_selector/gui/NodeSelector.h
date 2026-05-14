@@ -114,6 +114,17 @@ protected:
     void createSpecialisedTreeViewWidgets();
     NodeSelectorTreeViewWidget* addWidgetForTabType(TabType type);
 
+    // Layout configuration hooks. Default behaviour matches FilePicker (collapsed sidebar,
+    // SearchLineEdit in header, action buttons in footer, footer visible).
+    // Subclasses override to relocate widgets and tweak properties at runtime.
+    virtual void configureSidebar() {}
+
+    virtual void configureSearchTool() {}
+
+    virtual void configureActionButtonsPlacement() {}
+
+    virtual void configureFooterVisibility() {}
+
     virtual void specialisedTreeViewWidgetsCreated();
 
     virtual void configureCloudDriveWidget() {}
