@@ -1,5 +1,6 @@
 #include "NodeSelectorDelegates.h"
 
+#include "IconTokenizer.h"
 #include "MegaDelegateHoverManager.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorTreeView.h"
@@ -131,7 +132,7 @@ void NodeSelectorDelegate::paintRightIndicators(QPainter* painter,
     static constexpr int DOT_SIZE = 8;
     static constexpr int LINK_ICON_SIZE = 16;
     static constexpr int SPACING = 8;
-    static constexpr int RIGHT_PADDING = 12;
+    static constexpr int RIGHT_PADDING = 20;
 
     const QColor labelColor =
         index.data(toInt(NodeSelectorModelRoles::LABEL_COLOR_ROLE)).value<QColor>();
@@ -153,7 +154,12 @@ void NodeSelectorDelegate::paintRightIndicators(QPainter* painter,
                              centerY - LINK_ICON_SIZE / 2,
                              LINK_ICON_SIZE,
                              LINK_ICON_SIZE);
-        linkIcon.paint(painter, iconRect);
+        auto tokenizedPixmap =
+            IconTokenizer::changePixmapColor(
+                linkIcon.pixmap(iconRect.size()),
+                TokenParserWidgetManager::instance()->getColor(QLatin1String("icon-secondary")))
+                .value_or(QPixmap());
+        painter->drawPixmap(iconRect, tokenizedPixmap);
         x -= LINK_ICON_SIZE + SPACING;
     }
 

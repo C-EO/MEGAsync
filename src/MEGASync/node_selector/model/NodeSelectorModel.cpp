@@ -2812,17 +2812,7 @@ QVariant NodeSelectorModel::getIcon(const QModelIndex& index, NodeSelectorModelI
             auto info = getFolderIcon(item);
             auto pixmap = info.first.pixmap(iconSize);
 
-            QColor labelColor;
-            if (!isDisabled && item->getNode())
-            {
-                labelColor = NodeSelectorLabelColors::colorForLabel(item->getNode()->getLabel());
-            }
-
-            if (labelColor.isValid())
-            {
-                pixmap = IconTokenizer::changePixmapColor(pixmap, labelColor).value_or(QPixmap());
-            }
-            else if (!info.second.isEmpty() || isDisabled)
+            if (!info.second.isEmpty() || isDisabled)
             {
                 pixmap =
                     IconTokenizer::changePixmapColor(pixmap,
@@ -2830,6 +2820,24 @@ QVariant NodeSelectorModel::getIcon(const QModelIndex& index, NodeSelectorModelI
                                                          isDisabled ? disabledToken : info.second))
                         .value_or(QPixmap());
             }
+            else if (item->getNode() && !item->getNode()->isFile())
+            {
+                NodeSelectorLabelColors::LabelGradient labelGradient;
+                if (!isDisabled && item->getNode())
+                {
+                    labelGradient =
+                        NodeSelectorLabelColors::gradientForLabel(item->getNode()->getLabel());
+                }
+
+                if (labelGradient.from.isValid())
+                {
+                    pixmap = IconTokenizer::changePixmapToGradient(pixmap,
+                                                                   labelGradient.from,
+                                                                   labelGradient.to)
+                                 .value_or(QPixmap());
+                }
+            }
+
             return QVariant::fromValue<QPixmap>(pixmap);
         }
         case NodeSelectorModel::Column::ADDED_DATE:

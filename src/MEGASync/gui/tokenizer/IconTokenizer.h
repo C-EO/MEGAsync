@@ -27,6 +27,10 @@ public:
 
     static std::optional<QPixmap> changePixmapColor(const QPixmap& pixmap, QColor toColor);
 
+    static std::optional<QPixmap> changePixmapToGradient(const QPixmap& pixmap,
+                                                         const QColor& fromColor,
+                                                         const QColor& toColor);
+
 private:
     explicit IconTokenizer(QObject* parent = nullptr);
 
