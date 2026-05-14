@@ -48,5 +48,5 @@ QtObject {
     readonly property string menuActionsRescan: qsTr("Rescan")
     readonly property string menuActionsReboot: qsTr("Reboot")
     readonly property string menuActionsRemoveSyncedFolder: qsTr("Remove synced folder")
-    readonly property string solveIssueButtonEditSync: qsTr("Edit sync")
+    readonly property string solveIssueButtonRetry: qsTr("Retry")
 }

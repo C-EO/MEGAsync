@@ -44,9 +44,6 @@ Item {
     readonly property int noSyncAboveButtonSpacing: 48
     readonly property int errorBorders: 2
     readonly property int backgroundColorAnimationTime: 200
-    readonly property int topErrorLabelMargin: 8
-    readonly property int errorLabelMargin: 10
-    readonly property int issueHandlerSpacing: 4
 
     function getStatusDescription(status){
         switch(status) {
@@ -581,42 +578,16 @@ Item {
                     Layout.leftMargin: Layout.bottomMargin
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
-                    Layout.preferredHeight: errorInfo.implicitHeight
+                    Layout.preferredHeight: syncError.implicitHeight
                     color: ColorTheme.notificationError
                     radius: syncItemBackgroundRadius
 
-                    ColumnLayout {
-                        id: errorInfo
 
-                        anchors.fill: parent
-                        spacing: issueHandlerSpacing
+                    SyncError {
+                        id: syncError
 
-                        Text {
-                            id: errorLabel
-
-                            Layout.topMargin: root.topErrorLabelMargin
-                            Layout.rightMargin: root.errorLabelMargin
-                            Layout.leftMargin: root.errorLabelMargin
-                            Layout.fillWidth: true
-                            text: "(" + error_id + ") " + error
-                            font.pixelSize: issueLabelPixelSize
-                            font.weight: Font.Normal
-                            elide: Text.ElideRight
-                            color: ColorTheme.textError
-                        }
-
-                        PrimaryButton {
-                            id: action
-
-                            Layout.bottomMargin: root.errorLabelMargin
-                            Layout.topMargin: root.topErrorLabelMargin
-                            Layout.rightMargin: root.errorLabelMargin
-                            Layout.leftMargin: root.errorLabelMargin
-                            sizes: SmallSizes {}
-                            icons.source: Images.pen_2_small_thin_outline
-                            icons.position: Icon.Position.LEFT
-                            text: SettingsStrings.solveIssueButtonEditSync
-                        }
+                        errorId: error_id
+                        errorMessage: error
                     }
                 }
             }
