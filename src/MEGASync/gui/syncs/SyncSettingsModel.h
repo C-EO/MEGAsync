@@ -35,12 +35,14 @@ public:
 
     enum SyncStates
     {
-        PENDING = ::mega::MegaSync::RUNSTATE_PENDING,
-        LOADING = ::mega::MegaSync::RUNSTATE_LOADING,
-        RUNNING = ::mega::MegaSync::RUNSTATE_RUNNING,
-        SUSPENDED = ::mega::MegaSync::RUNSTATE_SUSPENDED,
-        DISABLED = ::mega::MegaSync::RUNSTATE_DISABLED,
+        PENDING,
+        LOADING,
+        SUSPENDED,
         ERROR,
+        SCANNING,
+        SYNCING,
+        SYNCED,
+        DISABLED
     };
 
     Q_ENUM(SyncStates)
@@ -54,9 +56,8 @@ private:
     SyncInfo* mSyncInfo;
     QList<std::shared_ptr<SyncSettings>> mList;
 
-    QString getState(std::shared_ptr<SyncSettings> sync) const;
+    SyncStates getState(std::shared_ptr<SyncSettings> sync) const;
     void sendDataChanged(int row);
-    SyncStates getStatusId(std::shared_ptr<SyncSettings> sync) const;
     QString getErrorMessage(std::shared_ptr<SyncSettings> sync) const;
 };
 

@@ -96,9 +96,8 @@ QHash<int, QByteArray> SyncSettingsModel::roleNames() const
         {NameRole, "name"},
         {FolderRole, "folder"},
         {StatusRole, "status"},
-        {StatusId, "statusid"},
         {ErrorMessage, "error"},
-        {ErrorId, "errorid"},
+        {ErrorId, "error_id"},
     };
 }
 
@@ -139,12 +138,6 @@ QVariant SyncSettingsModel::data(const QModelIndex& index, int role) const
         case StatusRole:
             return getState(sync);
 
-        case StatusId:
-            return getStatusId(sync);
-
-        case ErrorMessage:
-            return getErrorMessage(sync);
-
         case ErrorId:
             return sync->getError();
 
@@ -156,27 +149,14 @@ QVariant SyncSettingsModel::data(const QModelIndex& index, int role) const
 QString SyncSettingsModel::getErrorMessage(std::shared_ptr<SyncSettings> sync) const
 {
     QString errorMessage;
-    if (SyncStates::ERROR == getStatusId(sync))
+    if (SyncStates::ERROR == getState(sync))
     {
         std::unique_ptr<const char[]> syncErrorText(
             mega::MegaSync::getMegaSyncErrorCode(sync->getError()));
-        QString toolTip;
-        errorMessage += QCoreApplication::translate("MegaSyncError", syncErrorText.get());
+        errorMessage = QCoreApplication::translate("MegaSyncError", syncErrorText.get());
     }
 
     return errorMessage;
-}
-
-SyncSettingsModel::SyncStates
-    SyncSettingsModel::getStatusId(std::shared_ptr<SyncSettings> sync) const
-{
-    auto statusId = sync->getRunState();
-    if (statusId == ::mega::MegaSync::RUNSTATE_SUSPENDED && sync->getError())
-    {
-        statusId = SyncStates::ERROR;
-    }
-
-    return static_cast<SyncStates>(statusId);
 }
 
 std::shared_ptr<SyncSettings> SyncSettingsModel::getSync(int index) const
@@ -184,56 +164,51 @@ std::shared_ptr<SyncSettings> SyncSettingsModel::getSync(int index) const
     return mList.at(index);
 }
 
-QString SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
+SyncSettingsModel::SyncStates SyncSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
 {
-    QString s;
     switch (sync->getRunState())
     {
         case ::mega::MegaSync::RUNSTATE_PENDING:
-            [[fallthrough]];
+        {
+            return SyncStates::PENDING;
+        }
         case ::mega::MegaSync::RUNSTATE_LOADING:
         {
-            s = tr("Loading");
-            break;
+            return SyncStates::LOADING;
         }
         case ::mega::MegaSync::RUNSTATE_SUSPENDED:
         {
             if (sync->getError())
             {
-                s = tr("Disabled");
+                return SyncStates::ERROR;
             }
             else
             {
-                s = tr("Paused");
+                return SyncStates::SUSPENDED;
             }
-            break;
         }
         case ::mega::MegaSync::RUNSTATE_DISABLED:
         {
-            s = tr("Stopped");
-            break;
+            return SyncStates::DISABLED;
         }
         case ::mega::MegaSync::RUNSTATE_RUNNING:
         {
             auto it = mSyncInfo->mSyncStatsMap.find(sync->backupId());
             if (it != mSyncInfo->mSyncStatsMap.end())
             {
-                ::mega::MegaSyncStats& stats = *it->second;
-                if (stats.isScanning())
+                auto stats = it->second;
+                if (stats->isScanning())
                 {
-                    s = tr("Scanning");
+                    return SyncStates::SCANNING;
                 }
-                else if (stats.isSyncing())
+                else if (stats->isSyncing())
                 {
-                    s = tr("Syncing");
-                }
-                else
-                {
-                    s = tr("Synced");
+                    return SyncStates::SYNCING;
                 }
             }
             break;
         }
     }
-    return s;
+
+    return SyncStates::SYNCED;
 }
