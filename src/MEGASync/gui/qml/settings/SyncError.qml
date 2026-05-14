@@ -19,12 +19,12 @@ Item {
     readonly property int topErrorLabelMargin: 8
     readonly property int errorLabelMargin: 10
     readonly property int issueLabelPixelSize: 12
+    readonly property int buttonActionSpacing: 8
+    readonly property int buttonFocusBorder: 4
 
     anchors.fill: parent
     implicitHeight: errorInfo.implicitHeight
     implicitWidth: errorInfo.implicitWidth
-
-    property string test
 
     ColumnLayout {
         id: errorInfo
@@ -38,7 +38,7 @@ Item {
             Layout.topMargin: root.topErrorLabelMargin
             Layout.rightMargin: root.errorLabelMargin
             Layout.leftMargin: root.errorLabelMargin
-            Layout.bottomMargin: root.errorLabelMargin
+            Layout.bottomMargin: root.issueHandlerSpacing
             Layout.fillWidth: true
             text: "(" + root.errorId + ") " + root.errorMessage
             font.pixelSize: root.issueLabelPixelSize
@@ -50,19 +50,87 @@ Item {
         RowLayout{
             id: buttonList
 
-            Layout.fillWidth: true
+            spacing: root.buttonActionSpacing
+            Layout.bottomMargin: root.errorLabelMargin - buttonFocusBorder
+            Layout.rightMargin: root.errorLabelMargin
+            Layout.leftMargin: Layout.bottomMargin
 
             PrimaryButton {
                 id: actionRetry
 
-                visible: true
-                Layout.bottomMargin: root.errorLabelMargin
-                Layout.rightMargin: root.errorLabelMargin
-                Layout.leftMargin: root.errorLabelMargin
+                visible: false
                 sizes: SmallSizes {}
                 icons.source: Images.rotate_cw_small_thin_outline
                 icons.position: Icon.Position.LEFT
                 text: SettingsStrings.solveIssueButtonRetry
+
+                onClicked: {
+                    syncSettings.retry(index);
+                }
+            }
+
+            PrimaryButton {
+                id: actionGetMoreStorage
+
+                visible: false
+                sizes: SmallSizes {}
+                text: SettingsStrings.solveIssueGetMoreStorage
+
+                onClicked: {
+                    syncSettings.getMoreSpace();
+                }
+            }
+
+            OutlineButton {
+                id: actionSetFolderPermissions
+
+                visible: true
+                sizes: SmallSizes {}
+                text: SettingsStrings.solveIssueSetFolderPermissions
+
+                onClicked: {
+                    syncSettings.getMoreSpace();
+                }
+            }
+
+            PrimaryButton {
+                id: actionRemoveSyncedFolder
+
+                visible: true
+                colors.background: ColorTheme.buttonError
+                sizes: SmallSizes {}
+                text: SettingsStrings.solveIssueRemoveSyncedFolder
+                icons.source: Images.trash_small_thin_outline
+                icons.position: Icon.Position.LEFT
+                onClicked: {
+                    syncSettings.removeSyncedFolder(index);
+                }
+            }
+
+            PrimaryButton {
+                id: actionEnableSync
+
+                visible: true
+                sizes: SmallSizes {}
+                text: SettingsStrings.solveIssueEnableSync
+                icons.source: Images.power_small_thin_outline
+                icons.position: Icon.Position.LEFT
+                onClicked: {
+                    syncSettings.enableSync(index);
+                }
+            }
+
+            PrimaryButton {
+                id: actionRestoreSyncedFolder
+
+                visible: true
+                sizes: SmallSizes {}
+                text: SettingsStrings.solveIssueRestoreFolder
+                icons.source: Images.trash_off_small_thin_outline
+                icons.position: Icon.Position.LEFT
+                onClicked: {
+                    syncSettings.restoreSyncedFolder(index);
+                }
             }
         }
     }

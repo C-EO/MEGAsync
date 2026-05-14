@@ -49,4 +49,10 @@ QtObject {
     readonly property string menuActionsReboot: qsTr("Reboot")
     readonly property string menuActionsRemoveSyncedFolder: qsTr("Remove synced folder")
     readonly property string solveIssueButtonRetry: qsTr("Retry")
+    readonly property string solveIssueGetMoreStorage: qsTr("Get more storage")
+    readonly property string solveIssueSetFolderPermissions: qsTr("Folder permissions")
+    readonly property string solveIssueRemoveSyncedFolder: qsTr("Remove synced folder")
+    readonly property string solveIssueEnableSync: qsTr("Enable sync")
+    readonly property string solveIssueRestoreFolder: qsTr("Restore folder")
+
 }
