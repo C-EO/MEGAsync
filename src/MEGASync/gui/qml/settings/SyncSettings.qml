@@ -48,23 +48,21 @@ Item {
     readonly property int errorLabelMargin: 10
     readonly property int issueHandlerSpacing: 4
 
-    function getStatusDescription(status)
-    {
-        switch(status)
-        {
-        case SyncSettingsModel.PENDING:
-        case SyncSettingsModel.LOADING:
-                return qsTr("Loading")
-        case SyncSettingsModel.SUSPENDED:
-                return qsTr("Paused")
-        case SyncSettingsModel.ERROR:
-                return qsTr("Disabled")
-        case SyncSettingsModel.SCANNING:
-                return qsTr("Scanning")
-        case SyncSettingsModel.SYNCING:
-                return qsTr("Syncing")
-        case SyncSettingsModel.SYNCED:
-                return qsTr("Synced")
+    function getStatusDescription(status){
+        switch(status) {
+            case SyncSettingsModel.PENDING:
+            case SyncSettingsModel.LOADING:
+                    return SettingsStrings.syncStateLoading;
+            case SyncSettingsModel.SUSPENDED:
+                    return SettingsStrings.syncStatePaused;
+            case SyncSettingsModel.ERROR:
+                    return SettingsStrings.syncStateDisabled;
+            case SyncSettingsModel.SCANNING:
+                    return SettingsStrings.syncStateScanning;
+            case SyncSettingsModel.SYNCING:
+                    return SettingsStrings.syncStateSyncing;
+            case SyncSettingsModel.SYNCED:
+                    return SettingsStrings.syncStateSynced;
         }
     }
 
@@ -252,7 +250,7 @@ Item {
                 Text {
                     id: title
 
-                    text: qsTr("Automatic sync issue resolution")
+                    text: SettingsStrings.syncIssueTitle
                     font.pixelSize: issueLabelPixelSize
                     font.weight: Font.DemiBold
                     elide: Text.ElideRight
@@ -265,7 +263,7 @@ Item {
                     manageMouse: true
                     manageHover: true
                     underlineLink: true
-                    rawText: qsTr("MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]")
+                    rawText: SettingsStrings.syncIssueDescription
                     font.pixelSize: issueLabelPixelSize
                     font.weight: Font.Normal
                     elide: Text.ElideRight
@@ -471,7 +469,7 @@ Item {
                         ContextMenuItem {
                             visible: status === SyncSettingsModel.ERROR
                             height: visible ? implicitHeight : 0
-                            text: qsTr("Solve issues")
+                            text: SettingsStrings.menuActionsSolveIssues
                             icon.source: Images.lightbulb_small_thin_outline
                             onTriggered: {
                             }
@@ -483,7 +481,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: qsTr("Show in folder")
+                            text: SettingsStrings.menuActionsShowInFolder
                             icon.source: Images.folder_small_thin_outline
                             onTriggered: {
                                 syncSettings.exploreLocalSync(folder);
@@ -491,7 +489,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: qsTr("Open in mega")
+                            text: SettingsStrings.menuActionsOpenInMega
                             icon.source: Images.mega_medium_thin_outline
                             onTriggered: {
                                 syncSettings.openInMega(index);
@@ -504,7 +502,7 @@ Item {
                         ContextMenuItem {
                             visible: status === SyncSettingsModel.SYNCED
                             height: visible ? implicitHeight : 0
-                            text: qsTr("Pause")
+                            text: SettingsStrings.menuActionsPause
                             icon.source: Images.pause_thin_small_thin_outline
                             onTriggered: {
                                 syncSettings.pauseSync(index);
@@ -514,7 +512,7 @@ Item {
                         ContextMenuItem {
                             visible: status === SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
-                            text: qsTr("Resume")
+                            text: SettingsStrings.menuActionsResume
                             icon.source: Images.play_small_thin_outline
                             onTriggered: {
                                 syncSettings.resumeSync(index);
@@ -527,7 +525,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: qsTr("Manage exlusions")
+                            text: SettingsStrings.menuActionsManageExclusions
                             icon.source: Images.file_ignore_small_thin_outline
                             onTriggered: {
                                 syncSettings.openExclusionsDialog(index);
@@ -540,7 +538,7 @@ Item {
                         ContextMenuItem {
                             visible: status !== SyncSettingsModel.ERROR && status !== SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
-                            text: qsTr("Rescan")
+                            text: SettingsStrings.menuActionsRescan
                             icon.source: Images.search_large_small_thin_outline
                             onTriggered: {
                                 syncSettings.rescan(index);
@@ -550,7 +548,7 @@ Item {
                         ContextMenuItem {
                             visible: status !== SyncSettingsModel.ERROR && status !== SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
-                            text: qsTr("Reboot")
+                            text: SettingsStrings.menuActionsReboot
                             icon.source: Images.rotate_cw_small_thin_outline
                             onTriggered: {
                                 syncSettings.reboot(index);
@@ -563,7 +561,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: qsTr("Remove synced folder")
+                            text: SettingsStrings.menuActionsRemoveSyncedFolder
                             textColor: ColorTheme.textError
                             imageColor: ColorTheme.textError
                             icon.source: Images.trash_small_thin_outline
@@ -600,7 +598,7 @@ Item {
                             Layout.rightMargin: root.errorLabelMargin
                             Layout.leftMargin: root.errorLabelMargin
                             Layout.fillWidth: true
-                            text: "(" + error_id + ")" + error
+                            text: "(" + error_id + ") " + error
                             font.pixelSize: issueLabelPixelSize
                             font.weight: Font.Normal
                             elide: Text.ElideRight
@@ -617,7 +615,7 @@ Item {
                             sizes: SmallSizes {}
                             icons.source: Images.pen_2_small_thin_outline
                             icons.position: Icon.Position.LEFT
-                            text: qsTr("Edit sync")
+                            text: SettingsStrings.solveIssueButtonEditSync
                         }
                     }
                 }
