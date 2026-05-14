@@ -141,6 +141,9 @@ QVariant SyncSettingsModel::data(const QModelIndex& index, int role) const
         case ErrorId:
             return sync->getError();
 
+        case ErrorMessage:
+            return getErrorMessage(sync);
+
         default:
             return {};
     }
@@ -148,15 +151,10 @@ QVariant SyncSettingsModel::data(const QModelIndex& index, int role) const
 
 QString SyncSettingsModel::getErrorMessage(std::shared_ptr<SyncSettings> sync) const
 {
-    QString errorMessage;
-    if (SyncStates::ERROR == getState(sync))
-    {
-        std::unique_ptr<const char[]> syncErrorText(
-            mega::MegaSync::getMegaSyncErrorCode(sync->getError()));
-        errorMessage = QCoreApplication::translate("MegaSyncError", syncErrorText.get());
-    }
+    std::unique_ptr<const char[]> syncErrorText(
+        mega::MegaSync::getMegaSyncErrorCode(sync->getError()));
 
-    return errorMessage;
+    return QCoreApplication::translate("MegaSyncError", syncErrorText.get());
 }
 
 std::shared_ptr<SyncSettings> SyncSettingsModel::getSync(int index) const
