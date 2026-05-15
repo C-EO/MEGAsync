@@ -55,6 +55,23 @@ void SyncSettingsQuickWidget::resumeSync(int index) const
     SyncController::instance().setSyncToRun(mSyncModel->getSync(index));
 }
 
+void SyncSettingsQuickWidget::restoreSyncedFolder(int index) const
+{
+    auto sync = mSyncModel->getSync(index);
+
+    // deleted folder sync->getMegaFolder();
+}
+
+void SyncSettingsQuickWidget::openOverQuotaDialog() const
+{
+    auto overQuotaDialog = MegaSyncApp->createOverquotaDialogIfNeeded();
+
+    if (overQuotaDialog)
+    {
+        DialogOpener::showDialog(overQuotaDialog);
+    }
+}
+
 void SyncSettingsQuickWidget::openExclusionsDialog(int index) const
 {
     const auto& sync = mSyncModel->getSync(index);

@@ -464,20 +464,6 @@ Item {
                         }
 
                         ContextMenuItem {
-                            visible: status === SyncSettingsModel.ERROR
-                            height: visible ? implicitHeight : 0
-                            text: SettingsStrings.menuActionsSolveIssues
-                            icon.source: Images.lightbulb_small_thin_outline
-                            onTriggered: {
-                            }
-                        }
-
-                        MenuSeparator {
-                            visible: status === SyncSettingsModel.ERROR
-                            height: visible ? implicitHeight : 0
-                        }
-
-                        ContextMenuItem {
                             text: SettingsStrings.menuActionsShowInFolder
                             icon.source: Images.folder_small_thin_outline
                             onTriggered: {
@@ -588,6 +574,7 @@ Item {
 
                         errorId: error_id
                         errorMessage: error
+                        syncLocalFolder: folder
                     }
                 }
             }

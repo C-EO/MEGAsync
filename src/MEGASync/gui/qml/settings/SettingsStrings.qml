@@ -39,7 +39,6 @@ QtObject {
     readonly property string syncStateSynced: qsTr("Synced")
     readonly property string syncIssueTitle: qsTr("Automatic sync issue resolution")
     readonly property string syncIssueDescription: qsTr("MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]")
-    readonly property string menuActionsSolveIssues: qsTr("Solve issues")
     readonly property string menuActionsShowInFolder: qsTr("Show in folder")
     readonly property string menuActionsOpenInMega: qsTr("Open in mega")
     readonly property string menuActionsPause: qsTr("Pause")

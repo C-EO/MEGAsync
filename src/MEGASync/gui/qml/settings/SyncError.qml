@@ -14,31 +14,34 @@ Item {
 
     property int errorId
     property string errorMessage
+    property string syncLocalFolder
 
     readonly property int issueHandlerSpacing: 4
     readonly property int topErrorLabelMargin: 8
     readonly property int errorLabelMargin: 10
     readonly property int issueLabelPixelSize: 12
-    readonly property int buttonActionSpacing: 8
+    readonly property int buttonActionSpacing: 0
     readonly property int buttonFocusBorder: 4
+    readonly property int timeToResetActionButtonState: 5000
 
-    readonly property int k_LOCAL_PATH_TEMPORARY_UNAVAILABLE: 6 //
-    readonly property int k_LOCAL_PATH_UNAVAILABLE: 7 //
-    readonly property int k_REMOTE_NODE_NOT_FOUND: 8 //
-    readonly property int k_STORAGE_OVERQUOTA: 9 //
-    readonly property int k_LOCAL_FILESYSTEM_MISMATCH: 15 //
-    readonly property int k_REMOTE_NODE_INSIDE_RUBBISH: 20 //
-    readonly property int k_LOGGED_OUT: 26 //
-    readonly property int k_SYNC_CONFIG_WRITE_FAILURE: 31 //
-    readonly property int k_COULD_NOT_CREATE_IGNORE_FILE: 34 //
-    readonly property int k_SYNC_CONFIG_READ_FAILURE: 35 //
-    readonly property int k_UNKNOWN_DRIVE_PATH: 36 //
-    readonly property int k_NOTIFICATION_SYSTEM_UNAVAILABLE: 38 //
-    readonly property int k_UNABLE_TO_ADD_WATCH: 39 //
+    // error codes
+    readonly property int k_LOCAL_PATH_TEMPORARY_UNAVAILABLE: 6
+    readonly property int k_LOCAL_PATH_UNAVAILABLE: 7
+    readonly property int k_REMOTE_NODE_NOT_FOUND: 8
+    readonly property int k_STORAGE_OVERQUOTA: 9
+    readonly property int k_LOCAL_FILESYSTEM_MISMATCH: 15
+    readonly property int k_REMOTE_NODE_INSIDE_RUBBISH: 20
+    readonly property int k_LOGGED_OUT: 26
+    readonly property int k_SYNC_CONFIG_WRITE_FAILURE: 31
+    readonly property int k_COULD_NOT_CREATE_IGNORE_FILE: 34
+    readonly property int k_SYNC_CONFIG_READ_FAILURE: 35
+    readonly property int k_UNKNOWN_DRIVE_PATH: 36
+    readonly property int k_NOTIFICATION_SYSTEM_UNAVAILABLE: 38
+    readonly property int k_UNABLE_TO_ADD_WATCH: 39
     readonly property int k_UNABLE_TO_OPEN_DATABASE: 41
-    readonly property int k_INSUFFICIENT_DISK_SPACE: 42 //
-    readonly property int k_FAILURE_ACCESSING_PERSISTENT_STORAGE: 43 //
-    readonly property int k_MISMATCH_OF_ROOT_FSID: 44 //
+    readonly property int k_INSUFFICIENT_DISK_SPACE: 42
+    readonly property int k_FAILURE_ACCESSING_PERSISTENT_STORAGE: 43
+    readonly property int k_MISMATCH_OF_ROOT_FSID: 44
 
     anchors.fill: parent
     implicitHeight: errorInfo.implicitHeight
@@ -47,18 +50,26 @@ Item {
     function resetActionButtonsVisibility() {
         actionRetry.visible = false;
         actionGetMoreStorage.visible = false;
-        actionSetFolderPermissions.visible = false;
         actionRemoveSyncedFolder.visible = false;
         actionEnableSync.visible = false;
         actionRestoreSyncedFolder.visible = false;
     }
 
+    onErrorIdChanged: {
+        resetActionButtonsVisibility();
+    }
+
+    /*
+      every error code have a state, with a list of visible action buttons.
+    */
     states: [
         State {
             when: (errorId == k_LOCAL_PATH_TEMPORARY_UNAVAILABLE || errorId == k_LOCAL_PATH_UNAVAILABLE ||
                    errorId == k_COULD_NOT_CREATE_IGNORE_FILE || errorId == k_NOTIFICATION_SYSTEM_UNAVAILABLE ||
                    errorId == k_UNABLE_TO_ADD_WATCH || errorId == k_INSUFFICIENT_DISK_SPACE ||
-                   errorId == k_FAILURE_ACCESSING_PERSISTENT_STORAGE || errorId == k_MISMATCH_OF_ROOT_FSID)
+                   errorId == k_FAILURE_ACCESSING_PERSISTENT_STORAGE || errorId == k_MISMATCH_OF_ROOT_FSID ||
+                   errorId == k_SYNC_CONFIG_WRITE_FAILURE || errorId == k_SYNC_CONFIG_READ_FAILURE ||
+                   errorId == k_UNABLE_TO_OPEN_DATABASE)
 
             PropertyChanges {
                 target: actionRetry
@@ -106,20 +117,6 @@ Item {
             }
         },
         State {
-            when: errorId == k_SYNC_CONFIG_WRITE_FAILURE || errorId == k_SYNC_CONFIG_READ_FAILURE ||
-                  errorId == k_UNABLE_TO_OPEN_DATABASE
-
-            PropertyChanges {
-                target: actionRetry
-                visible: true
-            }
-
-            PropertyChanges {
-                target: actionSetFolderPermissions
-                visible: true
-            }
-        },
-        State {
             when: errorId == k_UNKNOWN_DRIVE_PATH
 
             PropertyChanges {
@@ -133,10 +130,6 @@ Item {
             }
         }
     ]
-
-    onStateChanged: {
-        resetActionButtonsVisibility();
-    }
 
     ColumnLayout {
         id: errorInfo
@@ -175,9 +168,25 @@ Item {
                 icons.source: Images.rotate_cw_small_thin_outline
                 icons.position: Icon.Position.LEFT
                 text: SettingsStrings.solveIssueButtonRetry
+                checkable: true
+
+                Timer {
+                    id: timerToResetButtonState
+
+                    interval: root.timeToResetActionButtonState
+                    repeat: false
+
+                    onTriggered: {
+                        actionRetry.checked = false;
+                    }
+                }
 
                 onClicked: {
-                    syncSettings.retry(index);
+                    if (!timerToResetButtonState.running) {
+                        syncSettings.resumeSync(index);
+                        actionRetry.checked = true;
+                        timerToResetButtonState.start();
+                    }
                 }
             }
 
@@ -189,19 +198,7 @@ Item {
                 text: SettingsStrings.solveIssueGetMoreStorage
 
                 onClicked: {
-                    syncSettings.getMoreSpace();
-                }
-            }
-
-            OutlineButton {
-                id: actionSetFolderPermissions
-
-                visible: false
-                sizes: SmallSizes {}
-                text: SettingsStrings.solveIssueSetFolderPermissions
-
-                onClicked: {
-                    syncSettings.setFolderPermissions();
+                    syncSettings.openOverQuotaDialog();
                 }
             }
 
@@ -210,12 +207,17 @@ Item {
 
                 visible: false
                 colors.background: ColorTheme.buttonError
+                colors.pressed: ColorTheme.buttonErrorPressed
+                colors.hover: ColorTheme.buttonErrorHover
                 sizes: SmallSizes {}
                 text: SettingsStrings.solveIssueRemoveSyncedFolder
+                colors.text: ColorTheme.textOnColor
                 icons.source: Images.trash_small_thin_outline
                 icons.position: Icon.Position.LEFT
+                icons.colorEnabled: ColorTheme.textOnColor
+
                 onClicked: {
-                    syncSettings.removeSyncedFolder(index);
+                    syncSettings.remove(index);
                 }
             }
 
@@ -228,7 +230,7 @@ Item {
                 icons.source: Images.power_small_thin_outline
                 icons.position: Icon.Position.LEFT
                 onClicked: {
-                    syncSettings.enableSync(index);
+                    syncSettings.resumeSync(index);
                 }
             }
 
@@ -241,7 +243,7 @@ Item {
                 icons.source: Images.trash_off_small_thin_outline
                 icons.position: Icon.Position.LEFT
                 onClicked: {
-                    syncSettings.restoreSyncedFolder(index);
+                    syncSettings.restoreSyncedFolder(index); // restore deleted node
                 }
             }
 
@@ -254,7 +256,7 @@ Item {
                 icons.source: Images.sync_plus_small_thin_outline
                 icons.position: Icon.Position.LEFT
                 onClicked: {
-                    syncSettings.addNewSync();
+                    syncSettings.addSync();
                 }
             }
         }
