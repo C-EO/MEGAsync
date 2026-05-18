@@ -599,6 +599,10 @@ void MegaApplication::initialize()
     connect(model, &SyncInfo::syncStateChanged, this, &MegaApplication::onSyncModelUpdated);
     connect(model, &SyncInfo::syncRemoved, this, &MegaApplication::onSyncModelUpdated);
     connect(model, &SyncInfo::syncDisabledListUpdated, this, &MegaApplication::updateTrayIcon);
+    connect(model,
+            &SyncInfo::syncDisabledListUpdated,
+            this,
+            &MegaApplication::enableLogOffDisabledSyncs);
 
     MegaApi::log(MegaApi::LOG_LEVEL_INFO, QString::fromLatin1("Graphics processing %1")
                  .arg(mDisableGfx ? QLatin1String("disabled")
@@ -3987,6 +3991,21 @@ void MegaApplication::onSyncModelUpdated(std::shared_ptr<SyncSettings>)
     if(mLoginController->isFetchNodesFinished())
     {
         createAppMenus();
+    }
+}
+
+void MegaApplication::enableLogOffDisabledSyncs()
+{
+    auto syncsUnattended = model->getSyncSettingsByType(MegaSync::SyncType::TYPE_TWOWAY);
+    for (auto& sync: as_const(syncsUnattended))
+    {
+        if (sync->getRunState() == ::mega::MegaSync::RUNSTATE_DISABLED)
+        {
+            if (sync->getError() == ::mega::MegaSync::LOGGED_OUT)
+            {
+                SyncController::instance().setSyncToRun(sync);
+            }
+        }
     }
 }
 
