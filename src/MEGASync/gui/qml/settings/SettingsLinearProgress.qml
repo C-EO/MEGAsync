@@ -157,8 +157,6 @@ Item {
             return SettingsStrings.backupsLabel
         case AccountStateQuickWidget.Versions:
             return SettingsStrings.versionsLabel
-        case AccountStateQuickWidget.Free:
-            return SettingsStrings.availableLabel
         case AccountStateQuickWidget.RubbishBin:
             return SettingsStrings.rubbishBinLabel
         case AccountStateQuickWidget.Downloads:
