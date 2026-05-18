@@ -30,6 +30,7 @@ Item {
     readonly property int k_REMOTE_NODE_NOT_FOUND: 8
     readonly property int k_STORAGE_OVERQUOTA: 9
     readonly property int k_LOCAL_FILESYSTEM_MISMATCH: 15
+    readonly property int k_REMOTE_NODE_MOVED_TO_RUBBISH: 19
     readonly property int k_REMOTE_NODE_INSIDE_RUBBISH: 20
     readonly property int k_LOGGED_OUT: 26
     readonly property int k_SYNC_CONFIG_WRITE_FAILURE: 31
@@ -101,7 +102,7 @@ Item {
             }
         },
         State {
-            when: errorId == k_REMOTE_NODE_INSIDE_RUBBISH
+            when: errorId == k_REMOTE_NODE_INSIDE_RUBBISH || errorId == k_REMOTE_NODE_MOVED_TO_RUBBISH
 
             PropertyChanges {
                 target: actionRestoreSyncedFolder
@@ -171,7 +172,7 @@ Item {
                 checkable: true
 
                 Timer {
-                    id: timerToResetButtonState
+                    id: timerActionRetry
 
                     interval: root.timeToResetActionButtonState
                     repeat: false
@@ -182,10 +183,10 @@ Item {
                 }
 
                 onClicked: {
-                    if (!timerToResetButtonState.running) {
+                    if (!timerActionRetry.running) {
                         syncSettings.resumeSync(index);
                         actionRetry.checked = true;
-                        timerToResetButtonState.start();
+                        timerActionRetry.start();
                     }
                 }
             }
@@ -196,9 +197,25 @@ Item {
                 visible: false
                 sizes: SmallSizes {}
                 text: SettingsStrings.solveIssueGetMoreStorage
+                checkable: true
+
+                Timer {
+                    id: timerActionGetMoreStorage
+
+                    interval: root.timeToResetActionButtonState
+                    repeat: false
+
+                    onTriggered: {
+                        actionGetMoreStorage.checked = false;
+                    }
+                }
 
                 onClicked: {
-                    syncSettings.openOverQuotaDialog();
+                    if (!timerActionGetMoreStorage.running) {
+                        syncSettings.openOverQuotaDialog();
+                        actionGetMoreStorage.checked = true;
+                        timerActionGetMoreStorage.start();
+                    }
                 }
             }
 
@@ -215,9 +232,25 @@ Item {
                 icons.source: Images.trash_small_thin_outline
                 icons.position: Icon.Position.LEFT
                 icons.colorEnabled: ColorTheme.textOnColor
+                checkable: true
+
+                Timer {
+                    id: timerActionRemoveSyncedFolder
+
+                    interval: root.timeToResetActionButtonState
+                    repeat: false
+
+                    onTriggered: {
+                        actionRemoveSyncedFolder.checked = false;
+                    }
+                }
 
                 onClicked: {
-                    syncSettings.remove(index);
+                    if (!timerActionRemoveSyncedFolder.running) {
+                        syncSettings.remove(index);
+                        actionRemoveSyncedFolder.checked = true;
+                        timerActionRemoveSyncedFolder.start();
+                    }
                 }
             }
 
@@ -229,8 +262,25 @@ Item {
                 text: SettingsStrings.solveIssueEnableSync
                 icons.source: Images.power_small_thin_outline
                 icons.position: Icon.Position.LEFT
+                checkable: true
+
+                Timer {
+                    id: timerActionEnableSync
+
+                    interval: root.timeToResetActionButtonState
+                    repeat: false
+
+                    onTriggered: {
+                        actionEnableSync.checked = false;
+                    }
+                }
+
                 onClicked: {
-                    syncSettings.resumeSync(index);
+                    if (!timerActionEnableSync.running) {
+                        syncSettings.resumeSync(index);
+                        actionEnableSync.checked = true;
+                        timerActionEnableSync.start();
+                    }
                 }
             }
 
@@ -242,8 +292,25 @@ Item {
                 text: SettingsStrings.solveIssueRestoreFolder
                 icons.source: Images.trash_off_small_thin_outline
                 icons.position: Icon.Position.LEFT
+                checkable: true
+
+                Timer {
+                    id: timerActionRestoreSyncedFolder
+
+                    interval: root.timeToResetActionButtonState
+                    repeat: false
+
+                    onTriggered: {
+                        actionRestoreSyncedFolder.checked = false;
+                    }
+                }
+
                 onClicked: {
-                    syncSettings.restoreSyncedFolder(index); // restore deleted node
+                    if (!timerActionRestoreSyncedFolder.running) {
+                        syncSettings.restoreSyncedFolder(index);
+                        actionRestoreSyncedFolder.checked = true;
+                        timerActionRestoreSyncedFolder.start();
+                    }
                 }
             }
 
@@ -255,9 +322,27 @@ Item {
                 text: SettingsStrings.solveIssueStartNewSync
                 icons.source: Images.sync_plus_small_thin_outline
                 icons.position: Icon.Position.LEFT
-                onClicked: {
-                    syncSettings.addSync();
+                checkable: true
+
+                Timer {
+                    id: timerActionStartNewSync
+
+                    interval: root.timeToResetActionButtonState
+                    repeat: false
+
+                    onTriggered: {
+                        actionStartNewSync.checked = false;
+                    }
                 }
+
+                onClicked: {
+                    if (!timerActionStartNewSync.running) {
+                        syncSettings.addSync();
+                        actionStartNewSync.checked = true;
+                        timerActionStartNewSync.start();
+                    }
+                }
+
             }
         }
     }

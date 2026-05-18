@@ -25,7 +25,7 @@ public:
     Q_INVOKABLE void reboot(int index) const;
     Q_INVOKABLE void remove(int index) const;
     Q_INVOKABLE void openOverQuotaDialog() const;
-    Q_INVOKABLE void restoreSyncedFolder(int index) const;
+    Q_INVOKABLE void restoreSyncedFolder(int index);
 
     bool getAutomaticSyncIssueResolverEnabled() const;
     void setAutomaticSyncIssueResolverEnabled(bool enable);

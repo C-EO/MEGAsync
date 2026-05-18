@@ -3,6 +3,7 @@
 #include "CreateRemoveSyncsManager.h"
 #include "Platform.h"
 #include "QmlManager.h"
+#include "RequestListenerManager.h"
 #include "StalledIssuesModel.h"
 #include "StatsEventHandler.h"
 #include "SyncController.h"
@@ -55,11 +56,35 @@ void SyncSettingsQuickWidget::resumeSync(int index) const
     SyncController::instance().setSyncToRun(mSyncModel->getSync(index));
 }
 
-void SyncSettingsQuickWidget::restoreSyncedFolder(int index) const
+void SyncSettingsQuickWidget::restoreSyncedFolder(int index)
 {
     auto sync = mSyncModel->getSync(index);
 
-    // deleted folder sync->getMegaFolder();
+    auto node = std::shared_ptr<mega::MegaNode>(
+        MegaSyncApp->getMegaApi()->getNodeByHandle(sync->getMegaHandle()));
+    auto restoreNode = std::shared_ptr<mega::MegaNode>(
+        MegaSyncApp->getMegaApi()->getNodeByHandle(node->getRestoreHandle()));
+
+    auto listener = RequestListenerManager::instance().registerAndGetCustomFinishListener(
+        this,
+        [&sync](mega::MegaRequest* request, mega::MegaError* e)
+        {
+            int errorCode = e->getErrorCode();
+
+            if (errorCode != mega::MegaError::API_OK)
+            {
+                QString logMsg =
+                    QString::fromUtf8("Can't restore (%1) mega folder").arg(sync->getMegaFolder());
+
+                mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_ERROR, logMsg.toUtf8().constData());
+            }
+            else
+            {
+                SyncController::instance().setSyncToRun(sync);
+            }
+        });
+
+    MegaSyncApp->getMegaApi()->moveNode(node.get(), restoreNode.get(), listener.get());
 }
 
 void SyncSettingsQuickWidget::openOverQuotaDialog() const
