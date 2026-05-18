@@ -12,20 +12,20 @@ file(REMOVE_RECURSE "${MSIPath}/${AssetsFolder}")
 file(COPY "${CMAKE_CURRENT_LIST_DIR}/${AssetsFolder}" DESTINATION "${MSIPath}/")
 message(STATUS "Assets folder copied")
 
+set(MEGA_DESKTOP_APP_CERTIFICATE_PUBLISHER $ENV{MEGA_DESKTOP_APP_CERTIFICATE_PUBLISHER})
+
+message (STATUS "Using certificate publisher: ${MEGA_DESKTOP_APP_CERTIFICATE_PUBLISHER}")
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/AppxManifest.xml.in ${MSIPath}/AppxManifest.xml @ONLY)
+
 execute_process(
     COMMAND makepri createconfig "/o" "/cf" "${MSIPath}/priconfig.xml" "/dq" "en-US"
 )
 
 execute_process(
     COMMAND makepri new "/cf" "${MSIPath}/priconfig.xml" "/pr" "${MSIPath}"
-    "/mn" "${MSIPath}/" "/o" "/of" "${MSIPath}/resources.pri"
+    "/mn" "${MSIPath}/AppxManifest.xml" "/o" "/of" "${MSIPath}/resources.pri"
 )
-
-set(MEGA_DESKTOP_APP_CERTIFICATE_PUBLISHER $ENV{MEGA_DESKTOP_APP_CERTIFICATE_PUBLISHER})
-
-message (STATUS "Using certificate publisher: ${MEGA_DESKTOP_APP_CERTIFICATE_PUBLISHER}")
-
-configure_file(${CMAKE_CURRENT_LIST_DIR}/AppxManifest.xml.in ${MSIPath}/AppxManifest.xml @ONLY)
 
 # Create msix package in the root build dir
 execute_process(
