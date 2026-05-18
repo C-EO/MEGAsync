@@ -187,7 +187,7 @@ SyncSettingsModel::SyncStates SyncSettingsModel::getState(std::shared_ptr<SyncSe
         }
         case ::mega::MegaSync::RUNSTATE_DISABLED:
         {
-            return SyncStates::DISABLED;
+            return SyncStates::ERROR;
         }
         case ::mega::MegaSync::RUNSTATE_RUNNING:
         {

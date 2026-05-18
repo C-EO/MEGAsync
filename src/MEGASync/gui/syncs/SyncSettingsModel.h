@@ -41,8 +41,7 @@ public:
         ERROR,
         SCANNING,
         SYNCING,
-        SYNCED,
-        DISABLED
+        SYNCED
     };
 
     Q_ENUM(SyncStates)
