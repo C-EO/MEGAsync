@@ -8376,19 +8376,6 @@ Refresh the list.</translation>
     </message>
 </context>
 <context>
-    <name>SyncAccountFullMessage</name>
-    <message>
-        <source>Purchase more storage</source>
-        <translatorcomment>Button text inviting the user to buy more storage using MEGA online service. Opens the Web Browser. Keep text as short as possible.SNC-4208</translatorcomment>
-        <translation>Buy more storage</translation>
-    </message>
-    <message>
-        <source>Your MEGA account is full. Uploads are disabled and folder synchronisation is paused.</source>
-        <translatorcomment>Warning text message shown in Sync pane when account storage is full.SNC-4208</translatorcomment>
-        <translation>Your MEGA account is full. Uploads are disabled and folder synchronisation is paused.</translation>
-    </message>
-</context>
-<context>
     <name>SyncController</name>
     <message>
         <source>Can&apos;t backup “%1” as it&apos;s the root folder. To continue, select a different folder</source>
@@ -8795,39 +8782,6 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>Saving synchronised folders…</source>
         <translatorcomment>Temporary text label shown while saving changes to Synchronized folders on Windows\Linux. Keep the 3 suspense periods, indicating to the user that the action is in in progress.SNC-4208</translatorcomment>
         <translation>Saving synchronised folders…</translation>
-    </message>
-</context>
-<context>
-    <name>SyncStallModeSelector</name>
-    <message>
-        <source>Advanced</source>
-        <translatorcomment>Stalled issues solve mode to allow users to solve them manually.SNC-2565</translatorcomment>
-        <translation>Advanced</translation>
-    </message>
-    <message>
-        <source>Get full control of the sync issues</source>
-        <translatorcomment>Description for the advanced solve mode of stalled issues.SNC-2565</translatorcomment>
-        <translation>Get full control of the sync issues</translation>
-    </message>
-    <message>
-        <source>Learn more</source>
-        <translatorcomment>Underline link label to open a help.mega.io article.SNC-2565</translatorcomment>
-        <translation>Learn more</translation>
-    </message>
-    <message>
-        <source>Let MEGA solve sync issues automatically</source>
-        <translatorcomment>Description for smart solve mode of stalled issues.SNC-2565</translatorcomment>
-        <translation>Let MEGA resolve sync issues automatically</translation>
-    </message>
-    <message>
-        <source>Smart</source>
-        <translatorcomment>Stalled issues solve mode to allow mega to try solve stalled issues when it can.SNC-2565</translatorcomment>
-        <translation>Smart</translation>
-    </message>
-    <message>
-        <source>Sync stall mode</source>
-        <translatorcomment>Section subtitle for the window allowing the user to select sync stall solve mode.SNC-2565</translatorcomment>
-        <translation>Issue resolution mode</translation>
     </message>
 </context>
 <context>
