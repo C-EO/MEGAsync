@@ -252,14 +252,6 @@ bool NodeRequester::canCreateSearchItem(mega::MegaNode* node)
     {
         return false;
     }
-    else if (mSyncSetupMode)
-    {
-        int access = MegaSyncApp->getMegaApi()->getAccess(node);
-        if (access != mega::MegaShare::ACCESS_FULL && access != mega::MegaShare::ACCESS_OWNER)
-        {
-            return false;
-        }
-    }
     else if (!mShowReadOnlyFolders)
     {
         if (MegaSyncApp->getMegaApi()->getAccess(node) == mega::MegaShare::ACCESS_READ ||
@@ -477,15 +469,7 @@ void NodeRequester::createCloudDriveRootItem()
 
 bool NodeRequester::isIncomingShareCompatible(mega::MegaNode* node)
 {
-    if (mSyncSetupMode)
-    {
-        if (MegaSyncApp->getMegaApi()->getAccess(node) != mega::MegaShare::ACCESS_FULL)
-        {
-            return false;
-            ;
-        }
-    }
-    else if (!mShowReadOnlyFolders)
+    if (!mShowReadOnlyFolders)
     {
         if (MegaSyncApp->getMegaApi()->getAccess(node) == mega::MegaShare::ACCESS_READ ||
             !node->isNodeKeyDecrypted())

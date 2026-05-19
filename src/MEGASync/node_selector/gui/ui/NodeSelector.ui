@@ -699,14 +699,14 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <number>21</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="cbAlwaysUploadToLocation">
-           <property name="text">
-            <string>Always upload to this destination</string>
-           </property>
-           <property name="type" stdset="0">
-            <string notr="true">mega</string>
+          <widget class="BannerWidget" name="destinationBanner" native="true">
+           <property name="visible">
+            <bool>false</bool>
            </property>
           </widget>
+         </item>
+         <item>
+          <widget class="NodeSelectorDestinationBreadcrumb" name="destinationBreadcrumb" native="true"/>
          </item>
          <item>
           <widget class="QWidget" name="bLayout" native="true">
@@ -960,6 +960,16 @@ background-color: #FFFFFF; /*colorToken.page-background*/
    <extends>QWidget</extends>
    <header>IncomingShareHeaderWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NodeSelectorDestinationBreadcrumb</class>
+   <extends>QWidget</extends>
+   <header>NodeSelectorDestinationBreadcrumb.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BannerWidget</class>
+   <extends>QWidget</extends>
+   <header>BannerWidget.h</header>
   </customwidget>
   <customwidget>
    <class>TokenizableButton</class>

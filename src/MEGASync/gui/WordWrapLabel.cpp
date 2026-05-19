@@ -87,6 +87,11 @@ void WordWrapLabel::resetSizeLimits()
     mAdaptHeightTimer.start();
 }
 
+bool WordWrapLabel::isEmpty() const
+{
+    return toPlainText().isEmpty();
+}
+
 void WordWrapLabel::setText(const QString& text)
 {
     if (mText != text)

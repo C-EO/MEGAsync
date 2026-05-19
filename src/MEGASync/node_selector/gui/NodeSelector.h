@@ -10,6 +10,8 @@
 #include <QItemSelection>
 #include <QMap>
 #include <QPixmap>
+#include <QPointer>
+#include <QStringList>
 #include <QTimer>
 
 #include <memory>
@@ -17,6 +19,7 @@
 
 class NodeSelectorProxyModel;
 class NodeSelectorModel;
+class NodeSelectorDestinationBreadcrumb;
 struct NodeSelectorMergeInfo;
 class NodeSelectorTreeViewWidgetCloudDrive;
 class NodeSelectorTreeViewWidgetIncomingShares;
@@ -45,16 +48,6 @@ class NodeSelector: public QDialog, public mega::MegaListener
     Q_OBJECT
 
 public:
-    enum TabItem
-    {
-        CLOUD_DRIVE = 0,
-        SHARES,
-        BACKUPS,
-        RUBBISH,
-        SEARCH
-    };
-    Q_ENUM(TabItem)
-
     enum class ClearType
     {
         CLEAR_ON_CLOSE_SEARCH_TAB = 0x0,
@@ -73,7 +66,7 @@ public:
     bool getDefaultUploadOption();
     void setSelectedNodeHandle(std::shared_ptr<mega::MegaNode> node = nullptr);
     mega::MegaHandle findIndexToMoveItem();
-    mega::MegaHandle getSelectedNodeHandle();
+    mega::MegaHandle getSelectedNodeHandle() const;
     QList<mega::MegaHandle> getMultiSelectionNodeHandle();
     void closeEvent(QCloseEvent* event) override;
     static void showNotFoundNodeMessageBox();
@@ -82,7 +75,7 @@ protected:
     bool event(QEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void addBackupsView();
-    std::shared_ptr<mega::MegaNode> getSelectedNode();
+    std::shared_ptr<mega::MegaNode> getSelectedNode() const;
     void initSpecialisedWidgets(NodeSelectorTreeViewWidget* wid);
     void createActionButtons();
     bool eventFilter(QObject* obj, QEvent* event) override;
@@ -125,6 +118,12 @@ protected:
 
     virtual void configureFooterVisibility() {}
 
+    virtual bool shouldClearSelectionOnBackgroundClick(const QPoint& pos) const
+    {
+        Q_UNUSED(pos);
+        return true;
+    }
+
     virtual void specialisedTreeViewWidgetsCreated();
 
     virtual void configureCloudDriveWidget() {}
@@ -148,11 +147,11 @@ protected:
     virtual void handleSearchHidden() {}
 
     bool isCurrentTabSearchActive() const;
-    std::optional<TabItem> currentSearchSourceTab() const;
+    std::optional<NodeSelectorTreeViewWidget::TabItem> currentSearchSourceTab() const;
     void clearCurrentTabSearch(bool clearLineEdit);
-    TabType tabTypeForItem(TabItem item) const;
+    TabType tabTypeForItem(NodeSelectorTreeViewWidget::TabItem item) const;
 
-    std::optional<TabItem> mSearchSourceTab;
+    std::optional<NodeSelectorTreeViewWidget::TabItem> mSearchSourceTab;
     QString mLastSearchText;
 
     virtual void onLanguageChangeEvent() {}
@@ -202,6 +201,8 @@ protected slots:
                                               int)
     {}
 
+    virtual void onModelModified() {}
+
     void onbShowCloudDriveClicked();
     void onbShowIncomingSharesClicked();
     void onOptionSelected(int index);
@@ -222,9 +223,10 @@ private slots:
     void onbNewFolderClicked();
 
 private:
-    NodeSelectorTreeViewWidget* widgetForTab(TabItem item) const;
-    std::optional<TabItem> tabItemForWidget(const NodeSelectorTreeViewWidget* wid) const;
-    void showTab(TabItem item);
+    NodeSelectorTreeViewWidget* widgetForTab(NodeSelectorTreeViewWidget::TabItem item) const;
+    std::optional<NodeSelectorTreeViewWidget::TabItem>
+        tabItemForWidget(const NodeSelectorTreeViewWidget* wid) const;
+    void showTab(NodeSelectorTreeViewWidget::TabItem item);
     QString folderNameForWidget(NodeSelectorTreeViewWidget* wid) const;
     void applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid);
     void applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid);
@@ -232,11 +234,13 @@ private:
     void refreshHeader(NodeSelectorTreeViewWidget* wid);
     void refreshHeaderButtons(NodeSelectorTreeViewWidget* wid);
 
+    virtual void refreshDestinationBreadcrumb() {}
+
     virtual void onOkButtonClicked() = 0;
     void shortCutConnects(int ignoreThis);
     void resetButtonsText();
 
-    std::optional<TabItem> selectedNodeTab();
+    std::optional<NodeSelectorTreeViewWidget::TabItem> selectedNodeTab();
 
     std::unique_ptr<mega::QTMegaListener> mDelegateListener;
 

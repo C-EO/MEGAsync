@@ -46,15 +46,27 @@ public:
     static const int LABEL_ELIDE_MARGIN;
     static const char* FULL_NAME_PROPERTY;
 
-    explicit NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWidget* parent = nullptr);
+    enum TabItem
+    {
+        CLOUD_DRIVE = 0,
+        SHARES,
+        BACKUPS,
+        RUBBISH,
+        SEARCH
+    };
+    Q_ENUM(TabItem)
+
+    explicit NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
+                                        TabItem tabType,
+                                        QWidget* parent = nullptr);
     ~NodeSelectorTreeViewWidget();
 
     void init();
 
-    mega::MegaHandle getSelectedNodeHandle();
     QList<mega::MegaHandle> getMultiSelectionNodeHandle();
     QModelIndexList getSelectedIndexes() const;
     bool containsTakenDownSelected() const;
+    mega::MegaHandle getSelectedNodeHandle() const;
     void navigateToItem(const mega::MegaHandle& handle);
     void setSelectedNodeHandle(const mega::MegaHandle& selectedHandle);
 
@@ -67,9 +79,10 @@ public:
 
     void selectPendingIndexes();
 
-    void clearSelection();
+    bool clearSelection();
 
     void abort();
+    void moveToTopRootIndex();
     NodeSelectorModelItem* rootItem();
     QModelIndex getCurrentRootIndex() const;
     NodeSelectorProxyModel* getProxyModel();
@@ -85,7 +98,7 @@ public:
     void finishMovingNodes();
     bool areItemsAboutToBeMovedFromHere(mega::MegaHandle firstHandleMoved);
 
-    mega::MegaHandle getHandleByIndex(const QModelIndex& idx);
+    mega::MegaHandle getHandleByIndex(const QModelIndex& idx) const;
 
     void addHandleToBeReplaced(mega::MegaHandle handle);
     void setParentOfRestoredNodes(const QSet<mega::MegaHandle>& parentOfRestoredNodes);
@@ -118,6 +131,11 @@ public:
     void setColumnHidden(int column, bool hidden);
     void setNonInteractiveColumns(const QSet<int>& columns);
 
+    TabItem getTabType() const
+    {
+        return mTabType;
+    }
+
 public slots:
     virtual void checkViewOnModelChange();
     void setLoadingSceneVisible(bool visible);
@@ -133,6 +151,7 @@ signals:
     void selectionHasChanged();
     void viewStateChanged();
     void viewButtonsStateChanged();
+    void modelModified();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
@@ -229,15 +248,17 @@ private:
     QTimer mResizeEventsTimer;
 
     virtual bool isAllowedToEnterInIndex(const QModelIndex& idx);
+    virtual bool isDownloadAllowed() const;
     void setRootIndex(const QModelIndex& proxy_idx);
     virtual QIcon getEmptyIcon();
     void setEmptyFolderPage();
+    QModelIndex currentFolderIndex() const;
 
     QModelIndex getIndexFromHandle(const mega::MegaHandle& handle);
     virtual std::shared_ptr<NodeSelectorProxyModel> createProxyModel();
     virtual std::unique_ptr<NodeSelectorModel> createModel() = 0;
 
-    virtual bool isCurrentRootIndexReadOnly()
+    virtual bool isCurrentRootIndexReadOnly() const
     {
         return false;
     }
@@ -273,6 +294,8 @@ private:
     QSet<mega::MegaHandle> mNodesToBeReplaced;
 
     QTimer mNodesUpdateTimer;
+
+    TabItem mTabType;
 
     friend class DownloadType;
     friend class SyncType;

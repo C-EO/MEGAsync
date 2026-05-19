@@ -44,7 +44,8 @@ private:
     {
         return mShowEmptyView;
     }
-    bool isCurrentRootIndexReadOnly() override;
+
+    bool isCurrentRootIndexReadOnly() const override;
 
     mega::MegaHandle findMergedSibling(std::shared_ptr<mega::MegaNode> node);
 
@@ -60,6 +61,9 @@ public:
     explicit NodeSelectorTreeViewWidgetIncomingShares(SelectTypeSPtr mode,
                                                       QWidget* parent = nullptr);
 
+signals:
+    void incomingShareAccessChanged();
+
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
     std::optional<IncomingShareHeaderData> incomingShareHeaderData() const override;
@@ -68,7 +72,7 @@ protected:
 private:
     QString getRootText() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
-    bool isCurrentRootIndexReadOnly() override;
+    bool isCurrentRootIndexReadOnly() const override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
     bool isCurrentSelectionReadOnly() override;
     QIcon getEmptyIcon() override;
@@ -86,7 +90,7 @@ private:
     QString getRootText() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
 
-    bool isCurrentRootIndexReadOnly() override
+    bool isCurrentRootIndexReadOnly() const override
     {
         return true;
     }
@@ -116,7 +120,7 @@ public:
     void search(const QString& text);
     void stopSearch();
     void setSearchScope(std::optional<TabType> scope);
-    bool isCurrentRootIndexReadOnly() override;
+    bool isCurrentRootIndexReadOnly() const override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
 
     std::shared_ptr<RestoreNodeManager> getRestoreManager() const;
@@ -185,7 +189,7 @@ private:
         return mShowEmptyView;
     }
 
-    bool isCurrentRootIndexReadOnly() override
+    bool isCurrentRootIndexReadOnly() const override
     {
         return true;
     }

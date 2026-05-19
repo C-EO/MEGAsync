@@ -26,20 +26,26 @@ bool SelectType::isAllowedToNavigateInside(const QModelIndex& index)
              item->isTakenDown());
 }
 
-bool SelectType::okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected)
+bool SelectType::isDownloadAllowed() const
 {
-    return std::none_of(
-        selected.cbegin(),
-        selected.cend(),
-        [](const QModelIndex& index)
-        {
-            return index.data(toInt(NodeSelectorModelRoles::IS_TAKEN_DOWN_ROLE)).toBool();
-        });
+    return false;
+}
+
+bool SelectType::okButtonEnabled(const QModelIndexList& selected)
+{
+    return !selected.isEmpty() &&
+           std::none_of(
+               selected.cbegin(),
+               selected.cend(),
+               [](const QModelIndex& index)
+               {
+                   return index.data(toInt(NodeSelectorModelRoles::IS_TAKEN_DOWN_ROLE)).toBool();
+               });
 }
 
 void SelectType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
-    wdg->ui->tMegaFolders->setAllowContextMenu(isContextMenuAllowed());
+    wdg->ui->tMegaFolders->setAllowContextMenu(areActionsAllowed());
     wdg->ui->tMegaFolders->setAllowNewFolderContextMenuItem(hasNewFolderButton());
 
     wdg->mModel->showFiles(true);
@@ -125,17 +131,17 @@ void SyncType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
     wdg->mModel->showReadOnlyFolders(false);
 }
 
-bool SyncType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
+bool SyncType::okButtonEnabled(const QModelIndexList& selected)
 {
-    if (selected.size() == 1 && SelectType::okButtonEnabled(wdg, selected))
+    if (selected.size() != 1)
     {
-        bool isSyncable =
-            selected.first().data(toInt(NodeSelectorModelRoles::IS_SYNCABLE_FOLDER_ROLE)).toBool();
-        bool isFile = selected.first().data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool();
-        return isSyncable && !isFile;
+        return false;
     }
 
-    return false;
+    bool isSyncable =
+        selected.first().data(toInt(NodeSelectorModelRoles::IS_SYNCABLE_FOLDER_ROLE)).toBool();
+    bool isFile = selected.first().data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool();
+    return (isSyncable && !isFile) && SelectType::okButtonEnabled(selected);
 }
 
 TabTypes SyncType::allowedTabTypes()
@@ -173,24 +179,21 @@ bool SyncType::isAllowedToNavigateInside(const QModelIndex& index)
 ///////////////////////SYNC TYPE//////////////////////////////
 
 ///////////////////////STREAM TYPE//////////////////////////////
-bool StreamType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
+bool StreamType::okButtonEnabled(const QModelIndexList& selected)
 {
-    if (selected.size() == 1 && SelectType::okButtonEnabled(wdg, selected))
+    if (selected.size() != 1)
     {
-        return selected.first().data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool();
+        return false;
     }
 
-    return false;
+    return selected.first().data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool() ?
+               SelectType::okButtonEnabled(selected) :
+               false;
 }
 
 TabTypes StreamType::allowedTabTypes()
 {
     return TabType::CLOUD_DRIVE | TabType::INCOMING_SHARE | TabType::BACKUP;
-}
-
-std::shared_ptr<NodeSelectorProxyModel> StreamType::createProxyModel()
-{
-    return std::make_shared<NodeSelectorProxyModelStream>();
 }
 
 ///////////////////////STREAM TYPE//////////////////////////////
@@ -204,21 +207,16 @@ void UploadType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
     wdg->mModel->showReadOnlyFolders(false);
 }
 
-bool UploadType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
+bool UploadType::okButtonEnabled(const QModelIndexList& selected)
 {
-    auto itemsSelected(selected.size());
-    // If we have one or less items selected
-    if (itemsSelected < 2)
+    if (selected.size() != 1)
     {
-        return itemsSelected == 1 ? SelectType::okButtonEnabled(wdg, selected) &&
-                                        !selected.first()
-                                             .data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE))
-                                             .toBool() :
-                                    !wdg->isCurrentRootIndexReadOnly();
+        return false;
     }
 
-    // If we have more than one item selected, we cannot upload anything
-    return false;
+    return selected.first().data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool() ?
+               false :
+               SelectType::okButtonEnabled(selected);
 }
 
 TabTypes UploadType::allowedTabTypes()
@@ -236,20 +234,24 @@ void DownloadType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
     wdg->ui->tMegaFolders->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
-bool DownloadType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected)
-{
-    return SelectType::okButtonEnabled(wdg, selected) &&
-           (!selected.isEmpty() || cloudDriveIsCurrentRootIndex(wdg));
-}
-
 TabTypes DownloadType::allowedTabTypes()
 {
     return TabType::CLOUD_DRIVE | TabType::INCOMING_SHARE | TabType::BACKUP;
 }
 
+bool DownloadType::isDownloadAllowed() const
+{
+    return true;
+}
+
 ///////////////////////DOWNLOAD TYPE//////////////////////////////
 
 ///////////////////////CLOUD DRIVE TYPE//////////////////////////////
+bool CloudDriveType::isDownloadAllowed() const
+{
+    return true;
+}
+
 void CloudDriveType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
     SelectType::initTreeViewWidget(wdg);
@@ -262,7 +264,7 @@ TabTypes CloudDriveType::allowedTabTypes()
     return TabType::CLOUD_DRIVE | TabType::INCOMING_SHARE | TabType::BACKUP | TabType::RUBBISH;
 }
 
-bool CloudDriveType::okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList&)
+bool CloudDriveType::okButtonEnabled(const QModelIndexList&)
 {
     return false;
 }
@@ -290,6 +292,11 @@ void CloudDriveType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg
                                                  uint buttonId,
                                                  QPushButton* button)
 {
+    if (!wdg)
+    {
+        return;
+    }
+
     auto rubbishWidget = dynamic_cast<NodeSelectorTreeViewWidgetRubbish*>(wdg);
 
     switch (buttonId)
@@ -319,12 +326,6 @@ void CloudDriveType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg
 TabTypes MoveBackupType::allowedTabTypes()
 {
     return TabType::CLOUD_DRIVE;
-}
-
-bool MoveBackupType::okButtonEnabled(NodeSelectorTreeViewWidget* wdg,
-                                     const QModelIndexList& selected)
-{
-    return selected.size() == 1 && SelectType::okButtonEnabled(wdg, selected);
 }
 
 ///////////////////////MOVE BACKUP TYPE//////////////////////////////

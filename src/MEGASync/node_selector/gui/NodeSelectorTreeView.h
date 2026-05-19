@@ -44,7 +44,6 @@ public:
     explicit NodeSelectorTreeView(QWidget* parent = nullptr);
     ~NodeSelectorTreeView();
 
-    MegaHandle getSelectedNodeHandle();
     QList<MegaHandle> getMultiSelectionNodeHandle(const QModelIndexList& selectedRows) const;
     void setModel(QAbstractItemModel* model) override;
     void setRootIndexReadOnly(bool state);

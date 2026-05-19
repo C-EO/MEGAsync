@@ -77,13 +77,6 @@ private slots:
     void onModelSortedFiltered();
 };
 
-class NodeSelectorProxyModelStream: public NodeSelectorProxyModel
-{
-public:
-    explicit NodeSelectorProxyModelStream(QObject* parent = nullptr);
-    void applyProxyModelFlags(Qt::ItemFlags& flags, const QModelIndex& index) const override;
-};
-
 class NodeSelectorProxyModelSync: public NodeSelectorProxyModel
 {
 public:

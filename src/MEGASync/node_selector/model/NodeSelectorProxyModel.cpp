@@ -372,21 +372,6 @@ void NodeSelectorProxyModel::onModelSortedFiltered()
     mItemsToMap.clear();
 }
 
-NodeSelectorProxyModelStream::NodeSelectorProxyModelStream(QObject* parent):
-    NodeSelectorProxyModel(parent)
-{}
-
-void NodeSelectorProxyModelStream::applyProxyModelFlags(Qt::ItemFlags& flags,
-                                                        const QModelIndex& index) const
-{
-    NodeSelectorProxyModel::applyProxyModelFlags(flags, index);
-
-    if (index.isValid() && !index.data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool())
-    {
-        flags &= ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    }
-}
-
 NodeSelectorProxyModelSync::NodeSelectorProxyModelSync(QObject* parent):
     NodeSelectorProxyModel(parent)
 {}

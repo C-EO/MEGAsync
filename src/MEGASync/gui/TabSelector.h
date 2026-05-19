@@ -11,6 +11,7 @@ class TabSelector;
 }
 
 class TokenPropertySetter;
+class TabSelectorTooltip;
 
 class TabSelector: public QWidget
 {
@@ -95,6 +96,11 @@ private:
     bool mIconOnly;
     QString mNormalOff;
     QString mNormalOn;
+
+    QPointer<TabSelectorTooltip> mTooltip;
+
+    void showCollapsedTooltip();
+    void closeCollapsedTooltip();
 };
 
 #endif // TABSELECTOR_H

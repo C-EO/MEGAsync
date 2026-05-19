@@ -72,21 +72,6 @@ NodeSelectorProxyModel* NodeSelectorTreeView::proxyModel() const
     return static_cast<NodeSelectorProxyModel*>(model());
 }
 
-// Only used for single selection mode
-MegaHandle NodeSelectorTreeView::getSelectedNodeHandle()
-{
-    MegaHandle ret = INVALID_HANDLE;
-
-    if (selectedRows().size() == 1)
-    {
-        if (auto node = proxyModel()->getNode(selectedRows().first()))
-        {
-            ret = node->getHandle();
-        }
-    }
-    return ret;
-}
-
 QList<MegaHandle>
     NodeSelectorTreeView::getMultiSelectionNodeHandle(const QModelIndexList& selectedRows) const
 {
@@ -312,7 +297,7 @@ void NodeSelectorTreeView::keyPressEvent(QKeyEvent* event)
 
     if (!bannedFromRootKeyList.contains(event->key()) || !indexes.contains(cdRootIndex))
     {
-        if (event->key() == Qt::Key_F2)
+        if (mAllowNewFolderContextMenuItem && event->key() == Qt::Key_F2)
         {
             renameNode();
         }
@@ -335,7 +320,7 @@ void NodeSelectorTreeView::keyPressEvent(QKeyEvent* event)
                 }
             }
         }
-        else if (event->key() == Qt::Key_Delete)
+        else if (mAllowNewFolderContextMenuItem && event->key() == Qt::Key_Delete)
         {
             // You cannot remove the root index
             if (!indexes.contains(rootIndex()))
@@ -763,21 +748,7 @@ QModelIndexList NodeSelectorTreeView::selectedRows() const
         return QModelIndexList();
     }
 
-    auto proxyModel = static_cast<NodeSelectorProxyModel*>(model());
-
-    QModelIndexList selectionIndexes(selectionModel()->selectedRows());
-
-    if (selectionIndexes.isEmpty())
-    {
-        auto index(proxyModel->mapFromSource(
-            proxyModel->getMegaModel()->rootIndex(proxyModel->mapToSource(rootIndex()))));
-        if (index.isValid())
-        {
-            selectionIndexes.append(index);
-        }
-    }
-
-    return selectionIndexes;
+    return selectionModel()->selectedRows();
 }
 
 void NodeSelectorTreeView::contextMenuEvent(QContextMenuEvent* event)

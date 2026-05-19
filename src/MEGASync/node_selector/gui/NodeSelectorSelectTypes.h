@@ -23,14 +23,19 @@ public:
     explicit SelectType();
     virtual ~SelectType() = default;
 
-    virtual bool isContextMenuAllowed()
+    virtual bool areActionsAllowed()
     {
         return false;
     }
 
+    virtual bool isCurrentFolderValidForSelection() const
+    {
+        return true;
+    }
     virtual bool isAllowedToNavigateInside(const QModelIndex& index);
+    virtual bool isDownloadAllowed() const;
     virtual void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg);
-    virtual bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected);
+    virtual bool okButtonEnabled(const QModelIndexList& selected);
 
     virtual bool hasNewFolderButton() const
     {
@@ -45,6 +50,11 @@ public:
     virtual bool isFilePicker() const
     {
         return true;
+    }
+
+    virtual bool showsDestinationBreadcrumb() const
+    {
+        return false;
     }
 
     enum ButtonId : uint
@@ -95,8 +105,8 @@ class DownloadType: public SelectType
 public:
     explicit DownloadType() = default;
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
+    bool isDownloadAllowed() const override;
 };
 
 class SyncType: public SelectType
@@ -105,19 +115,38 @@ public:
     explicit SyncType() = default;
     bool isAllowedToNavigateInside(const QModelIndex& index) override;
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected) override;
+    bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
     EmptyFolderPageInfo getEmptyFolderPageInfo() override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
+
+    bool hasNewFolderButton() const override
+    {
+        return true;
+    }
+
+    bool showsDestinationBreadcrumb() const override
+    {
+        return true;
+    }
 };
 
 class StreamType: public SelectType
 {
 public:
     explicit StreamType() = default;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
+    bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
-    std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
+
+    bool showsDestinationBreadcrumb() const override
+    {
+        return false;
+    }
+
+    bool isCurrentFolderValidForSelection() const override
+    {
+        return false;
+    }
 };
 
 class UploadType: public SelectType
@@ -125,10 +154,15 @@ class UploadType: public SelectType
 public:
     explicit UploadType() = default;
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected) override;
+    bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
 
     bool hasNewFolderButton() const override
+    {
+        return true;
+    }
+
+    bool showsDestinationBreadcrumb() const override
     {
         return true;
     }
@@ -139,10 +173,12 @@ class CloudDriveType: public SelectType
 public:
     explicit CloudDriveType() = default;
 
-    bool isContextMenuAllowed() override
+    bool areActionsAllowed() override
     {
         return true;
     }
+
+    bool isDownloadAllowed() const override;
 
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     void checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
@@ -154,7 +190,7 @@ public:
         return true;
     }
 
-    bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
+    bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
     bool flattenSearchResults() const override
     {
@@ -174,7 +210,6 @@ class MoveBackupType: public UploadType
 {
 public:
     explicit MoveBackupType() = default;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
 };
 

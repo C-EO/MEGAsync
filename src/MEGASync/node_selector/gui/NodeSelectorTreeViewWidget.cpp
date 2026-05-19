@@ -20,7 +20,9 @@
 const int CHECK_UPDATED_NODES_INTERVAL = 1000;
 const int IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD = 200;
 
-NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWidget* parent):
+NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
+                                                       TabItem tabType,
+                                                       QWidget* parent):
     QWidget(parent),
     ui(new Ui::NodeSelectorTreeViewWidget),
     mProxyModel(nullptr),
@@ -33,7 +35,8 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWid
     mResizeEventsReceived(0),
     first(true),
     mUiBlocked(false),
-    mWasEmpty(true)
+    mWasEmpty(true),
+    mTabType(tabType)
 {
     ui->setupUi(this);
     setFocusProxy(ui->tMegaFolders);
@@ -98,6 +101,7 @@ void NodeSelectorTreeViewWidget::init()
     ui->tMegaFolders->loadingView().setDelayTimeToShowInMs(150);
     mProxyModel = createProxyModel();
     mModel = createModel();
+    mSelectType->initTreeViewWidget(this);
     mSelectionCoordinator = std::make_unique<NodeSelectorSelectionCoordinator>(
         mMegaApi,
         NodeSelectorSelectionCoordinator::Objects{
@@ -331,15 +335,19 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
     {
         if (auto keyEvent = static_cast<QKeyEvent*>(event); keyEvent->matches(QKeySequence::Paste))
         {
-            if (event->type() == QEvent::ShortcutOverride)
+            // Our way to
+            if (mSelectType->areActionsAllowed())
             {
-                event->accept();
-            }
-            else
-            {
-                QMetaObject::invokeMethod(ui->tMegaFolders,
-                                          "onPasteShortcutActivated",
-                                          Qt::DirectConnection);
+                if (event->type() == QEvent::ShortcutOverride)
+                {
+                    event->accept();
+                }
+                else
+                {
+                    QMetaObject::invokeMethod(ui->tMegaFolders,
+                                              "onPasteShortcutActivated",
+                                              Qt::DirectConnection);
+                }
             }
 
             return true;
@@ -353,14 +361,21 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
     return QWidget::eventFilter(watched, event);
 }
 
-void NodeSelectorTreeViewWidget::clearSelection()
+bool NodeSelectorTreeViewWidget::clearSelection()
 {
+    auto hasSelection{!ui->tMegaFolders->selectedRows().isEmpty()};
     ui->tMegaFolders->clearSelection();
+    return hasSelection;
 }
 
 void NodeSelectorTreeViewWidget::abort()
 {
     mModel->abort();
+}
+
+void NodeSelectorTreeViewWidget::moveToTopRootIndex()
+{
+    setRootIndex(mProxyModel->getTopRootIndex());
 }
 
 NodeSelectorModelItem* NodeSelectorTreeViewWidget::rootItem()
@@ -670,7 +685,7 @@ void NodeSelectorTreeViewWidget::onRemoveIndexFromGoBack(const QModelIndex& inde
     }
 }
 
-MegaHandle NodeSelectorTreeViewWidget::getHandleByIndex(const QModelIndex& idx)
+MegaHandle NodeSelectorTreeViewWidget::getHandleByIndex(const QModelIndex& idx) const
 {
     return mProxyModel ? mProxyModel->getHandle(idx) : mega::INVALID_HANDLE;
 }
@@ -700,23 +715,36 @@ bool NodeSelectorTreeViewWidget::isAllowedToEnterInIndex(const QModelIndex& idx)
     return mSelectType->isAllowedToNavigateInside(idx);
 }
 
+bool NodeSelectorTreeViewWidget::isDownloadAllowed() const
+{
+    return mSelectType->isDownloadAllowed();
+}
+
 void NodeSelectorTreeViewWidget::onItemDoubleClick(const QModelIndex& index)
 {
-    if (!isAllowedToEnterInIndex(index))
+    if (isDownloadAllowed())
     {
         auto item = mModel->getItemByIndex(index);
-        if (item && item->getNode()->isFile() && !item->isTakenDown())
+        if (!item || !item->getNode())
+        {
+            return;
+        }
+
+        if (item->getNode()->isFile() && !item->isTakenDown())
         {
             MegaSyncApp->downloadACtionClickedWithHandles(QList<mega::MegaHandle>()
                                                           << item->getNode()->getHandle());
+            return;
         }
-        return;
     }
 
-    mNavigation.onNavigateInto(getHandleByIndex(ui->tMegaFolders->rootIndex()),
-                               mProxyModel->getHandle(index));
+    if (isAllowedToEnterInIndex(index))
+    {
+        mNavigation.onNavigateInto(getHandleByIndex(ui->tMegaFolders->rootIndex()),
+                                   mProxyModel->getHandle(index));
 
-    setRootIndex(index);
+        setRootIndex(index);
+    }
 }
 
 std::shared_ptr<NodeSelectorProxyModel> NodeSelectorTreeViewWidget::createProxyModel()
@@ -796,20 +824,23 @@ void NodeSelectorTreeViewWidget::onSelectionChanged(const QItemSelection& select
 
 void NodeSelectorTreeViewWidget::onModelModified()
 {
+    emit modelModified();
+
     const bool rootDeleted = !ui->tMegaFolders->rootIndex().isValid() && mNavigation.canGoBack();
 
     if (rootDeleted)
     {
         emit viewStateChanged();
-        return;
     }
-
-    const bool nowEmpty = (mProxyModel->rowCount(getCurrentRootIndex()) == 0);
-    if (nowEmpty != mWasEmpty)
+    else
     {
-        mWasEmpty = nowEmpty;
-        setEmptyFolderPage();
-        emit viewButtonsStateChanged();
+        const bool nowEmpty = (mProxyModel->rowCount(getCurrentRootIndex()) == 0);
+        if (nowEmpty != mWasEmpty)
+        {
+            mWasEmpty = nowEmpty;
+            setEmptyFolderPage();
+            emit viewButtonsStateChanged();
+        }
     }
 }
 
@@ -1024,11 +1055,6 @@ void NodeSelectorTreeViewWidget::setSelectedNodeHandle(const MegaHandle& selecte
     mSelectionCoordinator->setSelectedNodeHandle(selectedHandle);
 }
 
-MegaHandle NodeSelectorTreeViewWidget::getSelectedNodeHandle()
-{
-    return ui->tMegaFolders->getSelectedNodeHandle();
-}
-
 QList<MegaHandle> NodeSelectorTreeViewWidget::getMultiSelectionNodeHandle()
 {
     auto selectedRows(ui->tMegaFolders->selectedRows());
@@ -1037,7 +1063,26 @@ QList<MegaHandle> NodeSelectorTreeViewWidget::getMultiSelectionNodeHandle()
 
 QModelIndexList NodeSelectorTreeViewWidget::getSelectedIndexes() const
 {
-    return ui->tMegaFolders->selectedRows();
+    QModelIndexList selectedIndexes{ui->tMegaFolders->selectedRows()};
+
+    if (selectedIndexes.isEmpty() && !isCurrentRootIndexReadOnly() &&
+        mSelectType->isCurrentFolderValidForSelection())
+    {
+        auto rootIndex = getCurrentRootIndex();
+        if (rootIndex.isValid())
+        {
+            selectedIndexes.append(rootIndex);
+        }
+    }
+
+    return selectedIndexes;
+}
+
+MegaHandle NodeSelectorTreeViewWidget::getSelectedNodeHandle() const
+{
+    auto selectedCurrentIndex{getSelectedIndexes()};
+    return !selectedCurrentIndex.isEmpty() ? getHandleByIndex(selectedCurrentIndex.first()) :
+                                             mega::INVALID_HANDLE;
 }
 
 bool NodeSelectorTreeViewWidget::containsTakenDownSelected() const
@@ -1096,7 +1141,8 @@ void NodeSelectorTreeViewWidget::setEmptyFolderPage()
     auto topRootIndex(mProxyModel->getTopRootIndex());
 
     // If we are inside a folder, show the "Empty folder" page.
-    if (currentRootIndex != topRootIndex && mProxyModel->rowCount(currentRootIndex) == 0)
+    if ((currentRootIndex.isValid() || currentRootIndex != topRootIndex) &&
+        mProxyModel->rowCount(currentRootIndex) == 0)
     {
         ui->stackedWidget->setCurrentWidget(ui->emptyFolderPage);
         auto emptyFolderInfo = mSelectType->getEmptyFolderPageInfo();

@@ -1,5 +1,6 @@
 #include "TabSelector.h"
 
+#include "TabSelectorTooltip.h"
 #include "TokenizableItems/TokenPropertySetter.h"
 #include "TokenParserWidgetManager.h"
 #include "ui_TabSelector.h"
@@ -66,6 +67,7 @@ TabSelector::TabSelector(QWidget* parent):
 
 TabSelector::~TabSelector()
 {
+    closeCollapsedTooltip();
     delete ui;
 }
 
@@ -195,6 +197,7 @@ void TabSelector::setIconOnly(bool state)
     {
         ui->lCounter->setVisible(hasEmptyCount());
         ui->lTitle->show();
+        closeCollapsedTooltip();
     }
 }
 
@@ -230,8 +233,18 @@ bool TabSelector::event(QEvent* event)
         }
         else if (event->type() == QEvent::Enter || event->type() == QEvent::Leave)
         {
-            setProperty(HOVER, event->type() == QEvent::Enter ? true : false);
+            const bool entering = event->type() == QEvent::Enter;
+            setProperty(HOVER, entering);
             setStyleSheet(styleSheet());
+
+            if (mIconOnly && entering && !mTitle.isEmpty())
+            {
+                showCollapsedTooltip();
+            }
+            else
+            {
+                closeCollapsedTooltip();
+            }
         }
     }
 
@@ -360,8 +373,39 @@ void TabSelector::hideIcon()
 
 void TabSelector::hide()
 {
+    closeCollapsedTooltip();
     setCounter(0);
     QWidget::hide();
+}
+
+void TabSelector::showCollapsedTooltip()
+{
+    if (!mIconOnly || mTitle.isEmpty())
+    {
+        return;
+    }
+
+    closeCollapsedTooltip();
+
+    auto* tooltip = new TabSelectorTooltip(this);
+    tooltip->setText(mTitle);
+
+    static constexpr int H_GAP = 8;
+    const int x = mapToGlobal(QPoint(width() + H_GAP, 0)).x();
+    const int y = mapToGlobal(QPoint(0, (height() - tooltip->height()) / 2)).y();
+    tooltip->move(x, y);
+    tooltip->show();
+
+    mTooltip = tooltip;
+}
+
+void TabSelector::closeCollapsedTooltip()
+{
+    if (mTooltip)
+    {
+        mTooltip->close();
+        mTooltip = nullptr;
+    }
 }
 
 void TabSelector::connectToDropEvent(std::function<void(std::shared_ptr<QDropEvent>)> slot)

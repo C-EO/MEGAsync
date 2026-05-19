@@ -4495,11 +4495,6 @@ Enter a different name.</translation>
 <context>
     <name>NodeSelector</name>
     <message>
-        <source>Always upload to this destination</source>
-        <translatorcomment>Label to inform the user upload files/folder to a default destination. with a checkbox. SNC-5804</translatorcomment>
-        <translation>Always upload to this destination</translation>
-    </message>
-    <message>
         <source>Select a MEGA folder</source>
         <translatorcomment>Node selector dialog title</translatorcomment>
         <translation>Select a MEGA folder</translation>
@@ -4518,6 +4513,17 @@ Enter a different name.</translation>
         <source>Search</source>
         <translatorcomment>Search button header</translatorcomment>
         <translation>Search</translation>
+    </message>
+</context>
+<context>
+    <name>NodeSelectorDestinationBreadcrumb</name>
+    <message>
+        <source>Destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always upload to this destination</source>
+        <translation type="unfinished">Always upload to this destination</translation>
     </message>
 </context>
 <context>
@@ -4934,11 +4940,6 @@ Enter a different name.</translation>
         <translation>You cannot undo this action</translation>
     </message>
     <message>
-        <source>No folders to select</source>
-        <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Only folders can be synced</source>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation type="unfinished"></translation>
@@ -4996,14 +4997,10 @@ Enter a different name.</translation>
             <numerusform>If you leave these folders, you will not be able to see them again.</numerusform>
         </translation>
     </message>
-<<<<<<< HEAD
-=======
     <message>
         <source>Create folder</source>
-        <translatorcomment>Button label to create a New folder at your MEGA cloud drive. Keep capital letters. String as short as possible. SNC-6426</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
->>>>>>> 5abd12cdd (Create selection class)
 </context>
 <context>
     <name>NodeSelectorTreeViewWidgetBackups</name>
@@ -8125,6 +8122,10 @@ Refresh the list.</translation>
         <translatorcomment>Warning message when users try to select a folder for streaming</translatorcomment>
         <translation>You can’t stream folders. Select a file to stream.</translation>
     </message>
+    <message>
+        <source>Select a file to stream</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StreamingFromMegaDialog</name>
@@ -8629,6 +8630,26 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>You need Full access right to be able to sync the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying sync a non compatible folder</translatorcomment>
         <translation>To sync this folder, you need to have full-access permission to it.</translation>
+    </message>
+    <message>
+        <source>Select a full access shared folder to sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Folder to sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This folder is already synced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This location contains a folder that&apos;s already synced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only shared folders with full access can be synced</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

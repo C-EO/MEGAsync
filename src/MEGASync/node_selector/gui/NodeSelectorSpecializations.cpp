@@ -86,7 +86,7 @@ void DownloadNodeSelector::onOkButtonClicked()
 
     if (wrongNodes == nodes.size())
     {
-        if (ui->stackedWidget->currentIndex() == CLOUD_DRIVE)
+        if (ui->stackedWidget->currentIndex() == NodeSelectorTreeViewWidget::TabItem::CLOUD_DRIVE)
         {
             msgInfo.descriptionText =
                 tr("The item you selected has been removed. To reselect, close "
@@ -125,7 +125,59 @@ void DownloadNodeSelector::onOkButtonClicked()
 /////////////////////////////////////////////////////////////
 SyncNodeSelector::SyncNodeSelector(QWidget* parent):
     FilePickerNodeSelector(SelectTypeSPtr(new SyncType), parent)
-{}
+{
+    if (mIncomingSharesWidget)
+    {
+        connect(mIncomingSharesWidget,
+                &NodeSelectorTreeViewWidget::viewStateChanged,
+                this,
+                &SyncNodeSelector::refreshDestinationBreadcrumb);
+    }
+}
+
+QString SyncNodeSelector::destinationBreadcrumbEmptyText()
+{
+    return tr("Select a full access shared folder to sync");
+}
+
+void SyncNodeSelector::onModelModified()
+{
+    // Syncs is the only FilePicker that can show/hide the breadcrumb/banner depending on the model
+    refreshDestinationBreadcrumb();
+}
+
+void SyncNodeSelector::refreshDestinationBreadcrumb()
+{
+    // Case 3: SHARES tab with no shares → hide breadcrumb and banner; the tree view
+    // shows its own empty state.
+    if (incomingSharesTabIsEmpty())
+    {
+        ui->destinationBanner->setVisible(false);
+        ui->destinationBreadcrumb->setVisible(false);
+        ui->destinationBreadcrumb->setPathSegments({});
+        return;
+    }
+
+    FilePickerNodeSelector::refreshDestinationBreadcrumb();
+}
+
+bool SyncNodeSelector::incomingSharesTabIsEmpty() const
+{
+    auto* currentWidget = getCurrentTreeViewWidget();
+    if (!currentWidget ||
+        currentWidget->getTabType() != NodeSelectorTreeViewWidget::TabItem::SHARES)
+    {
+        return false;
+    }
+
+    auto* proxy = currentWidget->getProxyModel();
+    if (!proxy)
+    {
+        return false;
+    }
+
+    return proxy->rowCount(proxy->getTopRootIndex()) == 0;
+}
 
 bool SyncNodeSelector::isFullSync()
 {
@@ -139,6 +191,127 @@ bool SyncNodeSelector::isFullSync()
                      });
 
     return foundIt != syncsList.cend();
+}
+
+QString SyncNodeSelector::destinationTitleText() const
+{
+    return tr("Folder to sync");
+}
+
+FilePickerNodeSelector::DestinationBannerInfo SyncNodeSelector::destinationBannerInfo() const
+{
+    DestinationBannerInfo info{BannerWidget::Type::BANNER_WARNING, {}};
+
+    auto* currentWidget = getSearchAwareTargetWidget();
+    if (!currentWidget)
+    {
+        return info;
+    }
+
+    const auto selectedIndexes = currentWidget->getSelectedIndexes();
+    if (selectedIndexes.size() == 1)
+    {
+        const auto status = selectedIndexes.first()
+                                .data(toInt(NodeSelectorModelRoles::STATUS_ROLE))
+                                .value<NodeSelectorModelItem::Status>();
+
+        switch (status)
+        {
+            case NodeSelectorModelItem::Status::SYNC:
+            case NodeSelectorModelItem::Status::SYNC_CHILD:
+            {
+                info.text = tr("Choose a different folder. This folder is already synced");
+            }
+            case NodeSelectorModelItem::Status::SYNC_PARENT:
+            {
+                info.text = tr("Choose a different folder. This location contains a folder that's "
+                               "already synced");
+            }
+            default:
+            {
+                break;
+            }
+        }
+    }
+    else if (currentWidget->getTabType() == NodeSelectorTreeViewWidget::TabItem::SHARES)
+    {
+        if (!fullAccessInTopRootShares())
+        {
+            info.text = tr("Only shared folders with full access can be synced");
+        }
+        else if (!enableFoldersInTopRootShares())
+        {
+            info.text = tr("Choose a different folder. This location contains a folder that's "
+                           "already synced");
+        }
+    }
+
+    return info;
+}
+
+bool SyncNodeSelector::fullAccessInTopRootShares() const
+{
+    if (!mIncomingSharesWidget)
+    {
+        return false;
+    }
+
+    auto* proxy = mIncomingSharesWidget->getProxyModel();
+    if (!proxy)
+    {
+        return false;
+    }
+
+    const auto topRoot = proxy->getTopRootIndex();
+    const int rowCount = proxy->rowCount(topRoot);
+    if (rowCount == 0)
+    {
+        return false;
+    }
+
+    for (int row = 0; row < rowCount; ++row)
+    {
+        const auto idx = proxy->index(row, 0, topRoot);
+        if (idx.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt() ==
+            mega::MegaShare::ACCESS_FULL)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool SyncNodeSelector::enableFoldersInTopRootShares() const
+{
+    if (!mIncomingSharesWidget)
+    {
+        return false;
+    }
+
+    auto* proxy = mIncomingSharesWidget->getProxyModel();
+    if (!proxy)
+    {
+        return false;
+    }
+
+    const auto topRoot = proxy->getTopRootIndex();
+    const int rowCount = proxy->rowCount(topRoot);
+    if (rowCount == 0)
+    {
+        return false;
+    }
+
+    for (int row = 0; row < rowCount; ++row)
+    {
+        const auto idx = proxy->index(row, 0, topRoot);
+        if (idx.flags() & Qt::ItemIsEnabled)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void SyncNodeSelector::onOkButtonClicked()
@@ -189,6 +362,23 @@ StreamNodeSelector::StreamNodeSelector(QWidget* parent):
     FilePickerNodeSelector(SelectTypeSPtr(new StreamType), parent)
 {}
 
+QString StreamNodeSelector::destinationTitleText() const
+{
+    return tr("Select a file to stream");
+}
+
+FilePickerNodeSelector::DestinationBannerInfo StreamNodeSelector::destinationBannerInfo() const
+{
+    auto selectedNode(getSelectedNode());
+
+    if (selectedNode && selectedNode->isFile())
+    {
+        return {};
+    }
+
+    return {BannerWidget::Type::BANNER_MESSAGE, tr("Select a file to stream")};
+}
+
 void StreamNodeSelector::onOkButtonClicked()
 {
     auto node = getSelectedNode();
@@ -225,6 +415,8 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
 
     mDragBackDrop = new QWidget(this);
     mDragBackDrop->hide();
+
+    ui->destinationBreadcrumb->setVisible(false);
 
     setAcceptDrops(true);
 
@@ -853,12 +1045,12 @@ void CloudDriveNodeSelector::selectTabs(const HandlesByTab& tabsInfo)
     if (!tabsInfo.cloudDriveNodes.isEmpty())
     {
         onbShowCloudDriveClicked();
-        onOptionSelected(NodeSelector::CLOUD_DRIVE);
+        onOptionSelected(NodeSelectorTreeViewWidget::TabItem::CLOUD_DRIVE);
     }
     else if (!tabsInfo.incomingSharedNodes.isEmpty())
     {
         onbShowIncomingSharesClicked();
-        onOptionSelected(NodeSelector::SHARES);
+        onOptionSelected(NodeSelectorTreeViewWidget::TabItem::SHARES);
     }
 }
 

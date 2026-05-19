@@ -33,9 +33,21 @@ class SyncNodeSelector: public FilePickerNodeSelector
 public:
     explicit SyncNodeSelector(QWidget* parent = 0);
 
+protected:
+    QString destinationBreadcrumbEmptyText() override;
+
+protected slots:
+    void onModelModified() override;
+
 private:
     void onOkButtonClicked() override;
+    void refreshDestinationBreadcrumb() override;
     bool isFullSync();
+    bool fullAccessInTopRootShares() const;
+    bool enableFoldersInTopRootShares() const;
+    bool incomingSharesTabIsEmpty() const;
+    QString destinationTitleText() const override;
+    DestinationBannerInfo destinationBannerInfo() const override;
 };
 
 class StreamNodeSelector: public FilePickerNodeSelector
@@ -47,6 +59,8 @@ public:
 
 private:
     void onOkButtonClicked() override;
+    QString destinationTitleText() const override;
+    DestinationBannerInfo destinationBannerInfo() const override;
 };
 
 ////////////////////

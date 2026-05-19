@@ -474,6 +474,10 @@ signals:
         int actionType);
     void finishAsyncRequest(mega::MegaHandle handle, int error);
 
+public slots:
+    void beginRootItemsInsertion(int first, int last);
+    void beginChildRowsInsertion(const QModelIndex& parent, int first, int last);
+
 protected:
     void beginRemoveRowsAsync(const mega::MegaHandle& handle);
     MessageDialogInfo buildFailedRequestMessage(
@@ -508,8 +512,6 @@ protected:
     QList<QPair<mega::MegaHandle, QModelIndex>> mIndexesToBeExpanded;
 
 protected slots:
-    void beginRootItemsInsertion(int first, int last);
-    void beginChildRowsInsertion(const QModelIndex& parent, int first, int last);
     void onRootItemAdded();
 
 private slots:

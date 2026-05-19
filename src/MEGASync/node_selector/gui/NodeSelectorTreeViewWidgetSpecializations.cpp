@@ -14,7 +14,7 @@
 ///////////////////////////////////////////////////////////////////
 NodeSelectorTreeViewWidgetCloudDrive::NodeSelectorTreeViewWidgetCloudDrive(SelectTypeSPtr mode,
                                                                            QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
+    NodeSelectorTreeViewWidget(mode, TabItem::CLOUD_DRIVE, parent)
 {}
 
 void NodeSelectorTreeViewWidgetCloudDrive::setShowEmptyView(bool newShowEmptyView)
@@ -63,7 +63,7 @@ NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetCloudDrive:
     return info;
 }
 
-bool NodeSelectorTreeViewWidgetCloudDrive::isCurrentRootIndexReadOnly()
+bool NodeSelectorTreeViewWidgetCloudDrive::isCurrentRootIndexReadOnly() const
 {
     return false;
 }
@@ -94,7 +94,7 @@ MegaHandle
 NodeSelectorTreeViewWidgetIncomingShares::NodeSelectorTreeViewWidgetIncomingShares(
     SelectTypeSPtr mode,
     QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
+    NodeSelectorTreeViewWidget(mode, TabItem::SHARES, parent)
 {}
 
 bool NodeSelectorTreeViewWidgetIncomingShares::isNodeCompatibleWithModel(mega::MegaNode* node)
@@ -155,6 +155,8 @@ void NodeSelectorTreeViewWidgetIncomingShares::makeViewConnections()
         this,
         [this](mega::MegaHandle handle)
         {
+            emit incomingShareAccessChanged();
+
             const auto rootIndex = getCurrentRootIndex();
             if (!rootIndex.isValid())
             {
@@ -186,7 +188,7 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetIncomingShares::cre
     return std::unique_ptr<NodeSelectorModelIncomingShares>(new NodeSelectorModelIncomingShares);
 }
 
-bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentRootIndexReadOnly()
+bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentRootIndexReadOnly() const
 {
     auto rootIndex(ui->tMegaFolders->rootIndex());
     if (rootIndex.isValid())
@@ -258,7 +260,7 @@ NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetIncomingSha
 /////////////////////////////////////////////////////////////////
 NodeSelectorTreeViewWidgetBackups::NodeSelectorTreeViewWidgetBackups(SelectTypeSPtr mode,
                                                                      QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
+    NodeSelectorTreeViewWidget(mode, TabItem::BACKUPS, parent)
 {
     // Monitor Device Names changes and update the title if the current folder is a Device Folder
     auto deviceNamesRequest = UserAttributes::DeviceNames::requestDeviceNames();
@@ -304,7 +306,7 @@ NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetBackups::ge
 
 NodeSelectorTreeViewWidgetSearch::NodeSelectorTreeViewWidgetSearch(SelectTypeSPtr mode,
                                                                    QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
+    NodeSelectorTreeViewWidget(mode, TabItem::SEARCH, parent)
 {
     mSearchController = std::make_unique<NodeSelectorSearchController>(ui);
 
@@ -411,7 +413,7 @@ std::shared_ptr<NodeSelectorProxyModel> NodeSelectorTreeViewWidgetSearch::create
     return proxy;
 }
 
-bool NodeSelectorTreeViewWidgetSearch::isCurrentRootIndexReadOnly()
+bool NodeSelectorTreeViewWidgetSearch::isCurrentRootIndexReadOnly() const
 {
     return true;
 }
@@ -661,7 +663,7 @@ NodeSelectorDelegate* NodeSelectorTreeViewWidgetSearch::createItemDelegate(QObje
 ///////////////////////
 NodeSelectorTreeViewWidgetRubbish::NodeSelectorTreeViewWidgetRubbish(SelectTypeSPtr mode,
                                                                      QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
+    NodeSelectorTreeViewWidget(mode, TabItem::RUBBISH, parent)
 {}
 
 void NodeSelectorTreeViewWidgetRubbish::setShowEmptyView(bool newShowEmptyView)
