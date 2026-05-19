@@ -8780,44 +8780,6 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     </message>
 </context>
 <context>
-    <name>SyncSettingsUI</name>
-    <message>
-        <source>Error adding sync</source>
-        <translatorcomment>Title of the error message displayed when there was en error while trying to add a sync. SNC-4208</translatorcomment>
-        <translation>Error adding sync</translation>
-    </message>
-    <message>
-        <source>Error removing sync</source>
-        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
-        <translation>Error removing sync</translation>
-    </message>
-    <message>
-        <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
-        <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
-        <translation>Your folder “%1” can’t sync. Reason: %2</translation>
-    </message>
-    <message>
-        <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
-        <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Some folders have not synchronised. For more information, hover over the warning icon.</translation>
-    </message>
-    <message>
-        <source>Sync operation failed</source>
-        <translatorcomment>Title for message box shown when an error occurs in a sync.SNC-2565</translatorcomment>
-        <translation>Unable to sync</translation>
-    </message>
-    <message>
-        <source>Synced Folders</source>
-        <translatorcomment>Section title for Synchronized folders table view.SNC-4208</translatorcomment>
-        <translation>Synced folders</translation>
-    </message>
-    <message>
-        <source>Your sync can&apos;t be removed. Reason: %1</source>
-        <translatorcomment>MEssage box text shown when an error occurs when removing sync.SNC-4208</translatorcomment>
-        <translation>Your sync can’t be removed. Reason: %1</translation>
-    </message>
-</context>
-<context>
     <name>SyncSettingsUIBase</name>
     <message>
         <source>%1 can&apos;t be added as your Pro Flexi account has been deactivated due to payment failure or you&apos;ve cancelled your subscription. To continue, make a payment and reactivate your subscription.</source>

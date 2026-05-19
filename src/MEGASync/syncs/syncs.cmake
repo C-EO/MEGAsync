@@ -9,8 +9,6 @@ set(DESKTOP_APP_SYNCS_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/gui/SyncsMenu.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/RemoveSyncConfirmationDialog.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/SyncTableView.h
-    ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/SyncSettingsUI.h
-    ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/SyncSettingsElements.h
     ${CMAKE_CURRENT_LIST_DIR}/model/BackupItemModel.h
     ${CMAKE_CURRENT_LIST_DIR}/model/SyncItemModel.h
     ${CMAKE_CURRENT_LIST_DIR}/control/MegaIgnoreManager.h
@@ -37,8 +35,6 @@ set(DESKTOP_APP_SYNCS_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/gui/SyncsMenu.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/RemoveSyncConfirmationDialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/SyncTableView.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/SyncSettingsUI.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/SyncSettingsElements.cpp
     ${CMAKE_CURRENT_LIST_DIR}/model/BackupItemModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/model/SyncItemModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/control/MegaIgnoreManager.cpp
@@ -58,9 +54,7 @@ set(DESKTOP_APP_SYNCS_SOURCES
 set (DESKTOP_APP_SYNCS_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/gui/Backups/ui/OpenBackupsFolder.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/Backups/ui/RemoveBackupDialog.ui
-    ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/ui/SyncStallModeSelector.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/ui/SyncSettingsUIBase.ui
-    ${CMAKE_CURRENT_LIST_DIR}/gui/Twoways/ui/SyncAccountFullMessage.ui
 )
 
 set_property(TARGET ${ExecutableTarget}
