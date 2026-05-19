@@ -4943,11 +4943,6 @@ Enter a different name</source>
         <translation>項目を復元できませんでした。後でもう一度お試しください。</translation>
     </message>
     <message>
-        <source>This file has been the subject of a takedown notice</source>
-        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>このファイルは削除通知の対象となっています</translation>
-    </message>
-    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>このフォルダはテイクダウン通知（削除要請）の対象となっています</translation>
@@ -6230,7 +6225,7 @@ Enter a different name</source>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- 重複したフォルダ名の競合が自動的に解決されるようになりました。
+        <translation>- アップロード時の競合や、同じフォルダ内の重複項目の名前変更がより簡単になりました。
 - クラウドドライブ、同期、バックアップ、設定の各ダイアログがより分かりやすく、一貫性のあるデザインになりました。
 - バグを修正し、パフォーマンスが向上しました。</translation>
     </message>
@@ -7511,6 +7506,21 @@ Do you want to delete it anyway?</source>
 <context>
     <name>SettingsStrings</name>
     <message>
+        <source>Add a sync to keep folders up to date</source>
+        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
+        <translation>Add a sync to keep folders up to date</translation>
+    </message>
+    <message>
+        <source>Add sync</source>
+        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
+        <translation>Add sync</translation>
+    </message>
+    <message>
+        <source>Automatic sync issue resolution</source>
+        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>Automatic sync issue resolution</translation>
+    </message>
+    <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
         <translation>空き容量[BR]%1</translation>
@@ -7546,14 +7556,84 @@ Do you want to delete it anyway?</source>
         <translation>アップロードや同期が中断されないよう、アップグレードをご検討ください。</translation>
     </message>
     <message>
-        <source>File versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>ファイルバージョン</translation>
+        <source>Disabled</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Disabled</translation>
     </message>
     <message>
-        <source>File versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>ファイルバージョン[BR]%1</translation>
+        <source>Enable sync</source>
+        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
+        <translation>Enable sync</translation>
+    </message>
+    <message>
+        <source>Get more storage</source>
+        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
+        <translation>Get more storage</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Loading</translation>
+    </message>
+    <message>
+        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
+        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</translation>
+    </message>
+    <message>
+        <source>Manage exclusions</source>
+        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Manage exclusions</translation>
+    </message>
+    <message>
+        <source>No syncs set up</source>
+        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
+        <translation>No syncs set up</translation>
+    </message>
+    <message>
+        <source>Open in mega</source>
+        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
+        <translation>Open in mega</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
+        <translation>Pause</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Paused</translation>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
+        <translation>Reboot</translation>
+    </message>
+    <message>
+        <source>Remove synced folder</source>
+        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
+        <translation>Remove synced folder</translation>
+    </message>
+    <message>
+        <source>Rescan</source>
+        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
+        <translation>Rescan</translation>
+    </message>
+    <message>
+        <source>Restore folder</source>
+        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
+        <translation>Restore folder</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
+        <translation>Resume</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
+        <translation>Retry</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7566,9 +7646,44 @@ Do you want to delete it anyway?</source>
         <translation>ゴミ箱[BR]%1</translation>
     </message>
     <message>
+        <source>Scanning</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Scanning</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
+        <translation>Show in folder</translation>
+    </message>
+    <message>
+        <source>Start new sync</source>
+        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
+        <translation>Start new sync</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Status</translation>
+    </message>
+    <message>
         <source>Storage Space</source>
         <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
         <translation>ストレージ容量</translation>
+    </message>
+    <message>
+        <source>Synced</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Synced</translation>
+    </message>
+    <message>
+        <source>Synced folders</source>
+        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Synced folders</translation>
+    </message>
+    <message>
+        <source>Syncing</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Syncing</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7584,6 +7699,16 @@ Do you want to delete it anyway?</source>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>アップロードは無効になっており、フォルダの同期は一時停止されています。</translation>
+    </message>
+    <message>
+        <source>Versions</source>
+        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
+        <translation>バージョン</translation>
+    </message>
+    <message>
+        <source>Versions[BR]%1</source>
+        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
+        <translation>バージョン[BR]%1</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -8802,6 +8927,14 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
 </context>
 <context>
     <name>SyncSettingsElements</name>
+</context>
+<context>
+    <name>SyncSettingsQuickWidget</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Error opening .megaignore file</translation>
+    </message>
 </context>
 <context>
     <name>SyncSettingsUI</name>

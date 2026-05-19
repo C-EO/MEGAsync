@@ -50,14 +50,6 @@
     </message>
 </context>
 <context>
-    <name>AccountStateQuickWidget</name>
-    <message>
-        <source>Available[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
-        <translation>متاح[BR]%1</translation>
-    </message>
-</context>
-<context>
     <name>AccountStatusController</name>
     <message>
         <source>Your account has been disabled by your administrator. Please contact your business account administrator for further details.</source>
@@ -400,7 +392,7 @@
     <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>لم يتم نسخ بعض المجلدات احتياطيًا. لمزيد من المعلومات مرر مؤشر الفأرة فوق الأيقونة الحمراء.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sync operation failed</source>
@@ -657,11 +649,6 @@
         <translation>اشرح المشكلة</translation>
     </message>
     <message>
-        <source>Describe the problem *</source>
-        <translatorcomment>Label to indicate the description input field of form bug report. The user will fill it with a description of the bug and any specific detail that wants to be included.  SNC-6268</translatorcomment>
-        <translation>وصف المشكلة *</translation>
-    </message>
-    <message>
         <source>Error on submitting bug report</source>
         <translatorcomment>Error message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>حدث خطأ أثناء ترفيع المشكلة المبلغ عنها.</translation>
@@ -677,11 +664,6 @@
         <translation>قم بوصف المشكلة التي واجهتها بوضوح. كلما زادت التفاصيل التي تقدمها سيكون من الأسهل علينا حلها. سيتم مراجعة طلبك من قبل فريق التطوير لدينا.</translation>
     </message>
     <message>
-        <source>Please describe your issue in detail. Must be at least 30 characters.</source>
-        <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
-        <translation>يرجى وصف المشكلة التي تواجهها بمزيد من التفاصيل. يجب ألا يقل طولها عن 30 محرفاً.</translation>
-    </message>
-    <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
         <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
         <translation>يرجى المحاولة مرة أخرى لاحقًا أو التواصل مع فريق الدعم عبر [A]support@mega.io[/A] إذا استمرت المشكلة.</translation>
@@ -690,11 +672,6 @@
         <source>Please wait until the current upload is completed.</source>
         <translatorcomment>Informative message shown to the user to inform that needs to wait until the current bug report upload is completed to start a new one bug report.</translatorcomment>
         <translation>انتظر حتى اكتمال الترفيع الحالي.</translation>
-    </message>
-    <message>
-        <source>Report issue</source>
-        <translatorcomment>Title of the dialog used to send bug reports to support team. SNC-6268</translatorcomment>
-        <translation>الإبلاغ عن مشكلة</translation>
     </message>
     <message>
         <source>Submit</source>
@@ -5123,16 +5100,6 @@ Enter a different name</source>
         <translatorcomment>Secondary text of a messagebox when restoring some items (files and folders) in the Cloud Drive dialog failed. SNC-426</translatorcomment>
         <translation>لا يمكن استعادة العناصر. حاول مرة أخرى لاحقًا.</translation>
     </message>
-    <message>
-        <source>This file has been the subject of a takedown notice</source>
-        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>هذا الملف كان موضوع إشعار إزالة المحتوى</translation>
-    </message>
-    <message>
-        <source>This folder has been the subject of a takedown notice</source>
-        <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>هذا المجلد كان موضوع إشعار إزالة المحتوى</translation>
-    </message>
 </context>
 <context>
     <name>NodeSelectorTreeView</name>
@@ -5140,11 +5107,6 @@ Enter a different name</source>
         <source>Copy</source>
         <translatorcomment>Contextual menu text that appears when we right click on a folder/file on node selector. It copy the selected nodes (files or folders), waiting for the paste action. SAT-426</translatorcomment>
         <translation>نسخ</translation>
-    </message>
-    <message>
-        <source>Dispute takedown</source>
-        <translatorcomment>Contextual menu text that appears when we right click on a taken-down item on node selector. It opens the takedown dispute page. SNC-5350</translatorcomment>
-        <translation>إزالة المحتوى المتنازع عليه</translation>
     </message>
     <message>
         <source>Download</source>
@@ -5301,19 +5263,9 @@ Enter a different name</source>
         <translation>مجلّد جديد</translation>
     </message>
     <message>
-        <source>No folders to select</source>
-        <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
-        <translation>لا توجد مجلدات للاختيار</translation>
-    </message>
-    <message>
         <source>Ok</source>
         <translatorcomment>Button text to accept and close the dialog</translatorcomment>
         <translation>موافق</translation>
-    </message>
-    <message>
-        <source>Only folders can be synced</source>
-        <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
-        <translation>يمكن مزامنة المجلدات فقط</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -5503,11 +5455,6 @@ Enter a different name</source>
         <translation>الملفات المضافة أو المحذوفة</translation>
     </message>
     <message>
-        <source>Completed transfers</source>
-        <translatorcomment>Notification category for completed transfers notifications. SNC-6292</translatorcomment>
-        <translation>التراسلات المكتملة</translation>
-    </message>
-    <message>
         <source>Completed uploads and downloads</source>
         <translatorcomment>Title of a checkbox for disconnectig completed transfer notifications</translatorcomment>
         <translation>عمليات الترفيع والتنزيل المكتملة</translation>
@@ -5516,11 +5463,6 @@ Enter a different name</source>
         <source>Contacts</source>
         <translatorcomment>Notification category for contact notifications</translatorcomment>
         <translation>جهات الاتصال</translation>
-    </message>
-    <message>
-        <source>Desktop notifications</source>
-        <translatorcomment>Notification category for deskltop notifications. SNC-6292</translatorcomment>
-        <translation>إشعارات سطح المكتب</translation>
     </message>
     <message>
         <source>Info</source>
@@ -6485,16 +6427,6 @@ Enter a different name</source>
 - إصلاح أخطاء طفيفة وتحسينات على الأداء
 </translation>
     </message>
-    <message>
-        <source>- Rename upload conflicts and duplicate same-folder items more easily.
-- Cloud Drive, sync, backup, and settings dialogs are clearer and more consistent.
-- Bug fixes and performance improvements.
-</source>
-        <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- إعادة تسمية تعارضات الترفيع والعناصر المكرّرة في نفس المجلد بشكل أسهل.
-- مربعات حوار التخزين السحابي والمزامنة والنسخ الاحتياطي والإعدادات أصبحت أوضح وأكثر اتساقاً.
-- إصلاحات أخطاء وتحسينات على الأداء.</translation>
-    </message>
 </context>
 <context>
     <name>ProgressIndicatorDialog</name>
@@ -6532,11 +6464,6 @@ Enter a different name</source>
         <translation>لا يوجد بروكسي</translation>
     </message>
     <message>
-        <source>Password</source>
-        <translatorcomment>Section title for Password change in Security pane. SNC-6293</translatorcomment>
-        <translation>كلمة المرور</translation>
-    </message>
-    <message>
         <source>Password:</source>
         <translatorcomment>Label to indicate the password of the proxy that is being configured.</translatorcomment>
         <translation>كلمة المرور:</translation>
@@ -6570,11 +6497,6 @@ Enter a different name</source>
         <source>Server:</source>
         <translatorcomment>Label to indicate the server name/ip of the proxy that is being configured.</translatorcomment>
         <translation>المخدم:</translation>
-    </message>
-    <message>
-        <source>Username</source>
-        <translatorcomment>Label to indicate the username of the proxy that is being configured. SNC-6293</translatorcomment>
-        <translation>اسم المستخدم</translation>
     </message>
     <message>
         <source>Username:</source>
@@ -7269,16 +7191,6 @@ Do you want to delete it anyway?</source>
         <translation>%1 (ذاكرة التخزين المؤقت المحلية)</translation>
     </message>
     <message>
-        <source>(Max. 90% of available bandwidth)</source>
-        <translatorcomment>Helper text shown when automatic upload rate limit is selected in Network pane. DSN-2979</translatorcomment>
-        <translation>(حد أقصى 90٪ من النطاق الترددي المتاح)</translation>
-    </message>
-    <message>
-        <source>About MEGA</source>
-        <translatorcomment>Button label that opens the About MEGA dialog from the Settings window footer. Keep as short as possible. DSN-2976</translatorcomment>
-        <translation>حول ميغا MEGA</translation>
-    </message>
-    <message>
         <source>Account</source>
         <translatorcomment>Tab label of Account dialog. Max 15 characters.</translatorcomment>
         <translation>حساب</translation>
@@ -7292,11 +7204,6 @@ Do you want to delete it anyway?</source>
         <source>Are you sure?</source>
         <translatorcomment>Warning message second part asking if you are sure about continuing with the logout.</translatorcomment>
         <translation>هل تريد تسجيل الخروج؟</translation>
-    </message>
-    <message>
-        <source>Auto</source>
-        <translatorcomment>Label to indicate that management of the upload rate limit is automatic. DSN-2979</translatorcomment>
-        <translation>تلقائي</translation>
     </message>
     <message>
         <source>Backup</source>
@@ -7329,11 +7236,6 @@ Do you want to delete it anyway?</source>
         <translation>تغيير كلمة المرور</translation>
     </message>
     <message>
-        <source>Change Permissions</source>
-        <translatorcomment>Button label in File Management pane to open the dialog for changing default permissions for new folders and files. Keep as short as possible. DSN-2978</translatorcomment>
-        <translation>تغيير الإذونات</translation>
-    </message>
-    <message>
         <source>Change Settings…</source>
         <translatorcomment>Button label text for Bandwidth and Proxy settings in Network pane.</translatorcomment>
         <translation>تغيير الإعدادات…</translation>
@@ -7357,11 +7259,6 @@ Do you want to delete it anyway?</source>
         <source>Clear remote backup</source>
         <translatorcomment>Title label for the warning to the user before clearing the remote sync cache. Keep as short as possible.</translatorcomment>
         <translation>مسح النسخ الاحتياطي عن بعد</translation>
-    </message>
-    <message>
-        <source>Control who can access new folders and files created in the app, whether it’s just you, your group, or everyone on this device.</source>
-        <translatorcomment>Descriptive text in File Management pane explaining the permissions section for new folders and files. DSN-2978</translatorcomment>
-        <translation>تحكم في من يمكنه الوصول إلى المجلدات والملفات الجديدة التي يتم إنشاؤها في التطبيق، سواء كنت وحدك أو مجموعتك أو الجميع على هذا الجهاز.</translation>
     </message>
     <message>
         <source>Data temporarily unavailable</source>
@@ -7397,11 +7294,6 @@ Do you want to delete it anyway?</source>
         <source>Do you want to delete your remote backup now?</source>
         <translatorcomment>Confirmation prompt for the remote sync cache clear action message box.</translatorcomment>
         <translation>هل تريد حذف النسخة الاحتياطية عن بعد الآن؟</translation>
-    </message>
-    <message>
-        <source>Download rate limit</source>
-        <translatorcomment>Section title for the download speed limit controls in Network pane. DSN-2979</translatorcomment>
-        <translation>السرعة القصوى للتنزيل</translation>
     </message>
     <message>
         <source>Download rate limit:</source>
@@ -7449,11 +7341,6 @@ Do you want to delete it anyway?</source>
         <translation>تصدير مفتاح الاستعادة والحفاظ عليه في مكان آمن يساعدك على تحديد كلمة مرور جديدة دون فقدك للبيانات.</translation>
     </message>
     <message>
-        <source>File management</source>
-        <translatorcomment>Title for the Settings -&gt; File Management pane tab button. Keep as short as possible. DSN-2978</translatorcomment>
-        <translation>إدارة الملفات</translation>
-    </message>
-    <message>
         <source>File versions</source>
         <translatorcomment>Section title label for File versions settings in General pane.</translatorcomment>
         <translation>نسخ الملف</translation>
@@ -7494,11 +7381,6 @@ Do you want to delete it anyway?</source>
         <translation>تبليغ عن مشكلة</translation>
     </message>
     <message>
-        <source>KB/s</source>
-        <translatorcomment>Unit label for kilobytes per second used in Network pane rate limit controls. DSN-2979</translatorcomment>
-        <translation>كيلوبايت/ثانية</translation>
-    </message>
-    <message>
         <source>Language</source>
         <translatorcomment>Label to let the user select the desired language for the application using a dropdown menu.</translatorcomment>
         <translation>اللغة</translation>
@@ -7512,11 +7394,6 @@ Do you want to delete it anyway?</source>
         <source>Learn more</source>
         <translatorcomment>Underline link label to open a help.mega.io article.CON-681</translatorcomment>
         <translation>اعرف أكثر</translation>
-    </message>
-    <message>
-        <source>Limit to:</source>
-        <translatorcomment>Label for the custom rate limit input in Network pane. DSN-2979</translatorcomment>
-        <translation>حد أقصى:</translation>
     </message>
     <message>
         <source>Local folder with a backup of files deleted in MEGA</source>
@@ -7569,19 +7446,9 @@ Do you want to delete it anyway?</source>
         <translation>الإشعارات</translation>
     </message>
     <message>
-        <source>Number of connections per transfer</source>
-        <translatorcomment>Section title for the setting that controls how many connections each transfer uses in Network pane. DSN-2979</translatorcomment>
-        <translation>عدد الاتصالات لكل عملية تراسل معطيات</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translatorcomment>Section title for Password change in Security pane.</translatorcomment>
         <translation>كلمة المرور</translation>
-    </message>
-    <message>
-        <source>Permissions for new folders and files</source>
-        <translatorcomment>Section title for the file and folder permissions settings in File Management pane. DSN-2978</translatorcomment>
-        <translation>أذونات للمجلدات والملفات الجديدة</translation>
     </message>
     <message>
         <source>Please let us know if you encounter any issues. Help us by providing as much detail as possible.</source>
@@ -7596,11 +7463,6 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Proxies</source>
         <translatorcomment>Section title text for the Proxy summary text and actions in Network pane.</translatorcomment>
-        <translation>بروكسي</translation>
-    </message>
-    <message>
-        <source>Proxy</source>
-        <translatorcomment>Section title text for the Proxy summary text and actions in Network pane. DSN-2979</translatorcomment>
         <translation>بروكسي</translation>
     </message>
     <message>
@@ -7632,11 +7494,6 @@ Do you want to delete it anyway?</source>
         <source>Session history</source>
         <translatorcomment>Button label text for opening account login history in MEGA online app in Security pane. Keep as short as possible.</translatorcomment>
         <translation>تاريخ الجلسة</translation>
-    </message>
-    <message>
-        <source>Sets the number of connections used for each transfer. Doesn’t affect how many transfers run in parallel.</source>
-        <translatorcomment>Descriptive text for the number of connections per transfer setting in Network pane. DSN-2979</translatorcomment>
-        <translation>يحدد عدد الاتصالات المستخدمة لكل عملية تراسل. لا يؤثر ذلك على عدد عمليات التراسل التي تتم بالتوازي.</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -7686,7 +7543,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Theme</source>
         <translatorcomment>Label for the theme selection area in the settings dialog. SNC-6085</translatorcomment>
-        <translation>موضوع</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Transfer Quota</source>
@@ -7707,11 +7564,6 @@ Do you want to delete it anyway?</source>
         <source>Upgrade</source>
         <translatorcomment>Button label to let the user upgrade the account. String as short as possible.</translatorcomment>
         <translation>الترقية</translation>
-    </message>
-    <message>
-        <source>Upload rate limit</source>
-        <translatorcomment>Section title for the upload speed limit controls in Network pane. DSN-2979</translatorcomment>
-        <translation>السرعة القصوى للترفيع</translation>
     </message>
     <message>
         <source>Upload rate limit:</source>
@@ -7792,89 +7644,134 @@ Do you want to delete it anyway?</source>
 <context>
     <name>SettingsStrings</name>
     <message>
-        <source>Available[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
-        <translation>متاح[BR]%1</translation>
+        <source>Add a sync to keep folders up to date</source>
+        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
+        <translation>Add a sync to keep folders up to date</translation>
     </message>
     <message>
-        <source>Backups</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Backups segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>النسخ الاحتياطية</translation>
+        <source>Add sync</source>
+        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
+        <translation>Add sync</translation>
     </message>
     <message>
-        <source>Backups[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Backups segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>النسخ الاحتياطية[BR]%1</translation>
+        <source>Automatic sync issue resolution</source>
+        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>Automatic sync issue resolution</translation>
     </message>
     <message>
-        <source>Buy more storage</source>
-        <translatorcomment>Button label shown in the Account pane warning banner to let the user upgrade storage. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>شراء المزيد من مساحة التخزين</translation>
+        <source>Disabled</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Disabled</translation>
     </message>
     <message>
-        <source>Cloud Drive</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Cloud Drive segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>السواقة السحابية</translation>
+        <source>Enable sync</source>
+        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
+        <translation>Enable sync</translation>
     </message>
     <message>
-        <source>Cloud Drive[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Cloud Drive segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>السواقة السحابية[BR]%1</translation>
+        <source>Get more storage</source>
+        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
+        <translation>Get more storage</translation>
     </message>
     <message>
-        <source>Consider upgrading to avoid interruptions to uploads and synchronisation.</source>
-        <translatorcomment>Warning description shown in the Account pane when the account storage is nearly full. DSN-2975</translatorcomment>
-        <translation>فكّر في الترقية لتجنب الانقطاعات في الترفيع والمزامنة.</translation>
+        <source>Loading</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Loading</translation>
     </message>
     <message>
-        <source>File versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>نسخ الملف</translation>
+        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
+        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</translation>
     </message>
     <message>
-        <source>File versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>نسخ الملف[BR]%1</translation>
+        <source>Manage exclusions</source>
+        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Manage exclusions</translation>
     </message>
     <message>
-        <source>Rubbish Bin</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Rubbish Bin segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>سلة المحذوفات</translation>
+        <source>No syncs set up</source>
+        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
+        <translation>No syncs set up</translation>
     </message>
     <message>
-        <source>Rubbish Bin[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Rubbish Bin segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>سلة القمامة[BR]%1</translation>
+        <source>Open in mega</source>
+        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
+        <translation>Open in mega</translation>
     </message>
     <message>
-        <source>Storage Space</source>
-        <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
-        <translation>مساحة التخزين</translation>
+        <source>Pause</source>
+        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
+        <translation>Pause</translation>
     </message>
     <message>
-        <source>Transfers</source>
-        <translatorcomment>Section title for transfer usage details in the Account pane. DSN-2975</translatorcomment>
-        <translation>عمليات تراسل المعطيات</translation>
+        <source>Paused</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Paused</translation>
     </message>
     <message>
-        <source>Transfers[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Transfers segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the transfer amount. DSN-2975</translatorcomment>
-        <translation>التراسلات[BR]%1</translation>
+        <source>Reboot</source>
+        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
+        <translation>Reboot</translation>
     </message>
     <message>
-        <source>Uploads are disabled and folder synchronisation is paused.</source>
-        <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
-        <translation>تم تعطيل الترفيع وتوقّفت مزامنة المجلدات.</translation>
+        <source>Remove synced folder</source>
+        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
+        <translation>Remove synced folder</translation>
     </message>
     <message>
-        <source>Your MEGA account is full</source>
-        <translatorcomment>Warning title shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
-        <translation>حسابك على ميغا MEGA ممتلئ</translation>
+        <source>Rescan</source>
+        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
+        <translation>Rescan</translation>
     </message>
     <message>
-        <source>Your MEGA account is nearly full</source>
-        <translatorcomment>Warning title shown in the Account pane when the account storage is close to full. DSN-2975</translatorcomment>
-        <translation>حسابك في ميغا MEGA تقريباً ممتلئ</translation>
+        <source>Restore folder</source>
+        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
+        <translation>Restore folder</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
+        <translation>Resume</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
+        <translation>Retry</translation>
+    </message>
+    <message>
+        <source>Scanning</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Scanning</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
+        <translation>Show in folder</translation>
+    </message>
+    <message>
+        <source>Start new sync</source>
+        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
+        <translation>Start new sync</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <source>Synced</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Synced</translation>
+    </message>
+    <message>
+        <source>Synced folders</source>
+        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Synced folders</translation>
+    </message>
+    <message>
+        <source>Syncing</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Syncing</translation>
     </message>
 </context>
 <context>
@@ -9145,6 +9042,14 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <name>SyncSettingsElements</name>
 </context>
 <context>
+    <name>SyncSettingsQuickWidget</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Error opening .megaignore file</translation>
+    </message>
+</context>
+<context>
     <name>SyncSettingsUI</name>
     <message>
         <source>Error adding sync</source>
@@ -9169,7 +9074,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
         <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>لم تتم مزامنة بعض المجلدات. لمزيد من المعلومات، مرر مؤشر الفأرة فوق الرمز الأحمر.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sync operation failed</source>

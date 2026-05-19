@@ -54,7 +54,7 @@
     <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
-        <translation>Khả&#xa0;dụng còn lại[BR]%1</translation>
+        <translation>Khả dụng[BR]%1</translation>
     </message>
 </context>
 <context>
@@ -501,7 +501,7 @@
     <message>
         <source>(Max. 90% of available bandwidth)</source>
         <translatorcomment>Label to indicate that auto rate option will take a maximum of 90% of the available bandwidth.</translatorcomment>
-        <translation>(Tối đa 90% băng&#xa0;thông khả&#xa0;dụng)</translation>
+        <translation>(Tối đa 90% tổng lượng băng thông)</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -511,7 +511,7 @@
     <message>
         <source>Auto</source>
         <translatorcomment>Radio button text to indicate automatic rate limit.</translatorcomment>
-        <translation>Tự&#xa0;động</translation>
+        <translation>Tự động</translation>
     </message>
     <message>
         <source>Bandwidth</source>
@@ -526,7 +526,7 @@
     <message>
         <source>Download rate limit</source>
         <translatorcomment>Section title for download rate limit details.</translatorcomment>
-        <translation>Giới hạn tốc độ tải&#xa0;xuống</translation>
+        <translation>Giới hạn tốc độ tải xuống</translation>
     </message>
     <message>
         <source>Downloads:</source>
@@ -541,7 +541,7 @@
     <message>
         <source>Limit to:</source>
         <translatorcomment>Radio button text to indicate the limit for transfer rate.</translatorcomment>
-        <translation>Giới hạn tới:</translation>
+        <translation>Giới hạn đến:</translation>
     </message>
     <message>
         <source>No limit</source>
@@ -551,7 +551,7 @@
     <message>
         <source>Number of connections per transfer</source>
         <translatorcomment>Section title for number of connections per transfer details.</translatorcomment>
-        <translation>Số kết&#xa0;nối cho mỗi phiên truyền</translation>
+        <translation>Số lượng đường truyền kết nối cho mỗi tryền tải</translation>
     </message>
     <message>
         <source>Only enable this option if tranfers don&apos;t start. Under all other circumstances, using HTTP is satisfactory as MEGA already encrypts all data.</source>
@@ -561,7 +561,7 @@
     <message>
         <source>Upload rate limit</source>
         <translatorcomment>Section title for upload rate limit details.</translatorcomment>
-        <translation>Giới hạn tốc độ tải&#xa0;lên</translation>
+        <translation>Giới hạn tốc độ tải lên</translation>
     </message>
     <message>
         <source>Uploads:</source>
@@ -644,7 +644,7 @@
     <message>
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
-        <translation>Vui&#xa0;lòng mô&#xa0;tả chi&#xa0;tiết vấn&#xa0;đề. Phải có ít nhất 30 ký&#xa0;tự.</translation>
+        <translation>Vui lòng mô tả chi tiết vấn đề của bạn. Nội dung phải có ít nhất 30 ký&#xa0;tự.</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -659,7 +659,7 @@
     <message>
         <source>Report issue</source>
         <translatorcomment>Title of the dialog used to send bug reports to support team. SNC-6268</translatorcomment>
-        <translation>Báo cáo lỗi</translation>
+        <translation>Mô tả vấn&#xa0;đề</translation>
     </message>
     <message>
         <source>Submit</source>
@@ -1062,7 +1062,7 @@
     <message>
         <source>Today at %1</source>
         <translatorcomment>Label to indicate the today time of the current alert item displayed or completed transfer. SNC-2977</translatorcomment>
-        <translation>Hôm&#xa0;nay lúc %1</translation>
+        <translation>Hôm nay lúc %1</translation>
     </message>
     <message>
         <source>Yesterday at %1</source>
@@ -1286,7 +1286,7 @@
     <message>
         <source>Your account is suspended as read only until you proceed with the needed payments.</source>
         <translatorcomment>Notification message to indicate that current business account is suspended until needed payments are made</translatorcomment>
-        <translation>Tài khoản đã bị vô&#xa0;hiệu và chỉ được duyệt xem cho đến khi quý&#xa0;khách thanh&#xa0;toán các khoản phí được yêu&#xa0;cầu.</translation>
+        <translation>Tài khoản đã bị vô hiệu và chỉ được duyệt xem cho đến khi bạn thanh toán các khoản phí được yêu cầu.</translation>
     </message>
     <message>
         <source>Your data is at risk</source>
@@ -1401,7 +1401,7 @@
     <message>
         <source>A failure occurred either downloading the file, or moving the downloaded temporary file to its final name and location.</source>
         <translatorcomment>Title for the header widget of a sync stall when a file or cannot be downloaded.SNC-2565</translatorcomment>
-        <translation>Đã phát&#xa0;sinh ra lỗi khi tải&#xa0;xuống, hoặc di&#xa0;chuyển tệp&#xa0;tin tạm&#xa0;thời đã tải đến vị&#xa0;trí đích đã đặt cho nó.</translation>
+        <translation>Đã xảy ra lỗi khi tải xuống tệp hoặc di chuyển tệp&#xa0;tin đã tải xuống tạm&#xa0;thời đến vị&#xa0;trí cuối&#xa0;cùng của nó.</translation>
     </message>
     <message>
         <source>Can´t download [B]%1[/B] to the selected location</source>
@@ -1618,7 +1618,7 @@
     <message>
         <source>Containing</source>
         <translatorcomment>Wild card type to be used for the new exclusion rule.SAT-449</translatorcomment>
-        <translation>có chứa||có chứa đựng||bao gồm</translation>
+        <translation>có chứa</translation>
     </message>
     <message>
         <source>Done</source>
@@ -1943,7 +1943,7 @@
     <message>
         <source>file name</source>
         <translatorcomment>Label in exclusions table specifying the target for files exclusion rule in a sync.SAT-449</translatorcomment>
-        <translation>Tên tệp tin</translation>
+        <translation>Tên Tệp Tin</translation>
     </message>
     <message>
         <source>file type</source>
@@ -2108,7 +2108,7 @@
     <message>
         <source>About MEGA</source>
         <translatorcomment>Menu entry that opens the about MEGA dialog. CON-472</translatorcomment>
-        <translation>Về MEGA</translation>
+        <translation>Tiểu Sử về MEGA</translation>
     </message>
     <message>
         <source>Account temporarily locked</source>
@@ -2306,7 +2306,7 @@ Kiểm&#xa0;tra hộp thư email của bạn để xem hướng&#xa0;dẫn mở 
     <message>
         <source>Pro Flexi</source>
         <translatorcomment>Label to refer Pro Flexi tier CON-467</translatorcomment>
-        <translation>Pro Flexi</translation>
+        <translation>Pro&#xa0;Flexi</translation>
     </message>
     <message>
         <source>Storage space:</source>
@@ -3052,7 +3052,7 @@ Hãy chờ cho phiên tải lên được hoàn&#xa0;tất.</translation>
     <message>
         <source>Please check your e-mail and click the link to confirm your account.</source>
         <translatorcomment>Label text saying the user that he has to go to the email to confirm the account CON-465</translatorcomment>
-        <translation>Kiểm&#xa0;tra hộp&#xa0;thư email của bạn và click vào đường liên&#xa0;kết để xác&#xa0;nhận tài&#xa0;khoản của&#xa0;bạn.</translation>
+        <translation>Kiểm tra hộp&#xa0;thư email của bạn và nhấp vào đường liên&#xa0;kết để xác&#xa0;nhận tài&#xa0;khoản.</translation>
     </message>
     <message>
         <source>You have attempted to log in too many times.[BR]Please wait until %1 and try again.</source>
@@ -3070,7 +3070,7 @@ Hãy chờ cho phiên tải lên được hoàn&#xa0;tất.</translation>
     <message>
         <source>Secure connection failed</source>
         <translatorcomment>Title for the notification message shown when SSL checks fails. SNC-5610</translatorcomment>
-        <translation>Kết&#xa0;nối bảo&#xa0;mật không thành&#xa0;công</translation>
+        <translation>Kết&#xa0;nối an&#xa0;toàn không thành&#xa0;công</translation>
     </message>
     <message>
         <source>You have been logged out because of this error: %1</source>
@@ -3311,7 +3311,7 @@ Hãy chờ cho phiên tải lên được hoàn&#xa0;tất.</translation>
     <message>
         <source>No Internet connection</source>
         <translatorcomment>Tooltip shown when there is not an active Internet connection.</translatorcomment>
-        <translation>Không có kết&#xa0;nối internet</translation>
+        <translation>Không có kết nối internet</translation>
     </message>
     <message>
         <source>No update available at this time</source>
@@ -3533,7 +3533,7 @@ https://mega.co.nz/#sync</source>
     <message>
         <source>Your account is currently [A]suspended[/A]. You can only browse your data.</source>
         <translatorcomment>Informative message shown when a business account is expired and the user can only browse data and none operation (upload, download, creation..) is allowed.</translatorcomment>
-        <translation>Tài khoản của quý &#xa0;khách hiện đã [A]bị vô&#xa0;hiệu hóa[/A]. Quý&#xa0;khách chỉ có thể xem và duyệt dữ&#xa0;liệu của&#xa0;mình.</translation>
+        <translation>Tài khoản của bạn hiện đã [A]bị vô hiệu hóa[/A]. Bạn chỉ có thể xem và duyệt dữ liệu của mình.</translation>
     </message>
     <message>
         <source>Your account&apos;s security is now being upgraded. This will happen only once. If you have seen this message for this account before, press Cancel.</source>
@@ -3606,7 +3606,7 @@ https://mega.co.nz/#sync</source>
     <message>
         <source>Bad session ID</source>
         <translatorcomment>Label to show that an error related with a bad session ID occurs during a SDK operation.</translatorcomment>
-        <translation>Số ID phiên sai</translation>
+        <translation>Bad session ID</translation>
     </message>
     <message>
         <source>Blocked</source>
@@ -3833,8 +3833,7 @@ Kiểm&#xa0;tra hộp&#xa0;thư email của quý&#xa0;vị để biết thêm th
     <message>
         <source>Your account was terminated due to a breach of MEGA&apos;s Terms of Service, such as abuse of rights of others; sharing and/or importing illegal data; or system abuse.</source>
         <translatorcomment>Error triggered by SDK when an account has been terminated due to a breach of MEGA&apos;s terms of Service.</translatorcomment>
-        <translation>Tài&#xa0;khoản của bạn đã bị chấm&#xa0;dứt do vi&#xa0;phạm Điều&#xa0;Khoản Dịch&#xa0;Vụ của MEGA.
-Bạn sẽ không thể lấy lại quyền truy&#xa0;cập vào dữ&#xa0;liệu đã được lưu&#xa0;trữ của mình hoặc được phép đăng&#xa0;ký tài&#xa0;khoản MEGA mới.</translation>
+        <translation>Tài&#xa0;khoản của bạn đã bị chấm&#xa0;dứt do vi&#xa0;phạm Điều&#xa0;Khoản Dịch&#xa0;Vụ của MEGA. Bạn sẽ không thể lấy lại quyền truy&#xa0;cập vào dữ&#xa0;liệu đã được lưu&#xa0;trữ của mình hoặc được phép đăng&#xa0;ký tài&#xa0;khoản MEGA mới.</translation>
     </message>
     <message>
         <source>Your local storage is full</source>
@@ -4957,11 +4956,6 @@ Nhập một tên khác.</translation>
         <translation>Sao chép</translation>
     </message>
     <message>
-        <source>Dispute takedown</source>
-        <translatorcomment>Contextual menu text that appears when we right click on a taken-down item on node selector. It opens the takedown dispute page. SNC-5350</translatorcomment>
-        <translation>Phản cáo yêu cầu</translation>
-    </message>
-    <message>
         <source>Download</source>
         <translatorcomment>Contextual menu text that appears when we right click on a node on node selector. It downloads the selected nodes. SNC-5804</translatorcomment>
         <translation>Tải xuống</translation>
@@ -5214,40 +5208,40 @@ Nhập một tên khác.</translation>
     <message>
         <source>Offer expires in %1 m %2 s</source>
         <translatorcomment>Text indicating that the offer expires in the %1 minutes and %2 seconds. The placeholder %1 shall be replaced by the number of minutes and %2 by the number of seconds. CON-868</translatorcomment>
-        <translation>Ưu&#xa0;đãi hết hạn trong %1&#xa0;phút %2&#xa0;giây</translation>
+        <translation>KM hết hạn trong %1&#xa0;ph́ %2&#xa0;giây</translation>
     </message>
     <message numerus="yes">
         <source>Offer expires in %n day</source>
         <translatorcomment>Text indicating that the offer expires in the %n days. The placeholder %n shall be replaced by the number of days. CON-868</translatorcomment>
         <translation>
-            <numerusform>Kh.mại hết hạn trong %n ngày</numerusform>
+            <numerusform>KM hết hạn trong %n ngày</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Offer expires in %n hour</source>
         <translatorcomment>Text indicating that the offer expires in the %n days. The placeholder %n shall be replaced by the number of days. CON-868</translatorcomment>
         <translation>
-            <numerusform>Kh.mại hết hạn trong %n giờ</numerusform>
+            <numerusform>KM hết hạn trong %n giờ</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Offer expires in %n minute</source>
         <translatorcomment>Text indicating that the offer expires in the %n minutes. The placeholder %n shall be replaced by the number of minutes. CON-868/SNC-4853</translatorcomment>
         <translation>
-            <numerusform>Kh.mại hết hạn trong %n phút</numerusform>
+            <numerusform>KM hết hạn trong %n phút</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Offer expires in %n second</source>
         <translatorcomment>Text indicating that the offer expires in the %n seconds. Placeholder %n shall be replaced by the number of seconds. CON-868/SNC-4853</translatorcomment>
         <translation>
-            <numerusform>Kh.mại hết hạn trong %n giây</numerusform>
+            <numerusform>KM hết hạn trong %n giây</numerusform>
         </translation>
     </message>
     <message>
         <source>PROMO</source>
         <translatorcomment>Label that indicates there is a promotional notification available. The translation should stay in upper case. CON-868</translatorcomment>
-        <translation>KHUYẾN MẠI</translation>
+        <translation>Khuyến mãi</translation>
     </message>
 </context>
 <context>
@@ -5255,17 +5249,17 @@ Nhập một tên khác.</translation>
     <message>
         <source>Access to a shared folder was removed</source>
         <translatorcomment>Title of a checkbox for disconnectig notifications</translatorcomment>
-        <translation>Khi quyền truy&#xa0;cập vào một thư&#xa0;mục chia&#xa0;sẻ bị tước&#xa0;bỏ</translation>
+        <translation>Quyền truy cập vào một thư mục chia sẻ bị tước bỏ</translation>
     </message>
     <message>
         <source>Added or removed files</source>
         <translatorcomment>Title of a checkbox for disconnectig notifications</translatorcomment>
-        <translation>Khi ai&#xa0;đó thêm vào hoặc xóa bỏ tệp&#xa0;tin</translation>
+        <translation>Thêm vào hoặc xóa bỏ tệp tin</translation>
     </message>
     <message>
         <source>Completed transfers</source>
         <translatorcomment>Notification category for completed transfers notifications. SNC-6292</translatorcomment>
-        <translation>Khi các phiên truyền xong</translation>
+        <translation>Các phiên truyền đã hoàn&#xa0;tất</translation>
     </message>
     <message>
         <source>Completed uploads and downloads</source>
@@ -5280,7 +5274,7 @@ Nhập một tên khác.</translation>
     <message>
         <source>Desktop notifications</source>
         <translatorcomment>Notification category for deskltop notifications. SNC-6292</translatorcomment>
-        <translation>Thông&#xa0;báo trên màn&#xa0;hình làm việc</translation>
+        <translation>Thông&#xa0;báo trên máy&#xa0;tính</translation>
     </message>
     <message>
         <source>Info</source>
@@ -5295,17 +5289,17 @@ Nhập một tên khác.</translation>
     <message>
         <source>New contact request</source>
         <translatorcomment>Title of a checkbox for disconnectig notifications</translatorcomment>
-        <translation>Khi có lời&#xa0;mời thêm liên&#xa0;lạc mới</translation>
+        <translation>Lời mời thêm liên lạc mới</translation>
     </message>
     <message>
         <source>New shared folder from contact</source>
         <translatorcomment>Title of a checkbox for disconnectig notifications</translatorcomment>
-        <translation>Khi có người trong sổ liên&#xa0;lạc chia&#xa0;sẻ thư&#xa0;mục</translation>
+        <translation>Khi có người trong sổ liên lạc gửi chia sẻ thư mục</translation>
     </message>
     <message>
         <source>Pending contact request reminder</source>
         <translatorcomment>Title of a checkbox for disconnectig notifications</translatorcomment>
-        <translation>Nhận nhắc&#xa0;nhở về các lời yêu&#xa0;cầu thêm liên&#xa0;lạc chờ hồi&#xa0;âm</translation>
+        <translation>Nhắc nhở các lời yêu cầu thêm liên lạc còn chờ hồi âm</translation>
     </message>
     <message>
         <source>Shares</source>
@@ -5315,12 +5309,12 @@ Nhập một tên khác.</translation>
     <message>
         <source>Someone has accepted your contact request</source>
         <translatorcomment>Title of a checkbox for disconnectig notifications (SNC-3341) </translatorcomment>
-        <translation>Khi có người chấp&#xa0;nhận lời yêu&#xa0;cầu thêm liên&#xa0;lạc của&#xa0;bạn</translation>
+        <translation>Có người chấp nhận lời yêu cầu thêm liên lạc của bạn</translation>
     </message>
     <message>
         <source>System notifications:</source>
         <translatorcomment>Title of a checkbox for disconnectig all notifications</translatorcomment>
-        <translation>Thông&#xa0;báo hệ&#xa0;thống:</translation>
+        <translation>Thông báo hệ thống:</translation>
     </message>
     <message>
         <source>Uploads and downloads</source>
@@ -5389,7 +5383,7 @@ Nhập một tên khác.</translation>
     <message>
         <source>MEGA Pass</source>
         <translatorcomment>Label representing the products included in a plan.snc.6228</translatorcomment>
-        <translation>MEGA&#xa0;Pass</translation>
+        <translation>MEGA Pass</translation>
     </message>
     <message>
         <source>MEGA VPN</source>
@@ -6100,7 +6094,7 @@ Nhập một tên khác.</translation>
     <message>
         <source>Files and folders have an owner and belongs to a group of users. Using this dialog, you can grant different access permission for new files and folders created by MEGAsync to users that belong to the same group and to the rest of the users in the computer. If you don&apos;t need to change them, please leave them as default for security reasons.</source>
         <translatorcomment>Information for users in the dialog that allows to change permissions of new files and folders created by MEGAsync</translatorcomment>
-        <translation>Các tệp&#xa0;tin và thư&#xa0;mục đều có chủ&#xa0;sở&#xa0;hữu và thuộc về một nhóm người&#xa0;dùng. Sử&#xa0;dụng hộp&#xa0;thoại này để cấp các quyền truy&#xa0;cập khác nhau cho các tệp&#xa0;tin và thư&#xa0;mục mới được tạo bởi ứng&#xa0;dụng cho máy&#xa0;tính đối&#xa0;với những người&#xa0;dùng cùng nhóm và đối&#xa0;với phần còn&#xa0;lại của&#xa0;người&#xa0;dùng trên máy&#xa0;tính. Nếu bạn không cần thay&#xa0;đổi gì, hãy để nguyên theo mặc&#xa0;định vì lý&#xa0;do bảo&#xa0;mật.</translation>
+        <translation>Các tệp&#xa0;tin và thư&#xa0;mục đều có chủ sở&#xa0;hữu và thuộc về một nhóm người dùng. Sử&#xa0;dụng hộp&#xa0;thoại này, bạn có thể cấp các quyền truy&#xa0;cập khác nhau cho các tệp&#xa0;tin và thư&#xa0;mục mới do ứng&#xa0;dụng MEGA trên máy&#xa0;tính tạo ra cho người dùng thuộc cùng một nhóm và cho những người dùng còn lại trong máy&#xa0;tính. Nếu bạn không cần thay&#xa0;đổi gì, hãy để mọi thứ ở thiết&#xa0;đặt mặc&#xa0;định vì lý&#xa0;do bảo&#xa0;mật.</translation>
     </message>
     <message>
         <source>Folders</source>
@@ -6130,7 +6124,7 @@ Nhập một tên khác.</translation>
     <message>
         <source>Permissions for new folders and files</source>
         <translatorcomment>Title of the dialog that allows to change the default permissions for new files and folders created by MEGAsync.</translatorcomment>
-        <translation>Quyền cho các thư&#xa0;mục và tệp&#xa0;tin mới</translation>
+        <translation>Các quyền hạn cho thư mục và tệp tin mới</translation>
     </message>
     <message>
         <source>Public permissions:</source>
@@ -6226,9 +6220,7 @@ Nhập một tên khác.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Đặt lại tên cho xung đột tải&#xa0;lên và các mục trùng trong cùng thư&#xa0;mục&#xa0;được dễ hơn.
-- Các hộp thoại Ổ&#xa0;Mây, đồng&#xa0;bộ, sao&#xa0;lưu và cài&#xa0;đặt được rõ ràng, nhất&#xa0;quán hơn.
-- Sửa lỗi và cải thiện hiệu&#xa0;suất.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7056,7 +7048,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Change Permissions</source>
         <translatorcomment>Button label in File Management pane to open the dialog for changing default permissions for new folders and files. Keep as short as possible. DSN-2978</translatorcomment>
-        <translation>Đổi quyền&#xa0;hạn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Change Settings…</source>
@@ -7091,7 +7083,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Data temporarily unavailable</source>
         <translatorcomment>Label to indicate that the usage data is temporarily unavailable. String as short as possible.</translatorcomment>
-        <translation>Dữ&#xa0;liệu tạm thời không&#xa0;có</translation>
+        <translation>Số liệu tạm thời không khả dụng</translation>
     </message>
     <message>
         <source>Default Folders</source>
@@ -7126,7 +7118,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Download rate limit</source>
         <translatorcomment>Section title for the download speed limit controls in Network pane. DSN-2979</translatorcomment>
-        <translation>Giới&#xa0;hạn tốc&#xa0;độ tải&#xa0;xuống</translation>
+        <translation>Giới hạn tốc độ tải&#xa0;xuống</translation>
     </message>
     <message>
         <source>Download rate limit:</source>
@@ -7172,11 +7164,6 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <source>Exporting the master key and keeping it in a secure location enables you to set a new password without data loss.</source>
         <translatorcomment>Label to inform the user to keep the master key in a secure location.</translatorcomment>
         <translation>Xuất ra Chìa Khóa Phục Hồi và giữ chìa khóa này ở một nơi an toàn và dễ nhớ sẽ giúp bạn tránh việc mất dữ liệu khi quên mật khẩu.</translation>
-    </message>
-    <message>
-        <source>File management</source>
-        <translatorcomment>Title for the Settings -&gt; File Management pane tab button. Keep as short as possible. DSN-2978</translatorcomment>
-        <translation>Quản&#xa0;lý tệp&#xa0;tin</translation>
     </message>
     <message>
         <source>File versions</source>
@@ -7271,7 +7258,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>My Account</source>
         <translatorcomment>Button label used to open MEGA web app account overview section for current account. Keep as short as possible.</translatorcomment>
-        <translation>Tài&#xa0;khoản</translation>
+        <translation>Tài Khoản của Tôi</translation>
     </message>
     <message>
         <source>Network</source>
@@ -7296,7 +7283,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Number of connections per transfer</source>
         <translatorcomment>Section title for the setting that controls how many connections each transfer uses in Network pane. DSN-2979</translatorcomment>
-        <translation>Số kết&#xa0;nối cho mỗi phiên truyền&#xa0;tải</translation>
+        <translation>Số kết&#xa0;nối cho mỗi phiên truyền</translation>
     </message>
     <message>
         <source>Password</source>
@@ -7356,7 +7343,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Session history</source>
         <translatorcomment>Button label text for opening account login history in MEGA online app in Security pane. Keep as short as possible.</translatorcomment>
-        <translation>lịch&#xa0;sử phiên</translation>
+        <translation>Lịch sử phiên hoạt động</translation>
     </message>
     <message>
         <source>Sets the number of connections used for each transfer. Doesn’t affect how many transfers run in parallel.</source>
@@ -7416,7 +7403,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Transfer Quota</source>
         <translatorcomment>Section title for account transfer quota details.</translatorcomment>
-        <translation>Hạn mức băng&#xa0;thông truyền&#xa0;tải</translation>
+        <translation>Lượng băng thông</translation>
     </message>
     <message>
         <source>Unable to write file</source>
@@ -7436,7 +7423,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Upload rate limit</source>
         <translatorcomment>Section title for the upload speed limit controls in Network pane. DSN-2979</translatorcomment>
-        <translation>Giới&#xa0;hạn tốc&#xa0;độ tải&#xa0;lên</translation>
+        <translation>Giới hạn tốc độ tải&#xa0;lên</translation>
     </message>
     <message>
         <source>Upload rate limit:</source>
@@ -7493,7 +7480,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Auto</source>
         <translatorcomment>Label to indicate that management of rate upload limit is automatic. SNC-3076</translatorcomment>
-        <translation>Tự&#xa0;động</translation>
+        <translation>Tự động đặt</translation>
     </message>
 </context>
 <context>
@@ -7501,30 +7488,40 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Auto</source>
         <translatorcomment>Label to indicate that proxy settings are on auto detec mode. SNC-3076</translatorcomment>
-        <translation>Tự&#xa0;động</translation>
+        <translation>Tự động đặt</translation>
     </message>
 </context>
 <context>
     <name>SettingsStrings</name>
     <message>
-        <source>Available[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
-        <translation>Khả&#xa0;dụng còn lại[BR]%1</translation>
+        <source>Add a sync to keep folders up to date</source>
+        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
+        <translation>Add a sync to keep folders up to date</translation>
+    </message>
+    <message>
+        <source>Add sync</source>
+        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
+        <translation>Add sync</translation>
+    </message>
+    <message>
+        <source>Automatic sync issue resolution</source>
+        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>Automatic sync issue resolution</translation>
     </message>
     <message>
         <source>Backups</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Backups segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Sao&#xa0;lưu dự&#xa0;phòng</translation>
+        <translation>Sao lưu</translation>
     </message>
     <message>
         <source>Backups[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Backups segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Các bản sao&#xa0;lưu đang chiếm[BR]%1</translation>
+        <translation>Sao&#xa0;lưu[BR]%1</translation>
     </message>
     <message>
         <source>Buy more storage</source>
         <translatorcomment>Button label shown in the Account pane warning banner to let the user upgrade storage. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Mua thêm không&#xa0;gian</translation>
+        <translation>Mua thêm không&#xa0;gian lưu&#xa0;trữ</translation>
     </message>
     <message>
         <source>Cloud Drive</source>
@@ -7534,52 +7531,157 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Cloud Drive[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Cloud Drive segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Ổ&#xa0;Mây đang chiếm[BR]%1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Consider upgrading to avoid interruptions to uploads and synchronisation.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is nearly full. DSN-2975</translatorcomment>
-        <translation>Xin cân nhắc nâng&#xa0;cấp để tránh gián&#xa0;đoạn khi tải&#xa0;lên và đồng&#xa0;bộ.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Các phiên&#xa0;bản tệp&#xa0;tin</translation>
+        <source>Disabled</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Disabled</translation>
     </message>
     <message>
-        <source>File versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Phiên&#xa0;bản tệp đang chiếm[BR]%1</translation>
+        <source>Enable sync</source>
+        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
+        <translation>Enable sync</translation>
+    </message>
+    <message>
+        <source>Get more storage</source>
+        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
+        <translation>Get more storage</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Loading</translation>
+    </message>
+    <message>
+        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
+        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</translation>
+    </message>
+    <message>
+        <source>Manage exclusions</source>
+        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Manage exclusions</translation>
+    </message>
+    <message>
+        <source>No syncs set up</source>
+        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
+        <translation>No syncs set up</translation>
+    </message>
+    <message>
+        <source>Open in mega</source>
+        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
+        <translation>Open in mega</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
+        <translation>Pause</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Paused</translation>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
+        <translation>Reboot</translation>
+    </message>
+    <message>
+        <source>Remove synced folder</source>
+        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
+        <translation>Remove synced folder</translation>
+    </message>
+    <message>
+        <source>Rescan</source>
+        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
+        <translation>Rescan</translation>
+    </message>
+    <message>
+        <source>Restore folder</source>
+        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
+        <translation>Restore folder</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
+        <translation>Resume</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
+        <translation>Retry</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Rubbish Bin segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Thùng&#xa0;Rác</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Rubbish Bin[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Rubbish Bin segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Thùng&#xa0;Rác đang chiếm[BR]%1</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scanning</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Scanning</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
+        <translation>Show in folder</translation>
+    </message>
+    <message>
+        <source>Start new sync</source>
+        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
+        <translation>Start new sync</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Status</translation>
     </message>
     <message>
         <source>Storage Space</source>
         <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
-        <translation>Không&#xa0;gian lưu&#xa0;trữ</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Transfers</source>
-        <translatorcomment>Section title for transfer usage details in the Account pane. DSN-2975</translatorcomment>
-        <translation>Băng&#xa0;thông truyền&#xa0;tải</translation>
+        <source>Synced</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Synced</translation>
+    </message>
+    <message>
+        <source>Synced folders</source>
+        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Synced folders</translation>
+    </message>
+    <message>
+        <source>Syncing</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Syncing</translation>
     </message>
     <message>
         <source>Transfers[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Transfers segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the transfer amount. DSN-2975</translatorcomment>
-        <translation>Lượng truyền đã dùng[BR]%1</translation>
+        <translation>Truyền[BR]%1</translation>
     </message>
     <message>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
-        <translation>Tính năng tải&#xa0;lên đã bị tắt và đồng&#xa0;bộ thư&#xa0;mục đã tạm&#xa0;dừng.</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Versions[BR]%1</source>
+        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
+        <translation>Phiên bản tệp[BR]%1</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -8433,22 +8535,22 @@ Làm mới danh&#xa0;sách.</translation>
     <message>
         <source>Folder can&apos;t be backed up as it is already synced.</source>
         <translatorcomment>Warning message indicating that a folder can´t be backed up as it is synced. CON-468</translatorcomment>
-        <translation>Thư&#xa0;mục không thể sao&#xa0;lưu được vì nó đã được đồng&#xa0;bộ hóa</translation>
+        <translation>Thư&#xa0;mục không thể sao lưu được vì nó đã được đồng&#xa0;bộ hóa</translation>
     </message>
     <message>
         <source>Folder can&apos;t be synced as is already backed up</source>
         <translatorcomment>Warning message indicating that the selected folder is a backup. CON-467</translatorcomment>
-        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được vì nó đã được sao&#xa0;lưu rồi</translation>
+        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được vì nó đã được sao lưu</translation>
     </message>
     <message>
         <source>Folder can&apos;t be synced as it contains backed up folders</source>
         <translatorcomment>Warning message indicating that the selected is contains backed up folders. CON-467</translatorcomment>
-        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được bởi vì nó đang chứa các thư&#xa0;mục đã được sao&#xa0;lưu</translation>
+        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được bởi vì nó đang chứa các thư&#xa0;mục đã được sao lưu</translation>
     </message>
     <message>
         <source>Folder can&apos;t be synced as it contains synced folders</source>
         <translatorcomment>Warning message indicating that the selected is contains synced folders. CON-467</translatorcomment>
-        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được bởi vì nó đang chứa các thư&#xa0;mục đã được đồng&#xa0;bộ</translation>
+        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được bởi vì nó đang chứa các thư&#xa0;mục đã được đồng&#xa0;bộ rồi</translation>
     </message>
     <message>
         <source>Folder can&apos;t be synced as it&apos;s already synced</source>
@@ -8458,12 +8560,12 @@ Làm mới danh&#xa0;sách.</translation>
     <message>
         <source>Folder can&apos;t be synced as it&apos;s in the MEGA Rubbish bin.</source>
         <translatorcomment>Warning message indicating that the folder is in the rubbish bin. CON-467</translatorcomment>
-        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được bởi vì nó đang nằm ở trong Thùng&#xa0;Rác trên MEGA</translation>
+        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được bởi vì nó đang nằm ở trong Thùng&#xa0;Rác MEGA</translation>
     </message>
     <message>
         <source>Folder can&apos;t be synced as it&apos;s inside a backed up folder</source>
         <translatorcomment>Warning message indicating that the selected is inside a backed up folder. CON-467</translatorcomment>
-        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được bởi vì nó đang nằm ở trong một thư&#xa0;mục đã được sao&#xa0;lưu</translation>
+        <translation>Thư&#xa0;mục không thể đồng&#xa0;bộ được bởi vì nó đang nằm ở trong một thư&#xa0;mục đã được sao lưu</translation>
     </message>
     <message>
         <source>Folder can&apos;t be synced as it&apos;s inside a synced folder</source>
@@ -8513,7 +8615,7 @@ Làm mới danh&#xa0;sách.</translation>
     <message>
         <source>Unable to create backup. Try again and if issue continues, contact [A]Support[/A].</source>
         <translatorcomment>Text instructing to try creating a backup again. If it fails again, they should contact support</translatorcomment>
-        <translation>Không thể tạo bản sao lưu. Thử lại và nếu lỗi vẫn tiếp diễn, liên hệ [A]Trợ Giúp[/A].</translation>
+        <translation>KHông thể tạo bản sao lưu. Thử lại và nếu lỗi vẫn tiếp diễn, liên hệ [A]Trợ Giúp[/A].</translation>
     </message>
     <message>
         <source>Unable to create sync as selected folder is not valid. Try again.</source>
@@ -8689,7 +8791,7 @@ Nếu điều này không giải&#xa0;quyết được vấn&#xa0;đề, hãy li
     <message>
         <source>Downloads</source>
         <translatorcomment>Syncs table column name, it shows number of downloads.SNC-2565</translatorcomment>
-        <translation>Các phiên tải&#xa0;xuống</translation>
+        <translation>Phiên tải&#xa0;xuống</translation>
     </message>
     <message>
         <source>Files</source>
@@ -8779,7 +8881,7 @@ Nếu điều này không giải&#xa0;quyết được vấn&#xa0;đề, hãy li
     <message>
         <source>Uploads</source>
         <translatorcomment>Syncs table column header, it shows number of uploads.SNC-2565</translatorcomment>
-        <translation>Các phiên tải&#xa0;lên</translation>
+        <translation>Phiên tải&#xa0;lên</translation>
     </message>
 </context>
 <context>
@@ -8798,6 +8900,14 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
 </context>
 <context>
     <name>SyncSettingsElements</name>
+</context>
+<context>
+    <name>SyncSettingsQuickWidget</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Error opening .megaignore file</translation>
+    </message>
 </context>
 <context>
     <name>SyncSettingsUI</name>
@@ -9143,7 +9253,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Downloads</source>
         <translatorcomment>Label of tab to access all active downloads</translatorcomment>
-        <translation>Các phiên tải&#xa0;xuống</translation>
+        <translation>Phiên tải&#xa0;xuống</translation>
     </message>
     <message>
         <source>Failed</source>
@@ -9178,7 +9288,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>No transfers</source>
         <translatorcomment>Empty window message for generic categories</translatorcomment>
-        <translation>Không có truyền&#xa0;tải nào</translation>
+        <translation>Không có truyền tải</translation>
     </message>
     <message>
         <source>No uploads</source>
@@ -9238,7 +9348,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Uploads</source>
         <translatorcomment>Label of tab to access all active uploads</translatorcomment>
-        <translation>Các phiên tải&#xa0;lên</translation>
+        <translation>Phiên tải&#xa0;lên</translation>
     </message>
     <message>
         <source>Videos</source>
@@ -9558,7 +9668,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Avg. speed</source>
         <translatorcomment>speed table header column name for completed and failed transfers categories</translatorcomment>
-        <translation>Tốc độ tr.bình</translation>
+        <translation>Tốc&#xa0;độ TB</translation>
     </message>
     <message>
         <source>Cancel all archives</source>
@@ -9813,7 +9923,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Time left</source>
         <translatorcomment>Time table header column name for all transfers, downloads, uploads categories (where there are only active transfers)</translatorcomment>
-        <translation>Th.gian còn lại</translation>
+        <translation>Thời&#xa0;gian còn lại</translation>
     </message>
 </context>
 <context>
@@ -10158,7 +10268,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Basic</source>
         <translatorcomment>Label to refer to MEGA Basic account type in short form CON-719</translatorcomment>
-        <translation>Gói Cơ&#xa0;bản</translation>
+        <translation>Basic</translation>
     </message>
     <message>
         <source>Business</source>
@@ -10173,7 +10283,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Essential</source>
         <translatorcomment>Label to refer to MEGA Essential account type in short form CON-719</translatorcomment>
-        <translation>Thiết yếu</translation>
+        <translation>Essential</translation>
     </message>
     <message>
         <source>Free</source>
@@ -10213,7 +10323,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Pro Flexi</source>
         <translatorcomment>Text label indicating the Free tier of account type in Account pane, next to the shield icon indicating also the type of account. SNC-4555</translatorcomment>
-        <translation>Pro Flexi</translation>
+        <translation>Pro&#xa0;Flexi</translation>
     </message>
     <message>
         <source>Pro I</source>
@@ -10238,7 +10348,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Starter</source>
         <translatorcomment>Label to refer to MEGA Starter account type in short form CON-719</translatorcomment>
-        <translation>Gói Starter</translation>
+        <translation>Starter</translation>
     </message>
     <message>
         <source>TB</source>
