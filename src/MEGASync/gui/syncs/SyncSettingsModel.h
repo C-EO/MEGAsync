@@ -38,7 +38,7 @@ public:
         PENDING,
         LOADING,
         SUSPENDED,
-        ERROR,
+        FAIL,
         SCANNING,
         SYNCING,
         SYNCED

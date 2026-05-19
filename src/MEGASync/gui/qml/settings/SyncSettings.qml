@@ -52,7 +52,7 @@ Item {
                     return SettingsStrings.syncStateLoading;
             case SyncSettingsModel.SUSPENDED:
                     return SettingsStrings.syncStatePaused;
-            case SyncSettingsModel.ERROR:
+            case SyncSettingsModel.FAIL:
                     return SettingsStrings.syncStateDisabled;
             case SyncSettingsModel.SCANNING:
                     return SettingsStrings.syncStateScanning;
@@ -311,7 +311,7 @@ Item {
             radius: syncItemBackgroundRadius
             height: content.implicitHeight
             width: syncList.width
-            color: status === SyncSettingsModel.ERROR ? ColorTheme.notificationError : "transparent"
+            color: status === SyncSettingsModel.FAIL ? ColorTheme.notificationError : "transparent"
 
             ColumnLayout {
                 id: content
@@ -322,7 +322,7 @@ Item {
                 Rectangle {
                     id: syncItem
 
-                    Layout.topMargin: status === SyncSettingsModel.ERROR ? root.errorBorders : 0
+                    Layout.topMargin: status === SyncSettingsModel.FAIL ? root.errorBorders : 0
                     Layout.rightMargin: Layout.topMargin
                     Layout.leftMargin: Layout.topMargin
                     Layout.alignment: Qt.AlignHCenter
@@ -342,7 +342,7 @@ Item {
                     {
                         switch(status)
                         {
-                            case SyncSettingsModel.ERROR:
+                            case SyncSettingsModel.FAIL:
                                 return Images.alert_circle_small_thin_outline;
 
                             case SyncSettingsModel.SUSPENDED:
@@ -365,7 +365,7 @@ Item {
                         id: syncRow
 
                         anchors.fill: parent
-                        anchors.leftMargin: (status === SyncSettingsModel.ERROR) ? errorSyncItemHoritzontalPadding : syncItemHoritzontalPadding
+                        anchors.leftMargin: (status === SyncSettingsModel.FAIL) ? errorSyncItemHoritzontalPadding : syncItemHoritzontalPadding
                         anchors.rightMargin: anchors.leftMargin
                         spacing: syncItemContentSpacing
 
@@ -382,13 +382,13 @@ Item {
 
                                 text: name
                                 anchors.verticalCenter: parent.verticalCenter
-                                color: status === SyncSettingsModel.ERROR ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
+                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
                             }
 
                             SvgImage {
                                 id: folderSearchIcon
 
-                                color: status === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
+                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : ColorTheme.iconPrimary
                                 source: Images.folder_search_small_thin_outline
                                 sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                 visible: syncItem.syncItemContainsMouse
@@ -416,7 +416,7 @@ Item {
                             SvgImage {
                                 id: folderStatusIcon
 
-                                color: status === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
+                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : ColorTheme.iconPrimary
                                 source: syncItem.getStatusSyncIcon(status)
                                 sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                             }
@@ -425,7 +425,7 @@ Item {
                                 id: syncStatus
 
                                 text: getStatusDescription(status)
-                                color: status === SyncSettingsModel.ERROR ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
+                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
                             }
 
                             Item {
@@ -435,7 +435,7 @@ Item {
                             SvgImage {
                                 id: menuIcon
 
-                                color: status === SyncSettingsModel.ERROR ? ColorTheme.textError : ColorTheme.iconPrimary
+                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : ColorTheme.iconPrimary
                                 source: Images.threeDots
                                 sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                 visible: syncItem.syncItemContainsMouse
@@ -519,7 +519,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            visible: status !== SyncSettingsModel.ERROR && status !== SyncSettingsModel.SUSPENDED
+                            visible: status !== SyncSettingsModel.FAIL && status !== SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
                             text: SettingsStrings.menuActionsRescan
                             icon.source: Images.search_large_small_thin_outline
@@ -529,7 +529,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            visible: status !== SyncSettingsModel.ERROR && status !== SyncSettingsModel.SUSPENDED
+                            visible: status !== SyncSettingsModel.FAIL && status !== SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
                             text: SettingsStrings.menuActionsReboot
                             icon.source: Images.rotate_cw_small_thin_outline
@@ -539,7 +539,7 @@ Item {
                         }
 
                         MenuSeparator {
-                            visible: status !== SyncSettingsModel.ERROR && status !== SyncSettingsModel.SUSPENDED
+                            visible: status !== SyncSettingsModel.FAIL && status !== SyncSettingsModel.SUSPENDED
                             height: visible ? implicitHeight : 0
                         }
 
@@ -558,7 +558,7 @@ Item {
                 Rectangle {
                     id: errorItem
 
-                    visible: status === SyncSettingsModel.ERROR
+                    visible: status === SyncSettingsModel.FAIL
                     Layout.bottomMargin: root.errorBorders
                     Layout.rightMargin: Layout.bottomMargin
                     Layout.leftMargin: Layout.bottomMargin

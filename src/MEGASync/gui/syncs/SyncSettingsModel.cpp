@@ -178,7 +178,7 @@ SyncSettingsModel::SyncStates SyncSettingsModel::getState(std::shared_ptr<SyncSe
         {
             if (sync->getError())
             {
-                return SyncStates::ERROR;
+                return SyncStates::FAIL;
             }
             else
             {
@@ -187,7 +187,7 @@ SyncSettingsModel::SyncStates SyncSettingsModel::getState(std::shared_ptr<SyncSe
         }
         case ::mega::MegaSync::RUNSTATE_DISABLED:
         {
-            return SyncStates::ERROR;
+            return SyncStates::FAIL;
         }
         case ::mega::MegaSync::RUNSTATE_RUNNING:
         {
