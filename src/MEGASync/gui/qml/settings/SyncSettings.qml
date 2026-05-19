@@ -544,7 +544,7 @@ Item {
                         }
 
                         ContextMenuItem {
-                            text: SettingsStrings.menuActionsRemoveSyncedFolder
+                            text: SettingsStrings.solveIssueRemoveSyncedFolder
                             textColor: ColorTheme.textError
                             imageColor: ColorTheme.textError
                             icon.source: Images.trash_small_thin_outline
