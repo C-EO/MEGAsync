@@ -33,11 +33,20 @@ execute_process(
 )
 
 # Create msix package in the root build dir.
-# Note: /nv (no validation) is intentionally NOT used so makeappx catches
-# manifest/asset mismatches (e.g. a Logo PNG that doesn't exist in the
-# package) at build time rather than letting them escape to WACK / the Store.
+#
+# /nv (no validation) is required for sparse packages: makeappx's pack-time
+# validator does not honor <uap10:AllowExternalContent> for the Application
+# Executable= attribute nor for COM Class Path= when those point at files at
+# the ExternalLocationUri (i.e. MEGAsync.exe and the shell-ext DLL). Without
+# /nv, pack fails with "The file name 'MEGAsync.exe' ... doesn't exist in
+# the package". This matches Microsoft's official SparsePackage sample.
+#
+# Trade-off: /nv disables ALL manifest validation, so manifest/asset
+# mismatches (e.g. a Logo PNG referenced in the manifest but missing from
+# the assets folder) will not be caught at build time and will only surface
+# during WACK / Store certification.
 execute_process(
-    COMMAND makeappx pack "/o" "/d" "${MSIPath}" "/p" "${OutputPath}/${MSIName}"
+    COMMAND makeappx pack "/nv" "/o" "/d" "${MSIPath}" "/p" "${OutputPath}/${MSIName}"
     RESULT_VARIABLE makeappx_result
 )
 if(NOT makeappx_result EQUAL 0)
