@@ -20,6 +20,8 @@ MegaMenuItem::MegaMenuItem(const QString& text,
     // Make transparent for mouse events - let QMenu handle all interaction
     setAttribute(Qt::WA_TransparentForMouseEvents);
 
+    setObjectName(QLatin1String("megaMenuItem"));
+
     // Transparent background
     setStyleSheet(QLatin1String("MegaMenuItem { background-color: transparent; }"));
 
