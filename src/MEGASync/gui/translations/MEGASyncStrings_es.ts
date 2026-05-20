@@ -7447,7 +7447,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Get more storage</source>
         <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
-        <translation>Get more storage</translation>
+        <translation></translation>
     </message>
     <message>
         <source>Loading</source>
