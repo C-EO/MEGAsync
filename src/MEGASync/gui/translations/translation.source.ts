@@ -7335,21 +7335,6 @@ Do you want to delete it anyway?</translation>
 <context>
     <name>SettingsStrings</name>
     <message>
-        <source>Add a sync to keep folders up to date</source>
-        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
-        <translation>Add a sync to keep folders up to date</translation>
-    </message>
-    <message>
-        <source>Add sync</source>
-        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
-        <translation>Add sync</translation>
-    </message>
-    <message>
-        <source>Automatic sync issue resolution</source>
-        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>Automatic sync issue resolution</translation>
-    </message>
-    <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
         <translation>Available[BR]%1</translation>
@@ -7385,86 +7370,6 @@ Do you want to delete it anyway?</translation>
         <translation>Consider upgrading to avoid interruptions to uploads and syncing.</translation>
     </message>
     <message>
-        <source>Disabled</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Disabled</translation>
-    </message>
-    <message>
-        <source>Enable sync</source>
-        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
-        <translation>Enable sync</translation>
-    </message>
-    <message>
-        <source>Get more storage</source>
-        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
-        <translation>Get more storage</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Loading</translation>
-    </message>
-    <message>
-        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
-        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</translation>
-    </message>
-    <message>
-        <source>Manage exclusions</source>
-        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
-        <translation>Manage exclusions</translation>
-    </message>
-    <message>
-        <source>No syncs set up</source>
-        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
-        <translation>No syncs set up</translation>
-    </message>
-    <message>
-        <source>Open in mega</source>
-        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
-        <translation>Open in mega</translation>
-    </message>
-    <message>
-        <source>Pause</source>
-        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
-        <translation>Pause</translation>
-    </message>
-    <message>
-        <source>Paused</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Paused</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
-        <translation>Reboot</translation>
-    </message>
-    <message>
-        <source>Remove synced folder</source>
-        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
-        <translation>Remove synced folder</translation>
-    </message>
-    <message>
-        <source>Rescan</source>
-        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
-        <translation>Rescan</translation>
-    </message>
-    <message>
-        <source>Restore folder</source>
-        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
-        <translation>Restore folder</translation>
-    </message>
-    <message>
-        <source>Resume</source>
-        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
-        <translation>Resume</translation>
-    </message>
-    <message>
-        <source>Retry</source>
-        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
-        <translation>Retry</translation>
-    </message>
-    <message>
         <source>Rubbish Bin</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Rubbish Bin segment. Keep as short as possible. DSN-2975</translatorcomment>
         <translation>Rubbish bin</translation>
@@ -7475,44 +7380,9 @@ Do you want to delete it anyway?</translation>
         <translation>Rubbish bin[BR]%1</translation>
     </message>
     <message>
-        <source>Scanning</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Scanning</translation>
-    </message>
-    <message>
-        <source>Show in folder</source>
-        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
-        <translation>Show in folder</translation>
-    </message>
-    <message>
-        <source>Start new sync</source>
-        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
-        <translation>Start new sync</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
-        <translation>Status</translation>
-    </message>
-    <message>
         <source>Storage Space</source>
         <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
         <translation>Storage space</translation>
-    </message>
-    <message>
-        <source>Synced</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Synced</translation>
-    </message>
-    <message>
-        <source>Synced folders</source>
-        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
-        <translation>Synced folders</translation>
-    </message>
-    <message>
-        <source>Syncing</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Syncing</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7548,6 +7418,136 @@ Do you want to delete it anyway?</translation>
         <source>Your MEGA account is nearly full</source>
         <translatorcomment>Warning title shown in the Account pane when the account storage is close to full. DSN-2975</translatorcomment>
         <translation>Your MEGA account is nearly full</translation>
+    </message>
+    <message>
+        <source>Synced folders</source>
+        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Synced folders</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <source>Add sync</source>
+        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
+        <translation>Add sync</translation>
+    </message>
+    <message>
+        <source>No syncs set up</source>
+        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
+        <translation>No syncs set up</translation>
+    </message>
+    <message>
+        <source>Add a sync to keep folders up to date</source>
+        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
+        <translation>Add a sync to keep folders up to date</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Loading</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Paused</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Disabled</translation>
+    </message>
+    <message>
+        <source>Scanning</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Scanning</translation>
+    </message>
+    <message>
+        <source>Syncing</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Syncing</translation>
+    </message>
+    <message>
+        <source>Synced</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Synced</translation>
+    </message>
+    <message>
+        <source>Automatic sync issue resolution</source>
+        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>Automatic sync issue resolution</translation>
+    </message>
+    <message>
+        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
+        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
+        <translation>Show in folder</translation>
+    </message>
+    <message>
+        <source>Open in mega</source>
+        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
+        <translation>Open in mega</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
+        <translation>Pause</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
+        <translation>Resume</translation>
+    </message>
+    <message>
+        <source>Manage exclusions</source>
+        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Manage exclusions</translation>
+    </message>
+    <message>
+        <source>Rescan</source>
+        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
+        <translation>Rescan</translation>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
+        <translation>Reboot</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
+        <translation>Retry</translation>
+    </message>
+    <message>
+        <source>Get more storage</source>
+        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Remove synced folder</source>
+        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
+        <translation>Remove synced folder</translation>
+    </message>
+    <message>
+        <source>Enable sync</source>
+        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
+        <translation>Enable sync</translation>
+    </message>
+    <message>
+        <source>Restore folder</source>
+        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
+        <translation>Restore folder</translation>
+    </message>
+    <message>
+        <source>Start new sync</source>
+        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
+        <translation>Start new sync</translation>
     </message>
 </context>
 <context>
