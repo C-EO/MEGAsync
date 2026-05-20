@@ -60,8 +60,11 @@ void BandwidthSettings::initialize()
                                            ParallelConnectionsValues::getMaxValue());
     mUi->eMaxUploadConnections->setRange(ParallelConnectionsValues::getMinValue(),
                                          ParallelConnectionsValues::getMaxValue());
-    mUi->eMaxDownloadConnections->setValue(mPreferences->parallelDownloadConnections());
-    mUi->eMaxUploadConnections->setValue(mPreferences->parallelUploadConnections());
+
+    mInitialDownloadConnections = mApp->getMaxConnections(mega::MegaTransfer::TYPE_DOWNLOAD);
+    mInitialUploadConnections = mApp->getMaxConnections(mega::MegaTransfer::TYPE_UPLOAD);
+    mUi->eMaxDownloadConnections->setValue(mInitialDownloadConnections);
+    mUi->eMaxUploadConnections->setValue(mInitialUploadConnections);
 }
 
 void BandwidthSettings::on_rUploadAutoLimit_toggled(bool checked)
@@ -151,18 +154,20 @@ void BandwidthSettings::on_bUpdate_clicked()
     }
 
     // MAX CONNECTIONS
-    if (mUi->eMaxUploadConnections->value() != mPreferences->parallelUploadConnections())
+    if (mUi->eMaxUploadConnections->value() != mInitialUploadConnections)
     {
         mSettingsChanged.setFlag(UPLOAD_CONNECTIONS, true);
 
-        mPreferences->setParallelUploadConnections(mUi->eMaxUploadConnections->value());
+        mApp->setMaxConnections(mega::MegaTransfer::TYPE_UPLOAD,
+                                mUi->eMaxUploadConnections->value());
     }
 
-    if (mUi->eMaxDownloadConnections->value() != mPreferences->parallelDownloadConnections())
+    if (mUi->eMaxDownloadConnections->value() != mInitialDownloadConnections)
     {
         mSettingsChanged.setFlag(DOWNLOAD_CONNECTIONS, true);
 
-        mPreferences->setParallelDownloadConnections(mUi->eMaxDownloadConnections->value());
+        mApp->setMaxConnections(mega::MegaTransfer::TYPE_DOWNLOAD,
+                                mUi->eMaxDownloadConnections->value());
     }
 
     accept();

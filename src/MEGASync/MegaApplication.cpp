@@ -35,7 +35,6 @@
 #include "offer/OfferComponent.h"
 #include "Onboarding.h"
 #include "OverQuotaDialog.h"
-#include "ParallelConnectionsValues.h"
 #include "Platform.h"
 #include "PlatformStrings.h"
 #include "PowerOptions.h"
@@ -677,9 +676,6 @@ void MegaApplication::initialize()
     megaApi->setLanguage(currentLanguageCode.toUtf8().constData());
     megaApiFolders->setLanguage(currentLanguageCode.toUtf8().constData());
 
-    // In case the user has logout and closed the app, we set the default values
-    setMaxConnections(MegaTransfer::TYPE_UPLOAD, preferences->parallelUploadConnections());
-    setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, preferences->parallelDownloadConnections());
     megaApi->setDefaultFilePermissions(preferences->filePermissionsValue());
     megaApi->setDefaultFolderPermissions(preferences->folderPermissionsValue());
 
@@ -1540,12 +1536,35 @@ if (!infoDialog)
     mThreadPool->push([=](){
     setMaxUploadSpeed(preferences->uploadLimitKB());
     setMaxDownloadSpeed(preferences->downloadLimitKB());
-    setMaxConnections(MegaTransfer::TYPE_UPLOAD,   preferences->parallelUploadConnections());
-    setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, preferences->parallelDownloadConnections());
 
     megaApi->setDefaultFilePermissions(preferences->filePermissionsValue());
     megaApi->setDefaultFolderPermissions(preferences->folderPermissionsValue());
     });
+
+    auto uploadConnListener = RequestListenerManager::instance().registerAndGetCustomFinishListener(
+        this,
+        [this](MegaRequest* request, MegaError* e)
+        {
+            if (e->getErrorCode() == MegaError::API_OK)
+            {
+                setMaxConnections(MegaTransfer::TYPE_UPLOAD,
+                                  static_cast<int>(request->getNumber()));
+            }
+        });
+    megaApi->getMaxUploadConnections(uploadConnListener.get());
+
+    auto downloadConnListener =
+        RequestListenerManager::instance().registerAndGetCustomFinishListener(
+            this,
+            [this](MegaRequest* request, MegaError* e)
+            {
+                if (e->getErrorCode() == MegaError::API_OK)
+                {
+                    setMaxConnections(MegaTransfer::TYPE_DOWNLOAD,
+                                      static_cast<int>(request->getNumber()));
+                }
+            });
+    megaApi->getMaxDownloadConnections(downloadConnListener.get());
 
     // Connect ScanStage signal
     connect(&scanStageController, &ScanStageController::enableTransferActions,
@@ -3673,11 +3692,25 @@ void MegaApplication::setMaxConnections(int direction, int connections)
         return;
     }
 
-    if (connections >= ParallelConnectionsValues::getMinValue() &&
-        connections <= ParallelConnectionsValues::getMaxValue())
+    if (direction == MegaTransfer::TYPE_UPLOAD)
     {
-        megaApi->setMaxConnections(direction, connections);
+        mMaxUploadConnections = connections;
     }
+    else
+    {
+        mMaxDownloadConnections = connections;
+    }
+
+    megaApi->setMaxConnections(direction, connections);
+}
+
+int MegaApplication::getMaxConnections(int direction) const
+{
+    if (direction == MegaTransfer::TYPE_UPLOAD)
+    {
+        return mMaxUploadConnections;
+    }
+    return mMaxDownloadConnections;
 }
 
 void MegaApplication::startUpdateTask()

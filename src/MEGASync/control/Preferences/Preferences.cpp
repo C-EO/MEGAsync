@@ -1,7 +1,6 @@
 #include "Preferences.h"
 
 #include "FullName.h"
-#include "ParallelConnectionsValues.h"
 #include "QtMetaEnumUtils.h"
 #include "StatsEventHandler.h"
 #include "Version.h"
@@ -217,9 +216,7 @@ const QString Preferences::startOnStartupKey = QString::fromLatin1("startOnStart
 const QString Preferences::languageKey              = QString::fromLatin1("language");
 const QString Preferences::updateAutomaticallyKey   = QString::fromLatin1("updateAutomatically");
 const QString Preferences::uploadLimitKBKey         = QString::fromLatin1("uploadLimitKB");
-const QString Preferences::downloadLimitKBKey       = QString::fromLatin1("downloadLimitKB");
-const QString Preferences::parallelUploadConnectionsKey       = QString::fromLatin1("parallelUploadConnections");
-const QString Preferences::parallelDownloadConnectionsKey     = QString::fromLatin1("parallelDownloadConnections");
+const QString Preferences::downloadLimitKBKey = QString::fromLatin1("downloadLimitKB");
 
 const QString Preferences::lastCustomStreamingAppKey =
     QString::fromLatin1("lastCustomStreamingApp");
@@ -1646,39 +1643,6 @@ int Preferences::downloadLimitKB()
     assert(logged());
     return getValueConcurrent<int>(downloadLimitKBKey, defaultDownloadLimitKB);
 }
-
-int Preferences::parallelUploadConnections()
-{
-    return getValueConcurrent<int>(parallelUploadConnectionsKey,
-                                   ParallelConnectionsValues::getDefaultValue());
-}
-
-int Preferences::parallelDownloadConnections()
-{
-    return getValueConcurrent<int>(parallelDownloadConnectionsKey,
-                                   ParallelConnectionsValues::getDefaultValue());
-}
-
-void Preferences::setParallelUploadConnections(int value)
-{
-    assert(logged());
-    if (!ParallelConnectionsValues::contains(value))
-    {
-        value = ParallelConnectionsValues::getDefaultValue();
-    }
-    setValueConcurrently(parallelUploadConnectionsKey, value);
-}
-
-void Preferences::setParallelDownloadConnections(int value)
-{
-    assert(logged());
-    if (!ParallelConnectionsValues::contains(value))
-    {
-        value = ParallelConnectionsValues::getDefaultValue();
-    }
-    setValueConcurrently(parallelDownloadConnectionsKey, value);
-}
-
 void Preferences::setDownloadLimitKB(int value)
 {
     assert(logged());

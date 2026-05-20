@@ -1644,8 +1644,8 @@ void SettingsDialog::updateNetworkTab()
     mUi->eDownloadLimit->setEnabled(downloadLimitKB > 0);
 
     // Connections
-    mUi->eMaxDownloadConnections->setValue(mPreferences->parallelDownloadConnections());
-    mUi->eMaxUploadConnections->setValue(mPreferences->parallelUploadConnections());
+    mUi->eMaxDownloadConnections->setValue(mApp->getMaxConnections(MegaTransfer::TYPE_DOWNLOAD));
+    mUi->eMaxUploadConnections->setValue(mApp->getMaxConnections(MegaTransfer::TYPE_UPLOAD));
 
     // Proxy
     switch (mPreferences->proxyType())
@@ -1746,7 +1746,6 @@ void SettingsDialog::onMaxDownloadConnectionsChanged(int value)
     if (mLoadingSettings)
         return;
 
-    mPreferences->setParallelDownloadConnections(value);
     mApp->setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, value);
 }
 
@@ -1755,7 +1754,6 @@ void SettingsDialog::onMaxUploadConnectionsChanged(int value)
     if (mLoadingSettings)
         return;
 
-    mPreferences->setParallelUploadConnections(value);
     mApp->setMaxConnections(MegaTransfer::TYPE_UPLOAD, value);
 }
 

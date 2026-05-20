@@ -53,6 +53,8 @@ private:
     MegaApplication* mApp;
     std::shared_ptr<Preferences> mPreferences;
     SettingsChanged mSettingsChanged;
+    int mInitialUploadConnections = 0;
+    int mInitialDownloadConnections = 0;
 };
 
 #endif // BANDWIDTHSETTINGS_H

@@ -139,6 +139,7 @@ public:
     void setMaxUploadSpeed(int limit);
     void setMaxDownloadSpeed(int limit);
     void setMaxConnections(int direction, int connections);
+    int getMaxConnections(int direction) const;
     void startUpdateTask();
     void stopUpdateTask();
     void applyProxySettings();
@@ -421,6 +422,8 @@ protected:
     SyncInfo *model;
     mega::MegaApi *megaApi;
     mega::MegaApi* megaApiFolders;
+    int mMaxUploadConnections = 0;
+    int mMaxDownloadConnections = 0;
 
     HTTPServer *httpServer;
     mega::MegaHandle fileUploadTarget;
