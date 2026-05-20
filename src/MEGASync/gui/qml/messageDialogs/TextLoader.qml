@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import components.texts 1.0 as Texts
 
@@ -14,11 +15,11 @@ Loader {
     required property real textWeight
     property real textLeftPadding : 0
 
-    anchors {
-        left: parent.left
-        right: parent.right
-    }
+    Layout.fillWidth: true
+    Layout.preferredHeight: item ? item.implicitHeight : 0
     visible: root.textInfo ? root.textInfo.text !== "" : false
+    active: root.textInfo !== null
+    asynchronous: false
 
     sourceComponent: {
         if (!root.textInfo) {
@@ -38,6 +39,7 @@ Loader {
         id: textComponent
 
         Texts.Text {
+            width: root.width
             lineHeightMode: Text.FixedHeight
             lineHeight: root.textLineHeight
             wrapMode: Text.Wrap
@@ -54,6 +56,7 @@ Loader {
         id: richTextComponent
 
         Texts.RichText {
+            width: root.width
             lineHeightMode: Text.FixedHeight
             lineHeight: root.textLineHeight
             wrapMode: Text.Wrap
