@@ -1043,7 +1043,8 @@ void MegaApplication::updateTrayIcon()
     if (!networkConnectivity)
     {
         tooltipState = tr("No Internet connection");
-        iconState = QStringLiteral("logging");
+        iconState = QStringLiteral("offline");
+        animation = TrayIconManager::Animation::None;
     }
 
     QString tooltip = QString::fromUtf8("%1 %2\n")
@@ -2055,7 +2056,7 @@ void MegaApplication::checkNetworkInterfaces()
     {
         return;
     }
-
+    const bool oldConnectivityState = networkConnectivity;
     bool disconnect = false;
     const QList<QNetworkInterface> newNetworkInterfaces = findNewNetworkInterfaces();
     if (!newNetworkInterfaces.empty() && !networkConnectivity)
@@ -2084,6 +2085,10 @@ void MegaApplication::checkNetworkInterfaces()
     }
 
     reconnectIfNecessary(disconnect, newNetworkInterfaces);
+    if (oldConnectivityState != networkConnectivity)
+    {
+        updateTrayIcon();
+    }
 }
 
 void MegaApplication::checkMemoryUsage()

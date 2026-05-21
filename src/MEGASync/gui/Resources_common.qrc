@@ -1632,5 +1632,8 @@
         <file alias="images/mega_info_background.png">images/mega_info_background.png</file>
         <file alias="images/mega_rec_icon.svg">images/mega_rec_icon.svg</file>
         <file alias="message-alert_small_thin_outline">images/themed/tokenizable/message-alert_small_thin_outline.svg</file>
+        <file alias="light/tray_icon_offline.svg">images/system_tray/light/tray_icon_offline.svg</file>
+        <file alias="dark/tray_icon_offline.svg">images/system_tray/dark/tray_icon_offline.svg</file>
+        <file alias="reddish/tray_icon_offline.svg">images/system_tray/reddish/tray_icon_offline.svg</file>
     </qresource>
 </RCC>
