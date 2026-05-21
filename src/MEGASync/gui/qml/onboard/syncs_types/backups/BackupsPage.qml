@@ -1,7 +1,5 @@
 import QtQuick 2.15
 
-import backups 1.0
-
 import onboard 1.0
 import onboard.syncs_types 1.0
 
