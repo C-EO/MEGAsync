@@ -338,6 +338,7 @@ bool NodeSelectorTreeViewWidget::isEmpty() const
 void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)
 {
     ui->emptyFolderPage->setAcceptDrops(enable);
+    ui->emptyPage->setAcceptDrops(enable);
     ui->tMegaFolders->setDragEnabled(enable);
     ui->tMegaFolders->viewport()->setAcceptDrops(enable);
     ui->tMegaFolders->setDropIndicatorShown(enable);
