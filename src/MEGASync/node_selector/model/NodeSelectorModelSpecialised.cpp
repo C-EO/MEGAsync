@@ -418,25 +418,29 @@ bool NodeSelectorModelBackups::addToLoadingList(const std::shared_ptr<MegaNode> 
 
 void NodeSelectorModelBackups::loadLevelFinished()
 {
-    if (mIndexesToBeExpanded.size() == 1 && mIndexesToBeExpanded.at(0).second == index(0, 0))
+    const QModelIndex backupsRootIndex(index(0, 0));
+    const bool finishingBackupsRoot =
+        mIndexesToBeExpanded.size() == 1 && mIndexesToBeExpanded.at(0).second == backupsRootIndex;
+
+    if (finishingBackupsRoot)
     {
-        QModelIndex rootIndex(index(0, 0));
-        int rowcount = rowCount(rootIndex);
+        mBackupDevicesSize = 0;
+
+        const int rowcount = rowCount(backupsRootIndex);
         for (int i = 0; i < rowcount; i++)
         {
-            auto idx = index(i, 0, rootIndex);
-            if (canFetchMore(idx))
+            const auto idx = index(i, 0, backupsRootIndex);
+            if (canFetchMore(idx) && fetchItemChildren(idx))
             {
-                mBackupDevicesSize++;
-                fetchItemChildren(idx);
+                ++mBackupDevicesSize;
             }
         }
     }
-
-    if (mBackupDevicesSize > 0)
+    else if (mBackupDevicesSize > 0)
     {
-        mBackupDevicesSize--;
+        --mBackupDevicesSize;
     }
+
     if (mBackupDevicesSize == 0)
     {
         NodeSelectorModel::loadLevelFinished();

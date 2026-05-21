@@ -452,7 +452,7 @@ protected:
 
     QStringList mimeTypes() const override;
 
-    void fetchItemChildren(const QModelIndex& parent);
+    bool fetchItemChildren(const QModelIndex& parent);
     void addRootItems();
     virtual void loadLevelFinished();
     bool continueWithNextItemToLoad(const QModelIndex& parentIndex);
