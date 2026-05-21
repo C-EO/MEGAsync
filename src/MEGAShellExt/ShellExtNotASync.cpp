@@ -31,7 +31,7 @@ HRESULT ShellExtNotASync::IsMemberOf(PCWSTR pwszPath, DWORD dwAttrib)
 
         MegaInterface::FileState state = MegaInterface::getPathState(pwszPath);
 
-        if (state > MegaInterface::FILE_NOTFOUND_NON_SYNCABLE)
+        if (state == MegaInterface::FILE_NOTFOUND_SYNCABLE)
         {
             SHFILEINFOW sfi = {0};
             DWORD_PTR hr = SHGetFileInfo(pwszPath,
