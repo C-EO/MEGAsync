@@ -12,9 +12,25 @@ Item {
     property int minVisibleSegmentWidth: 4
     property int minVisibleChildSegmentWidth: Math.max(1, Math.floor(minVisibleSegmentWidth / 2))
 
+    function sumOfChildValues(segment) {
+        if (!segment || !segment.children) {
+            return 0
+        }
+        return segment.children.reduce(function(total, child) {
+            return total + Math.max(0, Number(child && child.value))
+        }, 0)
+    }
+
+    function effectiveSegmentValue(segment) {
+        if (!segment) {
+            return 0
+        }
+        return Math.max(Number(segment.value), root.sumOfChildValues(segment))
+    }
+
     function totalVisibleValue() {
         return (segments || []).reduce(function(total, segment) {
-            return total + Number(segment.value)
+            return total + root.effectiveSegmentValue(segment)
         }, 0)
     }
 
@@ -26,7 +42,7 @@ Item {
 
     function normalizedWidthForSegment(segment) {
         const total = root.totalVisibleValue()
-        return total > 0 ? Number(segment.value) / total : 0
+        return total > 0 ? root.effectiveSegmentValue(segment) / total : 0
     }
 
     function computeSegmentWidths() {

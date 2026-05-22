@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 
 import common 1.0
 import components.texts 1.0 as Texts
+import AccountStateQuickWidget 1.0
 
 Item {
     id: root
@@ -14,6 +15,18 @@ Item {
     readonly property int dividerThickness: 1
     readonly property int titleTextPixelSize: 10
     readonly property int summaryTextPixelSize: 12
+
+    readonly property int storageBannerPriority: {
+        if (accountStateAccess.storageState === AccountStateQuickWidget.FULL) return 2
+        if (accountStateAccess.storageState === AccountStateQuickWidget.WARNING) return 1
+        return 0
+    }
+    readonly property int transferBannerPriority: {
+        if (!accountStateAccess.showTransferCard || accountStateAccess.transferValueOnly) return 0
+        if (accountStateAccess.transferState === AccountStateQuickWidget.FULL) return 2
+        if (accountStateAccess.transferState === AccountStateQuickWidget.WARNING) return 1
+        return 0
+    }
 
     ColumnLayout {
         id: contentLayout
@@ -70,8 +83,9 @@ Item {
 
                 Layout.fillWidth: true
                 Layout.topMargin: root.defaultMargin
-                state: accountStateAccess.storageState
+                progressState: accountStateAccess.storageState
                 segments: accountStateAccess.storageSegments
+                bannerAlreadyShown: root.transferBannerPriority > root.storageBannerPriority
                 onBannerActionClicked: accountStateAccess.upgradeRequested()
             }
         }
@@ -123,8 +137,10 @@ Item {
                 Layout.fillWidth: true
                 Layout.topMargin: root.defaultMargin
                 visible: !accountStateAccess.transferValueOnly
-                state: accountStateAccess.transferState
+                progressState: accountStateAccess.transferState
                 segments: accountStateAccess.transferSegments
+                bannerAlreadyShown: root.storageBannerPriority > 0
+                                    && root.storageBannerPriority >= root.transferBannerPriority
                 onBannerActionClicked: accountStateAccess.upgradeRequested()
             }
 

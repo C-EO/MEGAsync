@@ -51,9 +51,11 @@ public:
 
     void updateUserStats(const Flags& flags, bool force, int source);
     void periodicUpdate();
+    void refreshStorageBreakdownLocal();
 
 signals:
     void accountDetailsUpdated();
+    void storageBreakdownLocalUpdated();
 
 private:
     template<typename Type>
@@ -88,6 +90,26 @@ private:
     int mQueuedStorageUserStatsReason;
     QTimer mProExpirityTimer;
 
+    struct PendingBreakdown
+    {
+        bool inFlight = false;
+        bool rootDone = false;
+        bool vaultDone = false;
+        bool rubbishDone = false;
+        mega::MegaHandle rootHandle = mega::INVALID_HANDLE;
+        mega::MegaHandle vaultHandle = mega::INVALID_HANDLE;
+        mega::MegaHandle rubbishHandle = mega::INVALID_HANDLE;
+        long long rootCurrent = 0;
+        long long vaultCurrent = 0;
+        long long rubbishCurrent = 0;
+        long long rootVersions = 0;
+        long long vaultVersions = 0;
+        long long rubbishVersions = 0;
+    };
+
+    PendingBreakdown mPendingBreakdown;
+    QTimer mStorageBreakdownDebounce;
+
     AccountDetailsManager(QObject* parent = nullptr);
 
     void handleAccountDetailsReply(mega::MegaRequest* request,
@@ -106,6 +128,10 @@ private:
     void processInShares(const std::shared_ptr<mega::MegaAccountDetails>& details,
                          const std::shared_ptr<mega::MegaNodeList>& inShares);
     void checkInflightUserStats(Flags& flags);
+
+    void runStorageBreakdownLocal();
+    void handleFolderInfoReply(mega::MegaRequest* request, mega::MegaError* error);
+    void commitStorageBreakdownLocal();
 
     static long long getLastRequest(const Flags& flags,
                                     const UserStats<long long>& lastRequestUserStats);

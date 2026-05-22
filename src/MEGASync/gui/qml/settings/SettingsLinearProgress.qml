@@ -10,7 +10,8 @@ import AccountStateQuickWidget 1.0
 Item {
     id: root
 
-    property int state: AccountStateQuickWidget.OK
+    property int progressState: AccountStateQuickWidget.OK
+    property bool bannerAlreadyShown: false
     property string centerText: ""
     property var segments: []
     property bool showLegend: true
@@ -28,8 +29,9 @@ Item {
     signal bannerActionClicked()
 
     function hasStateBanner() {
-        return state === AccountStateQuickWidget.WARNING
-               || state === AccountStateQuickWidget.FULL
+        return !root.bannerAlreadyShown
+               && (progressState === AccountStateQuickWidget.WARNING
+                   || progressState === AccountStateQuickWidget.FULL)
     }
 
     function normalStateColorForType(type) {
@@ -90,24 +92,24 @@ Item {
     }
 
     function bannerBackgroundColor() {
-        return state === AccountStateQuickWidget.FULL
+        return progressState === AccountStateQuickWidget.FULL
                ? ColorTheme.notificationError
                : ColorTheme.notificationWarning
     }
 
     function bannerAccentColor() {
-        return state === AccountStateQuickWidget.FULL ? ColorTheme.textError
-                                                      : ColorTheme.textWarning
+        return progressState === AccountStateQuickWidget.FULL ? ColorTheme.textError
+                                                             : ColorTheme.textWarning
     }
 
     function bannerTitle() {
-        return state === AccountStateQuickWidget.FULL
+        return progressState === AccountStateQuickWidget.FULL
                ? SettingsStrings.yourMegaAccountIsFull
                : SettingsStrings.yourMegaAccountIsNearlyFull
     }
 
     function bannerDescription() {
-        return state === AccountStateQuickWidget.FULL
+        return progressState === AccountStateQuickWidget.FULL
                ? SettingsStrings.uploadsDisabledDescription
                : SettingsStrings.nearlyFullDescription
     }
@@ -119,11 +121,11 @@ Item {
 
         const type = Number(segment.type)
 
-        if (state === AccountStateQuickWidget.FULL) {
+        if (progressState === AccountStateQuickWidget.FULL) {
             return root.fullStateColorForType(type)
         }
 
-        if (state === AccountStateQuickWidget.WARNING) {
+        if (progressState === AccountStateQuickWidget.WARNING) {
             return root.warningStateColorForType(type)
         }
 
@@ -353,7 +355,7 @@ Item {
                         id: bannerIcon
 
                         Layout.alignment: Qt.AlignTop
-                        source: root.state === AccountStateQuickWidget.FULL
+                        source: root.progressState === AccountStateQuickWidget.FULL
                                 ? Images.alertCircle
                                 : Images.alertTriangle
                         color: root.bannerAccentColor()

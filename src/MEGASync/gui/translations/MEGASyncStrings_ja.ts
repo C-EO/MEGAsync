@@ -54,7 +54,7 @@
     <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
-        <translation>Available[BR]%1</translation>
+        <translation>空き容量[BR]%1</translation>
     </message>
 </context>
 <context>
@@ -624,7 +624,7 @@
     <message>
         <source>Describe the problem *</source>
         <translatorcomment>Label to indicate the description input field of form bug report. The user will fill it with a description of the bug and any specific detail that wants to be included.  SNC-6268</translatorcomment>
-        <translation>Describe the problem *</translation>
+        <translation>問題の説明 *</translation>
     </message>
     <message>
         <source>Error on submitting bug report</source>
@@ -644,7 +644,7 @@
     <message>
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
-        <translation>Please describe your issue in detail. Must be at least 30 characters.</translation>
+        <translation>問題の詳細を記述してください（30文字以上）。</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -659,7 +659,7 @@
     <message>
         <source>Report issue</source>
         <translatorcomment>Title of the dialog used to send bug reports to support team. SNC-6268</translatorcomment>
-        <translation>Report issue</translation>
+        <translation>問題を報告</translation>
     </message>
     <message>
         <source>Submit</source>
@@ -4945,7 +4945,7 @@ Enter a different name</source>
     <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>This folder has been the subject of a takedown notice</translation>
+        <translation>このフォルダはテイクダウン通知（削除要請）の対象となっています</translation>
     </message>
 </context>
 <context>
@@ -4958,7 +4958,7 @@ Enter a different name</source>
     <message>
         <source>Dispute takedown</source>
         <translatorcomment>Contextual menu text that appears when we right click on a taken-down item on node selector. It opens the takedown dispute page. SNC-5350</translatorcomment>
-        <translation>Dispute takedown</translation>
+        <translation>削除要請に異議を申し立てる</translation>
     </message>
     <message>
         <source>Download</source>
@@ -5102,7 +5102,7 @@ Enter a different name</source>
     <message>
         <source>No folders to select</source>
         <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
-        <translation>No folders to select</translation>
+        <translation>選択できるフォルダがありません</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -5112,7 +5112,7 @@ Enter a different name</source>
     <message>
         <source>Only folders can be synced</source>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
-        <translation>Only folders can be synced</translation>
+        <translation>同期できるのはフォルダのみです</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -5264,7 +5264,7 @@ Enter a different name</source>
     <message>
         <source>Completed transfers</source>
         <translatorcomment>Notification category for completed transfers notifications. SNC-6292</translatorcomment>
-        <translation>Completed transfers</translation>
+        <translation>転送完了</translation>
     </message>
     <message>
         <source>Completed uploads and downloads</source>
@@ -5279,7 +5279,7 @@ Enter a different name</source>
     <message>
         <source>Desktop notifications</source>
         <translatorcomment>Notification category for deskltop notifications. SNC-6292</translatorcomment>
-        <translation>Desktop notifications</translation>
+        <translation>デスクトップ通知</translation>
     </message>
     <message>
         <source>Info</source>
@@ -6225,9 +6225,9 @@ Enter a different name</source>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Rename upload conflicts and duplicate same-folder items more easily.
-- Cloud Drive, sync, backup, and settings dialogs are clearer and more consistent.
-- Bug fixes and performance improvements.</translation>
+        <translation>- アップロード時の競合や、同じフォルダ内の重複項目の名前変更がより簡単になりました。
+- クラウドドライブ、同期、バックアップ、設定の各ダイアログがより分かりやすく、一貫性のあるデザインになりました。
+- バグを修正し、パフォーマンスが向上しました。</translation>
     </message>
 </context>
 <context>
@@ -6268,7 +6268,7 @@ Enter a different name</source>
     <message>
         <source>Password</source>
         <translatorcomment>Section title for Password change in Security pane. SNC-6293</translatorcomment>
-        <translation>Password</translation>
+        <translation>パスワード</translation>
     </message>
     <message>
         <source>Password:</source>
@@ -6308,7 +6308,7 @@ Enter a different name</source>
     <message>
         <source>Username</source>
         <translatorcomment>Label to indicate the username of the proxy that is being configured. SNC-6293</translatorcomment>
-        <translation>Username</translation>
+        <translation>ユーザー名</translation>
     </message>
     <message>
         <source>Username:</source>
@@ -6995,12 +6995,12 @@ Do you want to delete it anyway?</source>
     <message>
         <source>(Max. 90% of available bandwidth)</source>
         <translatorcomment>Helper text shown when automatic upload rate limit is selected in Network pane. DSN-2979</translatorcomment>
-        <translation>(Max. 90% of available bandwidth)</translation>
+        <translation>（利用可能な帯域幅の最大90%）</translation>
     </message>
     <message>
         <source>About MEGA</source>
         <translatorcomment>Button label that opens the About MEGA dialog from the Settings window footer. Keep as short as possible. DSN-2976</translatorcomment>
-        <translation>About MEGA</translation>
+        <translation>MEGAについて</translation>
     </message>
     <message>
         <source>Account</source>
@@ -7020,7 +7020,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Auto</source>
         <translatorcomment>Label to indicate that management of the upload rate limit is automatic. DSN-2979</translatorcomment>
-        <translation>Auto</translation>
+        <translation>自動</translation>
     </message>
     <message>
         <source>Backup</source>
@@ -7055,7 +7055,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Change Permissions</source>
         <translatorcomment>Button label in File Management pane to open the dialog for changing default permissions for new folders and files. Keep as short as possible. DSN-2978</translatorcomment>
-        <translation>Change Permissions</translation>
+        <translation>権限を変更</translation>
     </message>
     <message>
         <source>Change Settings…</source>
@@ -7085,7 +7085,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Control who can access new folders and files created in the app, whether it’s just you, your group, or everyone on this device.</source>
         <translatorcomment>Descriptive text in File Management pane explaining the permissions section for new folders and files. DSN-2978</translatorcomment>
-        <translation>Control who can access new folders and files created in the app, whether it’s just you, your group, or everyone on this device.</translation>
+        <translation>アプリ内で新規作成されたフォルダやファイルにアクセスできるユーザー（自分のみ、自分のグループ、またはこのデバイスのすべてのユーザー）を制御します。</translation>
     </message>
     <message>
         <source>Data temporarily unavailable</source>
@@ -7125,7 +7125,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Download rate limit</source>
         <translatorcomment>Section title for the download speed limit controls in Network pane. DSN-2979</translatorcomment>
-        <translation>Download rate limit</translation>
+        <translation>ダウンロード速度制限</translation>
     </message>
     <message>
         <source>Download rate limit:</source>
@@ -7175,7 +7175,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>File management</source>
         <translatorcomment>Title for the Settings -&gt; File Management pane tab button. Keep as short as possible. DSN-2978</translatorcomment>
-        <translation>File management</translation>
+        <translation>ファイル管理</translation>
     </message>
     <message>
         <source>File versions</source>
@@ -7240,7 +7240,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Limit to:</source>
         <translatorcomment>Label for the custom rate limit input in Network pane. DSN-2979</translatorcomment>
-        <translation>Limit to:</translation>
+        <translation>制限：</translation>
     </message>
     <message>
         <source>Local folder with a backup of files deleted in MEGA</source>
@@ -7295,7 +7295,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Number of connections per transfer</source>
         <translatorcomment>Section title for the setting that controls how many connections each transfer uses in Network pane. DSN-2979</translatorcomment>
-        <translation>Number of connections per transfer</translation>
+        <translation>転送ごとの接続数</translation>
     </message>
     <message>
         <source>Password</source>
@@ -7305,7 +7305,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Permissions for new folders and files</source>
         <translatorcomment>Section title for the file and folder permissions settings in File Management pane. DSN-2978</translatorcomment>
-        <translation>Permissions for new folders and files</translation>
+        <translation>新しいフォルダとファイルの権限</translation>
     </message>
     <message>
         <source>Please let us know if you encounter any issues. Help us by providing as much detail as possible.</source>
@@ -7325,7 +7325,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Proxy</source>
         <translatorcomment>Section title text for the Proxy summary text and actions in Network pane. DSN-2979</translatorcomment>
-        <translation>Proxy</translation>
+        <translation>プロキシ</translation>
     </message>
     <message>
         <source>Proxy settings:</source>
@@ -7360,7 +7360,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Sets the number of connections used for each transfer. Doesn’t affect how many transfers run in parallel.</source>
         <translatorcomment>Descriptive text for the number of connections per transfer setting in Network pane. DSN-2979</translatorcomment>
-        <translation>Sets the number of connections used for each transfer. Doesn’t affect how many transfers run in parallel.</translation>
+        <translation>各転送で使用される接続数を設定します。並行して実行される転送の数には影響しません。</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -7435,7 +7435,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Upload rate limit</source>
         <translatorcomment>Section title for the upload speed limit controls in Network pane. DSN-2979</translatorcomment>
-        <translation>Upload rate limit</translation>
+        <translation>アップロード速度制限</translation>
     </message>
     <message>
         <source>Upload rate limit:</source>
@@ -7506,99 +7506,99 @@ Do you want to delete it anyway?</source>
 <context>
     <name>SettingsStrings</name>
     <message>
-        <source>Available</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the remaining available segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Available</translation>
-    </message>
-    <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
-        <translation>Available[BR]%1</translation>
+        <translation>空き容量[BR]%1</translation>
     </message>
     <message>
         <source>Backups</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Backups segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Backups</translation>
+        <translation>バックアップ</translation>
     </message>
     <message>
         <source>Backups[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Backups segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Backups[BR]%1</translation>
+        <translation>バックアップ[BR]%1</translation>
     </message>
     <message>
         <source>Buy more storage</source>
         <translatorcomment>Button label shown in the Account pane warning banner to let the user upgrade storage. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Buy more storage</translation>
+        <translation>容量を追加購入</translation>
     </message>
     <message>
         <source>Cloud Drive</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Cloud Drive segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Cloud drive</translation>
+        <translation>クラウドドライブ</translation>
     </message>
     <message>
         <source>Cloud Drive[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Cloud Drive segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Cloud Drive[BR]%1</translation>
+        <translation>クラウドドライブ[BR]%1</translation>
     </message>
     <message>
         <source>Consider upgrading to avoid interruptions to uploads and synchronisation.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is nearly full. DSN-2975</translatorcomment>
-        <translation>Consider upgrading to avoid interruptions to uploads and synchronisation.</translation>
+        <translation>アップロードや同期が中断されないよう、アップグレードをご検討ください。</translation>
     </message>
     <message>
-        <source>Data temporarily unavailable</source>
-        <translatorcomment>Fallback text shown in the Account pane when storage or transfer data could not be loaded. DSN-2975</translatorcomment>
-        <translation>Data temporarily unavailable</translation>
+        <source>File versions</source>
+        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
+        <translation>File versions</translation>
+    </message>
+    <message>
+        <source>File versions[BR]%1</source>
+        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
+        <translation>File versions[BR]%1</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Rubbish Bin segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Rubbish Bin</translation>
+        <translation>ゴミ箱</translation>
     </message>
     <message>
         <source>Rubbish Bin[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Rubbish Bin segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Rubbish Bin[BR]%1</translation>
+        <translation>ゴミ箱[BR]%1</translation>
     </message>
     <message>
         <source>Storage Space</source>
         <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
-        <translation>Storage Space</translation>
+        <translation>ストレージ容量</translation>
     </message>
     <message>
         <source>Transfers</source>
         <translatorcomment>Section title for transfer usage details in the Account pane. DSN-2975</translatorcomment>
-        <translation>Transfers</translation>
+        <translation>転送</translation>
     </message>
     <message>
         <source>Transfers[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Transfers segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the transfer amount. DSN-2975</translatorcomment>
-        <translation>Transfers[BR]%1</translation>
+        <translation>転送[BR]%1</translation>
     </message>
     <message>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
-        <translation>Uploads are disabled and folder synchronisation is paused.</translation>
+        <translation>アップロードは無効になっており、フォルダの同期は一時停止されています。</translation>
     </message>
     <message>
         <source>Versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Versions</translation>
+        <translation>バージョン</translation>
     </message>
     <message>
         <source>Versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Versions[BR]%1</translation>
+        <translation>バージョン[BR]%1</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
         <translatorcomment>Warning title shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
-        <translation>Your MEGA account is full</translation>
+        <translation>MEGAアカウントの容量がいっぱいです</translation>
     </message>
     <message>
         <source>Your MEGA account is nearly full</source>
         <translatorcomment>Warning title shown in the Account pane when the account storage is close to full. DSN-2975</translatorcomment>
-        <translation>Your MEGA account is nearly full</translation>
+        <translation>MEGAアカウントの容量が残りわずかです</translation>
     </message>
 </context>
 <context>
