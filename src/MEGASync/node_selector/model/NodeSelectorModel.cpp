@@ -782,6 +782,12 @@ void NodeSelectorModel::executeAddExtraSpaceLogic(const QModelIndex& currentInde
 
 void NodeSelectorModel::executeExtraSpaceLogic()
 {
+    if (isBeingModified())
+    {
+        mAddExpaceWhenLoadingFinish = true;
+        return;
+    }
+
     executeRemoveExtraSpaceLogic(mCurrentRootIndex);
     mCurrentRootIndex = mPendingRootIndex;
     executeAddExtraSpaceLogic(mCurrentRootIndex);

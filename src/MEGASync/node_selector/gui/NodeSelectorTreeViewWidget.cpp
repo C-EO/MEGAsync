@@ -201,6 +201,7 @@ bool NodeSelectorTreeViewWidget::event(QEvent* event)
         }
 
         initEmptyMessages();
+        setEmptyFolderPage();
     }
     else if (event->type() == QEvent::MouseButtonRelease)
     {
