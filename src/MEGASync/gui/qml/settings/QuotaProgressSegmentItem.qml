@@ -32,14 +32,26 @@ Rectangle {
     function childSegmentWidth() {
         const parentValue = Number(root.segment && root.segment.value)
         const childValue = Number(root.childSegment && root.childSegment.value)
-        if (parentValue <= 0 || childValue <= 0) {
+        if (childValue <= 0) {
             return 0
         }
 
-        const proportionalWidth = root.width * childValue / parentValue
+        // The parent segment's width is laid out against max(parentValue, childValue),
+        // so the overlay uses the same denominator to stay in sync.
+        const effectiveParentValue = Math.max(parentValue, childValue)
+        if (effectiveParentValue <= 0) {
+            return 0
+        }
+
+        const proportionalWidth = root.width * childValue / effectiveParentValue
         const minimumWidth = Math.max(0, root.minVisibleChildSegmentWidth)
-        return Math.min(root.width,
-                        Math.max(minimumWidth, proportionalWidth))
+        // When child >= parent and the parent has value of its own, leave at least
+        // minimumWidth px of the parent visible. If parentValue is 0 there is nothing
+        // to preserve, so the overlay is allowed to fill the whole segment.
+        const maximumWidth = (parentValue > 0 && childValue >= parentValue)
+                             ? root.width - minimumWidth
+                             : root.width
+        return Math.min(maximumWidth, Math.max(minimumWidth, proportionalWidth))
     }
 
     // TODO: Remove these corner-hiding helper rectangles when we move to Qt 6,
@@ -89,11 +101,16 @@ Rectangle {
         font.weight: Font.DemiBold
         lineHeight: 16
         lineHeightMode: Text.FixedHeight
+        verticalAlignment: Text.AlignVCenter
         z: 1
     }
 
     Item {
         id: childOverlayContainer
+
+        readonly property bool overlayCoversLeftEdge: root.roundLeftEdge
+                                                      && root.childSegmentWidth() >= root.width
+        readonly property bool overlayCoversRightEdge: root.roundRightEdge
 
         anchors {
             top: parent.top
@@ -109,9 +126,47 @@ Rectangle {
             id: childOverlayFill
 
             anchors.fill: parent
+            radius: (childOverlayContainer.overlayCoversLeftEdge
+                     || childOverlayContainer.overlayCoversRightEdge)
+                    ? root.segmentRadius
+                    : 0
             color: root.childSegmentFillColor && root.childSegment
                    ? root.childSegmentFillColor(root.childSegment)
                    : "transparent"
+
+            // TODO: Remove these corner-hiding helper rectangles when we move to Qt 6,
+            // which supports setting the radius per corner directly.
+            Rectangle {
+                id: hidesChildOverlayRightCorners
+
+                anchors {
+                    top: parent.top
+                    right: parent.right
+                    bottom: parent.bottom
+                }
+                width: childOverlayContainer.overlayCoversLeftEdge
+                       && !childOverlayContainer.overlayCoversRightEdge
+                       ? Math.max(0, parent.width - root.segmentRadius)
+                       : 0
+                visible: width > 0
+                color: parent.color
+            }
+
+            Rectangle {
+                id: hidesChildOverlayLeftCorners
+
+                anchors {
+                    left: parent.left
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                width: childOverlayContainer.overlayCoversRightEdge
+                       && !childOverlayContainer.overlayCoversLeftEdge
+                       ? Math.max(0, parent.width - root.segmentRadius)
+                       : 0
+                visible: width > 0
+                color: parent.color
+            }
         }
 
         MouseArea {

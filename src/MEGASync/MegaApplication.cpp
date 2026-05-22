@@ -697,6 +697,11 @@ void MegaApplication::initialize()
                 requestUserDiscounts(true);
             });
 
+    connect(AccountDetailsManager::instance(),
+            &AccountDetailsManager::storageBreakdownLocalUpdated,
+            this,
+            &MegaApplication::refreshStorageUIs);
+
     delegateListener = new QTMegaListener(megaApi, this);
     megaApi->addListener(delegateListener);
     mUploader = new MegaUploader(megaApi, mFolderTransferListener);
@@ -6543,6 +6548,10 @@ void MegaApplication::onEvent(MegaApi*, MegaEvent* event)
 
         updateUsedStorage();
         refreshStorageUIs();
+        // Refresh the per-root breakdown (Cloud Drive / Backups / Rubbish / Versions)
+        // from local NodeCounters instead of forcing a network `uq`. The breakdown
+        // commit invokes refreshStorageUIs() again once values are in.
+        AccountDetailsManager::instance()->refreshStorageBreakdownLocal();
     }
     else if (event->getType() == MegaEvent::EVENT_BUSINESS_STATUS)
     {
