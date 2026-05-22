@@ -1209,11 +1209,17 @@ void MegaApplication::start()
 
                 mDiscountPolicy->recordShown();
 
+                auto closingDueToExpiry = std::make_shared<bool>(false);
+
                 QObject::connect(dialog->getDialog(),
                                  &QmlDialogWrapper<OfferComponent>::rejected,
                                  this,
-                                 [this]()
+                                 [this, closingDueToExpiry]()
                                  {
+                                     if (*closingDueToExpiry)
+                                     {
+                                         return;
+                                     }
                                      mDiscountPolicy->recordDismissed();
                                      emit mDiscountStateMachine->discountDismissed();
                                  });
@@ -1224,6 +1230,22 @@ void MegaApplication::start()
                                  {
                                      mDiscountPolicy->recordAccepted();
                                      emit mDiscountStateMachine->discountAccepted();
+                                 });
+
+                // Campaign expiry clears the policy's data; closing the dialog
+                // here prevents a later binding re-evaluation (e.g. language
+                // change) from rendering it with empty placeholders.
+                QPointer<QmlDialogWrapper<OfferComponent>> dialogPtr(dialog->getDialog());
+                QObject::connect(mDiscountPolicy.data(),
+                                 &DiscountPolicy::campaignDeactivated,
+                                 dialog->getDialog(),
+                                 [dialogPtr, closingDueToExpiry]()
+                                 {
+                                     if (dialogPtr)
+                                     {
+                                         *closingDueToExpiry = true;
+                                         dialogPtr->close();
+                                     }
                                  });
             });
 
