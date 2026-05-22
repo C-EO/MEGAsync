@@ -121,13 +121,9 @@ void NodeSelectorTreeViewWidget::init()
     mProxyModel->setSourceModel(mModel.get());
 
     connect(mProxyModel.get(),
-            &NodeSelectorProxyModel::modelSorted,
+            &NodeSelectorProxyModel::levelLoaded,
             this,
-            &NodeSelectorTreeViewWidget::onExpandReady);
-    connect(mProxyModel.get(),
-            &NodeSelectorProxyModel::modelSorted,
-            this,
-            &NodeSelectorTreeViewWidget::viewReady);
+            &NodeSelectorTreeViewWidget::onLevelLoaded);
     connect(mProxyModel.get(),
             &NodeSelectorProxyModel::modelSorted,
             this,
@@ -456,8 +452,9 @@ void NodeSelectorTreeViewWidget::checkNewFolderAdded(QPointer<NodeSelectorModelI
     }
 }
 
-void NodeSelectorTreeViewWidget::onExpandReady()
+void NodeSelectorTreeViewWidget::onLevelLoaded()
 {
+    // Initialise the view only the first time, but always refresh the empty/nav state below
     if (ui->tMegaFolders->model() == nullptr)
     {
         ui->tMegaFolders->setContextMenuPolicy(Qt::DefaultContextMenu);
@@ -474,7 +471,6 @@ void NodeSelectorTreeViewWidget::onExpandReady()
         ui->tMegaFolders->header()->setProperty("HeaderIconCenter", true);
 
         // those connects needs to be done after the model is set, do not move them
-
         connect(ui->tMegaFolders->selectionModel(),
                 &QItemSelectionModel::selectionChanged,
                 this,
@@ -526,7 +522,13 @@ void NodeSelectorTreeViewWidget::onExpandReady()
         setRootIndex(mModel->hasTopRootIndex() ? mProxyModel->index(0, 0) : QModelIndex());
 
         setStyleSheet(styleSheet());
+
+        // View ready to work with it > View init and model loaded
+        emit viewReady();
     }
+
+    // Check empty view page and forward/backward navigation buttons
+    checkViewOnModelChange();
 }
 
 void NodeSelectorTreeViewWidget::onGoBackClicked()
