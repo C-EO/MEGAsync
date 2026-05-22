@@ -44,7 +44,8 @@
         <file>components/buttons/RadioButton.qml</file>
         <file>components/buttons/RadioButtonSizes.qml</file>
         <file>components/buttons/RadioButtonColors.qml</file>
-        <file>components/buttons/SwitchButton.qml</file>
+        <file>components/switch/qmldir</file>
+        <file>components/switch/Switch.qml</file>
         <file>components/checkBoxes/qmldir</file>
         <file>components/checkBoxes/CheckBox.qml</file>
         <file>components/checkBoxes/Colors.qml</file>

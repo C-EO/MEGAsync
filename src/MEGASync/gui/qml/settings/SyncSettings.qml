@@ -8,6 +8,7 @@ import components.images 1.0
 import components.texts 1.0
 import components.buttons 1.0
 import components.menus 1.0
+import components.switch 1.0
 
 import SyncSettingsModel 1.0
 
@@ -34,7 +35,7 @@ Item {
     readonly property int issueLabelPixelSize: 12
     readonly property int issuePartHeigh: 58
     readonly property int issuePartSpacing: 4
-    readonly property int switchButtonSeparator: 12
+    readonly property int switchSeparator: 12
     readonly property int noSyncsTopMargin: 128
     readonly property int megaDevicesImageSize: 120
     readonly property int titleNoSyncPixelSize: 20
@@ -279,10 +280,10 @@ Item {
 
                     Item {
                         Layout.fillWidth: true
-                        Layout.minimumWidth: switchButtonSeparator
+                        Layout.minimumWidth: switchSeparator
                     }
 
-                    SwitchButton {
+                    Switch {
                         id: fixIssue
 
                         checked: syncSettings.automaticSyncIssueResolverEnabled

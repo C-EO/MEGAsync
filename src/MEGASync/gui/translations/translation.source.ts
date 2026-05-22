@@ -366,11 +366,6 @@
         <translation>Error adding backup</translation>
     </message>
     <message>
-        <source>Error adding sync</source>
-        <translatorcomment>Title of the error message displayed when there was en error while trying to add a sync. SNC-4208</translatorcomment>
-        <translation>Error adding sync</translation>
-    </message>
-    <message>
         <source>Error removing backup</source>
         <translatorcomment>Error message dialog title.SNC-4208</translatorcomment>
         <translation>Error stopping backup</translation>
@@ -381,29 +376,14 @@
         <translation>Operation on backup ‘%1’ failed. Reason: %2</translation>
     </message>
     <message>
-        <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
-        <translatorcomment>text for error dialog shown when a  sync fails, folder path and reason are given during runtime in the placeholders.SNC-2565</translatorcomment>
-        <translation>Your folder “%1” can’t sync. Reason: %2</translation>
-    </message>
-    <message>
         <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
         <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
         <translation>Some folders haven’t been backed up. For more information, hover over the warning icon.</translation>
     </message>
     <message>
-        <source>Sync operation failed</source>
-        <translatorcomment>Title for error dialog shown when a  sync fails.SNC-2565</translatorcomment>
-        <translation>Unable to sync</translation>
-    </message>
-    <message>
         <source>Your backup can’t be removed. Reason: %1</source>
         <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
         <translation>Your backup can’t be removed. Reason: %1</translation>
-    </message>
-    <message>
-        <source>Your sync can&apos;t be removed. Reason: %1</source>
-        <translatorcomment>Warning message title indicating that an error happened removing a sync. the reason is given at runtime in place of the placeholder.SNC-4208</translatorcomment>
-        <translation>Your sync can’t be removed. Reason: %1</translation>
     </message>
 </context>
 <context>
@@ -516,11 +496,6 @@
         <translation>Attach diagnostic log files to assist with debugging</translation>
     </message>
     <message>
-        <source>Bug report</source>
-        <translatorcomment>Title of the dialog used to send bug reports to support team.</translatorcomment>
-        <translation>Report issue</translation>
-    </message>
-    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>Your issue couldn’t be uploaded due to an error. Try again later or contact our support team via [A]support@mega.io[/A] if the problem persists.</translation>
@@ -546,11 +521,6 @@
         <translation>Continue</translation>
     </message>
     <message>
-        <source>Describe the problem</source>
-        <translatorcomment>Label to indicate the description input field of form bug report. The user will fill it with a description of the bug and any specific detail that wants to be included.</translatorcomment>
-        <translation>Describe the issue</translation>
-    </message>
-    <message>
         <source>Describe the problem *</source>
         <translatorcomment>Label to indicate the description input field of form bug report. The user will fill it with a description of the bug and any specific detail that wants to be included.  SNC-6268</translatorcomment>
         <translation>Describe the problem *</translation>
@@ -559,11 +529,6 @@
         <source>Error on submitting bug report</source>
         <translatorcomment>Error message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>Error while uploading reported issue.</translation>
-    </message>
-    <message>
-        <source>Optional</source>
-        <translatorcomment>Label to indicate that title field of bug report form is not mandatory.</translatorcomment>
-        <translation>Optional</translation>
     </message>
     <message>
         <source>Please clearly describe the issue you encountered. The more details, the easier for us to resolve. Your submission will be reviewed by our development team.</source>
@@ -5237,11 +5202,6 @@ Enter a different name.</translation>
         <translation>Completed transfers</translation>
     </message>
     <message>
-        <source>Completed uploads and downloads</source>
-        <translatorcomment>Title of a checkbox for disconnectig completed transfer notifications</translatorcomment>
-        <translation>Completed uploads and downloads</translation>
-    </message>
-    <message>
         <source>Contacts</source>
         <translatorcomment>Notification category for contact notifications</translatorcomment>
         <translation>Contacts</translation>
@@ -5255,11 +5215,6 @@ Enter a different name.</translation>
         <source>Info</source>
         <translatorcomment>Notification category for non-critical info notifications</translatorcomment>
         <translation>Info</translation>
-    </message>
-    <message>
-        <source>Info notifications</source>
-        <translatorcomment>Title of a checkbox for disconnectig secondary info notifications</translatorcomment>
-        <translation>Info notifications</translation>
     </message>
     <message>
         <source>New contact request</source>
@@ -6176,25 +6131,6 @@ Enter a different name.</translation>
 <context>
     <name>Preferences</name>
     <message>
-        <source>- Improve conflict resolution.
-- Improve device name handling.
-- Bug fixes and performance improvements.
-</source>
-        <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
-        <translation>- Improved conflict resolution.
-- Improved device name handling.
-- Bug fixes and performance improvements.</translation>
-    </message>
-    <message>
-        <source>- Improved reliability for problematic graphics drivers on Windows.
-- Minor bug fixes and performance improvements.
-</source>
-        <translatorcomment>Change log for version 6.2.0. SNC-6221</translatorcomment>
-        <translation>- Improved reliability for problematic graphics drivers on Windows
-- Minor bug fixes and performance improvements
-</translation>
-    </message>
-    <message>
         <source>- Rename upload conflicts and duplicate same-folder items more easily.
 - Cloud Drive, sync, backup, and settings dialogs are clearer and more consistent.
 - Bug fixes and performance improvements.
@@ -6246,11 +6182,6 @@ Enter a different name.</translation>
         <translation>Password</translation>
     </message>
     <message>
-        <source>Password:</source>
-        <translatorcomment>Label to indicate the password of the proxy that is being configured.</translatorcomment>
-        <translation>Password:</translation>
-    </message>
-    <message>
         <source>Proxies</source>
         <translatorcomment>Title of dialog to set proxy settings.</translatorcomment>
         <translation>Proxy</translation>
@@ -6284,11 +6215,6 @@ Enter a different name.</translation>
         <source>Username</source>
         <translatorcomment>Label to indicate the username of the proxy that is being configured. SNC-6293</translatorcomment>
         <translation>Username</translation>
-    </message>
-    <message>
-        <source>Username:</source>
-        <translatorcomment>Label to indicate the username of the proxy that is being configured.</translatorcomment>
-        <translation>Username:</translation>
     </message>
     <message>
         <source>We couldn’t connect using your proxy settings. Check your proxy details or try a different network.</source>
@@ -6738,11 +6664,6 @@ Do you want to delete it anyway?</translation>
         <translatorcomment>Button to add new syncs or backups from settings window.SNC-2565</translatorcomment>
         <translation>Add</translation>
     </message>
-    <message>
-        <source>Permissions</source>
-        <translatorcomment>Text of a button that opens a dialog to set the default permissions for new files and folders. The translation should be as short as possible.</translatorcomment>
-        <translation>Permissions</translation>
-    </message>
 </context>
 <context>
     <name>RemoteMoveOrRenameCannotOccurChooseWidget</name>
@@ -7020,11 +6941,6 @@ Do you want to delete it anyway?</translation>
         <translation>Backups will be disabled.</translation>
     </message>
     <message>
-        <source>Bandwidth</source>
-        <translatorcomment>Tab label of Bandwidth dialog. Max 15 characters.</translatorcomment>
-        <translation>Bandwidth</translation>
-    </message>
-    <message>
         <source>Change Password</source>
         <translatorcomment>Button label text allowing the user to change his account password. Keep as short as possible.</translatorcomment>
         <translation>Change password</translation>
@@ -7065,19 +6981,9 @@ Do you want to delete it anyway?</translation>
         <translation>Control who can access new folders and files created in the app, whether it’s just you, your group, or everyone on this device.</translation>
     </message>
     <message>
-        <source>Data temporarily unavailable</source>
-        <translatorcomment>Label to indicate that the usage data is temporarily unavailable. String as short as possible.</translatorcomment>
-        <translation>Data temporarily unavailable</translation>
-    </message>
-    <message>
         <source>Default Folders</source>
         <translatorcomment>Section title text for Upload and Download folder defaults in Folders pane.</translatorcomment>
         <translation>Default folders</translation>
-    </message>
-    <message>
-        <source>Details</source>
-        <translatorcomment>Button label to show the account usage details for the current user of the application. String as short as possible.</translatorcomment>
-        <translation>Details</translation>
     </message>
     <message>
         <source>Disabling file versioning will prevent the creation and storage of new file versions. Do you want to continue?</source>
@@ -7103,11 +7009,6 @@ Do you want to delete it anyway?</translation>
         <source>Download rate limit</source>
         <translatorcomment>Section title for the download speed limit controls in Network pane. DSN-2979</translatorcomment>
         <translation>Download rate limit</translation>
-    </message>
-    <message>
-        <source>Download rate limit:</source>
-        <translatorcomment>Form label text indicating the active download rate limit.</translatorcomment>
-        <translation>Download rate limit:</translation>
     </message>
     <message>
         <source>Downloads:</source>
@@ -7163,11 +7064,6 @@ Do you want to delete it anyway?</translation>
         <source>Folder in MEGA with a backup of files deleted in the local computer</source>
         <translatorcomment>Tooltip shown when hovering remote SyncDebris label.</translatorcomment>
         <translation>A folder in MEGA with a backup of files deleted in the local computer</translation>
-    </message>
-    <message>
-        <source>Folders</source>
-        <translatorcomment>Title for the Settings -&gt; Folders pane tab button. Keep as short as possible.</translatorcomment>
-        <translation>Folders</translation>
     </message>
     <message>
         <source>General</source>
@@ -7275,11 +7171,6 @@ Do you want to delete it anyway?</translation>
         <translation>Number of connections per transfer</translation>
     </message>
     <message>
-        <source>Password</source>
-        <translatorcomment>Section title for Password change in Security pane.</translatorcomment>
-        <translation>Password</translation>
-    </message>
-    <message>
         <source>Permissions for new folders and files</source>
         <translatorcomment>Section title for the file and folder permissions settings in File Management pane. DSN-2978</translatorcomment>
         <translation>Permissions for new folders and files</translation>
@@ -7295,19 +7186,9 @@ Do you want to delete it anyway?</translation>
         <translation>Prevent the computer from going to sleep when transfers or syncs are in progress.</translation>
     </message>
     <message>
-        <source>Proxies</source>
-        <translatorcomment>Section title text for the Proxy summary text and actions in Network pane.</translatorcomment>
-        <translation>Proxy</translation>
-    </message>
-    <message>
         <source>Proxy</source>
         <translatorcomment>Section title text for the Proxy summary text and actions in Network pane. DSN-2979</translatorcomment>
         <translation>Proxy</translation>
-    </message>
-    <message>
-        <source>Proxy settings:</source>
-        <translatorcomment>Form label text indicating the active Proxy settings.</translatorcomment>
-        <translation>Proxy settings:</translation>
     </message>
     <message>
         <source>Recovery Key</source>
@@ -7360,11 +7241,6 @@ Do you want to delete it anyway?</translation>
         <translation>Space used:</translation>
     </message>
     <message>
-        <source>Storage Space</source>
-        <translatorcomment>Section title for account storage details.</translatorcomment>
-        <translation>Storage space</translation>
-    </message>
-    <message>
         <source>Sync</source>
         <translatorcomment>Title for the Settings -&gt; Sync pane tab button. Keep as short as possible.</translatorcomment>
         <translation>Sync</translation>
@@ -7390,11 +7266,6 @@ Do you want to delete it anyway?</translation>
         <translation>Theme</translation>
     </message>
     <message>
-        <source>Transfer Quota</source>
-        <translatorcomment>Section title for account transfer quota details.</translatorcomment>
-        <translation>Transfer quota</translation>
-    </message>
-    <message>
         <source>Unable to write file</source>
         <translatorcomment>Title for message box displayed when an error occurs exporting the master key to a file.</translatorcomment>
         <translation>Unable to write file</translation>
@@ -7415,22 +7286,9 @@ Do you want to delete it anyway?</translation>
         <translation>Upload rate limit</translation>
     </message>
     <message>
-        <source>Upload rate limit:</source>
-        <translatorcomment>Form label text indicating the active upload rate limit.</translatorcomment>
-        <translation>Upload rate limit:</translation>
-    </message>
-    <message>
         <source>Uploads:</source>
         <translatorcomment>Label to indicate the default folder for uploads.</translatorcomment>
         <translation>Uploads:</translation>
-    </message>
-    <message numerus="yes">
-        <source>Used quota for the last %n hour:</source>
-        <translatorcomment>Informative text shown in Account pane for Free account type. Indicates the used quota in the last %n specified number of hours. Keep the %n subsitution argument.</translatorcomment>
-        <translation>
-            <numerusform>Used quota for the last hour:</numerusform>
-            <numerusform>Used quota for the last %n hours:</numerusform>
-        </translation>
     </message>
     <message>
         <source>You are about to permanently remove all file versions. Would you like to proceed?</source>
@@ -7464,14 +7322,6 @@ Do you want to delete it anyway?</translation>
             <numerusform>day</numerusform>
             <numerusform>days</numerusform>
         </translation>
-    </message>
-</context>
-<context>
-    <name>SettingsDialog_Bandwith</name>
-    <message>
-        <source>Auto</source>
-        <translatorcomment>Label to indicate that management of rate upload limit is automatic. SNC-3076</translatorcomment>
-        <translation>Auto</translation>
     </message>
 </context>
 <context>
@@ -8521,19 +8371,6 @@ Refresh the list.</translation>
     </message>
 </context>
 <context>
-    <name>SyncAccountFullMessage</name>
-    <message>
-        <source>Purchase more storage</source>
-        <translatorcomment>Button text inviting the user to buy more storage using MEGA online service. Opens the Web Browser. Keep text as short as possible.SNC-4208</translatorcomment>
-        <translation>Buy more storage</translation>
-    </message>
-    <message>
-        <source>Your MEGA account is full. Uploads are disabled and folder synchronisation is paused.</source>
-        <translatorcomment>Warning text message shown in Sync pane when account storage is full.SNC-4208</translatorcomment>
-        <translation>Your MEGA account is full. Uploads are disabled and folder synchronisation is paused.</translation>
-    </message>
-</context>
-<context>
     <name>SyncController</name>
     <message>
         <source>Can&apos;t backup “%1” as it&apos;s the root folder. To continue, select a different folder</source>
@@ -8917,57 +8754,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     </message>
 </context>
 <context>
-    <name>SyncSettingsElements</name>
-</context>
-<context>
     <name>SyncSettingsQuickWidget</name>
     <message>
         <source>Error opening megaignore file</source>
         <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
         <translation>Error opening .megaignore file</translation>
-    </message>
-</context>
-<context>
-    <name>SyncSettingsUI</name>
-    <message>
-        <source>Error adding sync</source>
-        <translatorcomment>Title of the error message displayed when there was en error while trying to add a sync. SNC-4208</translatorcomment>
-        <translation>Error adding sync</translation>
-    </message>
-    <message>
-        <source>Error removing backup</source>
-        <translatorcomment>Error message dialog title.SNC-4208</translatorcomment>
-        <translation>Error stopping backup</translation>
-    </message>
-    <message>
-        <source>Error removing sync</source>
-        <translatorcomment>Error message dialog title (failed to remove a sync).SNC-3258</translatorcomment>
-        <translation>Error removing sync</translation>
-    </message>
-    <message>
-        <source>Operation on sync &apos;%1&apos; failed. Reason: %2</source>
-        <translatorcomment>Text in message box shown when an error occurs when removing a sync.SNC-2565</translatorcomment>
-        <translation>Your folder “%1” can’t sync. Reason: %2</translation>
-    </message>
-    <message>
-        <source>Some folders have not synchronised. For more information please hover over the red icon.</source>
-        <translatorcomment>Warning text message shown in Sync pane when folders are not synchronizing, inviting the user to use the warning message icon for each affected sync to find out more.SNC-2565</translatorcomment>
-        <translation>Some folders have not synchronised. For more information, hover over the warning icon.</translation>
-    </message>
-    <message>
-        <source>Sync operation failed</source>
-        <translatorcomment>Title for message box shown when an error occurs in a sync.SNC-2565</translatorcomment>
-        <translation>Unable to sync</translation>
-    </message>
-    <message>
-        <source>Synced Folders</source>
-        <translatorcomment>Section title for Synchronized folders table view.SNC-4208</translatorcomment>
-        <translation>Synced folders</translation>
-    </message>
-    <message>
-        <source>Your sync can&apos;t be removed. Reason: %1</source>
-        <translatorcomment>MEssage box text shown when an error occurs when removing sync.SNC-4208</translatorcomment>
-        <translation>Your sync can’t be removed. Reason: %1</translation>
     </message>
 </context>
 <context>
@@ -8986,39 +8777,6 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>Saving synchronised folders…</source>
         <translatorcomment>Temporary text label shown while saving changes to Synchronized folders on Windows\Linux. Keep the 3 suspense periods, indicating to the user that the action is in in progress.SNC-4208</translatorcomment>
         <translation>Saving synchronised folders…</translation>
-    </message>
-</context>
-<context>
-    <name>SyncStallModeSelector</name>
-    <message>
-        <source>Advanced</source>
-        <translatorcomment>Stalled issues solve mode to allow users to solve them manually.SNC-2565</translatorcomment>
-        <translation>Advanced</translation>
-    </message>
-    <message>
-        <source>Get full control of the sync issues</source>
-        <translatorcomment>Description for the advanced solve mode of stalled issues.SNC-2565</translatorcomment>
-        <translation>Get full control of the sync issues</translation>
-    </message>
-    <message>
-        <source>Learn more</source>
-        <translatorcomment>Underline link label to open a help.mega.io article.SNC-2565</translatorcomment>
-        <translation>Learn more</translation>
-    </message>
-    <message>
-        <source>Let MEGA solve sync issues automatically</source>
-        <translatorcomment>Description for smart solve mode of stalled issues.SNC-2565</translatorcomment>
-        <translation>Let MEGA resolve sync issues automatically</translation>
-    </message>
-    <message>
-        <source>Smart</source>
-        <translatorcomment>Stalled issues solve mode to allow mega to try solve stalled issues when it can.SNC-2565</translatorcomment>
-        <translation>Smart</translation>
-    </message>
-    <message>
-        <source>Sync stall mode</source>
-        <translatorcomment>Section subtitle for the window allowing the user to select sync stall solve mode.SNC-2565</translatorcomment>
-        <translation>Issue resolution mode</translation>
     </message>
 </context>
 <context>
