@@ -168,8 +168,6 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
     connect(mUi->bLearnMore, &QPushButton::clicked, this, &SettingsDialog::onBLearnMore);
     connect(mUi->bAboutMega, &QPushButton::clicked, this, &SettingsDialog::onBAboutMega);
 
-    initNetworkTab();
-
     // React to AppState changes
     connect(AppState::instance().get(),
             &AppState::appStateChanged,
@@ -431,6 +429,8 @@ void SettingsDialog::loadSettings()
     mUi->cDesktopIntegration->setChecked(!mPreferences->leftPaneIconsDisabled());
 #endif
 
+    // Init the network tab before updating network values
+    initNetworkTab();
     updateNetworkTab();
 
     // File management tab
