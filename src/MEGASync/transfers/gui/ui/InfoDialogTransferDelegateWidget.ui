@@ -48,16 +48,11 @@ background-color: #FFF7F7F7;/*colorToken.surface-1*/
 {
 	border: none;
 }
-#lFileNameCompleted, #lFileName
-{
-font-weight:700;
-}
 #lSpeed, #lTransferTypeCompleted
 {
 color: #ff616366; /*colorToken.text-secondary*/
 font-size: 10px;
 line-height: 16px;
-font-weight:600;
 }
 #pbTransfer
 {
@@ -67,7 +62,6 @@ background-color: transparent;
 {
 background-color: #29DD74;/*colorToken.indicator-green*/
 }
-
 #lRemainingTime
 {
   font-size: 10px;
@@ -77,7 +71,6 @@ background-color: #29DD74;/*colorToken.indicator-green*/
 {
 	background-color:#FFD8D9DB; /*colorToken.border-disabled*/
 }
-
 #wCompletedSeparator
 {
 background-color: #FFD8D9DB; /*colorToken.border-disabled*/
@@ -87,7 +80,6 @@ background-color: #FFD8D9DB; /*colorToken.border-disabled*/
 color: #FF009B48; /*colorToken.support-success*/
 font-size: 10px;
 line-height: 16px;
-font-weight:600;
 }
 #lElapsedTime[state=&quot;Failed&quot;]
 {
@@ -291,6 +283,9 @@ color: #FF009B48; /*colorToken.support-error*/
                   <property name="textFormat">
                    <enum>Qt::PlainText</enum>
                   </property>
+                  <property name="semibold" stdset="0">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -365,6 +360,9 @@ color: #FF009B48; /*colorToken.support-error*/
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
                  </property>
+                 <property name="semibold" stdset="0">
+                  <bool>true</bool>
+                 </property>
                 </widget>
                </item>
                <item alignment="Qt::AlignLeft">
@@ -389,6 +387,9 @@ color: #FF009B48; /*colorToken.support-error*/
                  </property>
                  <property name="text">
                   <string/>
+                 </property>
+                 <property name="semibold" stdset="0">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -688,6 +689,9 @@ color: #FF009B48; /*colorToken.support-error*/
                         <property name="textFormat">
                          <enum>Qt::PlainText</enum>
                         </property>
+                        <property name="semibold" stdset="0">
+                         <bool>true</bool>
+                        </property>
                        </widget>
                       </item>
                       <item>
@@ -786,6 +790,9 @@ color: #FF009B48; /*colorToken.support-error*/
                        </property>
                        <property name="text">
                         <string/>
+                       </property>
+                       <property name="semibold" stdset="0">
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>

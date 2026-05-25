@@ -438,14 +438,6 @@ void MegaApplication::addFont(const QString& fontPath)
 
 void MegaApplication::addFonts()
 {
-#if !defined(__APPLE__) && !defined(_WIN32)
-    addFont(QString::fromUtf8("://fonts/OpenSans-Regular.ttf"));
-    addFont(QString::fromUtf8("://fonts/OpenSans-Semibold.ttf"));
-
-    QFont font(QString::fromUtf8("Open Sans"), 8);
-    qApp->setFont(font);
-#endif
-
     addFont(QString::fromUtf8("://fonts/SourceSansPro-Semibold.ttf"));
     addFont(QString::fromUtf8("://fonts/Lato-Light.ttf"));
     addFont(QString::fromUtf8("://fonts/Lato-Bold.ttf"));
@@ -480,6 +472,14 @@ void MegaApplication::addFonts()
     addFont(QString::fromUtf8("://fonts/Inter-Regular.ttf"));
     addFont(QString::fromUtf8("://fonts/Inter-SemiBold.ttf"));
     addFont(QString::fromUtf8("://fonts/Inter-Thin.ttf"));
+
+#ifdef Q_OS_LINUX
+    addFont(QString::fromUtf8("://fonts/OpenSans-Regular.ttf"));
+    addFont(QString::fromUtf8("://fonts/OpenSans-Semibold.ttf"));
+
+    QFont font(QString::fromUtf8("Inter"), 8);
+    qApp->setFont(font);
+#endif
 }
 
 void MegaApplication::initStyleAndResources()

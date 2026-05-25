@@ -411,13 +411,13 @@ border:none;
 QAbstractButton[type="primary"], QAbstractButton[type="secondary"], QAbstractButton[type="outline"]
 {
 /* semibold */
-font-weight: 600;
+font-weight: 400;
 }
 
 QAbstractButton[type = "ghost"], QAbstractButton[type = "link"]
 {
 /* regular */
-font-weight:400
+font-weight: 400
 }
 
 /*
@@ -577,7 +577,7 @@ font-weight: 400;
 
 QWidget[semibold]
 {
-font-weight: 600;
+font-weight: 400;
 }
 
 QWidget[bold]
