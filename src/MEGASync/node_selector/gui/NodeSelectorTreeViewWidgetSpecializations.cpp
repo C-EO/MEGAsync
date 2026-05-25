@@ -581,7 +581,7 @@ void NodeSelectorTreeViewWidgetSearch::resetChipsVisibility()
     ui->searchButtonsWidget->setVisible(true);
 }
 
-void NodeSelectorTreeViewWidgetSearch::onExpandReady()
+void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
 {
     if (mNewSearch)
     {
@@ -648,14 +648,14 @@ void NodeSelectorTreeViewWidgetSearch::onExpandReady()
 
         mNewSearch = false;
 
-        NodeSelectorTreeViewWidget::onExpandReady();
+        NodeSelectorTreeViewWidget::onLevelLoaded();
 
         // Do it after setting the model to the view, otherwise it won´t work
         changeColumnsVisibility(tabSelected);
     }
     else
     {
-        NodeSelectorTreeViewWidget::onExpandReady();
+        NodeSelectorTreeViewWidget::onLevelLoaded();
     }
 }
 

@@ -57,6 +57,7 @@ signals:
     void navigateReady(const QModelIndex& index);
     void modelAboutToBeChanged();
     void modelSorted();
+    void levelLoaded();
 
 private:
     QModelIndex findIndexInParentList(mega::MegaNode* NodeToFind,
@@ -68,6 +69,7 @@ private:
     QModelIndexList mItemsToMap;
     bool mExpandMapped;
     bool mForceInvalidate;
+    bool mPendingSortIsLevelLoad;
 
 private slots:
     void invalidateModel(const QList<QPair<mega::MegaHandle, QModelIndex> >& parents,

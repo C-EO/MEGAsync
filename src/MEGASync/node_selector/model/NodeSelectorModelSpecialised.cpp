@@ -78,7 +78,6 @@ void NodeSelectorModelCloudDrive::onRootItemCreated()
     {
         fetchItemChildren(rootIndex);
         mIndexesToBeExpanded.append(qMakePair(MegaSyncApp->getRootNode()->getHandle(), rootIndex));
-        loadLevelFinished();
     }
     else
     {

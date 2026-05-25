@@ -12,7 +12,8 @@ NodeSelectorProxyModel::NodeSelectorProxyModel(QObject* parent):
     mSortColumn(NodeSelectorModel::Column::NODE),
     mOrder(Qt::AscendingOrder),
     mExpandMapped(true),
-    mForceInvalidate(false)
+    mForceInvalidate(false),
+    mPendingSortIsLevelLoad(false)
 {
     mCollator.setCaseSensitivity(Qt::CaseInsensitive);
     mCollator.setNumericMode(true);
@@ -202,7 +203,8 @@ void NodeSelectorProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
         connect(nodeSelectorModel,
                 &NodeSelectorModel::levelsAdded,
                 this,
-                &NodeSelectorProxyModel::invalidateModel);
+                &NodeSelectorProxyModel::invalidateModel,
+                Qt::UniqueConnection);
         nodeSelectorModel->firstLoad();
     }
 }
@@ -315,6 +317,8 @@ void NodeSelectorProxyModel::invalidateModel(
     const QList<QPair<mega::MegaHandle, QModelIndex>>& parents,
     bool force)
 {
+    mPendingSortIsLevelLoad = true;
+
     foreach(auto parent, parents)
     {
         mItemsToMap.append(parent.second);
@@ -325,6 +329,11 @@ void NodeSelectorProxyModel::invalidateModel(
 
 void NodeSelectorProxyModel::onModelSortedFiltered()
 {
+    // Consume the flag atomically so a re-entry while emitting signals
+    // cannot leave it stuck in an inconsistent state.
+    const bool sortFromLevelLoad = mPendingSortIsLevelLoad;
+    mPendingSortIsLevelLoad = false;
+
     if (mForceInvalidate)
     {
         if (auto nodeSelectorModel = dynamic_cast<NodeSelectorModel*>(sourceModel()))
@@ -348,7 +357,16 @@ void NodeSelectorProxyModel::onModelSortedFiltered()
         mExpandMapped = true;
     }
 
-    emit modelSorted();
+    // If the sort was caused by a new level loaded
+    if (sortFromLevelLoad)
+    {
+        emit levelLoaded();
+    }
+    // If the sort was caused by a filter or a column sort
+    else
+    {
+        emit modelSorted();
+    }
 
     getMegaModel()->sendBlockUiSignal(false);
     mItemsToMap.clear();

@@ -128,7 +128,7 @@ protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
     QModelIndex getAddedNodeParent(mega::MegaHandle parentHandle) override;
     void makeCustomConnections() override;
-    void onExpandReady() override;
+    void onLevelLoaded() override;
 
 protected slots:
     NodeState getNodeOnModelState(const QModelIndex& index, mega::MegaNode* node) override;

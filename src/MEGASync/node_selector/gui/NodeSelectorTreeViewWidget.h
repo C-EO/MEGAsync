@@ -183,8 +183,8 @@ protected slots:
     // Title
     void updateRootTitle();
 
-    // When the model has been filtered
-    virtual void onExpandReady();
+    // Invoked after the proxy finishes processing a level load
+    virtual void onLevelLoaded();
 
 private slots:
     void onbNewFolderClicked();
