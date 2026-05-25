@@ -170,7 +170,7 @@ color: #ff252626; /*colorToken.border-subtle*/
              </property>
              <property name="icon">
               <iconset resource="../Resources_common.qrc">
-               <normaloff>:/images/mega_rec_icon.svg</normaloff>:/images/mega_rec_icon.svg</iconset>
+               <normaloff>:/images/mega_icon.svg</normaloff>:/images/mega_icon.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
