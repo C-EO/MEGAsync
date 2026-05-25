@@ -1580,39 +1580,48 @@ void SettingsDialog::initNetworkTab()
     connect(mUi->rUploadAutoLimit,
             &QRadioButton::toggled,
             this,
-            &SettingsDialog::onUploadLimitOptionChanged);
+            &SettingsDialog::onUploadLimitOptionChanged,
+            Qt::UniqueConnection);
     connect(mUi->rUploadNoLimit,
             &QRadioButton::toggled,
             this,
-            &SettingsDialog::onUploadLimitOptionChanged);
+            &SettingsDialog::onUploadLimitOptionChanged,
+            Qt::UniqueConnection);
     connect(mUi->rUploadLimit,
             &QRadioButton::toggled,
             this,
-            &SettingsDialog::onUploadLimitOptionChanged);
+            &SettingsDialog::onUploadLimitOptionChanged,
+            Qt::UniqueConnection);
     connect(mUi->rDownloadNoLimit,
             &QRadioButton::toggled,
             this,
-            &SettingsDialog::onDownloadLimitOptionChanged);
+            &SettingsDialog::onDownloadLimitOptionChanged,
+            Qt::UniqueConnection);
     connect(mUi->rDownloadLimit,
             &QRadioButton::toggled,
             this,
-            &SettingsDialog::onDownloadLimitOptionChanged);
+            &SettingsDialog::onDownloadLimitOptionChanged,
+            Qt::UniqueConnection);
     connect(mUi->eUploadLimit,
             &QLineEdit::editingFinished,
             this,
-            &SettingsDialog::onUploadLimitValueChanged);
+            &SettingsDialog::onUploadLimitValueChanged,
+            Qt::UniqueConnection);
     connect(mUi->eDownloadLimit,
             &QLineEdit::editingFinished,
             this,
-            &SettingsDialog::onDownloadLimitValueChanged);
+            &SettingsDialog::onDownloadLimitValueChanged,
+            Qt::UniqueConnection);
     connect(mUi->eMaxDownloadConnections,
             QOverload<int>::of(&QSpinBox::valueChanged),
             this,
-            &SettingsDialog::onMaxDownloadConnectionsChanged);
+            &SettingsDialog::onMaxDownloadConnectionsChanged,
+            Qt::UniqueConnection);
     connect(mUi->eMaxUploadConnections,
             QOverload<int>::of(&QSpinBox::valueChanged),
             this,
-            &SettingsDialog::onMaxUploadConnectionsChanged);
+            &SettingsDialog::onMaxUploadConnectionsChanged,
+            Qt::UniqueConnection);
 }
 
 void SettingsDialog::updateNetworkTab()

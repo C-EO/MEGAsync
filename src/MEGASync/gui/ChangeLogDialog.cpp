@@ -40,6 +40,7 @@ ChangeLogDialog::ChangeLogDialog(QString version, QString SDKversion, QString ch
 
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+    ui->bMEGAlogo->setIcon(QIcon(QLatin1String(":/images/mega_rec_icon.svg")));
 #endif
 
 #ifdef Q_OS_LINUX
