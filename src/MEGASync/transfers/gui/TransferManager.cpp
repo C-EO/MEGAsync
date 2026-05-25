@@ -638,6 +638,9 @@ void TransferManager::onStorageStateChanged(int storageState)
 {
     mStorageQuotaState = storageState;
 
+    mUi->bScanning->setOverQuotaState(storageState == MegaApi::STORAGE_STATE_RED ||
+                                      storageState == MegaApi::STORAGE_STATE_PAYWALL);
+
     mUi->pStatusHeaderInfo->setStorageQuotaState(storageState);
     mUi->pStatusHeaderInfo->updateStorageBannerText();
 
