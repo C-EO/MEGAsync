@@ -29,6 +29,13 @@ border: none;
 #treeViewPage
 {
 background-color: transparent;
+}
+
+#frame[hasBorder=&quot;true&quot;]
+{
+border: 2px dotted #B0B1B366;/*colorToken.border-strong*/
+border-radius: 16px;
+background: transparent;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -287,7 +294,7 @@ background-color: transparent;
             <property name="lineWidth">
              <number>0</number>
             </property>
-            <layout class="QGridLayout" name="gridLayout">
+            <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0,0,4">
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -333,35 +340,145 @@ background-color: transparent;
               <widget class="IconLabel" name="emptyIcon">
                <property name="minimumSize">
                 <size>
-                 <width>96</width>
-                 <height>96</height>
+                 <width>120</width>
+                 <height>120</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>96</width>
-                 <height>96</height>
+                 <width>120</width>
+                 <height>120</height>
                 </size>
                </property>
                <property name="text">
                 <string notr="true"/>
                </property>
-               <property name="icon">
-                <iconset resource="../../../gui/Resources_common.qrc">
-                 <normaloff>:/search_small_thin_outline</normaloff>:/search_small_thin_outline</iconset>
-               </property>
                <property name="iconSize">
                 <size>
-                 <width>96</width>
-                 <height>96</height>
+                 <width>120</width>
+                 <height>120</height>
                 </size>
-               </property>
-               <property name="normal_off" stdset="0">
-                <string notr="true">icon-secondary</string>
                </property>
               </widget>
              </item>
              <item row="3" column="1">
+              <widget class="QWidget" name="emptyPageButtonsWidget" native="true">
+               <layout class="QHBoxLayout" name="emptyPageButtonsLayout">
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <spacer name="emptyPageButtonsSpacerLeft">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="TokenizableButton" name="bEmptyUpload" native="true">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text" stdset="0">
+                   <string notr="true">Upload</string>
+                  </property>
+                  <property name="icon" stdset="0">
+                   <iconset resource="../../../gui/Resources_common.qrc">
+                    <normaloff>:/arrow-up_small_thin_outline</normaloff>:/arrow-up_small_thin_outline</iconset>
+                  </property>
+                  <property name="iconSize" stdset="0">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                  <property name="type" stdset="0">
+                   <string notr="true">primary</string>
+                  </property>
+                  <property name="dimension" stdset="0">
+                   <string notr="true">medium</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="TokenizableButton" name="bEmptyNewFolder" native="true">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="visible">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text" stdset="0">
+                   <string notr="true">New folder</string>
+                  </property>
+                  <property name="icon" stdset="0">
+                   <iconset resource="../../../gui/Resources_common.qrc">
+                    <normaloff>:/folder-plus-01_small_thin_outline</normaloff>:/folder-plus-01_small_thin_outline</iconset>
+                  </property>
+                  <property name="iconSize" stdset="0">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                  <property name="type" stdset="0">
+                   <string notr="true">secondary</string>
+                  </property>
+                  <property name="dimension" stdset="0">
+                   <string notr="true">medium</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="emptyPageButtonsSpacerRight">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="4" column="1">
               <spacer name="verticalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -377,7 +494,7 @@ background-color: transparent;
              <item row="2" column="1">
               <widget class="QWidget" name="textEmptyInfo" native="true">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -386,6 +503,12 @@ background-color: transparent;
                 <size>
                  <width>0</width>
                  <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>416</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -406,30 +529,36 @@ background-color: transparent;
                 </property>
                 <item>
                  <widget class="QLabel" name="titleEmptyLabel">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="text">
                    <string notr="true"/>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
                   </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
                   <property name="bold" stdset="0">
                    <bool>true</bool>
+                  </property>
+                  <property name="font-size" stdset="0">
+                   <string notr="true">label-1</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="descriptionEmptyLabel">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
-                   </size>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
                   <property name="text">
                    <string notr="true"/>
@@ -444,7 +573,10 @@ background-color: transparent;
                    <string notr="true">secondary</string>
                   </property>
                   <property name="regular" stdset="0">
-                   <bool>false</bool>
+                   <bool>true</bool>
+                  </property>
+                  <property name="font-size" stdset="0">
+                   <string notr="true">body-1</string>
                   </property>
                  </widget>
                 </item>
@@ -453,222 +585,6 @@ background-color: transparent;
              </item>
              <item row="0" column="1">
               <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="emptyFolderPage">
-         <property name="acceptDrops">
-          <bool>true</bool>
-         </property>
-         <layout class="QVBoxLayout" name="emptyFolderVerticalLayout">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QFrame" name="emptyFolderFrame">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Plain</enum>
-            </property>
-            <property name="lineWidth">
-             <number>0</number>
-            </property>
-            <layout class="QGridLayout" name="emptyFolderGridLayout">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="1" column="0">
-              <spacer name="emptyFolderHorizontalSpacer_1">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="1" column="2">
-              <spacer name="emptyFolderHorizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="1" column="1" alignment="Qt::AlignHCenter">
-              <widget class="IconLabel" name="emptyFolderIcon">
-               <property name="minimumSize">
-                <size>
-                 <width>96</width>
-                 <height>96</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>96</width>
-                 <height>96</height>
-                </size>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-               <property name="icon">
-                <iconset resource="../../../gui/Resources_light.qrc">
-                 <normaloff>:/folder_small_thin</normaloff>:/folder_small_thin</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>96</width>
-                 <height>96</height>
-                </size>
-               </property>
-               <property name="normal_off" stdset="0">
-                <string notr="true">icon-secondary</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <spacer name="emptyFolderVerticalSpacer_1">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="2" column="1">
-              <widget class="QWidget" name="textEmptyFolderInfo" native="true">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <layout class="QVBoxLayout" name="emptyFolderVerticalLayout_7">
-                <property name="spacing">
-                 <number>8</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="titleEmptyFolderLabel">
-                  <property name="visible">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                  <property name="font-size" stdset="0">
-                   <string notr="true">label-1</string>
-                  </property>
-                  <property name="bold" stdset="0">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="descriptionEmptyFolderLabel">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Folder is empty</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                  <property name="font-size" stdset="0">
-                   <string notr="true">label-2</string>
-                  </property>
-                  <property name="type" stdset="0">
-                   <string notr="true">secondary</string>
-                  </property>
-                  <property name="regular" stdset="0">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <spacer name="emptyFolderVerticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
@@ -709,10 +625,14 @@ background-color: transparent;
    <extends>QTreeView</extends>
    <header>node_selector/gui/NodeSelectorTreeView.h</header>
   </customwidget>
+  <customwidget>
+   <class>TokenizableButton</class>
+   <extends>QWidget</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../../../gui/Resources_common.qrc"/>
-  <include location="../../../gui/Resources_light.qrc"/>
  </resources>
  <connections/>
 </ui>

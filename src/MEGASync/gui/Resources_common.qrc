@@ -1642,5 +1642,27 @@
         <file alias="light/tray_icon_offline.svg">images/system_tray/light/tray_icon_offline.svg</file>
         <file alias="dark/tray_icon_offline.svg">images/system_tray/dark/tray_icon_offline.svg</file>
         <file alias="reddish/tray_icon_offline.svg">images/system_tray/reddish/tray_icon_offline.svg</file>
+        <file alias="empty_search">images/empty_search.png</file>
+        <file alias="empty_search@2x">images/empty_search@2x.png</file>
+        <file alias="empty_search@3x">images/empty_search@3x.png</file>
+        <file alias="empty_backups">images/empty_backups.png</file>
+        <file alias="empty_backups@2x">images/empty_backups@2x.png</file>
+        <file alias="empty_backups@3x">images/empty_backups@3x.png</file>
+        <file alias="empty_cloud_drive">images/empty_cloud_drive.png</file>
+        <file alias="empty_cloud_drive@2x">images/empty_cloud_drive@2x.png</file>
+        <file alias="empty_cloud_drive@3x">images/empty_cloud_drive@3x.png</file>
+        <file alias="empty_cloud_with_add_action">images/empty_cloud_with_add_action.png</file>
+        <file alias="empty_cloud_with_add_action@2x">images/empty_cloud_with_add_action@2x.png</file>
+        <file alias="empty_cloud_with_add_action@3x">images/empty_cloud_with_add_action@3x.png</file>
+        <file alias="empty_incoming_shares">images/empty_incoming_shares.png</file>
+        <file alias="empty_incoming_shares@2x">images/empty_incoming_shares@2x.png</file>
+        <file alias="empty_incoming_shares@3x">images/empty_incoming_shares@3x.png</file>
+        <file alias="empty_rubbish">images/empty_rubbish.png</file>
+        <file alias="empty_rubbish@2x">images/empty_rubbish@2x.png</file>
+        <file alias="empty_rubbish@3x">images/empty_rubbish@3x.png</file>
+        <file alias="empty_safe">images/empty_safe.png</file>
+        <file alias="empty_safe@2x">images/empty_safe@2x.png</file>
+        <file alias="empty_safe@3x">images/empty_safe@3x.png</file>
+        <file alias="arrow-down_small_thin_outline">images/themed/tokenizable/arrow-down_small_thin_outline.svg</file>
     </qresource>
 </RCC>

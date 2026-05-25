@@ -42,6 +42,14 @@ public:
         return false;
     }
 
+    virtual bool acceptDrops(int tabItem)
+    {
+        return false;
+    }
+
+    virtual bool showEmptyStateUploadButton(NodeSelectorTreeViewWidget* wdg) const;
+    virtual bool showEmptyStateNewFolderButton(NodeSelectorTreeViewWidget* wdg) const;
+
     virtual bool flattenSearchResults() const
     {
         return false;
@@ -59,39 +67,44 @@ public:
 
     enum ButtonId : uint
     {
-        Upload,
-        NewFolder,
-        ClearRubbish
+        NONE = 0x0,
+        UPLOAD = 0x1,
+        NEW_FOLDER = 0x2,
+        CLEAR_RUBBISH = 0x4
     };
+    Q_DECLARE_FLAGS(ButtonIds, ButtonId)
 
     virtual void updateActionButtonsText(QMap<uint, QPushButton*> buttons);
     virtual QString getCustomButtonText(uint buttonId) const;
     void checkActionButtonsVisibility(NodeSelectorTreeViewWidget* wdg,
                                       QMap<uint, QPushButton*> buttons);
-    virtual void checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
-                                             uint buttonId,
-                                             QPushButton* button);
+    void checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
+                                     uint buttonId,
+                                     QPushButton* button);
+    virtual bool checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg, uint buttonId);
 
     virtual TabTypes allowedTabTypes() = 0;
 
-    struct EmptyFolderPageInfo
+    struct EmptyPageInfo
     {
         QString title;
         QString description;
         QIcon icon;
-        bool iconTokenized = true;
-        QString descriptionLabelFontSize;
+        ButtonIds buttons = ButtonId::NONE;
+        bool hasBorder = false;
 
         bool isValid()
         {
-            return !title.isEmpty() && !description.isEmpty() && !icon.isNull() &&
-                   !descriptionLabelFontSize.isEmpty();
+            return !title.isEmpty() && !description.isEmpty() && !icon.isNull();
         }
     };
 
-    virtual EmptyFolderPageInfo getEmptyFolderPageInfo()
+    virtual EmptyPageInfo getEmptyFolderPageInfo() const = 0;
+    virtual EmptyPageInfo getEmptyCloudDrivePage() const = 0;
+
+    virtual bool emptyPageHasButtons() const
     {
-        return EmptyFolderPageInfo();
+        return false;
     }
 
     virtual std::shared_ptr<NodeSelectorProxyModel> createProxyModel();
@@ -100,7 +113,68 @@ protected:
     bool cloudDriveIsCurrentRootIndex(NodeSelectorTreeViewWidget* wdg);
 };
 
-class DownloadType: public SelectType
+Q_DECLARE_METATYPE(SelectType::ButtonIds)
+Q_DECLARE_OPERATORS_FOR_FLAGS(SelectType::ButtonIds)
+
+class CloudDriveType: public SelectType
+{
+public:
+    explicit CloudDriveType() = default;
+
+    bool areActionsAllowed() override
+    {
+        return true;
+    }
+
+    bool isDownloadAllowed() const override;
+
+    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
+    bool checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg, uint buttonId) override;
+
+    bool hasNewFolderButton() const override
+    {
+        return true;
+    }
+
+    bool acceptDrops(int tabItem) override;
+
+    bool showEmptyStateUploadButton(NodeSelectorTreeViewWidget* wdg) const override;
+
+    bool okButtonEnabled(const QModelIndexList& selected) override;
+    TabTypes allowedTabTypes() override;
+
+    bool flattenSearchResults() const override
+    {
+        return false;
+    }
+
+    bool isFilePicker() const override
+    {
+        return false;
+    }
+
+    bool emptyPageHasButtons() const override
+    {
+        return true;
+    }
+
+    EmptyPageInfo getEmptyFolderPageInfo() const override;
+    EmptyPageInfo getEmptyCloudDrivePage() const override;
+
+private:
+    QString getCustomButtonText(uint buttonId) const override;
+};
+
+class FilePickerType: public SelectType
+{
+public:
+    FilePickerType() = default;
+
+    EmptyPageInfo getEmptyFolderPageInfo() const override;
+    EmptyPageInfo getEmptyCloudDrivePage() const override;
+};
+
+class DownloadType: public FilePickerType
 {
 public:
     explicit DownloadType() = default;
@@ -109,7 +183,7 @@ public:
     bool isDownloadAllowed() const override;
 };
 
-class SyncType: public SelectType
+class SyncType: public FilePickerType
 {
 public:
     explicit SyncType() = default;
@@ -117,7 +191,7 @@ public:
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
-    EmptyFolderPageInfo getEmptyFolderPageInfo() override;
+    EmptyPageInfo getEmptyFolderPageInfo() const override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
 
     bool hasNewFolderButton() const override
@@ -129,9 +203,14 @@ public:
     {
         return true;
     }
+
+    bool emptyPageHasButtons() const override
+    {
+        return true;
+    }
 };
 
-class StreamType: public SelectType
+class StreamType: public FilePickerType
 {
 public:
     explicit StreamType() = default;
@@ -149,7 +228,7 @@ public:
     }
 };
 
-class UploadType: public SelectType
+class UploadType: public FilePickerType
 {
 public:
     explicit UploadType() = default;
@@ -168,45 +247,7 @@ public:
     }
 };
 
-class CloudDriveType: public SelectType
-{
-public:
-    explicit CloudDriveType() = default;
-
-    bool areActionsAllowed() override
-    {
-        return true;
-    }
-
-    bool isDownloadAllowed() const override;
-
-    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
-    void checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg,
-                                     uint buttonId,
-                                     QPushButton* button) override;
-
-    bool hasNewFolderButton() const override
-    {
-        return true;
-    }
-
-    bool okButtonEnabled(const QModelIndexList& selected) override;
-    TabTypes allowedTabTypes() override;
-    bool flattenSearchResults() const override
-    {
-        return false;
-    }
-
-    bool isFilePicker() const override
-    {
-        return false;
-    }
-
-private:
-    QString getCustomButtonText(uint buttonId) const override;
-};
-
-class MoveBackupType: public UploadType
+class MoveBackupType: public FilePickerType
 {
 public:
     explicit MoveBackupType() = default;

@@ -202,13 +202,17 @@ FilePickerNodeSelector::DestinationBannerInfo SyncNodeSelector::destinationBanne
 {
     DestinationBannerInfo info{BannerWidget::Type::BANNER_WARNING, {}};
 
-    auto* currentWidget = getSearchAwareTargetWidget();
-    if (!currentWidget)
+    auto* contextWidget = getSearchAwareTargetWidget();
+    if (!contextWidget)
     {
         return info;
     }
 
-    const auto selectedIndexes = currentWidget->getSelectedIndexes();
+    // While searching, the selection lives in the search widget, not in the source tab
+    // returned by getSearchAwareTargetWidget(); consult the currently visible widget.
+    auto* selectionWidget = getCurrentTreeViewWidget();
+    const auto selectedIndexes =
+        selectionWidget ? selectionWidget->getSelectedIndexes() : QModelIndexList();
     if (selectedIndexes.size() == 1)
     {
         const auto status = selectedIndexes.first()
@@ -221,11 +225,13 @@ FilePickerNodeSelector::DestinationBannerInfo SyncNodeSelector::destinationBanne
             case NodeSelectorModelItem::Status::SYNC_CHILD:
             {
                 info.text = tr("Choose a different folder. This folder is already synced");
+                break;
             }
             case NodeSelectorModelItem::Status::SYNC_PARENT:
             {
                 info.text = tr("Choose a different folder. This location contains a folder that's "
                                "already synced");
+                break;
             }
             default:
             {
@@ -233,7 +239,7 @@ FilePickerNodeSelector::DestinationBannerInfo SyncNodeSelector::destinationBanne
             }
         }
     }
-    else if (currentWidget->getTabType() == NodeSelectorTreeViewWidget::TabItem::SHARES)
+    else if (contextWidget->getTabType() == NodeSelectorTreeViewWidget::TabItem::SHARES)
     {
         if (!fullAccessInTopRootShares())
         {
@@ -445,8 +451,6 @@ void CloudDriveNodeSelector::specialisedTreeViewWidgetsCreated()
 {
     NodeSelector::specialisedTreeViewWidgetsCreated();
 
-    enableDragAndDrop(true);
-
     if (mSearchWidget)
     {
         connect(mSearchWidget,
@@ -571,28 +575,37 @@ void CloudDriveNodeSelector::configureSidebar()
 void CloudDriveNodeSelector::configureSearchTool()
 {
     // Search Line Edit
-    ui->leSearchTool->addCustomWidget(ui->wTitleContainer);
-    ui->leSearchTool->setMode(SearchLineEdit::Mode::EXPANDABLE);
+    ui->leSearchTool->setMode(SearchLineEdit::Mode::ALWAYS_EXPANDED);
+
+    static constexpr int SEARCH_LINE_EDIT_FIXED_WIDTH = 345;
+    static constexpr int SEARCH_LINE_EDIT_FIXED_HEIGHT = 40;
+
+    ui->leSearchTool->setFixedSize(SEARCH_LINE_EDIT_FIXED_WIDTH, SEARCH_LINE_EDIT_FIXED_HEIGHT);
 }
 
 void CloudDriveNodeSelector::configureActionButtonsPlacement()
 {
-    const auto applyHeaderStyle = [](TokenizableButton* btn)
+    const auto applyHeaderStyle = [](TokenizableButton* btn, const QString& type)
     {
         if (!btn)
         {
             return;
         }
-        btn->setProperty("type", QLatin1String("ghost"));
-        btn->setProperty("dimension", QLatin1String("small"));
+        btn->setProperty("type", type);
+        btn->setProperty("dimension", QLatin1String("medium"));
         btn->style()->unpolish(btn);
         btn->style()->polish(btn);
     };
 
+    applyHeaderStyle(ui->bUpload, QLatin1String("primary"));
+    applyHeaderStyle(ui->bClearRubbish, QLatin1String("primary"));
+    applyHeaderStyle(ui->bNewFolder, QLatin1String("secondary"));
+
+    ui->headerLayout->insertWidget(0, ui->actionButtonsContainer);
+
     for (auto* btn: {ui->bUpload, ui->bNewFolder, ui->bClearRubbish})
     {
-        applyHeaderStyle(btn);
-        ui->headerLayout->addWidget(btn);
+        ui->actionButtonsLayout->addWidget(btn);
     }
 }
 
@@ -635,13 +648,6 @@ void CloudDriveNodeSelector::handleSearchHidden()
     {
         onbShowCloudDriveClicked();
     }
-}
-
-void CloudDriveNodeSelector::enableDragAndDrop(bool enable)
-{
-    mCloudDriveWidget->enableDragAndDrop(enable);
-    mRubbishWidget->enableDragAndDrop(true);
-    mIncomingSharesWidget->enableDragAndDrop(true);
 }
 
 void CloudDriveNodeSelector::sendStats()
@@ -691,7 +697,7 @@ void CloudDriveNodeSelector::sendStats()
 
 void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
 {
-    if (id == SelectType::Upload)
+    if (id == SelectType::UPLOAD)
     {
         MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
             AppStatsEvents::EventType::CLOUD_DRIVE_UPLOAD_CLICKED);
@@ -712,7 +718,7 @@ void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
             }
         }
     }
-    else if (id == SelectType::ClearRubbish)
+    else if (id == SelectType::CLEAR_RUBBISH)
     {
         MessageDialogInfo msgInfo;
         msgInfo.parent = this;

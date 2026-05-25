@@ -198,15 +198,17 @@ protected:
         DOESNT_EXIST
     };
 
-    virtual NodeState getNodeOnModelState(const QModelIndex& index, mega::MegaNode* node);
-
-    struct EmptyLabelInfo
+    enum class EmptyStateKind
     {
-        QString title;
-        QString description;
+        NONE,
+        ROOT,
+        FOLDER
     };
 
-    virtual EmptyLabelInfo getEmptyLabel();
+    virtual NodeState getNodeOnModelState(const QModelIndex& index, mega::MegaNode* node);
+
+    virtual SelectType::EmptyPageInfo getEmptyRootPageInfo();
+    void showRootEmptyState();
 
     virtual NodeSelectorDelegate* createItemDelegate(QObject* parent);
 
@@ -250,8 +252,11 @@ private:
     virtual bool isAllowedToEnterInIndex(const QModelIndex& idx);
     virtual bool isDownloadAllowed() const;
     void setRootIndex(const QModelIndex& proxy_idx);
-    virtual QIcon getEmptyIcon();
     void setEmptyFolderPage();
+    void showFolderEmptyState();
+    void applyEmptyState(const SelectType::EmptyPageInfo& info, EmptyStateKind kind);
+    void setEmptyStateButtonsVisibility(const SelectType::EmptyPageInfo& info);
+    void updateEmptyStateButtonsVisibility();
     QModelIndex currentFolderIndex() const;
 
     QModelIndex getIndexFromHandle(const mega::MegaHandle& handle);
@@ -278,7 +283,8 @@ private:
     void checkOkButton(const QModelIndexList& selected);
 
     // Empty messages
-    void initEmptyMessages();
+    void initEmptyRootPageMessages();
+    void initEmptyFolderMessages();
 
     // Column width
     QList<int> mVisibleColumns;
@@ -289,6 +295,7 @@ private:
     bool mUiBlocked;
     bool mWasEmpty;
     bool mNewFolderButtonVisible = true;
+    EmptyStateKind mCurrentEmptyStateKind = EmptyStateKind::NONE;
 
     // Containers used to ignore specific nodes updates
     QSet<mega::MegaHandle> mNodesToBeReplaced;

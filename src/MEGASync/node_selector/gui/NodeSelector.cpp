@@ -226,14 +226,14 @@ void NodeSelector::onbNewFolderClicked()
 
 void NodeSelector::onUiIsBlocked(bool state)
 {
-    ui->bCancel->setDisabled(state);
     ui->leSearchTool->setDisabled(state);
+    ui->header->setDisabled(state);
+    ui->customButtonsContainer->setDisabled(state);
     if (state)
     {
         ui->bOk->setDisabled(true);
     }
-
-    ui->header->setDisabled(state);
+    // bCancel and wLeftPaneNS stay enabled so the user can always abort or navigate tabs.
 }
 
 void NodeSelector::onSelectionChanged()
@@ -790,9 +790,9 @@ void NodeSelector::showNotFoundNodeMessageBox()
 void NodeSelector::createActionButtons()
 {
     mButtons = {
-        {SelectType::ButtonId::Upload, ui->bUpload},
-        {SelectType::ButtonId::NewFolder, ui->bNewFolder},
-        {SelectType::ButtonId::ClearRubbish, ui->bClearRubbish},
+        {SelectType::ButtonId::UPLOAD, ui->bUpload},
+        {SelectType::ButtonId::NEW_FOLDER, ui->bNewFolder},
+        {SelectType::ButtonId::CLEAR_RUBBISH, ui->bClearRubbish},
     };
 
     for (auto it = mButtons.cbegin(); it != mButtons.cend(); ++it)
@@ -1055,7 +1055,6 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
                                               });
 
         refreshHeader(wid);
-        onSelectionChanged();
     }
 }
 
@@ -1247,7 +1246,7 @@ NodeSelectorTreeViewWidget* NodeSelector::addRubbish()
 
 void NodeSelector::onCustomButtonClicked(uint id)
 {
-    if (id == CloudDriveType::NewFolder)
+    if (id == CloudDriveType::NEW_FOLDER)
     {
         onbNewFolderClicked();
     }

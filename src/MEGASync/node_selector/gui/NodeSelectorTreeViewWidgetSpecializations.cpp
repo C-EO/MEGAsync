@@ -41,26 +41,18 @@ void NodeSelectorTreeViewWidgetCloudDrive::setViewPage()
 {
     if (mProxyModel->rowCount(getCurrentRootIndex()) == 0 && showEmptyView())
     {
+        showRootEmptyState();
         ui->stackedWidget->setCurrentWidget(ui->emptyPage);
     }
     else
     {
-        ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+        NodeSelectorTreeViewWidget::setViewPage();
     }
 }
 
-QIcon NodeSelectorTreeViewWidgetCloudDrive::getEmptyIcon()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetCloudDrive::getEmptyRootPageInfo()
 {
-    return Utilities::getIcon(QLatin1String("cloud"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
-}
-
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetCloudDrive::getEmptyLabel()
-{
-    EmptyLabelInfo info;
-    info.description = tr("Cloud drive is empty");
-    return info;
+    return mSelectType->getEmptyCloudDrivePage();
 }
 
 bool NodeSelectorTreeViewWidgetCloudDrive::isCurrentRootIndexReadOnly() const
@@ -234,25 +226,14 @@ bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentSelectionReadOnly()
     return isSelectionReadOnly(ui->tMegaFolders->selectedRows());
 }
 
-QIcon NodeSelectorTreeViewWidgetIncomingShares::getEmptyIcon()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetIncomingShares::getEmptyRootPageInfo()
 {
-    return Utilities::getIcon(QLatin1String("folder-users"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
-}
+    SelectType::EmptyPageInfo info;
 
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetIncomingShares::getEmptyLabel()
-{
-    EmptyLabelInfo info;
-    if (std::dynamic_pointer_cast<SyncType>(mSelectType))
-    {
-        info.title = tr("No incoming shares you can sync");
-        info.description = tr("You can only sync a shared folder if you’ve been given full access");
-    }
-    else
-    {
-        info.description = tr("No incoming shares");
-    }
+    info.title = tr("No incoming shares");
+    info.description = tr("Folders shared with you will appear here");
+    info.icon.addFile(Utilities::getPixmapName(QLatin1String("empty_incoming_shares"),
+                                               Utilities::AttributeType::NONE));
 
     return info;
 }
@@ -288,17 +269,12 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetBackups::createMode
     return std::unique_ptr<NodeSelectorModelBackups>(new NodeSelectorModelBackups);
 }
 
-QIcon NodeSelectorTreeViewWidgetBackups::getEmptyIcon()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetBackups::getEmptyRootPageInfo()
 {
-    return Utilities::getIcon(QLatin1String("devices"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
-}
-
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetBackups::getEmptyLabel()
-{
-    EmptyLabelInfo info;
-    info.description = tr("No backups");
+    SelectType::EmptyPageInfo info;
+    info.title = tr("No backups");
+    info.icon.addFile(
+        Utilities::getPixmapName(QLatin1String("empty_backups"), Utilities::AttributeType::NONE));
     return info;
 }
 
@@ -347,10 +323,13 @@ NodeSelectorTreeViewWidgetSearch::NodeSelectorTreeViewWidgetSearch(SelectTypeSPt
 
 void NodeSelectorTreeViewWidgetSearch::prepareForInitialDisplay()
 {
-    // The search view does not load content on startup. Pre-attaching the view avoids the
-    // first visible search having to build the tree view and delegates mid-transition.
-    setLoadingSceneVisible(false);
-    onExpandReady();
+    if (mSelectType->isFilePicker())
+    {
+        // The search view does not load content on startup. Pre-attaching the view avoids the
+        // first visible search having to build the tree view and delegates mid-transition.
+        setLoadingSceneVisible(false);
+        onExpandReady();
+    }
 }
 
 void NodeSelectorTreeViewWidgetSearch::setSearchScope(std::optional<TabType> scope)
@@ -607,17 +586,13 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel
     return model;
 }
 
-QIcon NodeSelectorTreeViewWidgetSearch::getEmptyIcon()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetSearch::getEmptyRootPageInfo()
 {
-    return Utilities::getIcon(QLatin1String("search"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
-}
-
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetSearch::getEmptyLabel()
-{
-    EmptyLabelInfo info;
-    info.description = tr("No search results");
+    SelectType::EmptyPageInfo info;
+    info.title = tr("No results found");
+    info.description = tr("Try a different name or check the spelling");
+    info.icon.addFile(
+        Utilities::getPixmapName(QLatin1String("empty_search"), Utilities::AttributeType::NONE));
     return info;
 }
 
@@ -636,6 +611,7 @@ void NodeSelectorTreeViewWidgetSearch::setViewPage()
         mSearchController->setHasRows(hasRows);
         if (!hasRows && showEmptyView())
         {
+            showRootEmptyState();
             ui->stackedWidget->setCurrentWidget(ui->emptyPage);
             return;
         }
@@ -709,6 +685,7 @@ void NodeSelectorTreeViewWidgetRubbish::setViewPage()
     auto rootIndex = mModel->index(0, 0);
     if (mModel->rowCount(rootIndex) == 0 && showEmptyView())
     {
+        showRootEmptyState();
         ui->stackedWidget->setCurrentWidget(ui->emptyPage);
 
         // The rubbish has been emptied, so we can unset the loading view
@@ -716,20 +693,16 @@ void NodeSelectorTreeViewWidgetRubbish::setViewPage()
     }
     else
     {
-        ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+        NodeSelectorTreeViewWidget::setViewPage();
     }
 }
 
-QIcon NodeSelectorTreeViewWidgetRubbish::getEmptyIcon()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetRubbish::getEmptyRootPageInfo()
 {
-    return Utilities::getIcon(QLatin1String("trash"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
-}
+    SelectType::EmptyPageInfo info;
+    info.title = tr("Rubbish bin is empty");
+    info.icon.addFile(
+        Utilities::getPixmapName(QLatin1String("empty_rubbish"), Utilities::AttributeType::NONE));
 
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetRubbish::getEmptyLabel()
-{
-    EmptyLabelInfo info;
-    info.description = tr("The Rubbish bin is empty");
     return info;
 }

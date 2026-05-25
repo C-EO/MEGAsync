@@ -37,8 +37,7 @@ private:
     QString getRootText() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     void setViewPage() override;
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 
     bool showEmptyView() override
     {
@@ -75,8 +74,7 @@ private:
     bool isCurrentRootIndexReadOnly() const override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
     bool isCurrentSelectionReadOnly() override;
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 };
 
 class NodeSelectorTreeViewWidgetBackups: public NodeSelectorTreeViewWidget
@@ -105,8 +103,7 @@ private:
         return true;
     }
 
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 };
 
 class NodeSelectorTreeViewWidgetSearch: public NodeSelectorTreeViewWidget
@@ -153,8 +150,7 @@ private:
     QString getRootText() override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
     NodeSelectorDelegate* createItemDelegate(QObject* parent) override;
     NodeSelectorModelSearch* searchModel() const;
     NodeSelectorProxyModelSearch* searchProxyModel() const;
@@ -181,8 +177,7 @@ private:
     QString getRootText() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     void setViewPage() override;
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 
     bool showEmptyView() override
     {

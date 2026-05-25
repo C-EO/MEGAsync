@@ -132,7 +132,7 @@ padding-right: 6px;
 */
 QHeaderView[class="new-design"]::section
 {
-padding-left: 20px;
+padding-left: 6px;
 }
 
 QHeaderView[class="new-design"]::up-arrow,

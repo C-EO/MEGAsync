@@ -1310,6 +1310,23 @@ NodeSelectorHeaderView::NodeSelectorHeaderView(Qt::Orientation orientation, QWid
     QHeaderView(orientation, parent)
 {}
 
+QPixmap NodeSelectorHeaderView::sortArrowPixmap(Qt::SortOrder order) const
+{
+    auto& cachedPixmap = order == Qt::AscendingOrder ? mAscendingSortArrow : mDescendingSortArrow;
+
+    if (cachedPixmap.isNull())
+    {
+        cachedPixmap = Utilities::getColoredPixmap(
+            order == Qt::AscendingOrder ? QLatin1String("arrow-up") : QLatin1String("arrow-down"),
+            Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
+                Utilities::AttributeType::OUTLINE,
+            QLatin1String("icon-secondary"),
+            QSize(16, 16));
+    }
+
+    return cachedPixmap;
+}
+
 void NodeSelectorHeaderView::setNonInteractiveSections(const QSet<int>& sections)
 {
     if (mNonInteractiveSections != sections)
@@ -1323,14 +1340,84 @@ void NodeSelectorHeaderView::paintSection(QPainter* painter,
                                           const QRect& rect,
                                           int logicalIndex) const
 {
-    if (!mNonInteractiveSections.contains(logicalIndex))
+    if (!rect.isValid())
     {
-        QHeaderView::paintSection(painter, rect, logicalIndex);
         return;
     }
 
-    if (!rect.isValid())
+    const bool sectionIsSorted = isSortIndicatorShown() && sortIndicatorSection() == logicalIndex;
+
+    if (!mNonInteractiveSections.contains(logicalIndex))
     {
+        if (!sectionIsSorted)
+        {
+            QHeaderView::paintSection(painter, rect, logicalIndex);
+            return;
+        }
+
+        // The QSS-driven sort indicator with `subcontrol-position: center left`
+        // does not push the text rect to the right (Qt only reserves space when
+        // the indicator sits on the default right side). Draw the arrow manually
+        // so it stays tokenized and fixed at 16x16, then shift the label rect.
+        QStyleOptionHeader opt;
+        initStyleOption(&opt);
+        opt.rect = rect;
+        opt.section = logicalIndex;
+        opt.orientation = orientation();
+        if (isEnabled())
+        {
+            opt.state |= QStyle::State_Enabled;
+        }
+        opt.state |= QStyle::State_Horizontal;
+        opt.position = sectionPosition(logicalIndex);
+
+        if (auto* m = model())
+        {
+            opt.text = m->headerData(logicalIndex, orientation(), Qt::DisplayRole).toString();
+            const QVariant alignVar =
+                m->headerData(logicalIndex, orientation(), Qt::TextAlignmentRole);
+            opt.textAlignment =
+                alignVar.isValid() ? Qt::Alignment(alignVar.toInt()) : defaultAlignment();
+        }
+        else
+        {
+            opt.textAlignment = defaultAlignment();
+        }
+
+        opt.sortIndicator = QStyleOptionHeader::None;
+        style()->drawControl(QStyle::CE_HeaderSection, &opt, painter, this);
+
+        constexpr int sortArrowSize = 16;
+        constexpr int sortArrowMargin = 8;
+        constexpr int sortArrowSpacing = 4;
+        const bool isRtl = layoutDirection() == Qt::RightToLeft;
+
+        QRect arrowRect(0,
+                        rect.top() + (rect.height() - sortArrowSize) / 2,
+                        sortArrowSize,
+                        sortArrowSize);
+        if (isRtl)
+        {
+            arrowRect.moveRight(rect.right() - sortArrowMargin);
+        }
+        else
+        {
+            arrowRect.moveLeft(rect.left() + sortArrowMargin);
+        }
+
+        painter->drawPixmap(arrowRect, sortArrowPixmap(sortIndicatorOrder()));
+
+        QStyleOptionHeader labelOpt(opt);
+        if (isRtl)
+        {
+            labelOpt.rect.adjust(0, 0, -(sortArrowSize + sortArrowMargin + sortArrowSpacing), 0);
+        }
+        else
+        {
+            labelOpt.rect.adjust(sortArrowSize + sortArrowMargin + sortArrowSpacing, 0, 0, 0);
+        }
+
+        style()->drawControl(QStyle::CE_HeaderLabel, &labelOpt, painter, this);
         return;
     }
 
@@ -1347,23 +1434,7 @@ void NodeSelectorHeaderView::paintSection(QPainter* painter,
     opt.text = QString();
     opt.icon = QIcon();
     opt.sortIndicator = QStyleOptionHeader::None;
-
-    if (count() == 1)
-    {
-        opt.position = QStyleOptionHeader::OnlyOneSection;
-    }
-    else if (logicalIndex == 0)
-    {
-        opt.position = QStyleOptionHeader::Beginning;
-    }
-    else if (logicalIndex == count() - 1)
-    {
-        opt.position = QStyleOptionHeader::End;
-    }
-    else
-    {
-        opt.position = QStyleOptionHeader::Middle;
-    }
+    opt.position = sectionPosition(logicalIndex);
 
     style()->drawControl(QStyle::CE_Header, &opt, painter, this);
 }
@@ -1386,4 +1457,21 @@ void NodeSelectorHeaderView::mouseReleaseEvent(QMouseEvent* event)
         return;
     }
     QHeaderView::mouseReleaseEvent(event);
+}
+
+QStyleOptionHeader::SectionPosition NodeSelectorHeaderView::sectionPosition(int logicalIndex) const
+{
+    if (count() == 1)
+    {
+        return QStyleOptionHeader::OnlyOneSection;
+    }
+    if (logicalIndex == 0)
+    {
+        return QStyleOptionHeader::Beginning;
+    }
+    if (logicalIndex == count() - 1)
+    {
+        return QStyleOptionHeader::End;
+    }
+    return QStyleOptionHeader::Middle;
 }

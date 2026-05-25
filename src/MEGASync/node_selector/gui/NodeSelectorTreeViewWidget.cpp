@@ -14,6 +14,7 @@
 #include "ui_NodeSelectorTreeViewWidget.h"
 
 #include <QKeyEvent>
+#include <QLayout>
 
 #include <algorithm>
 
@@ -77,13 +78,19 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
 
     // Empty pages
     ui->emptyPage->installEventFilter(this);
-    ui->emptyFolderPage->installEventFilter(this);
     ui->emptyPage->setFocusPolicy(Qt::StrongFocus);
-    ui->emptyFolderPage->setFocusPolicy(Qt::StrongFocus);
-    // By default, the empty pages don´t allow drag and drop.
-    // emptyFolderPage can accept drops if "enableDragAndDrop" is called with true
-    ui->emptyFolderPage->setAcceptDrops(false);
     ui->emptyPage->setAcceptDrops(false);
+
+    auto emitUpload = [this]()
+    {
+        emit onCustomButtonClicked(SelectType::ButtonId::UPLOAD);
+    };
+    auto emitNewFolder = [this]()
+    {
+        emit onCustomButtonClicked(SelectType::ButtonId::NEW_FOLDER);
+    };
+    connect(ui->bEmptyUpload, &QPushButton::clicked, this, emitUpload);
+    connect(ui->bEmptyNewFolder, &QPushButton::clicked, this, emitNewFolder);
 
     mNodeActions.setDialogParent(Utilities::getTopParent<QDialog>(ui->tMegaFolders));
 }
@@ -192,11 +199,7 @@ void NodeSelectorTreeViewWidget::init()
 
     mNodeActions.setModel(mModel.get());
 
-    // Regardless the type of treeviewwidget, the empty icon always use icon-secondary token
-    ui->emptyIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("icon-secondary"));
-    ui->emptyIcon->setIcon(getEmptyIcon());
-
-    initEmptyMessages();
+    enableDragAndDrop(mSelectType->acceptDrops(mTabType));
 
     ui->tMegaFolders->setSortingEnabled(true);
     ui->tMegaFolders->viewport()->installEventFilter(this);
@@ -247,21 +250,81 @@ void NodeSelectorTreeViewWidget::init()
     mNodesUpdateTimer.start(CHECK_UPDATED_NODES_INTERVAL);
 }
 
-void NodeSelectorTreeViewWidget::initEmptyMessages()
+void NodeSelectorTreeViewWidget::initEmptyRootPageMessages()
 {
-    auto emptyLabelInfo(getEmptyLabel());
+    showRootEmptyState();
+}
+
+void NodeSelectorTreeViewWidget::initEmptyFolderMessages()
+{
+    showFolderEmptyState();
+}
+
+void NodeSelectorTreeViewWidget::showRootEmptyState()
+{
+    applyEmptyState(getEmptyRootPageInfo(), EmptyStateKind::ROOT);
+}
+
+void NodeSelectorTreeViewWidget::showFolderEmptyState()
+{
+    if (mSelectType)
+    {
+        applyEmptyState(mSelectType->getEmptyFolderPageInfo(), EmptyStateKind::FOLDER);
+    }
+}
+
+void NodeSelectorTreeViewWidget::applyEmptyState(const SelectType::EmptyPageInfo& info,
+                                                 EmptyStateKind kind)
+{
+    mCurrentEmptyStateKind = kind;
+    const bool isFolderState = kind == EmptyStateKind::FOLDER;
+
     ui->descriptionEmptyLabel->hide();
     ui->titleEmptyLabel->hide();
-    if (!emptyLabelInfo.description.isEmpty())
+
+    if (!info.description.isEmpty())
     {
+        ui->descriptionEmptyLabel->setText(info.description);
         ui->descriptionEmptyLabel->show();
-        ui->descriptionEmptyLabel->setText(emptyLabelInfo.description);
     }
-    if (!emptyLabelInfo.title.isEmpty())
+    if (!info.title.isEmpty())
     {
+        ui->titleEmptyLabel->setText(info.title);
         ui->titleEmptyLabel->show();
-        ui->titleEmptyLabel->setText(emptyLabelInfo.title);
     }
+    if (!info.icon.isNull())
+    {
+        ui->emptyIcon->setIcon(info.icon);
+    }
+
+    static const char* HAS_BORDER_PROPERTY("hasBorder");
+    ui->frame->setProperty(HAS_BORDER_PROPERTY, info.hasBorder);
+    ui->verticalLayout_3->setContentsMargins(isFolderState ? 20 : 0,
+                                             isFolderState ? 16 : 0,
+                                             isFolderState ? 20 : 0,
+                                             isFolderState ? 20 : 0);
+    ui->gridLayout->setContentsMargins(isFolderState ? 32 : 0,
+                                       isFolderState ? 32 : 0,
+                                       isFolderState ? 32 : 0,
+                                       isFolderState ? 32 : 0);
+    ui->gridLayout->setRowStretch(0, isFolderState ? 1 : 1);
+    ui->gridLayout->setRowStretch(4, isFolderState ? 1 : 4);
+    setStyleSheet(styleSheet());
+    setEmptyStateButtonsVisibility(info);
+}
+
+void NodeSelectorTreeViewWidget::setEmptyStateButtonsVisibility(
+    const SelectType::EmptyPageInfo& info)
+{
+    const bool showUpload = mSelectType && info.buttons.testFlag(SelectType::ButtonId::UPLOAD) &&
+                            mSelectType->showEmptyStateUploadButton(this);
+    const bool showNewFolder = mSelectType &&
+                               info.buttons.testFlag(SelectType::ButtonId::NEW_FOLDER) &&
+                               mSelectType->showEmptyStateNewFolderButton(this);
+
+    ui->bEmptyUpload->setVisible(showUpload);
+    ui->bEmptyNewFolder->setVisible(showNewFolder);
+    ui->emptyPageButtonsWidget->setVisible(showUpload || showNewFolder);
 }
 
 bool NodeSelectorTreeViewWidget::event(QEvent* event)
@@ -269,11 +332,21 @@ bool NodeSelectorTreeViewWidget::event(QEvent* event)
     if (event->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
+<<<<<<< HEAD
         initEmptyMessages();
 
         if (mModel && mProxyModel && mSelectType)
         {
             setEmptyFolderPage();
+=======
+        if (mCurrentEmptyStateKind == EmptyStateKind::FOLDER)
+        {
+            showFolderEmptyState();
+        }
+        else
+        {
+            showRootEmptyState();
+>>>>>>> 7bad9a033 (Working on empty pages)
         }
     }
     else if (event->type() == QEvent::MouseButtonRelease)
@@ -330,7 +403,7 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
         }
     }
     // Propagate key events to the view
-    else if ((watched == ui->emptyPage || watched == ui->emptyFolderPage) &&
+    else if (watched == ui->emptyPage &&
              (event->type() == QEvent::ShortcutOverride || event->type() == QEvent::KeyPress))
     {
         if (auto keyEvent = static_cast<QKeyEvent*>(event); keyEvent->matches(QKeySequence::Paste))
@@ -353,7 +426,7 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
             return true;
         }
     }
-    else if (watched == ui->emptyFolderPage && event->type() == QEvent::ContextMenu)
+    else if (watched == ui->emptyPage && event->type() == QEvent::ContextMenu)
     {
         ui->tMegaFolders->contextMenuEvent(static_cast<QContextMenuEvent*>(event));
     }
@@ -429,7 +502,10 @@ bool NodeSelectorTreeViewWidget::isEmpty() const
 
 void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)
 {
+<<<<<<< HEAD
     ui->emptyFolderPage->setAcceptDrops(enable);
+=======
+>>>>>>> 7bad9a033 (Working on empty pages)
     ui->emptyPage->setAcceptDrops(enable);
     ui->tMegaFolders->setDragEnabled(enable);
     ui->tMegaFolders->viewport()->setAcceptDrops(enable);
@@ -608,14 +684,14 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
                 this,
                 [this]()
                 {
-                    emit onCustomButtonClicked(SelectType::ButtonId::NewFolder);
+                    emit onCustomButtonClicked(SelectType::ButtonId::NEW_FOLDER);
                 });
         connect(ui->tMegaFolders,
                 &NodeSelectorTreeView::uploadClicked,
                 this,
                 [this]()
                 {
-                    emit onCustomButtonClicked(SelectType::ButtonId::Upload);
+                    emit onCustomButtonClicked(SelectType::ButtonId::UPLOAD);
                 });
         connect(ui->tMegaFolders,
                 &NodeSelectorTreeView::getMegaLinkClicked,
@@ -756,6 +832,7 @@ void NodeSelectorTreeViewWidget::setLoadingSceneVisible(bool blockUi)
 {
     if (blockUi && ui->stackedWidget->currentWidget() != ui->treeViewPage)
     {
+        mCurrentEmptyStateKind = EmptyStateKind::NONE;
         ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
     }
 
@@ -782,11 +859,30 @@ void NodeSelectorTreeViewWidget::setViewPage()
 
         if (mModel->rowCount(topRootIndex) == 0 && showEmptyView())
         {
+            showRootEmptyState();
             ui->stackedWidget->setCurrentWidget(ui->emptyPage);
             return;
         }
     }
+    mCurrentEmptyStateKind = EmptyStateKind::NONE;
     ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+}
+
+void NodeSelectorTreeViewWidget::updateEmptyStateButtonsVisibility()
+{
+    if (!mSelectType || ui->stackedWidget->currentWidget() != ui->emptyPage)
+    {
+        return;
+    }
+
+    if (mCurrentEmptyStateKind == EmptyStateKind::FOLDER)
+    {
+        setEmptyStateButtonsVisibility(mSelectType->getEmptyFolderPageInfo());
+    }
+    else if (mCurrentEmptyStateKind == EmptyStateKind::ROOT)
+    {
+        setEmptyStateButtonsVisibility(getEmptyRootPageInfo());
+    }
 }
 
 QModelIndex NodeSelectorTreeViewWidget::getAddedNodeParent(mega::MegaHandle parentHandle)
@@ -1130,31 +1226,21 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
     notifyViewStateChanged();
 }
 
-QIcon NodeSelectorTreeViewWidget::getEmptyIcon()
-{
-    return QIcon();
-}
-
 void NodeSelectorTreeViewWidget::setEmptyFolderPage()
 {
     auto currentRootIndex(getCurrentRootIndex());
     auto topRootIndex(mProxyModel->getTopRootIndex());
 
     // If we are inside a folder, show the "Empty folder" page.
-    if ((currentRootIndex.isValid() || currentRootIndex != topRootIndex) &&
-        mProxyModel->rowCount(currentRootIndex) == 0)
+    if ((currentRootIndex != topRootIndex) && mProxyModel->rowCount(currentRootIndex) == 0)
     {
-        ui->stackedWidget->setCurrentWidget(ui->emptyFolderPage);
-        auto emptyFolderInfo = mSelectType->getEmptyFolderPageInfo();
-        if (emptyFolderInfo.isValid())
+        if (ui && ui->tMegaFolders->loadingView().isLoadingViewSet())
         {
-            // By default, it is hidden
-            ui->titleEmptyFolderLabel->setVisible(true);
-            ui->titleEmptyFolderLabel->setText(emptyFolderInfo.title);
-            ui->descriptionEmptyFolderLabel->setText(emptyFolderInfo.description);
-            ui->emptyFolderIcon->setIcon(emptyFolderInfo.icon);
-            ui->emptyFolderIcon->setIsTokenized(emptyFolderInfo.iconTokenized);
+            return;
         }
+
+        showFolderEmptyState();
+        ui->stackedWidget->setCurrentWidget(ui->emptyPage);
     }
     else
     {
@@ -1171,9 +1257,9 @@ void NodeSelectorTreeViewWidget::setEmptyFolderPage()
     }
 }
 
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidget::getEmptyLabel()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidget::getEmptyRootPageInfo()
 {
-    return EmptyLabelInfo();
+    return SelectType::EmptyPageInfo();
 }
 
 NodeSelectorDelegate* NodeSelectorTreeViewWidget::createItemDelegate(QObject* parent)

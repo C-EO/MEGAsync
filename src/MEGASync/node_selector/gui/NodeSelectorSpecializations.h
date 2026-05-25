@@ -71,8 +71,6 @@ class CloudDriveNodeSelector: public NodeSelector
 public:
     explicit CloudDriveNodeSelector(QWidget* parent = 0);
 
-    void enableDragAndDrop(bool enable);
-
     static void sendStats();
 
 protected:

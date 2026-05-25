@@ -61,7 +61,8 @@ private:
                                           const std::shared_ptr<mega::MegaNode>& node) const;
     std::shared_ptr<mega::MegaNode>
         destinationNodeForBreadcrumb(NodeSelectorTreeViewWidget* wid) const;
-    void hideAllButNode(NodeSelectorTreeViewWidget* widget);
+    void hideIncomingShareColumns(NodeSelectorTreeViewWidget* widget);
+    void showIncomingShareColumns(NodeSelectorTreeViewWidget* widget);
 };
 
 #endif // FILEPICKERNODESELECTOR_H

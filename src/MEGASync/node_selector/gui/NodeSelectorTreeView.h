@@ -31,7 +31,12 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
+    QStyleOptionHeader::SectionPosition sectionPosition(int logicalIndex) const;
+    QPixmap sortArrowPixmap(Qt::SortOrder order) const;
+
     QSet<int> mNonInteractiveSections;
+    mutable QPixmap mAscendingSortArrow;
+    mutable QPixmap mDescendingSortArrow;
 };
 
 using namespace mega;
