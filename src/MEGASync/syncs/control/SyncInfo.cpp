@@ -10,6 +10,7 @@
 #include <MegaNodeNames.h>
 
 #include <mega/types.h>
+#include <QCoreApplication>
 
 #include <assert.h>
 
@@ -600,6 +601,8 @@ void SyncInfo::onEvent(mega::MegaApi*, mega::MegaEvent* event)
 		{
 			Platform::getInstance()->notifyAllSyncFoldersAdded();
 		}
+
+        Platform::getInstance()->startShellDispatcher(static_cast<MegaApplication*>(qApp));
     }
 }
 
