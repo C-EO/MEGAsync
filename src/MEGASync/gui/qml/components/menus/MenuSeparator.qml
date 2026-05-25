@@ -11,7 +11,6 @@ Qml.MenuSeparator {
     id: root
 
     readonly property int lineSpacing: 4
-    readonly property int lineHeight: 1
 
     padding: 0
     topPadding: lineSpacing
@@ -21,7 +20,7 @@ Qml.MenuSeparator {
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.margins: lineSpacing
-        implicitHeight: lineHeight
+        implicitHeight: Constants.dividerThickness
         color: ColorTheme.surface2
     }
 }

@@ -38,7 +38,7 @@ Item {
         }
 
         Item {
-            Layout.preferredHeight:  Constants.imageSpacing
+            Layout.preferredHeight: root.imageSpacing
             Layout.preferredWidth: parent.width
         }
 

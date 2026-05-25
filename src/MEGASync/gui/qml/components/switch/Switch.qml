@@ -18,17 +18,17 @@ Switch {
     readonly property int borderWidth: 2
 
     function getBackgroundColor() {
-        var color = ColorTheme.surface1
+        let color = ColorTheme.surface1
 
         if (root.checked) {
-            if (root.pressed) {
+            if (!root.enabled) {
+                color = ColorTheme.buttonDisabled
+            }
+            else if (root.pressed) {
                 color = ColorTheme.buttonPrimaryPressed
             }
             else if (root.hovered) {
                 color = ColorTheme.buttonPrimaryHover
-            }
-            else if (!root.enabled) {
-                color = ColorTheme.buttonDisabled
             }
             else {
                 color = ColorTheme.buttonPrimary
@@ -39,14 +39,14 @@ Switch {
     }
 
     function getBackgroundBorderColor() {
-        if (root.pressed) {
+        if (!root.enabled) {
+            return ColorTheme.buttonDisabled
+        }
+        else if (root.pressed) {
             return ColorTheme.buttonPrimaryPressed
         }
         else if (root.hovered) {
             return ColorTheme.buttonPrimaryHover
-        }
-        else if (!root.enabled) {
-            return ColorTheme.buttonDisabled
         }
         else {
             return ColorTheme.buttonPrimary;
@@ -54,17 +54,17 @@ Switch {
     }
 
     function getHandleColor() {
-        var color = ColorTheme.surface1
+        let color = ColorTheme.surface1
 
         if (!root.checked) {
-            if (root.pressed) {
+            if (!root.enabled) {
+                return ColorTheme.buttonDisabled;
+            }
+            else if (root.pressed) {
                 return ColorTheme.buttonPrimaryPressed
             }
             else if (root.hovered) {
                 color = ColorTheme.buttonPrimaryHover
-            }
-            else if (!root.enabled) {
-                return ColorTheme.buttonDisabled;
             }
             else {
                 color = ColorTheme.buttonPrimary
@@ -104,13 +104,6 @@ Switch {
                 }
             }
 
-            Behavior on y {
-                NumberAnimation {
-                    duration: 100
-                    easing.type: Easing.InOutQuad
-                }
-            }
-
             Behavior on width {
                 NumberAnimation {
                     duration: 100
@@ -125,7 +118,7 @@ Switch {
                 anchors.margins: tickImageMarginsToHandle
                 color: getBackgroundColor() // tick color is exactly the same as the background color.
                 source: Images.check_medium_regular_solid
-                sourceSize: Qt.size(root.check_image_size, root.check_image_size)
+                sourceSize: Qt.size(root.checkImageSize, root.checkImageSize)
                 visible: root.checked
             }
         }
