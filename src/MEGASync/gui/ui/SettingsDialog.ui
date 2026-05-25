@@ -2236,13 +2236,13 @@ border: none
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>0</height>
+                 <height>26</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>16777215</height>
+                 <height>26</height>
                 </size>
                </property>
                <property name="title">
@@ -2298,7 +2298,13 @@ border: none
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
-                    <height>26</height>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>20</height>
                    </size>
                   </property>
                   <property name="accessibleName">
@@ -2399,13 +2405,13 @@ border: none
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>0</height>
+                 <height>26</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>16777215</height>
+                 <height>26</height>
                 </size>
                </property>
                <property name="title">
@@ -2461,7 +2467,13 @@ border: none
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
-                    <height>26</height>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>20</height>
                    </size>
                   </property>
                   <property name="accessibleName">
