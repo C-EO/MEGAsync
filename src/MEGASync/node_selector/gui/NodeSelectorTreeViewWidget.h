@@ -6,7 +6,6 @@
 #include "megaapi.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorModelUpdateCoordinator.h"
-#include "NodeSelectorNavigation.h"
 #include "NodeSelectorNodeActions.h"
 #include "NodeSelectorSelectionCoordinator.h"
 #include "NodeSelectorSelectTypes.h"
@@ -18,6 +17,7 @@
 #include <QMap>
 #include <QPersistentModelIndex>
 #include <QSet>
+#include <QStringList>
 #include <QTimer>
 #include <QWidget>
 
@@ -56,6 +56,14 @@ public:
     };
     Q_ENUM(TabItem)
 
+    enum class ViewType
+    {
+        VIEW,
+        ROOT_EMPTY,
+        FOLDER_EMPTY
+    };
+    Q_ENUM(ViewType)
+
     explicit NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
                                         TabItem tabType,
                                         QWidget* parent = nullptr);
@@ -86,6 +94,10 @@ public:
     NodeSelectorModelItem* rootItem();
     QModelIndex getCurrentRootIndex() const;
     NodeSelectorProxyModel* getProxyModel();
+    QStringList navigationBreadcrumbSegments() const;
+    bool navigateToBreadcrumbSegment(int segmentIndex);
+    bool isShowingEmptyPage() const;
+    ViewType currentViewPage() const;
     bool isInRootView() const;
     bool isEmpty() const;
 
@@ -109,13 +121,7 @@ public:
     void resetMergeFolderHandles(const QMultiHash<SourceHandle, TargetHandle>& handles);
 
     bool isUiBlocked();
-    bool canGoBack() const;
-    bool canGoForward() const;
-    bool shouldShowNavigationButtons() const;
-
     void dropIntoRootIndex(QDropEvent* event);
-    void goBack();
-    void goForward();
 
     using NewFolderInfo = NodeSelectorSelectionCoordinator::NewFolderInfo;
 
@@ -126,7 +132,7 @@ public:
         return std::nullopt;
     }
 
-    virtual QString getRootText() = 0;
+    virtual QString getRootText() const = 0;
 
     void setColumnHidden(int column, bool hidden);
     void setNonInteractiveColumns(const QSet<int>& columns);
@@ -150,11 +156,11 @@ signals:
     void uiIsBlocked(bool state);
     void selectionHasChanged();
     void viewStateChanged();
+    void currentViewPageChanged(ViewType type);
     void viewButtonsStateChanged();
     void modelModified();
 
 protected:
-    void mousePressEvent(QMouseEvent* event) override;
     bool event(QEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
     void showEvent(QShowEvent* event) override;
@@ -198,17 +204,11 @@ protected:
         DOESNT_EXIST
     };
 
-    enum class EmptyStateKind
-    {
-        NONE,
-        ROOT,
-        FOLDER
-    };
-
     virtual NodeState getNodeOnModelState(const QModelIndex& index, mega::MegaNode* node);
 
     virtual SelectType::EmptyPageInfo getEmptyRootPageInfo();
     void showRootEmptyState();
+    void setCurrentPage(ViewType type);
 
     virtual NodeSelectorDelegate* createItemDelegate(QObject* parent);
 
@@ -217,7 +217,6 @@ protected:
     std::unique_ptr<NodeSelectorModel> mModel;
     std::unique_ptr<NodeSelectorSelectionCoordinator> mSelectionCoordinator;
     std::unique_ptr<NodeSelectorModelUpdateCoordinator> mModelUpdateCoordinator;
-    NodeSelectorNavigation mNavigation;
     NodeSelectorNodeActions mNodeActions;
     mega::MegaApi* mMegaApi;
     SelectTypeSPtr mSelectType;
@@ -239,7 +238,7 @@ private slots:
     void onRenameClicked();
     void onGenMEGALinkClicked(const QList<mega::MegaHandle>& handles);
     virtual void onItemDoubleClick(const QModelIndex& index);
-    void onRemoveIndexFromGoBack(const QModelIndex& index);
+    void onRemovedIndexAffectsCurrentRoot(const QModelIndex& index);
     void onSectionResized();
     void onUiBlocked(bool state);
     void processCachedNodesUpdated();
@@ -254,10 +253,11 @@ private:
     void setRootIndex(const QModelIndex& proxy_idx);
     void setEmptyFolderPage();
     void showFolderEmptyState();
-    void applyEmptyState(const SelectType::EmptyPageInfo& info, EmptyStateKind kind);
+    void applyEmptyState(const SelectType::EmptyPageInfo& info, ViewType type);
     void setEmptyStateButtonsVisibility(const SelectType::EmptyPageInfo& info);
     void updateEmptyStateButtonsVisibility();
     QModelIndex currentFolderIndex() const;
+    QModelIndex indexForBreadcrumbSegment(int segmentIndex) const;
 
     QModelIndex getIndexFromHandle(const mega::MegaHandle& handle);
     virtual std::shared_ptr<NodeSelectorProxyModel> createProxyModel();
@@ -295,7 +295,7 @@ private:
     bool mUiBlocked;
     bool mWasEmpty;
     bool mNewFolderButtonVisible = true;
-    EmptyStateKind mCurrentEmptyStateKind = EmptyStateKind::NONE;
+    ViewType mCurrentViewType = ViewType::VIEW;
 
     // Containers used to ignore specific nodes updates
     QSet<mega::MegaHandle> mNodesToBeReplaced;

@@ -17,9 +17,18 @@ background-color: transparent;
 border: none;
 }
 
-#NodeSelectorDestinationOverflowPopup QLabel
+#NodeSelectorDestinationOverflowPopup QLabel,
+#NodeSelectorDestinationOverflowPopup QToolButton
 {
 color: #303233; /*colorToken.text-primary*/
+}
+
+#NodeSelectorDestinationOverflowPopup QToolButton
+{
+border: none;
+background: transparent;
+padding: 0px;
+text-align: left;
 }
 
 #scrollArea

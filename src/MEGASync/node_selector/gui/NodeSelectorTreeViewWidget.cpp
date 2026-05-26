@@ -28,7 +28,6 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
     ui(new Ui::NodeSelectorTreeViewWidget),
     mProxyModel(nullptr),
     mModel(nullptr),
-    mNavigation(MegaSyncApp->getMegaApi()),
     mNodeActions(MegaSyncApp->getMegaApi()),
     mMegaApi(MegaSyncApp->getMegaApi()),
     mSelectType(mode),
@@ -182,16 +181,9 @@ void NodeSelectorTreeViewWidget::init()
                                                              std::move(updatePolicy));
 
     connect(mModelUpdateCoordinator.get(),
-            &NodeSelectorModelUpdateCoordinator::indexRemovedFromHistory,
+            &NodeSelectorModelUpdateCoordinator::indexRemovedAffectingCurrentPath,
             this,
-            &NodeSelectorTreeViewWidget::onRemoveIndexFromGoBack);
-    connect(mModelUpdateCoordinator.get(),
-            &NodeSelectorModelUpdateCoordinator::handleRemovedFromNavigation,
-            this,
-            [this](mega::MegaHandle handle)
-            {
-                mNavigation.onHandleRemoved(handle);
-            });
+            &NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot);
     connect(mModelUpdateCoordinator.get(),
             &NodeSelectorModelUpdateCoordinator::viewStateChanged,
             this,
@@ -262,22 +254,71 @@ void NodeSelectorTreeViewWidget::initEmptyFolderMessages()
 
 void NodeSelectorTreeViewWidget::showRootEmptyState()
 {
-    applyEmptyState(getEmptyRootPageInfo(), EmptyStateKind::ROOT);
+    applyEmptyState(getEmptyRootPageInfo(), ViewType::ROOT_EMPTY);
 }
 
 void NodeSelectorTreeViewWidget::showFolderEmptyState()
 {
     if (mSelectType)
     {
-        applyEmptyState(mSelectType->getEmptyFolderPageInfo(), EmptyStateKind::FOLDER);
+        applyEmptyState(mSelectType->getEmptyFolderPageInfo(), ViewType::FOLDER_EMPTY);
+    }
+}
+
+void NodeSelectorTreeViewWidget::setCurrentPage(ViewType type)
+{
+    const auto previousType = mCurrentViewType;
+
+    // We still don´t know if the view is empty as it is still loading it
+    if ((type == ViewType::ROOT_EMPTY || type == ViewType::FOLDER_EMPTY) &&
+        ui->tMegaFolders->loadingView().isLoadingViewSet())
+    {
+        return;
+    }
+
+    switch (type)
+    {
+        case ViewType::ROOT_EMPTY:
+        {
+            showRootEmptyState();
+            ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+            break;
+        }
+        case ViewType::FOLDER_EMPTY:
+        {
+            showFolderEmptyState();
+            ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+            break;
+        }
+        case ViewType::VIEW:
+        default:
+        {
+            mCurrentViewType = ViewType::VIEW;
+            ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+            break;
+        }
+    }
+
+    if (ui->stackedWidget->currentWidget() != ui->treeViewPage)
+    {
+        ui->stackedWidget->currentWidget()->setFocus(Qt::OtherFocusReason);
+    }
+    else
+    {
+        ui->tMegaFolders->setFocus(Qt::OtherFocusReason);
+    }
+
+    if (previousType != mCurrentViewType)
+    {
+        emit currentViewPageChanged(mCurrentViewType);
     }
 }
 
 void NodeSelectorTreeViewWidget::applyEmptyState(const SelectType::EmptyPageInfo& info,
-                                                 EmptyStateKind kind)
+                                                 ViewType type)
 {
-    mCurrentEmptyStateKind = kind;
-    const bool isFolderState = kind == EmptyStateKind::FOLDER;
+    mCurrentViewType = type;
+    const bool isFolderState = type == ViewType::FOLDER_EMPTY;
 
     ui->descriptionEmptyLabel->hide();
     ui->titleEmptyLabel->hide();
@@ -332,21 +373,14 @@ bool NodeSelectorTreeViewWidget::event(QEvent* event)
     if (event->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-<<<<<<< HEAD
-        initEmptyMessages();
 
-        if (mModel && mProxyModel && mSelectType)
-        {
-            setEmptyFolderPage();
-=======
-        if (mCurrentEmptyStateKind == EmptyStateKind::FOLDER)
+        if (mCurrentViewType == ViewType::FOLDER_EMPTY)
         {
             showFolderEmptyState();
         }
-        else
+        else if (mCurrentViewType == ViewType::ROOT_EMPTY)
         {
             showRootEmptyState();
->>>>>>> 7bad9a033 (Working on empty pages)
         }
     }
     else if (event->type() == QEvent::MouseButtonRelease)
@@ -473,19 +507,61 @@ NodeSelectorProxyModel* NodeSelectorTreeViewWidget::getProxyModel()
     return mProxyModel.get();
 }
 
-bool NodeSelectorTreeViewWidget::canGoBack() const
+QStringList NodeSelectorTreeViewWidget::navigationBreadcrumbSegments() const
 {
-    return mNavigation.canGoBack();
+    if (!mProxyModel)
+    {
+        return {};
+    }
+
+    const auto currentRoot = getCurrentRootIndex();
+    if (!currentRoot.isValid())
+    {
+        return QStringList() << getRootText();
+    }
+
+    QStringList segments;
+    for (QModelIndex index = currentRoot; index.isValid(); index = index.parent())
+    {
+        segments.prepend(index.data(Qt::DisplayRole).toString());
+    }
+
+    if (!mProxyModel->getTopRootIndex().isValid())
+    {
+        segments.prepend(getRootText());
+    }
+
+    return segments;
 }
 
-bool NodeSelectorTreeViewWidget::canGoForward() const
+bool NodeSelectorTreeViewWidget::navigateToBreadcrumbSegment(int segmentIndex)
 {
-    return mNavigation.canGoForward();
+    if (mUiBlocked)
+    {
+        return false;
+    }
+
+    const auto targetIndex = indexForBreadcrumbSegment(segmentIndex);
+    const auto currentRoot = getCurrentRootIndex();
+
+    if (targetIndex == currentRoot || (!targetIndex.isValid() && !currentRoot.isValid()))
+    {
+        return false;
+    }
+
+    setRootIndex(targetIndex);
+    onSelectionHasChanged();
+    return true;
 }
 
-bool NodeSelectorTreeViewWidget::shouldShowNavigationButtons() const
+bool NodeSelectorTreeViewWidget::isShowingEmptyPage() const
 {
-    return mNavigation.shouldShowNavigationButtons();
+    return ui->stackedWidget->currentWidget() == ui->emptyPage;
+}
+
+NodeSelectorTreeViewWidget::ViewType NodeSelectorTreeViewWidget::currentViewPage() const
+{
+    return mCurrentViewType;
 }
 
 bool NodeSelectorTreeViewWidget::isInRootView() const
@@ -502,68 +578,12 @@ bool NodeSelectorTreeViewWidget::isEmpty() const
 
 void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)
 {
-<<<<<<< HEAD
-    ui->emptyFolderPage->setAcceptDrops(enable);
-=======
->>>>>>> 7bad9a033 (Working on empty pages)
     ui->emptyPage->setAcceptDrops(enable);
     ui->tMegaFolders->setDragEnabled(enable);
     ui->tMegaFolders->viewport()->setAcceptDrops(enable);
     ui->tMegaFolders->setDropIndicatorShown(enable);
     ui->tMegaFolders->setDragDropMode(enable ? QAbstractItemView::DragDrop :
                                                QAbstractItemView::NoDragDrop);
-}
-
-void NodeSelectorTreeViewWidget::goBack()
-{
-    if (mUiBlocked)
-    {
-        return;
-    }
-
-    const auto targetHandle = mNavigation.goBack(getHandleByIndex(ui->tMegaFolders->rootIndex()));
-    if (!targetHandle.has_value())
-    {
-        return;
-    }
-
-    const auto rootIndex = ui->tMegaFolders->rootIndex();
-    setRootIndex(getIndexFromHandle(*targetHandle));
-
-    if (rootIndex.isValid())
-    {
-        selectIndex(rootIndex, true, true);
-    }
-}
-
-void NodeSelectorTreeViewWidget::goForward()
-{
-    if (mUiBlocked)
-    {
-        return;
-    }
-
-    const auto targetHandle =
-        mNavigation.goForward(getHandleByIndex(ui->tMegaFolders->rootIndex()));
-    if (!targetHandle.has_value())
-    {
-        return;
-    }
-
-    setRootIndex(getIndexFromHandle(*targetHandle));
-    onSelectionHasChanged();
-}
-
-void NodeSelectorTreeViewWidget::mousePressEvent(QMouseEvent* event)
-{
-    if (event->button() == Qt::BackButton && mNavigation.canGoBack() && !mUiBlocked)
-    {
-        goBack();
-    }
-    else if (event->button() == Qt::ForwardButton && mNavigation.canGoForward() && !mUiBlocked)
-    {
-        goForward();
-    }
 }
 
 void NodeSelectorTreeViewWidget::onRootIndexChanged(const QModelIndex&)
@@ -637,6 +657,7 @@ void NodeSelectorTreeViewWidget::onSectionResized()
 void NodeSelectorTreeViewWidget::checkViewOnModelChange()
 {
     setEmptyFolderPage();
+    emit viewStateChanged();
 }
 
 void NodeSelectorTreeViewWidget::setNewFolderInfo(const NewFolderInfo& newNewFolderInfo)
@@ -724,41 +745,38 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
     checkViewOnModelChange();
 }
 
-void NodeSelectorTreeViewWidget::onRemoveIndexFromGoBack(const QModelIndex& indexToRemove)
+void NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot(const QModelIndex& indexToRemove)
 {
-    if (indexToRemove.isValid())
+    if (!indexToRemove.isValid())
     {
-        auto changeRootIndex = [this](QModelIndex removedIndex)
-        {
-            auto parentIndex(removedIndex.parent());
+        return;
+    }
 
-            // Avoid adding the cloud drive
-            if (parentIndex.parent().isValid())
-            {
-                setRootIndex(parentIndex);
-            }
-            else
-            {
-                setRootIndex(mModel->hasTopRootIndex() ? mProxyModel->index(0, 0) : QModelIndex());
-                mNavigation.clearBackward();
-            }
-        };
+    const auto currentRoot = ui->tMegaFolders->rootIndex();
+    if (!currentRoot.isValid())
+    {
+        return;
+    }
 
-        if (indexToRemove == ui->tMegaFolders->rootIndex())
+    bool removedIndexIsInCurrentPath = false;
+    for (QModelIndex index = currentRoot; index.isValid(); index = index.parent())
+    {
+        if (index == indexToRemove)
         {
-            changeRootIndex(indexToRemove);
-        }
-        else
-        {
-            // If the index is in the list of backward handles
-            // set the parent as root index and remove the parent from the list of backward handles
-            auto indexHandleToRemove(getHandleByIndex(indexToRemove));
-            if (mNavigation.hasBackwardHandle(indexHandleToRemove))
-            {
-                changeRootIndex(indexToRemove);
-            }
+            removedIndexIsInCurrentPath = true;
+            break;
         }
     }
+
+    if (!removedIndexIsInCurrentPath)
+    {
+        return;
+    }
+
+    const auto parentIndex = indexToRemove.parent();
+    setRootIndex(parentIndex.isValid() ?
+                     parentIndex :
+                     (mModel->hasTopRootIndex() ? mProxyModel->getTopRootIndex() : QModelIndex()));
 }
 
 MegaHandle NodeSelectorTreeViewWidget::getHandleByIndex(const QModelIndex& idx) const
@@ -816,9 +834,6 @@ void NodeSelectorTreeViewWidget::onItemDoubleClick(const QModelIndex& index)
 
     if (isAllowedToEnterInIndex(index))
     {
-        mNavigation.onNavigateInto(getHandleByIndex(ui->tMegaFolders->rootIndex()),
-                                   mProxyModel->getHandle(index));
-
         setRootIndex(index);
     }
 }
@@ -832,8 +847,7 @@ void NodeSelectorTreeViewWidget::setLoadingSceneVisible(bool blockUi)
 {
     if (blockUi && ui->stackedWidget->currentWidget() != ui->treeViewPage)
     {
-        mCurrentEmptyStateKind = EmptyStateKind::NONE;
-        ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+        setCurrentPage(ViewType::VIEW);
     }
 
     ui->tMegaFolders->loadingView().toggleLoadingScene(blockUi);
@@ -859,13 +873,11 @@ void NodeSelectorTreeViewWidget::setViewPage()
 
         if (mModel->rowCount(topRootIndex) == 0 && showEmptyView())
         {
-            showRootEmptyState();
-            ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+            setCurrentPage(ViewType::ROOT_EMPTY);
             return;
         }
     }
-    mCurrentEmptyStateKind = EmptyStateKind::NONE;
-    ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+    setCurrentPage(ViewType::VIEW);
 }
 
 void NodeSelectorTreeViewWidget::updateEmptyStateButtonsVisibility()
@@ -875,14 +887,40 @@ void NodeSelectorTreeViewWidget::updateEmptyStateButtonsVisibility()
         return;
     }
 
-    if (mCurrentEmptyStateKind == EmptyStateKind::FOLDER)
+    if (mCurrentViewType == ViewType::FOLDER_EMPTY)
     {
         setEmptyStateButtonsVisibility(mSelectType->getEmptyFolderPageInfo());
     }
-    else if (mCurrentEmptyStateKind == EmptyStateKind::ROOT)
+    else if (mCurrentViewType == ViewType::ROOT_EMPTY)
     {
         setEmptyStateButtonsVisibility(getEmptyRootPageInfo());
     }
+}
+
+QModelIndex NodeSelectorTreeViewWidget::indexForBreadcrumbSegment(int segmentIndex) const
+{
+    if (!mProxyModel || segmentIndex < 0)
+    {
+        return QModelIndex();
+    }
+
+    QList<QModelIndex> path;
+    for (QModelIndex index = getCurrentRootIndex(); index.isValid(); index = index.parent())
+    {
+        path.prepend(index);
+    }
+
+    if (!mProxyModel->getTopRootIndex().isValid())
+    {
+        if (segmentIndex == 0)
+        {
+            return QModelIndex();
+        }
+
+        --segmentIndex;
+    }
+
+    return segmentIndex < path.size() ? path.at(segmentIndex) : QModelIndex();
 }
 
 QModelIndex NodeSelectorTreeViewWidget::getAddedNodeParent(mega::MegaHandle parentHandle)
@@ -922,21 +960,13 @@ void NodeSelectorTreeViewWidget::onModelModified()
 {
     emit modelModified();
 
-    const bool rootDeleted = !ui->tMegaFolders->rootIndex().isValid() && mNavigation.canGoBack();
-
-    if (rootDeleted)
+    const bool nowEmpty = (mProxyModel->rowCount(getCurrentRootIndex()) == 0);
+    if (nowEmpty != mWasEmpty)
     {
+        mWasEmpty = nowEmpty;
+        setEmptyFolderPage();
         emit viewStateChanged();
-    }
-    else
-    {
-        const bool nowEmpty = (mProxyModel->rowCount(getCurrentRootIndex()) == 0);
-        if (nowEmpty != mWasEmpty)
-        {
-            mWasEmpty = nowEmpty;
-            setEmptyFolderPage();
-            emit viewButtonsStateChanged();
-        }
+        emit viewButtonsStateChanged();
     }
 }
 
@@ -1218,9 +1248,6 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
         selectionModel->setCurrentIndex(currentIndex, QItemSelectionModel::NoUpdate);
     }
 
-    // Remove in case the rootindex is in the backward list
-    mNavigation.onRootChanged(getHandleByIndex(node_column_idx));
-
     onRootIndexChanged(node_column_idx);
     setEmptyFolderPage();
     notifyViewStateChanged();
@@ -1239,21 +1266,11 @@ void NodeSelectorTreeViewWidget::setEmptyFolderPage()
             return;
         }
 
-        showFolderEmptyState();
-        ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+        setCurrentPage(ViewType::FOLDER_EMPTY);
     }
     else
     {
         setViewPage();
-    }
-
-    if (ui->stackedWidget->currentWidget() != ui->treeViewPage)
-    {
-        ui->stackedWidget->currentWidget()->setFocus(Qt::OtherFocusReason);
-    }
-    else
-    {
-        ui->tMegaFolders->setFocus(Qt::OtherFocusReason);
     }
 }
 

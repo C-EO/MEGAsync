@@ -352,9 +352,8 @@ void NodeSelectorModelUpdateCoordinator::removeItemByHandle(mega::MegaHandle han
         if (proxyIndex.isValid())
         {
             mMovedHandlesToSelect.remove(handle);
-            emit indexRemovedFromHistory(proxyIndex);
+            emit indexRemovedAffectingCurrentPath(proxyIndex);
             mProxyModel->deleteNode(proxyIndex);
-            emit handleRemovedFromNavigation(handle);
         }
     }
 }

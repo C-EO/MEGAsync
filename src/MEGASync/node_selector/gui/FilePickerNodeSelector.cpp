@@ -54,6 +54,18 @@ void FilePickerNodeSelector::handleSearchHidden()
     clearCurrentTabSearch(true);
 }
 
+void FilePickerNodeSelector::clearSearch()
+{
+    ui->leSearchTool->onClearClicked();
+    mLastSearchText.clear();
+    mSearchSourceTab.reset();
+
+    if (mSearchWidget)
+    {
+        mSearchWidget->resetSearchState();
+    }
+}
+
 void FilePickerNodeSelector::refreshDestinationBreadcrumb()
 {
     const bool shouldShowPath =
@@ -209,7 +221,6 @@ void FilePickerNodeSelector::configureSidebar()
         applyHeaderStyle(btn);
     }
 
-    ui->wTop->setVisible(false);
     ui->wSearch->setVisible(false);
 }
 

@@ -8,6 +8,7 @@
 #include "MegaNodeNames.h"
 #include "MessageDialogOpener.h"
 #include "NewFolderDialog.h"
+#include "NodeSelectorDestinationBreadcrumb.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorProxyModel.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
@@ -40,11 +41,18 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
 {
     ui->setupUi(this);
     ui->destinationBreadcrumb->showDefaultUploadOption(false);
+    ui->navigationBreadcrumb->setDisplayMode(
+        NodeSelectorDestinationBreadcrumb::DisplayMode::NAVIGATION);
 
     connect(ui->stackedWidget,
             &QStackedWidget::currentChanged,
             this,
             &NodeSelector::onCurrentTreeViewWidgetChanged);
+
+    connect(ui->navigationBreadcrumb,
+            &NodeSelectorDestinationBreadcrumb::segmentActivated,
+            this,
+            &NodeSelector::onNavigationBreadcrumbSegmentActivated);
 
     mMegaApi->addListener(mDelegateListener.get());
 
@@ -73,27 +81,6 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
 
     connect(ui->bOk, &QPushButton::clicked, this, &NodeSelector::confirmSelection);
     connect(ui->bCancel, &QPushButton::clicked, this, &NodeSelector::reject);
-
-    connect(ui->bBack,
-            &QPushButton::clicked,
-            this,
-            [this]()
-            {
-                if (auto wid = getCurrentTreeViewWidget())
-                {
-                    wid->goBack();
-                }
-            });
-    connect(ui->bForward,
-            &QPushButton::clicked,
-            this,
-            [this]()
-            {
-                if (auto wid = getCurrentTreeViewWidget())
-                {
-                    wid->goForward();
-                }
-            });
 
     connect(ui->leSearchTool, &SearchLineEdit::search, this, &NodeSelector::onSearch);
 
@@ -245,7 +232,7 @@ void NodeSelector::onSelectionChanged()
         ui->bOk->setEnabled(isSelectionCorrect);
     }
 
-    refreshDestinationBreadcrumb();
+    refreshBreadcrumbs();
 }
 
 QString NodeSelector::folderNameForWidget(NodeSelectorTreeViewWidget* wid) const
@@ -265,18 +252,6 @@ QString NodeSelector::folderNameForWidget(NodeSelectorTreeViewWidget* wid) const
                                         wid->getRootText();
 }
 
-void NodeSelector::applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid)
-{
-    if (!wid)
-    {
-        return;
-    }
-
-    ui->navigationButtons->setVisible(wid->shouldShowNavigationButtons());
-    ui->bBack->setEnabled(wid->canGoBack());
-    ui->bForward->setEnabled(wid->canGoForward());
-}
-
 void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
 {
     if (!wid)
@@ -288,7 +263,6 @@ void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
     const auto showIncomingInfo = incomingInfo.has_value();
 
     ui->incomingShareHeaderWidget->setVisible(showIncomingInfo);
-    ui->lFolderName->setVisible(!showIncomingInfo);
 
     if (incomingInfo)
     {
@@ -296,7 +270,6 @@ void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
     }
     else
     {
-        ui->lFolderName->setText(folderNameForWidget(wid));
         ui->incomingShareHeaderWidget->clear();
     }
 }
@@ -311,6 +284,14 @@ void NodeSelector::applyHeaderButtonsState(NodeSelectorTreeViewWidget* wid)
     mSelectType->checkActionButtonsVisibility(wid, mButtons);
 }
 
+void NodeSelector::applySearchToolVisibilityState(NodeSelectorTreeViewWidget* wid,
+                                                  NodeSelectorTreeViewWidget::ViewType type)
+{
+    const bool shouldShowSearchTool =
+        wid && (wid == mSearchWidget || type == NodeSelectorTreeViewWidget::ViewType::VIEW);
+    ui->leSearchTool->setVisible(shouldShowSearchTool);
+}
+
 void NodeSelector::refreshHeaderButtons(NodeSelectorTreeViewWidget* wid)
 {
     if (!wid || wid != getCurrentTreeViewWidget())
@@ -319,7 +300,6 @@ void NodeSelector::refreshHeaderButtons(NodeSelectorTreeViewWidget* wid)
     }
 
     applyHeaderButtonsState(wid);
-    applyNavigationButtonsState(wid);
 }
 
 void NodeSelector::refreshHeader(NodeSelectorTreeViewWidget* wid)
@@ -330,9 +310,33 @@ void NodeSelector::refreshHeader(NodeSelectorTreeViewWidget* wid)
     }
 
     applyHeaderButtonsState(wid);
-    applyNavigationButtonsState(wid);
     applyHeaderFolderInfoState(wid);
+    refreshBreadcrumbs();
+}
+
+void NodeSelector::refreshBreadcrumbs()
+{
     refreshDestinationBreadcrumb();
+    refreshNavigationBreadcrumb();
+}
+
+void NodeSelector::refreshNavigationBreadcrumb()
+{
+    const bool shouldShowBreadcrumb =
+        getCurrentTreeViewWidget() && getCurrentTreeViewWidget() != mSearchWidget;
+
+    ui->navigationBreadcrumb->setVisible(shouldShowBreadcrumb);
+    ui->navigationBreadcrumb->setNavigationSegments(
+        shouldShowBreadcrumb ? getCurrentTreeViewWidget()->navigationBreadcrumbSegments() :
+                               QStringList());
+}
+
+void NodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)
+{
+    if (auto* widget = getCurrentTreeViewWidget(); widget && widget != mSearchWidget)
+    {
+        widget->navigateToBreadcrumbSegment(segmentIndex);
+    }
 }
 
 void NodeSelector::showDefaultUploadOption(bool show)
@@ -368,7 +372,7 @@ bool NodeSelector::event(QEvent* event)
         }
         else
         {
-            refreshDestinationBreadcrumb();
+            refreshBreadcrumbs();
         }
     }
 
@@ -917,6 +921,11 @@ void NodeSelector::initSpecialisedWidgets(NodeSelectorTreeViewWidget* viewContai
                 });
 
         ui->stackedWidget->addWidget(viewContainer);
+
+        if (ui->stackedWidget->currentWidget() == viewContainer)
+        {
+            refreshHeader(viewContainer);
+        }
     }
 }
 
@@ -1011,6 +1020,11 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
 {
     if (auto wid = dynamic_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
     {
+        if (wid != mSearchWidget)
+        {
+            clearSearch();
+        }
+
         if (searchHasOwnTab() || wid != mSearchWidget)
         {
             if (auto tabItem = tabItemForWidget(wid); tabItem.has_value())
@@ -1025,6 +1039,7 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
         // while the proxy model is mid-transition inside loadTreeFromNode/setRootIndex.
         disconnect(mSelectionChangedConnection);
         disconnect(mViewStateConnection);
+        disconnect(mCurrentViewPageConnection);
         disconnect(mViewButtonsStateConnection);
 
         if (mNodeToBeSelected)
@@ -1046,6 +1061,16 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
                                        {
                                            refreshHeader(wid);
                                        });
+        mCurrentViewPageConnection = connect(wid,
+                                             &NodeSelectorTreeViewWidget::currentViewPageChanged,
+                                             this,
+                                             [this, wid](NodeSelectorTreeViewWidget::ViewType type)
+                                             {
+                                                 if (wid == getCurrentTreeViewWidget())
+                                                 {
+                                                     applySearchToolVisibilityState(wid, type);
+                                                 }
+                                             });
         mViewButtonsStateConnection = connect(wid,
                                               &NodeSelectorTreeViewWidget::viewButtonsStateChanged,
                                               this,
@@ -1054,6 +1079,7 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
                                                   refreshHeaderButtons(wid);
                                               });
 
+        onSelectionChanged();
         refreshHeader(wid);
     }
 }
@@ -1109,7 +1135,7 @@ void NodeSelector::specialisedTreeViewWidgetsCreated()
                 this,
                 [this]()
                 {
-                    refreshDestinationBreadcrumb();
+                    refreshBreadcrumbs();
                 });
     }
     if (mBackupsWidget)

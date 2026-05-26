@@ -27,7 +27,7 @@ bool NodeSelectorTreeViewWidgetCloudDrive::isNodeCompatibleWithModel(mega::MegaN
     return MegaSyncApp->getMegaApi()->isInCloud(node);
 }
 
-QString NodeSelectorTreeViewWidgetCloudDrive::getRootText()
+QString NodeSelectorTreeViewWidgetCloudDrive::getRootText() const
 {
     return MegaNodeNames::getCloudDriveName();
 }
@@ -41,8 +41,7 @@ void NodeSelectorTreeViewWidgetCloudDrive::setViewPage()
 {
     if (mProxyModel->rowCount(getCurrentRootIndex()) == 0 && showEmptyView())
     {
-        showRootEmptyState();
-        ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+        setCurrentPage(ViewType::ROOT_EMPTY);
     }
     else
     {
@@ -170,7 +169,7 @@ void NodeSelectorTreeViewWidgetIncomingShares::makeViewConnections()
         Qt::UniqueConnection);
 }
 
-QString NodeSelectorTreeViewWidgetIncomingShares::getRootText()
+QString NodeSelectorTreeViewWidgetIncomingShares::getRootText() const
 {
     return MegaNodeNames::getIncomingSharesName();
 }
@@ -259,7 +258,7 @@ NodeSelectorTreeViewWidgetBackups::NodeSelectorTreeViewWidgetBackups(SelectTypeS
             });
 }
 
-QString NodeSelectorTreeViewWidgetBackups::getRootText()
+QString NodeSelectorTreeViewWidgetBackups::getRootText() const
 {
     return MegaNodeNames::getBackupsName();
 }
@@ -548,7 +547,7 @@ void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
     }
 }
 
-QString NodeSelectorTreeViewWidgetSearch::getRootText()
+QString NodeSelectorTreeViewWidgetSearch::getRootText() const
 {
     const auto count = searchModel() ? searchModel()->searchResultCount() : 0;
     return tr("%n result found", "", count);
@@ -611,12 +610,11 @@ void NodeSelectorTreeViewWidgetSearch::setViewPage()
         mSearchController->setHasRows(hasRows);
         if (!hasRows && showEmptyView())
         {
-            showRootEmptyState();
-            ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+            setCurrentPage(ViewType::ROOT_EMPTY);
             return;
         }
     }
-    ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+    setCurrentPage(ViewType::VIEW);
 }
 
 NodeSelectorModelSearch* NodeSelectorTreeViewWidgetSearch::searchModel() const
@@ -666,7 +664,7 @@ void NodeSelectorTreeViewWidgetRubbish::makeViewConnections()
             &RestoreNodeManager::onRestoreClicked);
 }
 
-QString NodeSelectorTreeViewWidgetRubbish::getRootText()
+QString NodeSelectorTreeViewWidgetRubbish::getRootText() const
 {
     return MegaNodeNames::getRubbishName();
 }
@@ -685,8 +683,7 @@ void NodeSelectorTreeViewWidgetRubbish::setViewPage()
     auto rootIndex = mModel->index(0, 0);
     if (mModel->rowCount(rootIndex) == 0 && showEmptyView())
     {
-        showRootEmptyState();
-        ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+        setCurrentPage(ViewType::ROOT_EMPTY);
 
         // The rubbish has been emptied, so we can unset the loading view
         ui->tMegaFolders->loadingView().toggleLoadingScene(false);

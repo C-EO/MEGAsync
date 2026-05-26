@@ -601,12 +601,12 @@ void CloudDriveNodeSelector::configureActionButtonsPlacement()
     applyHeaderStyle(ui->bClearRubbish, QLatin1String("primary"));
     applyHeaderStyle(ui->bNewFolder, QLatin1String("secondary"));
 
-    ui->headerLayout->insertWidget(0, ui->actionButtonsContainer);
-
     for (auto* btn: {ui->bUpload, ui->bNewFolder, ui->bClearRubbish})
     {
         ui->actionButtonsLayout->addWidget(btn);
     }
+
+    ui->actionButtonsLayout->addStretch();
 }
 
 void CloudDriveNodeSelector::configureFooterVisibility()

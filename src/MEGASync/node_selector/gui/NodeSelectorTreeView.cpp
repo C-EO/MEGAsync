@@ -457,7 +457,7 @@ void NodeSelectorTreeView::addNewFolderMenuAction(QMap<int, QAction*>& actions)
     if (!mRootIndexReadOnly)
     {
         auto newfolderAction(
-            new MegaMenuItemAction(tr("Create folder"),
+            new MegaMenuItemAction(tr("New folder"),
                                    Utilities::getPixmapName(QLatin1String("folder-plus-01"),
                                                             Utilities::AttributeType::SMALL |
                                                                 Utilities::AttributeType::THIN |

@@ -57,8 +57,7 @@ public:
     bool shouldUpdateImmediately(int immediateThreshold) const;
 
 signals:
-    void indexRemovedFromHistory(const QModelIndex& index);
-    void handleRemovedFromNavigation(mega::MegaHandle handle);
+    void indexRemovedAffectingCurrentPath(const QModelIndex& index);
     void viewStateChanged();
 
 private:

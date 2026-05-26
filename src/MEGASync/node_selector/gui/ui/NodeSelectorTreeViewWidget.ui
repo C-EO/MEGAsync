@@ -610,25 +610,25 @@ background: transparent;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>IconLabel</class>
-   <extends>QToolButton</extends>
-   <header>tokenizer/TokenizableItems/IconLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>TabSelector</class>
    <extends>QWidget</extends>
    <header>TabSelector.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>NodeSelectorTreeView</class>
-   <extends>QTreeView</extends>
-   <header>node_selector/gui/NodeSelectorTreeView.h</header>
-  </customwidget>
-  <customwidget>
    <class>TokenizableButton</class>
    <extends>QWidget</extends>
    <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
+  </customwidget>
+  <customwidget>
+   <class>IconLabel</class>
+   <extends>QToolButton</extends>
+   <header>tokenizer/TokenizableItems/IconLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NodeSelectorTreeView</class>
+   <extends>QTreeView</extends>
+   <header>node_selector/gui/NodeSelectorTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -46,6 +46,7 @@ protected:
     void configureBackupsWidget() override;
     void configureRubbishWidget() override;
     void configureSearchWidget(TabType type) override;
+    void clearSearch() override;
 
     void configureSidebar() override;
     void configureSearchTool() override;

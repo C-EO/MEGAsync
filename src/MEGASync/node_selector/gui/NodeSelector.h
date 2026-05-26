@@ -139,6 +139,8 @@ protected:
         Q_UNUSED(type);
     }
 
+    virtual void clearSearch() {}
+
     virtual ClearTypes searchClearType() const;
     virtual bool searchHasOwnTab() const = 0;
 
@@ -229,10 +231,14 @@ private:
     void showTab(NodeSelectorTreeViewWidget::TabItem item);
     QString folderNameForWidget(NodeSelectorTreeViewWidget* wid) const;
     void applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid);
-    void applyNavigationButtonsState(NodeSelectorTreeViewWidget* wid);
     void applyHeaderButtonsState(NodeSelectorTreeViewWidget* wid);
+    void applySearchToolVisibilityState(NodeSelectorTreeViewWidget* wid,
+                                        NodeSelectorTreeViewWidget::ViewType type);
     void refreshHeader(NodeSelectorTreeViewWidget* wid);
     void refreshHeaderButtons(NodeSelectorTreeViewWidget* wid);
+    void refreshBreadcrumbs();
+    void refreshNavigationBreadcrumb();
+    void onNavigationBreadcrumbSegmentActivated(int segmentIndex);
 
     virtual void refreshDestinationBreadcrumb() {}
 
@@ -261,6 +267,7 @@ private:
     // Selection changed signal
     QMetaObject::Connection mSelectionChangedConnection;
     QMetaObject::Connection mViewStateConnection;
+    QMetaObject::Connection mCurrentViewPageConnection;
     QMetaObject::Connection mViewButtonsStateConnection;
 };
 

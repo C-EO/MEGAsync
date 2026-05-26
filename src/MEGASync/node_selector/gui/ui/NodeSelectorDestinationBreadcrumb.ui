@@ -11,10 +11,16 @@
    </rect>
   </property>
   <property name="styleSheet">
-   <string notr="true">.NodeSelectorDestinationBreadcrumb
+   <string notr="true">NodeSelectorDestinationBreadcrumb[displayMode=&quot;destination&quot;]
 {
 border-radius: 8px;
 background-color: #F7F7F7; /*colorToken.surface-1*/
+}
+
+NodeSelectorDestinationBreadcrumb[displayMode=&quot;navigation&quot;]
+{
+border: none;
+background: transparent;
 }
 
 #bDestinationOverflow, #bDestinationClear
@@ -24,14 +30,23 @@ background: transparent;
 padding: 0px;
 }
 
-#wDestinationSegments QLabel
+#wDestinationSegments QLabel,
+#wDestinationSegments QToolButton
 {
 color: #616366; /*colorToken.text-secondary*/
 }
 
-#wDestinationSegments QLabel[bold=&quot;true&quot;]
+#wDestinationSegments QLabel[bold=&quot;true&quot;],
+#wDestinationSegments QToolButton[current=&quot;true&quot;]
 {
 color: #303233; /*colorToken.text-primary*/
+}
+
+#wDestinationSegments QToolButton
+{
+border: none;
+background: transparent;
+padding: 0px;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="breadcrumbLayout">

@@ -34,7 +34,7 @@ protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
 
 private:
-    QString getRootText() override;
+    QString getRootText() const override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     void setViewPage() override;
     SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
@@ -69,7 +69,7 @@ protected:
     void makeViewConnections() override;
 
 private:
-    QString getRootText() override;
+    QString getRootText() const override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     bool isCurrentRootIndexReadOnly() const override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
@@ -85,7 +85,7 @@ public:
     explicit NodeSelectorTreeViewWidgetBackups(SelectTypeSPtr mode, QWidget* parent = nullptr);
 
 private:
-    QString getRootText() override;
+    QString getRootText() const override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
 
     bool isCurrentRootIndexReadOnly() const override
@@ -147,7 +147,7 @@ private:
     void onSearchTabClicked(TabType type);
     void changeColumnsVisibility(TabType type);
     void expandSearchResults();
-    QString getRootText() override;
+    QString getRootText() const override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
@@ -174,7 +174,7 @@ protected:
     void makeViewConnections() override;
 
 private:
-    QString getRootText() override;
+    QString getRootText() const override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     void setViewPage() override;
     SelectType::EmptyPageInfo getEmptyRootPageInfo() override;

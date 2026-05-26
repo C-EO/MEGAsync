@@ -74,7 +74,7 @@ QString SelectType::getCustomButtonText(uint buttonId) const
     {
         case ButtonId::NEW_FOLDER:
         {
-            return QCoreApplication::translate("NodeSelectorTreeViewWidget", "Create folder");
+            return QCoreApplication::translate("NodeSelectorTreeViewWidget", "New folder");
         }
         default:
         {

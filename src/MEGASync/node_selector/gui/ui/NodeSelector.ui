@@ -94,85 +94,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        <number>24</number>
       </property>
       <item>
-       <widget class="QWidget" name="wTop" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>32</height>
-         </size>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QWidget" name="wTitleContainer" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>16</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="title">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Files</string>
-              </property>
-              <property name="font-size" stdset="0">
-               <string notr="true">subtitle</string>
-              </property>
-              <property name="regular" stdset="0">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
        <widget class="QGroupBox" name="wStorage">
         <property name="title">
          <string notr="true"/>
@@ -469,9 +390,9 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <height>16777215</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="headerLayout" stretch="0,1,1,0,0">
+        <layout class="QVBoxLayout" name="headerContainerLayout">
          <property name="spacing">
-          <number>4</number>
+          <number>16</number>
          </property>
          <property name="leftMargin">
           <number>20</number>
@@ -486,14 +407,8 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           <number>20</number>
          </property>
          <item>
-          <widget class="QWidget" name="navigationButtons" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <widget class="QWidget" name="headerTopRow" native="true">
+           <layout class="QHBoxLayout" name="headerLayout" stretch="1,0,0">
             <property name="spacing">
              <number>4</number>
             </property>
@@ -510,90 +425,55 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <number>0</number>
             </property>
             <item>
-             <widget class="TokenizableToolButton" name="bBack">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+             <widget class="QWidget" name="actionButtonsContainer" native="true">
               <property name="minimumSize">
                <size>
-                <width>24</width>
-                <height>24</height>
+                <width>50</width>
+                <height>50</height>
                </size>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="text">
-               <string notr="true"/>
-              </property>
-              <property name="icon">
-               <iconset resource="../../../gui/Resources_common.qrc">
-                <normaloff>:/chevron-left_medium_thin_outline</normaloff>:/chevron-left_medium_thin_outline</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-              <property name="type" stdset="0">
-               <string notr="true">ghost</string>
-              </property>
-              <property name="disabled_off" stdset="0">
-               <string notr="true">icon-disabled</string>
+              <layout class="QHBoxLayout" name="actionButtonsLayout">
+               <property name="spacing">
+                <number>12</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="IncomingShareHeaderWidget" name="incomingShareHeaderWidget" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="TokenizableToolButton" name="bForward">
+             <widget class="SearchLineEdit" name="leSearchTool">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="minimumSize">
                <size>
-                <width>24</width>
-                <height>24</height>
+                <width>0</width>
+                <height>0</height>
                </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-              <property name="cursor">
-               <cursorShape>PointingHandCursor</cursorShape>
-              </property>
-              <property name="text">
-               <string notr="true"/>
-              </property>
-              <property name="icon">
-               <iconset resource="../../../gui/Resources_common.qrc">
-                <normaloff>:/chevron-right_medium_thin_outline</normaloff>:/chevron-right_medium_thin_outline</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-              <property name="type" stdset="0">
-               <string notr="true">ghost</string>
-              </property>
-              <property name="disabled_off" stdset="0">
-               <string notr="true">icon-disabled</string>
               </property>
              </widget>
             </item>
@@ -601,87 +481,9 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           </widget>
          </item>
          <item>
-          <widget class="ElidingLabel" name="lFolderName">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <bold>true</bold>
-             <strikeout>false</strikeout>
-             <kerning>false</kerning>
-            </font>
-           </property>
-           <property name="text">
-            <string notr="true">FolderName</string>
-           </property>
-           <property name="font-size" stdset="0">
-            <string notr="true">body-2</string>
-           </property>
-           <property name="bold" stdset="0">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="IncomingShareHeaderWidget" name="incomingShareHeaderWidget" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="actionButtonsContainer" native="true">
-           <layout class="QHBoxLayout" name="actionButtonsLayout">
-            <property name="spacing">
-             <number>12</number>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="SearchLineEdit" name="leSearchTool">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
+          <widget class="NodeSelectorDestinationBreadcrumb" name="navigationBreadcrumb" native="true">
+           <property name="visible">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -970,16 +772,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
    <class>TokenizableButton</class>
    <extends>QWidget</extends>
    <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
-  </customwidget>
-  <customwidget>
-   <class>TokenizableToolButton</class>
-   <extends>QToolButton</extends>
-   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
-  </customwidget>
-  <customwidget>
-   <class>ElidingLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/ElidedLabel.h</header>
   </customwidget>
   <customwidget>
    <class>SearchLineEdit</class>
