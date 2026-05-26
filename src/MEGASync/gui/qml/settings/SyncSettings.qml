@@ -152,7 +152,7 @@ Item {
             leftPadding: rightPadding
 
             Text {
-                id: syncName
+                id: syncNameColumn
 
                 text: SettingsStrings.tableSyncsNameColumn
                 font.pixelSize: root.titleTextPixelSize
@@ -162,7 +162,7 @@ Item {
             }
 
             Text {
-                id: syncStatus
+                id: syncStatusColumn
 
                 text: SettingsStrings.tableSyncsStatusColumn
                 font.pixelSize: root.titleTextPixelSize
@@ -314,6 +314,31 @@ Item {
             width: syncList.width
             color: status === SyncSettingsModel.FAIL ? ColorTheme.notificationError : "transparent"
 
+            function getSyncTextColor() {
+                if (status === SyncSettingsModel.FAIL) {
+                    return ColorTheme.textError;
+                }
+                else if (status === SyncSettingsModel.SUSPENDED) {
+                    return ColorTheme.textDisabled;
+                }
+                else {
+                    return ColorTheme.textPrimary;
+                }
+            }
+
+            function getSyncIconColor() {
+                if (status === SyncSettingsModel.FAIL) {
+                    return ColorTheme.textError;
+                }
+                else if (status === SyncSettingsModel.SUSPENDED) {
+                    return ColorTheme.iconDisabled;
+                }
+                else {
+                    return ColorTheme.iconPrimary;
+                }
+            }
+
+
             ColumnLayout {
                 id: content
 
@@ -331,7 +356,7 @@ Item {
                     Layout.preferredHeight: syncItemBackgroundHeight
                     color: syncItem.syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
                     radius: syncItemBackgroundRadius
-                    property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse
+                    property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || folderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse || statusIconMouseArea.containsMouse || statusTextMouseArea.containsMouse
 
                     Behavior on color {
                         ColorAnimation {
@@ -339,10 +364,8 @@ Item {
                         }
                     }
 
-                    function getStatusSyncIcon(status)
-                    {
-                        switch(status)
-                        {
+                    function getStatusSyncIcon(status) {
+                        switch(status) {
                             case SyncSettingsModel.FAIL:
                                 return Images.alert_circle_small_thin_outline;
 
@@ -383,13 +406,13 @@ Item {
 
                                 text: name
                                 anchors.verticalCenter: parent.verticalCenter
-                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
+                                color: getSyncTextColor()
                             }
 
                             SvgImage {
                                 id: folderSearchIcon
 
-                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : ColorTheme.iconPrimary
+                                color: getSyncIconColor()
                                 source: Images.folder_search_small_thin_outline
                                 sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                 visible: syncItem.syncItemContainsMouse
@@ -417,16 +440,42 @@ Item {
                             SvgImage {
                                 id: folderStatusIcon
 
-                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : ColorTheme.iconPrimary
+                                color: statusIconMouseArea.containsMouse || statusTextMouseArea.containsMouse ? ColorTheme.iconPrimary : getSyncIconColor()
                                 source: syncItem.getStatusSyncIcon(status)
                                 sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+
+                                MouseArea {
+                                    id: statusIconMouseArea
+
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: status === SyncSettingsModel.SUSPENDED ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    onClicked: {
+                                        if (status === SyncSettingsModel.SUSPENDED) {
+                                            syncSettings.resumeSync(index);
+                                        }
+                                    }
+                                }
                             }
 
                             Text {
                                 id: syncStatus
 
                                 text: getStatusDescription(status)
-                                color: status === SyncSettingsModel.FAIL ? ColorTheme.textError : enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled
+                                color: statusTextMouseArea.containsMouse || statusIconMouseArea.containsMouse ? ColorTheme.textPrimary : getSyncTextColor()
+
+                                MouseArea {
+                                    id: statusTextMouseArea
+
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: status === SyncSettingsModel.SUSPENDED ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    onClicked: {
+                                        if (status === SyncSettingsModel.SUSPENDED) {
+                                            syncSettings.resumeSync(index);
+                                        }
+                                    }
+                                }
                             }
 
                             Item {

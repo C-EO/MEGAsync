@@ -69,18 +69,18 @@ void SyncSettingsQuickWidget::restoreSyncedFolder(int index)
         msgInfo.descriptionText = logMsg;
         msgInfo.buttons = QMessageBox::Cancel | QMessageBox::Yes;
         QMap<QMessageBox::Button, QString> textsByButton;
-        textsByButton.insert(QMessageBox::Yes, tr("Delete Sync"));
+        textsByButton.insert(QMessageBox::Yes, tr("Remove sync"));
         textsByButton.insert(
             QMessageBox::Cancel,
             tr("Close")); // :-( , need to add this, so i've the outline style button.
         msgInfo.buttonsText = textsByButton;
 
         msgInfo.defaultButton = QMessageBox::Close;
-        msgInfo.finishFunc = [this, sync](QPointer<MessageDialogResult> msg)
+        msgInfo.finishFunc = [sync](QPointer<MessageDialogResult> msg)
         {
             if (msg->result() == QMessageBox::Yes)
             {
-                CreateRemoveSyncsManager::removeSync(sync, this->parentWidget());
+                SyncController::instance().removeSync(sync);
             }
         };
 

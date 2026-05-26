@@ -8761,11 +8761,6 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <translation>Error opening .megaignore file</translation>
     </message>
     <message>
-        <source>Delete Sync</source>
-        <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
-        <translation>Delete Sync</translation>
-    </message>
-    <message>
         <source>Can&apos;t restore %1 mega folder</source>
         <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
         <translation>Can&apos;t restore %1 mega folder</translation>
@@ -8774,6 +8769,11 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>Close</source>
         <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
         <translation>Close</translation>
+    </message>
+    <message>
+        <source>Remove sync</source>
+         <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
+        <translation>Remove sync</translation>
     </message>
 </context>
 <context>
