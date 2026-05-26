@@ -87,7 +87,7 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
     ui->incomingShareHeaderWidget->hide();
 
     resize(1024, 720);
-    setMinimumSize(760, 400);
+    setMinimumSize(660, 560);
 }
 
 NodeSelector::~NodeSelector()

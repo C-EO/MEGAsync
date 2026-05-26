@@ -943,7 +943,6 @@ void NodeSelectorModel::executeRemoveExtraSpaceLogic(const QModelIndex& previous
             beginRemoveRows(previousIndex, lastRow, lastRow);
             endRemoveRows();
 
-            mAddedIndex = QModelIndex();
             mRemovingPreviousExtraSpace = false;
             mExtraSpaceRemoved = true;
             mExtraSpaceAdded = false;
@@ -982,7 +981,6 @@ void NodeSelectorModel::executeAddExtraSpaceLogic(const QModelIndex& currentInde
                     endInsertRows();
                     mExtraSpaceAdded = true;
                     mExtraSpaceRemoved = false;
-                    mAddedIndex = createIndex(totalRows, 0, nullptr);
                 }
             }
         }
@@ -1004,6 +1002,17 @@ void NodeSelectorModel::executeExtraSpaceLogic()
     mPendingRootIndex = QModelIndex();
 }
 
+bool NodeSelectorModel::isExtraSpaceIndex(const QModelIndex& index) const
+{
+    if (!mExtraSpaceAdded || !index.isValid() || index.internalPointer() != nullptr ||
+        !mCurrentRootIndex.isValid())
+    {
+        return false;
+    }
+
+    return index.row() == rowCount(mCurrentRootIndex) - 1;
+}
+
 int NodeSelectorModel::columnCount(const QModelIndex&) const
 {
     return NodeSelectorModel::Column::last;
@@ -1019,7 +1028,7 @@ QVariant NodeSelectorModel::data(const QModelIndex& index, int role) const
         {
             case toInt(NodeSelectorModelRoles::EXTRA_ROW_ROLE):
             {
-                return item == nullptr;
+                return isExtraSpaceIndex(index);
             }
             default:
             {
@@ -1194,7 +1203,7 @@ Qt::ItemFlags NodeSelectorModel::flags(const QModelIndex& index) const
             }
         }
         // no item -> extra space row
-        else if (mExtraSpaceAdded && mAddedIndex.parent() == index.parent())
+        else if (isExtraSpaceIndex(index))
         {
             flags |= Qt::ItemIsDropEnabled;
             flags &= ~(Qt::ItemIsSelectable);
@@ -2025,6 +2034,11 @@ QModelIndex NodeSelectorModel::parent(const QModelIndex& index) const
 
     if (index.isValid())
     {
+        if (isExtraSpaceIndex(index))
+        {
+            return mCurrentRootIndex;
+        }
+
         NodeSelectorModelItem* item = static_cast<NodeSelectorModelItem*>(index.internalPointer());
         if (item)
         {

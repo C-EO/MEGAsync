@@ -327,7 +327,7 @@ void NodeSelectorTreeViewWidgetSearch::prepareForInitialDisplay()
         // The search view does not load content on startup. Pre-attaching the view avoids the
         // first visible search having to build the tree view and delegates mid-transition.
         setLoadingSceneVisible(false);
-        onExpandReady();
+        onLevelLoaded();
     }
 }
 
@@ -481,70 +481,16 @@ void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
         ui->tMegaFolders->model() != nullptr,
         [this]()
         {
-        NodeSelectorTreeViewWidget::onExpandReady();
+            NodeSelectorTreeViewWidget::onLevelLoaded();
         },
         [this](TabType type)
         {
-            if (tabSelected != TabType::NONE)
-            {
-                return;
-            }
-
-            auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-            if (searchedTypes.testFlag(type))
-            {
-                tabSelected = type;
-                // If it is the first time we load the model, the base method will run a sort/filter
-                // action, so we don´t need to do it, just set the mode without sorting/filtering
-                if (ui->tMegaFolders->model() == nullptr)
-                {
-                    // Block the chip signals to avoid calling the slot, which will sort/filter the
-                    // model
-                    TabSelector::applyActionToTabSelectors(ui->searchButtonsWidget,
-                                                           [](TabSelector* tab)
-                                                           {
-                                                               tab->blockSignals(true);
-                                                           });
-                    TabSelector::selectTabIf(ui->searchButtonsWidget,
-                                             TAB_TYPE,
-                                             static_cast<int>(type));
-                    TabSelector::applyActionToTabSelectors(ui->searchButtonsWidget,
-                                                           [](TabSelector* tab)
-                                                           {
-                                                               tab->blockSignals(false);
-                                                           });
-                    proxy_model->setMode(type, false);
-                }
-                // If it is not the first time, we just click on the correct chip, and it will
-                // sort/filter for us
-                else
-                {
-                    TabSelector::selectTabIf(ui->searchButtonsWidget,
-                                             TAB_TYPE,
-                                             static_cast<int>(type));
-                }
-            }
-        };
-
-        // Only one will be set, in this order
-        setMode(TabType::CLOUD_DRIVE);
-        setMode(TabType::INCOMING_SHARE);
-        setMode(TabType::BACKUP);
-        setMode(TabType::RUBBISH);
-
-        mNewSearch = false;
-
-        NodeSelectorTreeViewWidget::onLevelLoaded();
-
-        // Do it after setting the model to the view, otherwise it won´t work
-        changeColumnsVisibility(tabSelected);
-        expandSearchResults();
-    }
-    else
-    {
-        NodeSelectorTreeViewWidget::onLevelLoaded();
-        expandSearchResults();
-    }
+            changeColumnsVisibility(type);
+        },
+        [this]()
+        {
+            expandSearchResults();
+        });
 }
 
 QString NodeSelectorTreeViewWidgetSearch::getRootText() const

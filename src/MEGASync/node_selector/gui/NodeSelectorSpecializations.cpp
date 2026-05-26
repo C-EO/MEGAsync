@@ -569,7 +569,7 @@ void CloudDriveNodeSelector::configureSidebar()
     expandTab(ui->fSearch);
 
     resize(1024, 720);
-    setMinimumSize(792, 400);
+    setMinimumSize(1024, 691);
 }
 
 void CloudDriveNodeSelector::configureSearchTool()

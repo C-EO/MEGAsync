@@ -222,9 +222,6 @@ protected:
     SelectTypeSPtr mSelectType;
 
 protected slots:
-    // Title
-    void updateRootTitle();
-
     // Invoked after the proxy finishes processing a level load
     virtual void onLevelLoaded();
 

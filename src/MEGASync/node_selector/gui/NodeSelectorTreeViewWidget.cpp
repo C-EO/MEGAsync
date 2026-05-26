@@ -733,7 +733,7 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
 
         makeViewConnections();
 
-        setRootIndex(mModel->hasTopRootIndex() ? mProxyModel->index(0, 0) : QModelIndex());
+        setRootIndex(mModel->hasTopRootIndex() ? mProxyModel->getTopRootIndex() : QModelIndex());
 
         setStyleSheet(styleSheet());
 
@@ -1228,9 +1228,14 @@ void NodeSelectorTreeViewWidget::notifyButtonsStateChanged()
 
 void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
 {
+    QModelIndex node_column_idx;
+
     // In case the idx is coming from a potentially hidden column, we always take the NODE column
     // As it is the only one that have childrens
-    auto node_column_idx = proxy_idx.sibling(proxy_idx.row(), NodeSelectorModel::Column::NODE);
+    if (proxy_idx.isValid() && proxy_idx.model() == mProxyModel.get())
+    {
+        node_column_idx = proxy_idx.sibling(proxy_idx.row(), NodeSelectorModel::Column::NODE);
+    }
 
     mModel->setCurrentRootIndex(mProxyModel->mapToSource(node_column_idx));
     ui->tMegaFolders->setRootIndex(node_column_idx);
@@ -1240,7 +1245,8 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
         selectionModel->clearSelection();
 
         auto currentIndex = ui->tMegaFolders->rootIndex();
-        if (mProxyModel->rowCount(currentIndex) > 0)
+        if (currentIndex.isValid() && currentIndex.model() == mProxyModel.get() &&
+            mProxyModel->rowCount(currentIndex) > 0)
         {
             currentIndex = mProxyModel->index(0, NodeSelectorModel::Column::NODE, currentIndex);
         }

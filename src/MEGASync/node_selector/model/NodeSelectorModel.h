@@ -534,6 +534,7 @@ private:
 
     void executeRemoveExtraSpaceLogic(const QModelIndex& previousIndex);
     void executeAddExtraSpaceLogic(const QModelIndex& currentIndex);
+    bool isExtraSpaceIndex(const QModelIndex& index) const;
 
     QPair<QIcon, QString> getFolderIcon(NodeSelectorModelItem* item) const;
     bool fetchMoreRecursively(const QModelIndex& parentIndex);
@@ -569,7 +570,6 @@ private:
 
     // Current root index
     QModelIndex mCurrentRootIndex;
-    QModelIndex mAddedIndex;
     bool mAddExpaceWhenLoadingFinish = false;
     QModelIndex mPendingRootIndex;
     bool mExtraSpaceAdded;
