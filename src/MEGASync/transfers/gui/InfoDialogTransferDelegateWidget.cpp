@@ -164,26 +164,33 @@ void InfoDialogTransferDelegateWidget::setType()
 {
     QIcon icon;
 
-    auto transferType = getData()->mType;
+    auto transferData = getData();
 
-    if(transferType & TransferData::TRANSFER_DOWNLOAD || transferType & TransferData::TRANSFER_LTCPDOWNLOAD)
+    if (transferData)
     {
-        icon = Utilities::getCachedPixmap(QString::fromLatin1(":/arrow-down-brand-primary.svg"));
-    }
-    else if(transferType & TransferData::TRANSFER_UPLOAD)
-    {
-        icon = Utilities::getCachedPixmap(QString::fromLatin1(":/arrow-up-brand-primary.svg"));
-    }
+        auto transferType = transferData->mType;
 
-    mUi->lTransferType->setPixmap(icon.pixmap(mUi->lTransferType->size()));
+        if (transferType & TransferData::TRANSFER_DOWNLOAD ||
+            transferType & TransferData::TRANSFER_LTCPDOWNLOAD)
+        {
+            icon =
+                Utilities::getCachedPixmap(QString::fromLatin1(":/arrow-down-brand-primary.svg"));
+        }
+        else if (transferType & TransferData::TRANSFER_UPLOAD)
+        {
+            icon = Utilities::getCachedPixmap(QString::fromLatin1(":/arrow-up-brand-primary.svg"));
+        }
 
-    mUi->lSyncIcon->setVisible(getData()->isSyncTransfer());
+        mUi->lTransferType->setPixmap(icon.pixmap(mUi->lTransferType->size()));
 
-    if(getData()->isSyncTransfer())
-    {
-        auto sync_icon =
-            Utilities::getCachedPixmap(QString::fromLatin1(":/syncing-icon-secondary.svg"));
-        mUi->lSyncIcon->setPixmap(sync_icon.pixmap(mUi->lSyncIcon->size()));
+        mUi->lSyncIcon->setVisible(transferData->isSyncTransfer());
+
+        if (transferData->isSyncTransfer())
+        {
+            auto sync_icon =
+                Utilities::getCachedPixmap(QString::fromLatin1(":/syncing-icon-secondary.svg"));
+            mUi->lSyncIcon->setPixmap(sync_icon.pixmap(mUi->lSyncIcon->size()));
+        }
     }
 }
 
