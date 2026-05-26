@@ -60,31 +60,67 @@ void SyncSettingsQuickWidget::restoreSyncedFolder(int index)
 {
     auto sync = mSyncModel->getSync(index);
 
+    auto triggerErrorMessage = [sync, this]()
+    {
+        QString logMsg = tr("Can't restore %1 mega folder").arg(sync->getMegaFolder());
+
+        MessageDialogInfo msgInfo;
+        msgInfo.parent = this->parentWidget();
+        msgInfo.descriptionText = logMsg;
+        msgInfo.buttons = QMessageBox::Cancel | QMessageBox::Yes;
+        QMap<QMessageBox::Button, QString> textsByButton;
+        textsByButton.insert(QMessageBox::Yes, tr("Delete Sync"));
+        textsByButton.insert(
+            QMessageBox::Cancel,
+            tr("Close")); // :-( , need to add this, so i've the outline style button.
+        msgInfo.buttonsText = textsByButton;
+
+        msgInfo.defaultButton = QMessageBox::Close;
+        msgInfo.finishFunc = [this, sync](QPointer<MessageDialogResult> msg)
+        {
+            if (msg->result() == QMessageBox::Yes)
+            {
+                CreateRemoveSyncsManager::removeSync(sync, this->parentWidget());
+            }
+        };
+
+        MessageDialogOpener::critical(msgInfo);
+
+        mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_ERROR, logMsg.toUtf8().constData());
+    };
+
     auto node = std::shared_ptr<mega::MegaNode>(
         MegaSyncApp->getMegaApi()->getNodeByHandle(sync->getMegaHandle()));
-    auto restoreNode = std::shared_ptr<mega::MegaNode>(
-        MegaSyncApp->getMegaApi()->getNodeByHandle(node->getRestoreHandle()));
+    if (node)
+    {
+        auto restoreNode = std::shared_ptr<mega::MegaNode>(
+            MegaSyncApp->getMegaApi()->getNodeByHandle(node->getRestoreHandle()));
 
-    auto listener = RequestListenerManager::instance().registerAndGetCustomFinishListener(
-        this,
-        [&sync](mega::MegaRequest* request, mega::MegaError* e)
+        if (restoreNode)
         {
-            int errorCode = e->getErrorCode();
+            auto listener = RequestListenerManager::instance().registerAndGetCustomFinishListener(
+                this,
+                [sync, triggerErrorMessage](mega::MegaRequest* request, mega::MegaError* e)
+                {
+                    int errorCode = e->getErrorCode();
 
-            if (errorCode != mega::MegaError::API_OK)
-            {
-                QString logMsg =
-                    QString::fromUtf8("Can't restore (%1) mega folder").arg(sync->getMegaFolder());
+                    if (errorCode != mega::MegaError::API_OK)
+                    {
+                        triggerErrorMessage();
+                    }
+                    else
+                    {
+                        SyncController::instance().setSyncToRun(sync);
+                    }
+                });
 
-                mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_ERROR, logMsg.toUtf8().constData());
-            }
-            else
-            {
-                SyncController::instance().setSyncToRun(sync);
-            }
-        });
+            MegaSyncApp->getMegaApi()->moveNode(node.get(), restoreNode.get(), listener.get());
 
-    MegaSyncApp->getMegaApi()->moveNode(node.get(), restoreNode.get(), listener.get());
+            return;
+        }
+    }
+
+    triggerErrorMessage();
 }
 
 void SyncSettingsQuickWidget::openOverQuotaDialog() const
