@@ -79,11 +79,9 @@ class BackupSyncsMenu : public SyncsMenu
 public:
     explicit BackupSyncsMenu(QWidget* parent = nullptr);
 
-protected:
-    bool eventFilter(QObject* obj, QEvent* e) override;
-
 private slots:
     void onDeviceNameSet(QString name);
+    void onDeviceRowTriggered();
 
 private:
     QString createSyncTooltipText(const std::shared_ptr<SyncSettings>& syncSetting) const override;
