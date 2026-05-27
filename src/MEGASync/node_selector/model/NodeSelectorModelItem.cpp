@@ -61,6 +61,7 @@ bool NodeSelectorModelItem::isSpecialNode() const
 
 bool NodeSelectorModelItem::isTakenDown() const
 {
+    return QString::fromUtf8(mNode->getName()).contains(QLatin1String("TAKEN"));
     return mNode && mNode->isTakenDown();
 }
 
@@ -500,6 +501,11 @@ bool NodeSelectorModelItem::isMyBackupsFolder() const
 bool NodeSelectorModelItem::isDeviceFolder() const
 {
     return false;
+}
+
+bool NodeSelectorModelItem::isFile() const
+{
+    return getNode() && getNode()->isFile();
 }
 
 bool NodeSelectorModelItem::isInShare() const

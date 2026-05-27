@@ -66,6 +66,7 @@ public:
     virtual bool isSyncable();
     virtual bool isMyBackupsFolder() const;
     virtual bool isDeviceFolder() const;
+    bool isFile() const;
     bool isInShare() const;
     bool isInVault() const;
     bool isCloudDrive() const;
