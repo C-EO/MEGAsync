@@ -409,30 +409,37 @@ Item {
                                 anchors.fill: parent
                                 spacing: syncItemContentSpacing
 
-                                Text {
-                                    id: syncName
+                                RowLayout {
+                                    id: syncNameWrapper
 
-                                    text: name
                                     anchors.verticalCenter: parent.verticalCenter
-                                    color: nameAndFolderSearchMouseArea.containsMouse ? ColorTheme.textPrimary : getSyncTextColor()
-                                }
+                                    height: parent.height
 
-                                SvgImage {
-                                    id: folderSearchIcon
+                                    Text {
+                                        id: syncName
 
-                                    color: nameAndFolderSearchMouseArea.containsMouse ? ColorTheme.iconPrimary : getSyncIconColor()
-                                    source: Images.folder_search_small_thin_outline
-                                    sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
-                                    visible: nameAndFolderSearchMouseArea.containsMouse
-                                    anchors.verticalCenter: parent.verticalCenter
+                                        text: name
+                                        Layout.alignment: Qt.AlignVCenter
+                                        color: nameAndFolderSearchMouseArea.containsMouse ? ColorTheme.textPrimary : getSyncTextColor()
+                                    }
 
-                                    ToolTip {
-                                        id: showInFolderTooltip
+                                    SvgImage {
+                                        id: folderSearchIcon
 
+                                        color: nameAndFolderSearchMouseArea.containsMouse ? ColorTheme.iconPrimary : getSyncIconColor()
+                                        source: Images.folder_search_small_thin_outline
+                                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                         visible: nameAndFolderSearchMouseArea.containsMouse
-                                        text: SettingsStrings.toolTipShowInFolder
-                                        delay: toolTipShowDelay
-                                        timeout: toolTipTimeoutToHide
+                                        Layout.alignment: Qt.AlignVCenter
+
+                                        ToolTip {
+                                            id: showInFolderTooltip
+
+                                            visible: nameAndFolderSearchMouseArea.containsMouse
+                                            text: SettingsStrings.toolTipShowInFolder
+                                            delay: toolTipShowDelay
+                                            timeout: toolTipTimeoutToHide
+                                        }
                                     }
                                 }
                             }
@@ -440,9 +447,9 @@ Item {
                             MouseArea {
                                 id: nameAndFolderSearchMouseArea
 
-                                x: syncName.x
-                                y: syncName.y
-                                width: syncName.width + folderSearchIcon.width + syncItemContentSpacing
+                                x: syncNameWrapper.x
+                                y: syncNameWrapper.y
+                                width: syncNameWrapper.width
                                 height: parent.height
 
                                 hoverEnabled: true
