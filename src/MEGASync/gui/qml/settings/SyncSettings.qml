@@ -359,7 +359,8 @@ Item {
                     Layout.preferredHeight: syncItemBackgroundHeight
                     color: syncItem.syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
                     radius: syncItemBackgroundRadius
-                    property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || nameAndFolderSearchMouseArea.containsMouse || menuIconMouseArea.containsMouse || statusIconMouseArea.containsMouse || statusTextMouseArea.containsMouse
+                    property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || nameAndFolderSearchMouseArea.containsMouse ||
+                                                          menuIconMouseArea.containsMouse || statusSyncMouseArea.containsMouse
 
                     Behavior on color {
                         ColorAnimation {
@@ -409,53 +410,57 @@ Item {
                                 anchors.fill: parent
                                 spacing: syncItemContentSpacing
 
-                                RowLayout {
-                                    id: syncNameWrapper
+                                Item {
+                                    id: nameAndFolderSearch
 
                                     anchors.verticalCenter: parent.verticalCenter
+                                    width: syncNameWrapper.implicitWidth
                                     height: parent.height
 
-                                    Text {
-                                        id: syncName
+                                    RowLayout {
+                                        id: syncNameWrapper
 
-                                        text: name
-                                        Layout.alignment: Qt.AlignVCenter
-                                        color: nameAndFolderSearchMouseArea.containsMouse ? ColorTheme.textPrimary : getSyncTextColor()
-                                    }
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        height: parent.height
 
-                                    SvgImage {
-                                        id: folderSearchIcon
+                                        Text {
+                                            id: syncName
 
-                                        color: nameAndFolderSearchMouseArea.containsMouse ? ColorTheme.iconPrimary : getSyncIconColor()
-                                        source: Images.folder_search_small_thin_outline
-                                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
-                                        visible: nameAndFolderSearchMouseArea.containsMouse
-                                        Layout.alignment: Qt.AlignVCenter
+                                            text: name
+                                            Layout.alignment: Qt.AlignVCenter
+                                            color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : getSyncTextColor()
+                                        }
 
-                                        ToolTip {
-                                            id: showInFolderTooltip
+                                        SvgImage {
+                                            id: folderSearchIcon
 
+                                            color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.iconPrimary : getSyncIconColor()
+                                            source: Images.folder_search_small_thin_outline
+                                            sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                             visible: nameAndFolderSearchMouseArea.containsMouse
-                                            text: SettingsStrings.toolTipShowInFolder
-                                            delay: toolTipShowDelay
-                                            timeout: toolTipTimeoutToHide
+                                            Layout.alignment: Qt.AlignVCenter
+
+                                            ToolTip {
+                                                id: showInFolderTooltip
+
+                                                visible: nameAndFolderSearchMouseArea.containsMouse
+                                                text: SettingsStrings.toolTipShowInFolder
+                                                delay: toolTipShowDelay
+                                                timeout: toolTipTimeoutToHide
+                                            }
                                         }
                                     }
-                                }
-                            }
 
-                            MouseArea {
-                                id: nameAndFolderSearchMouseArea
+                                    MouseArea {
+                                        id: nameAndFolderSearchMouseArea
 
-                                x: syncNameWrapper.x
-                                y: syncNameWrapper.y
-                                width: syncNameWrapper.width
-                                height: parent.height
-
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    syncSettings.exploreLocalSync(folder);
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: {
+                                            syncSettings.exploreLocalSync(folder);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -465,36 +470,40 @@ Item {
 
                             spacing: syncItemContentSpacing
                             Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height
 
-                            SvgImage {
-                                id: folderStatusIcon
+                            Item {
+                                id: syncStatusWrapper
 
-                                color: statusIconMouseArea.containsMouse || statusTextMouseArea.containsMouse ? ColorTheme.iconPrimary : getSyncIconColor()
-                                source: syncItem.getStatusSyncIcon(status)
-                                sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.preferredWidth: syncStatusRowContent.implicitWidth
+                                Layout.preferredHeight: parent.height
 
-                                MouseArea {
-                                    id: statusIconMouseArea
+                                RowLayout {
+                                    id: syncStatusRowContent
 
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: status === SyncSettingsModel.SUSPENDED ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    onClicked: {
-                                        if (status === SyncSettingsModel.SUSPENDED) {
-                                            syncSettings.resumeSync(index);
-                                        }
+                                    anchors.verticalCenter: parent.verticalCenter
+
+                                    SvgImage {
+                                        id: folderStatusIcon
+
+                                        Layout.alignment: Qt.AlignVCenter
+                                        color: statusSyncMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED? ColorTheme.iconPrimary : getSyncIconColor()
+                                        source: syncItem.getStatusSyncIcon(status)
+                                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                                    }
+
+                                    Text {
+                                        id: syncStatus
+
+                                        Layout.alignment: Qt.AlignVCenter
+                                        text: getStatusDescription(status)
+                                        color: statusSyncMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : getSyncTextColor()
                                     }
                                 }
-                            }
-
-                            Text {
-                                id: syncStatus
-
-                                text: getStatusDescription(status)
-                                color: statusTextMouseArea.containsMouse || statusIconMouseArea.containsMouse ? ColorTheme.textPrimary : getSyncTextColor()
 
                                 MouseArea {
-                                    id: statusTextMouseArea
+                                    id: statusSyncMouseArea
 
                                     anchors.fill: parent
                                     hoverEnabled: true
