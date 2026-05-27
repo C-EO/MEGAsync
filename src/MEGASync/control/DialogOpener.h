@@ -488,16 +488,14 @@ private:
 
             bool ignoreGeometry(isQML && QmlDialogWrapperUtilities::isShowWhenCreated(dialog));
             QRect geometry;
-            QPoint framePosition;
-            bool hasFramePosition(false);
+            QByteArray siblingGeometryState;
 
             if(info)
             {
                 if(removeSiblings && info->getDialog() != dialog)
                 {
                     geometry = info->getDialog()->geometry();
-                    framePosition = info->getDialog()->frameGeometry().topLeft();
-                    hasFramePosition = true;
+                    siblingGeometryState = info->getDialog()->saveGeometry();
                     dialog->setWindowFlags(info->getDialog()->windowFlags());
                     removeDialog(info->getDialog());
                     info->setDialog(dialog);
@@ -586,7 +584,15 @@ private:
 
                     if (!dialog->isVisible())
                     {
-                        if (geometry.isValid())
+                        if (!siblingGeometryState.isEmpty())
+                        {
+                            // Reopening over a still-open sibling: restoreGeometry
+                            // round-trips the frame position exactly on every platform,
+                            // avoiding the upward drift that setGeometry() causes on macOS.
+                            dialog->restoreGeometry(siblingGeometryState);
+                            dialog->show();
+                        }
+                        else if (geometry.isValid())
                         {
                             // First time this is used
                             if (savedGeo.maximized)
@@ -597,10 +603,6 @@ private:
                             {
                                 dialog->setGeometry(geometry);
                                 dialog->show();
-                                if (hasFramePosition)
-                                {
-                                    dialog->move(framePosition);
-                                }
                             }
                         }
                         else
