@@ -52,4 +52,5 @@ QtObject {
     readonly property string solveIssueEnableSync: qsTr("Enable sync")
     readonly property string solveIssueRestoreFolder: qsTr("Restore folder")
     readonly property string solveIssueStartNewSync: qsTr("Start new sync")
+    readonly property string toolTipShowInFolder: qsTr("Show in folder")
 }

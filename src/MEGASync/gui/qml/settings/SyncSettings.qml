@@ -9,6 +9,7 @@ import components.texts 1.0
 import components.buttons 1.0
 import components.menus 1.0
 import components.switch 1.0
+import components.toolTips 1.0
 
 import SyncSettingsModel 1.0
 
@@ -45,6 +46,8 @@ Item {
     readonly property int noSyncAboveButtonSpacing: 48
     readonly property int errorBorders: 2
     readonly property int backgroundColorAnimationTime: 200
+    readonly property int toolTipShowDelay: 500
+    readonly property int toolTipTimeoutToHide: 5000
 
     function getStatusDescription(status){
         switch(status) {
@@ -417,6 +420,15 @@ Item {
                                 sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                 visible: syncItem.syncItemContainsMouse
                                 anchors.verticalCenter: parent.verticalCenter
+
+                                ToolTip {
+                                    id: showInFolderTooltip
+
+                                    visible: folderSearchMouseArea.containsMouse
+                                    text: SettingsStrings.toolTipShowInFolder
+                                    delay: toolTipShowDelay
+                                    timeout: toolTipTimeoutToHide
+                                }
 
                                 MouseArea {
                                     id: folderSearchMouseArea
