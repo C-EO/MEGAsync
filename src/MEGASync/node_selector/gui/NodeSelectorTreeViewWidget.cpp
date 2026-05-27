@@ -504,9 +504,9 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
                 this,
                 &NodeSelectorTreeViewWidget::onItemDoubleClick);
         connect(ui->tMegaFolders,
-                &NodeSelectorTreeView::nodeSelected,
+                &NodeSelectorTreeView::enterKeyPressed,
                 this,
-                &NodeSelectorTreeViewWidget::okBtnClicked);
+                &NodeSelectorTreeViewWidget::enterKeyPressed);
         connect(ui->bForward,
                 &QPushButton::clicked,
                 this,
@@ -1661,6 +1661,11 @@ QList<MegaHandle> NodeSelectorTreeViewWidget::getMultiSelectionNodeHandle()
 QModelIndexList NodeSelectorTreeViewWidget::getSelectedIndexes() const
 {
     return ui->tMegaFolders->selectedRows();
+}
+
+bool NodeSelectorTreeViewWidget::containsTakenDownSelected() const
+{
+    return ui->tMegaFolders->containsTakenDownItem(ui->tMegaFolders->selectedRows());
 }
 
 void NodeSelectorTreeViewWidget::checkBackForwardButtons()

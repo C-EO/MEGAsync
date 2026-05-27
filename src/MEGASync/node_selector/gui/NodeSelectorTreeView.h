@@ -62,10 +62,10 @@ public:
     Q_ENUM(ActionsOrder)
 
     void setAllowContextMenu(bool newAllowContextMenu);
-
     void setAllowNewFolderContextMenuItem(bool newAllowNewFolderContextMenuItem);
-
     void contextMenuEvent(QContextMenuEvent* event) override;
+
+    bool containsTakenDownItem(const QModelIndexList& selectedIndexes) const;
 
 protected:
     void drawBranches(QPainter* painter,
@@ -94,7 +94,7 @@ signals:
     void pasteNodesClicked();
     void getMegaLinkClicked(const QList<MegaHandle>& handles);
     void restoreClicked(const QList<MegaHandle>& handles);
-    void nodeSelected();
+    void enterKeyPressed();
     void newFolderClicked();
     void uploadClicked();
 
@@ -132,7 +132,6 @@ private:
     bool areAllEligibleForLinkShare(const QModelIndexList& selectedIndexes) const;
     bool areAllEligibleForRestore(const QModelIndexList& selectedIndexes) const;
     bool areAllEligibleForDownload(const QModelIndexList& selectedIndexes) const;
-    bool containsTakenDownItem(const QModelIndexList& selectedIndexes) const;
 
     void addShareLinkMenuAction(QMap<int, QAction*>& actions,
                                 const QModelIndexList& selectedIndexes,

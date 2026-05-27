@@ -144,7 +144,7 @@ protected slots:
 
 private slots:
     void onbShowSearchClicked();
-    void onbOkClicked();
+    void confirmSelection();
     void onbShowBackupsFolderClicked();
     void onbShowRubbishClicked();
     void updateNodeSelectorTabs();

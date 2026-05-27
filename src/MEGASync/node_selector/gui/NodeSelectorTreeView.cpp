@@ -320,7 +320,7 @@ void NodeSelectorTreeView::keyPressEvent(QKeyEvent* event)
             {
                 if (indexes.first() == rootIndex() || indexes.size() > 1)
                 {
-                    emit nodeSelected();
+                    emit enterKeyPressed();
                 }
                 else
                 {
@@ -328,7 +328,7 @@ void NodeSelectorTreeView::keyPressEvent(QKeyEvent* event)
                         mMegaApi->getNodeByHandle(getSelectedNodeHandle()));
                     if (node)
                     {
-                        emit nodeSelected();
+                        emit enterKeyPressed();
                     }
                 }
             }

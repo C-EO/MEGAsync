@@ -31,29 +31,34 @@ void NodeSelectorDelegate::paint(QPainter* painter,
         pen.setWidth(1);
 
         // Text color
+        QColor textColor;
+
         const auto isTakenDown(
             index.data(toInt(NodeSelectorModelRoles::IS_TAKEN_DOWN_ROLE)).toBool());
 
         if (isTakenDown)
         {
-            auxOpt.palette.setBrush(
-                QPalette::ColorRole::Text,
-                TokenParserWidgetManager::instance()->getColor(QLatin1String("text-error")));
+            textColor = TokenParserWidgetManager::instance()->getColor(QLatin1String("text-error"));
+
+            if (!index.flags().testFlag(Qt::ItemIsEnabled))
+            {
+                static constexpr double ALPHA_CORRECTION_FOR_ERROR_DISABLED = 0.5;
+                textColor.setAlphaF(ALPHA_CORRECTION_FOR_ERROR_DISABLED);
+            }
         }
         else if (!index.flags().testFlag(Qt::ItemIsEnabled))
         {
-            auxOpt.palette.setBrush(
-                QPalette::ColorRole::Text,
-                TokenParserWidgetManager::instance()->getColor(QLatin1String("text-disabled")));
+            textColor =
+                TokenParserWidgetManager::instance()->getColor(QLatin1String("text-disabled"));
         }
         else
         {
-            auto textToken = QLatin1String("text-primary");
-            auxOpt.palette.setBrush(QPalette::ColorRole::Text,
-                                    TokenParserWidgetManager::instance()->getColor(textToken));
-            auxOpt.palette.setBrush(QPalette::ColorRole::HighlightedText,
-                                    TokenParserWidgetManager::instance()->getColor(textToken));
+            textColor =
+                TokenParserWidgetManager::instance()->getColor(QLatin1String("text-primary"));
         }
+
+        auxOpt.palette.setBrush(QPalette::ColorRole::Text, textColor);
+        auxOpt.palette.setBrush(QPalette::ColorRole::HighlightedText, textColor);
 
         // Separator
         {
