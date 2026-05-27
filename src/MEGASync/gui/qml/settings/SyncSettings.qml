@@ -266,7 +266,7 @@ Item {
                     font.weight: Font.Normal
                     elide: Text.ElideRight
                     width: parent.width
-                    url: serviceUrlsAccess.getCreateSyncHelpUrl()
+                    url: serviceUrlsAccess.getSyncHelpUrl()
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                 }
