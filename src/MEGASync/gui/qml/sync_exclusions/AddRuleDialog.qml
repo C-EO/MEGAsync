@@ -306,13 +306,18 @@ QmlDialog{
         } //RowLayou: buttonsLayout
     } // Column: mainColumn
 
+    function appendPickedPath(pickedPath) {
+        const current = root.ruleValue.trim();
+        root.ruleValue = current.length === 0 ? pickedPath : (current + ", " + pickedPath);
+    }
+
     ChooseLocalFolder {
         id: folderDialog
 
         title: ExclusionsStrings.selectFolderTitle
 
         onFolderChosen: (folderPath) => {
-            root.ruleValue = folderPath;
+            appendPickedPath(folderPath);
         }
     }
 
@@ -322,7 +327,7 @@ QmlDialog{
         title: ExclusionsStrings.selectFileTitle
 
         onFileChosen: (folderPath) => {
-            root.ruleValue = folderPath;
+            appendPickedPath(folderPath);
         }
     }
 
