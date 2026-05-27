@@ -19,9 +19,9 @@ void DuplicatedUploadBase::onNodeItemSelected()
     }
 }
 
-QStringList &DuplicatedUploadBase::getCheckedNames()
+QStringList& DuplicatedUploadBase::getCheckedNames(mega::MegaHandle parentHandle)
 {
-    return checkedNames;
+    return checkedNamesByParent[parentHandle];
 }
 
 QString DuplicatedUploadBase::getHeader(std::shared_ptr<DuplicatedNodeInfo> conflict)

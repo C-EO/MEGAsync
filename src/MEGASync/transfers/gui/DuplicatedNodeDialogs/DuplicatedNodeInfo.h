@@ -4,8 +4,10 @@
 #include "megaapi.h"
 
 #include <QDateTime>
+#include <QHash>
 #include <QObject>
 #include <QString>
+#include <QStringList>
 
 #include <memory>
 
@@ -51,6 +53,7 @@ public:
     const QString& getName() const;
     void setName(const QString &newName);
     void setNewName(const QString &newNewName);
+    void setReservedNames(const QStringList& reservedNames);
 
     bool hasConflict() const;
     void setHasConflict(bool newHasConflict);
@@ -83,8 +86,12 @@ protected:
     bool mIsNameConflict;
     QDateTime mConflictNodeModifiedTime;
     QDateTime mSourceItemModifiedTime;
+    QStringList mReservedNames;
     DuplicatedUploadBase* mChecker;
     PiTagTrigger mPiTagTrigger;
+
+private:
+    QStringList getUsedNamesForRename() const;
 };
 
 class DuplicatedMoveNodeInfo : public DuplicatedNodeInfo
@@ -122,6 +129,8 @@ struct ConflictTypes
     QList<std::shared_ptr<DuplicatedNodeInfo>> mFolderConflicts;
     QList<std::shared_ptr<DuplicatedNodeInfo>> mFileNameConflicts;
     QList<std::shared_ptr<DuplicatedNodeInfo>> mFolderNameConflicts;
+
+    QHash<mega::MegaHandle, QStringList> mReservedNodeNamesByTargetParent;
 
     bool isConflictFree() const;
 };

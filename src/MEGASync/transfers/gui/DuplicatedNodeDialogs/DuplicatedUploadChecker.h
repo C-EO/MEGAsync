@@ -3,6 +3,7 @@
 
 #include "DuplicatedNodeInfo.h"
 
+#include <QHash>
 #include <QObject>
 
 class DuplicatedNodeDialog;
@@ -20,7 +21,7 @@ public:
     QString getHeader(std::shared_ptr<DuplicatedNodeInfo> conflict);
     QString getSkipText(bool isFile);
 
-    QStringList& getCheckedNames();
+    QStringList& getCheckedNames(mega::MegaHandle parentHandle);
 
 signals:
     void selectionDone();
@@ -34,7 +35,7 @@ protected slots:
     void onNodeItemSelected();
 
 private:
-    QStringList checkedNames;
+    QHash<mega::MegaHandle, QStringList> checkedNamesByParent;
 };
 
 class DuplicatedUploadFile : public DuplicatedUploadBase

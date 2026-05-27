@@ -50,6 +50,10 @@ private:
     void cleanUi();
     void fillDialog();
     void setDialogTitle(const QString& title);
+    void updateReservedNames(std::shared_ptr<DuplicatedNodeInfo> conflict);
+    void updateReservedNames(
+        const QList<std::shared_ptr<DuplicatedNodeInfo>>& conflictsBeingProcessed);
+    void reserveResolvedName(std::shared_ptr<DuplicatedNodeInfo> conflict);
     void processConflict(std::shared_ptr<DuplicatedNodeInfo> conflict);
     void onConflictProcessed();
 
