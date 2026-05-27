@@ -401,7 +401,7 @@ Item {
 
                             Layout.preferredHeight: parent.height
                             Layout.preferredWidth: syncItemContentNameWidth
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
 
                             Row {
                                 id: syncNameContent

@@ -48,7 +48,7 @@ public:
     Q_INVOKABLE static QUrl getDesktopAppHelpUrl();
     static QUrl getDesktopSyncHelpUrl();
     static QUrl getDesktopBackupsHelpUrl();
-    static QUrl getSyncHelpUrl();
+    Q_INVOKABLE static QUrl getSyncHelpUrl();
     static QUrl getSyncFat32HelpUrl();
     static QUrl getFileVersionHistoryHelpUrl();
     static QUrl getTransferQuotaHelpUrl();
