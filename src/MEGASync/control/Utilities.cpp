@@ -1824,7 +1824,7 @@ const QString Utilities::getPlatformProps(const QString sourceStyleSheet)
     QString prefix;
 #if defined(Q_OS_MACOS)
     prefix = QStringLiteral("/* macOS */\n"
-                            "* { font-family: Inter; font-size: 36px;}\n");
+                            "* { font-family: Inter;}\n");
 #elif defined(Q_OS_WIN)
     prefix = QStringLiteral("/* Windows */\n"
                             "* { font-family: Lato; }\n");
