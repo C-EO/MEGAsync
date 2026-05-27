@@ -23,30 +23,29 @@ border: none;
 background: transparent;
 }
 
-#bDestinationOverflow, #bDestinationClear
+#bDestinationClear
 {
 border: none;
 background: transparent;
 padding: 0px;
 }
 
-#wDestinationSegments QLabel,
-#wDestinationSegments QToolButton
+#wDestinationSegments QLabel
 {
 color: #616366; /*colorToken.text-secondary*/
 }
 
 #wDestinationSegments QLabel[bold=&quot;true&quot;],
-#wDestinationSegments QToolButton[current=&quot;true&quot;]
+#wDestinationSegments QLabel[current=&quot;true&quot;]
 {
 color: #303233; /*colorToken.text-primary*/
 }
 
-#wDestinationSegments QToolButton
+#bDestinationOverflow[popupVisible=&quot;true&quot;]
 {
-border: none;
-background: transparent;
-padding: 0px;
+border: 1px solid #989A9C4D;/*colorToken.neutral-container-hover*/
+border-radius:8px;
+background-color: #989A9C4D; /*colorToken.neutral-container-hover*/
 }</string>
   </property>
   <layout class="QVBoxLayout" name="breadcrumbLayout">
@@ -127,7 +126,19 @@ padding: 0px;
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="bDestinationOverflow">
+          <widget class="QLabel" name="bDestinationOverflow">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>16</height>
+            </size>
+           </property>
            <property name="cursor">
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
@@ -135,10 +146,10 @@ padding: 0px;
             <bool>false</bool>
            </property>
            <property name="text">
-            <string notr="true">...</string>
+            <string notr="true">⋯</string>
            </property>
-           <property name="flat">
-            <bool>true</bool>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>

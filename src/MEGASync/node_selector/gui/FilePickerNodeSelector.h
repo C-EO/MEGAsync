@@ -49,7 +49,7 @@ protected:
     void clearSearch() override;
 
     void configureSidebar() override;
-    void configureSearchTool() override;
+    void configureHeader() override;
 
 protected slots:
     void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int actionType) override;

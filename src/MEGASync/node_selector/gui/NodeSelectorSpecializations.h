@@ -93,7 +93,7 @@ protected:
     void configureSearchWidget(TabType type) override;
 
     void configureSidebar() override;
-    void configureSearchTool() override;
+    void configureHeader() override;
     void configureActionButtonsPlacement() override;
     void configureFooterVisibility() override;
 

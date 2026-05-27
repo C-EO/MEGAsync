@@ -224,7 +224,7 @@ void FilePickerNodeSelector::configureSidebar()
     ui->wSearch->setVisible(false);
 }
 
-void FilePickerNodeSelector::configureSearchTool()
+void FilePickerNodeSelector::configureHeader()
 {
     ui->leSearchTool->setMode(SearchLineEdit::Mode::ALWAYS_EXPANDED);
 
@@ -232,6 +232,14 @@ void FilePickerNodeSelector::configureSearchTool()
     static constexpr int SEARCH_LINE_EDIT_FIXED_HEIGHT = 40;
 
     ui->leSearchTool->setFixedSize(SEARCH_LINE_EDIT_FIXED_WIDTH, SEARCH_LINE_EDIT_FIXED_HEIGHT);
+    ui->actionButtonsContainer->setVisible(false);
+    ui->navigationBreadcrumb->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+
+    if (auto* topRowLayout = ui->headerLayout)
+    {
+        ui->headerContainerLayout->removeWidget(ui->navigationBreadcrumb);
+        topRowLayout->insertWidget(0, ui->navigationBreadcrumb, 0, Qt::AlignLeft | Qt::AlignTop);
+    }
 }
 
 QString FilePickerNodeSelector::destinationTitleText() const

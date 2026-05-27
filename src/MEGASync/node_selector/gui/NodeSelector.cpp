@@ -104,7 +104,7 @@ NodeSelector::~NodeSelector()
 void NodeSelector::init()
 {
     configureSidebar();
-    configureSearchTool();
+    configureHeader();
     configureActionButtonsPlacement();
     configureFooterVisibility();
 
@@ -322,13 +322,42 @@ void NodeSelector::refreshBreadcrumbs()
 
 void NodeSelector::refreshNavigationBreadcrumb()
 {
-    const bool shouldShowBreadcrumb =
-        getCurrentTreeViewWidget() && getCurrentTreeViewWidget() != mSearchWidget;
+    auto* breadcrumbWidget = getCurrentTreeViewWidget();
+    if (mSelectType && mSelectType->isFilePicker())
+    {
+        breadcrumbWidget = getSearchAwareTargetWidget();
+    }
+
+    bool shouldShowBreadcrumb = breadcrumbWidget != nullptr;
+    if (shouldShowBreadcrumb)
+    {
+        shouldShowBreadcrumb =
+            breadcrumbWidget != mSearchWidget || !mSelectType || mSelectType->isFilePicker();
+    }
 
     ui->navigationBreadcrumb->setVisible(shouldShowBreadcrumb);
-    ui->navigationBreadcrumb->setNavigationSegments(
-        shouldShowBreadcrumb ? getCurrentTreeViewWidget()->navigationBreadcrumbSegments() :
-                               QStringList());
+    if (!shouldShowBreadcrumb)
+    {
+        ui->navigationBreadcrumb->setNavigationSegments({});
+        return;
+    }
+
+    auto segments = breadcrumbWidget->navigationBreadcrumbSegments();
+    auto clickable = true;
+
+    auto breadcrumbMode = SelectType::NavigationBreadcrumbMode::FULL;
+    if (mSelectType)
+    {
+        breadcrumbMode = mSelectType->navigationBreadcrumbMode();
+    }
+
+    if (breadcrumbMode == SelectType::NavigationBreadcrumbMode::TOP_ROOT_READ_ONLY)
+    {
+        segments = segments.isEmpty() ? QStringList() : QStringList() << segments.first();
+        clickable = false;
+    }
+
+    ui->navigationBreadcrumb->setNavigationSegments(segments, clickable);
 }
 
 void NodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)

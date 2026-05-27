@@ -572,7 +572,7 @@ void CloudDriveNodeSelector::configureSidebar()
     setMinimumSize(1024, 691);
 }
 
-void CloudDriveNodeSelector::configureSearchTool()
+void CloudDriveNodeSelector::configureHeader()
 {
     // Search Line Edit
     ui->leSearchTool->setMode(SearchLineEdit::Mode::ALWAYS_EXPANDED);

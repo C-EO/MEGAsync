@@ -248,7 +248,7 @@ private:
     virtual bool isAllowedToEnterInIndex(const QModelIndex& idx);
     virtual bool isDownloadAllowed() const;
     void setRootIndex(const QModelIndex& proxy_idx);
-    void setEmptyFolderPage();
+    void setCurrentViewWidget();
     void showFolderEmptyState();
     void applyEmptyState(const SelectType::EmptyPageInfo& info, ViewType type);
     void setEmptyStateButtonsVisibility(const SelectType::EmptyPageInfo& info);

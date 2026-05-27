@@ -28,12 +28,15 @@ public:
     ~NodeSelectorDestinationBreadcrumb() override;
 
     void setPathSegments(const QStringList& segments);
-    void setNavigationSegments(const QStringList& segments);
+    void setNavigationSegments(const QStringList& segments, bool clickable = true);
     void setDisplayMode(DisplayMode mode);
     void setTitleText(const QString& text);
     void showDefaultUploadOption(bool show = true);
     void setDefaultUploadOption(bool value);
     bool getDefaultUploadOption() const;
+
+protected:
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
 signals:
     void clearRequested();
@@ -42,6 +45,7 @@ signals:
 private:
     void closeOverflowPopup();
     void showOverflowPopup();
+    void updateOverflowButtonStyle(bool popupVisible);
     void rebuildSegments();
     void clearSegmentWidgets();
     QWidget* makeSegmentWidget(const QString& text, bool isFirst, bool isLast, int segmentIndex);

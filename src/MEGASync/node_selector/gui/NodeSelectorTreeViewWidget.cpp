@@ -656,7 +656,7 @@ void NodeSelectorTreeViewWidget::onSectionResized()
 
 void NodeSelectorTreeViewWidget::checkViewOnModelChange()
 {
-    setEmptyFolderPage();
+    setCurrentViewWidget();
     emit viewStateChanged();
 }
 
@@ -851,13 +851,6 @@ void NodeSelectorTreeViewWidget::setLoadingSceneVisible(bool blockUi)
     }
 
     ui->tMegaFolders->loadingView().toggleLoadingScene(blockUi);
-
-    if (!blockUi)
-    {
-        setEmptyFolderPage();
-        mSelectionCoordinator->expandPendingIndexes();
-        mSelectionCoordinator->selectPendingIndexes();
-    }
 }
 
 void NodeSelectorTreeViewWidget::selectPendingIndexes()
@@ -876,8 +869,9 @@ void NodeSelectorTreeViewWidget::setViewPage()
             setCurrentPage(ViewType::ROOT_EMPTY);
             return;
         }
+
+        setCurrentPage(ViewType::VIEW);
     }
-    setCurrentPage(ViewType::VIEW);
 }
 
 void NodeSelectorTreeViewWidget::updateEmptyStateButtonsVisibility()
@@ -940,7 +934,10 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
 
     if (!state)
     {
+        setCurrentViewWidget();
         onSelectionHasChanged();
+        mSelectionCoordinator->expandPendingIndexes();
+        mSelectionCoordinator->selectPendingIndexes();
     }
 }
 
@@ -964,7 +961,7 @@ void NodeSelectorTreeViewWidget::onModelModified()
     if (nowEmpty != mWasEmpty)
     {
         mWasEmpty = nowEmpty;
-        setEmptyFolderPage();
+        setCurrentViewWidget();
         emit viewStateChanged();
         emit viewButtonsStateChanged();
     }
@@ -1255,12 +1252,17 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
     }
 
     onRootIndexChanged(node_column_idx);
-    setEmptyFolderPage();
+    setCurrentViewWidget();
     notifyViewStateChanged();
 }
 
-void NodeSelectorTreeViewWidget::setEmptyFolderPage()
+void NodeSelectorTreeViewWidget::setCurrentViewWidget()
 {
+    if (!mProxyModel)
+    {
+        return;
+    }
+
     auto currentRootIndex(getCurrentRootIndex());
     auto topRootIndex(mProxyModel->getTopRootIndex());
 

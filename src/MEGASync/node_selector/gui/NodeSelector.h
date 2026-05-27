@@ -112,7 +112,7 @@ protected:
     // Subclasses override to relocate widgets and tweak properties at runtime.
     virtual void configureSidebar() {}
 
-    virtual void configureSearchTool() {}
+    virtual void configureHeader() {}
 
     virtual void configureActionButtonsPlacement() {}
 

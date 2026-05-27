@@ -408,6 +408,12 @@ background-color: #FFFFFF; /*colorToken.page-background*/
          </property>
          <item>
           <widget class="QWidget" name="headerTopRow" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
            <layout class="QHBoxLayout" name="headerLayout" stretch="1,0,0">
             <property name="spacing">
              <number>4</number>
@@ -769,15 +775,15 @@ background-color: #FFFFFF; /*colorToken.page-background*/
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TokenizableButton</class>
-   <extends>QWidget</extends>
-   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
-  </customwidget>
-  <customwidget>
    <class>SearchLineEdit</class>
    <extends>QFrame</extends>
    <header>SearchLineEdit.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TokenizableButton</class>
+   <extends>QWidget</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
   </customwidget>
   <customwidget>
    <class>IncomingShareHeaderWidget</class>
