@@ -494,7 +494,6 @@ private:
             {
                 if(removeSiblings && info->getDialog() != dialog)
                 {
-                    geometry = info->getDialog()->geometry();
                     siblingGeometryState = info->getDialog()->saveGeometry();
                     dialog->setWindowFlags(info->getDialog()->windowFlags());
                     removeDialog(info->getDialog());
