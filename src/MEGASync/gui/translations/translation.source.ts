@@ -8772,7 +8772,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     </message>
     <message>
         <source>Remove sync</source>
-         <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
+        <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
         <translation>Remove sync</translation>
     </message>
 </context>

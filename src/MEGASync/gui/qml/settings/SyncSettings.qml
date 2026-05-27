@@ -319,7 +319,7 @@ Item {
                     return ColorTheme.textError;
                 }
                 else if (status === SyncSettingsModel.SUSPENDED) {
-                    return ColorTheme.textDisabled;
+                    return ColorTheme.textSecondary;
                 }
                 else {
                     return ColorTheme.textPrimary;
@@ -331,7 +331,7 @@ Item {
                     return ColorTheme.textError;
                 }
                 else if (status === SyncSettingsModel.SUSPENDED) {
-                    return ColorTheme.iconDisabled;
+                    return ColorTheme.iconSecondary;
                 }
                 else {
                     return ColorTheme.iconPrimary;
