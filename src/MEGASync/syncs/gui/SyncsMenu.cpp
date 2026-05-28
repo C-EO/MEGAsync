@@ -1,8 +1,12 @@
 #include "SyncsMenu.h"
 
 #include "DeviceNames.h"
+#include "DialogOpener.h"
+#include "MegaApplication.h"
 #include "MegaMenuItemAction.h"
 #include "MyBackupsHandle.h"
+#include "NodeSelector.h"
+#include "NodeSelectorSpecializations.h"
 #include "Preferences.h"
 #include "SyncController.h"
 #include "SyncInfo.h"
@@ -10,7 +14,6 @@
 #include "Utilities.h"
 
 #include <QCoreApplication>
-#include <QMouseEvent>
 #include <QUrl>
 
 const QLatin1String DEVICE_ICON("monitor");
@@ -252,21 +255,6 @@ BackupSyncsMenu::BackupSyncsMenu(QWidget* parent):
             &BackupSyncsMenu::onDeviceNameSet);
 }
 
-bool BackupSyncsMenu::eventFilter(QObject* obj, QEvent* e)
-{
-    if (obj == mMenu && mDevNameAction &&
-        (e->type() == QEvent::MouseButtonRelease || e->type() == QEvent::MouseButtonPress ||
-         e->type() == QEvent::MouseButtonDblClick))
-    {
-        auto* mouseEvent = static_cast<QMouseEvent*>(e);
-        if (mMenu->actionAt(mouseEvent->pos()) == mDevNameAction)
-        {
-            return true;
-        }
-    }
-    return SyncsMenu::eventFilter(obj, e);
-}
-
 void BackupSyncsMenu::onDeviceNameSet(QString name)
 {
     auto menu (getMenu());
@@ -312,7 +300,32 @@ void BackupSyncsMenu::refresh()
                                                             false),
                                    0,
                                    menu);
+        connect(mDevNameAction,
+                &MegaMenuItemAction::triggered,
+                this,
+                &BackupSyncsMenu::onDeviceRowTriggered);
         menu->insertAction(firstBackup, mDevNameAction);
         onDeviceNameSet(mDeviceNameRequest->getDeviceName());
     }
+}
+
+void BackupSyncsMenu::onDeviceRowTriggered()
+{
+    auto* api = MegaSyncApp->getMegaApi();
+    if (!api)
+    {
+        return;
+    }
+
+    std::shared_ptr<mega::MegaNode> myBackupsNode(
+        api->getNodeByHandle(mMyBackupsHandleRequest->getMyBackupsHandle()));
+    if (!myBackupsNode)
+    {
+        return;
+    }
+
+    auto* nodeSelector = new CloudDriveNodeSelector();
+    nodeSelector->init();
+    nodeSelector->setSelectedNodeHandle(myBackupsNode);
+    DialogOpener::showGeometryRetainerDialog<NodeSelector>(nodeSelector);
 }
