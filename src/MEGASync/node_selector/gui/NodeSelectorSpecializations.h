@@ -35,6 +35,8 @@ protected:
     void configureActionButtonsPlacement() override;
     void configureFooterVisibility() override;
 
+    void refreshSearchResultCount() override;
+
     void onLanguageChangeEvent() override;
 
 protected slots:

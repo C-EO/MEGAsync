@@ -487,6 +487,16 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="lSearchResultCount">
+           <property name="visible">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="NodeSelectorDestinationBreadcrumb" name="navigationBreadcrumb" native="true">
            <property name="visible">
             <bool>false</bool>

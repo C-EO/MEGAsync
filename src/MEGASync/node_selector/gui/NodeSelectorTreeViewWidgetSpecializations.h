@@ -121,6 +121,7 @@ public:
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
 
     std::shared_ptr<RestoreNodeManager> getRestoreManager() const;
+    int searchResultCount() const;
 
 public slots:
     void resetMovingNumber();

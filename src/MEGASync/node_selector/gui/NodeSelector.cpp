@@ -335,6 +335,7 @@ void NodeSelector::refreshBreadcrumbs()
 {
     refreshDestinationBreadcrumb();
     refreshNavigationBreadcrumb();
+    refreshSearchResultCount();
 }
 
 void NodeSelector::refreshNavigationBreadcrumb()

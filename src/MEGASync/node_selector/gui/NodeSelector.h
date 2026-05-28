@@ -249,6 +249,8 @@ private:
 
     virtual void refreshDestinationBreadcrumb() {}
 
+    virtual void refreshSearchResultCount() {}
+
     virtual void onOkButtonClicked() = 0;
     void shortCutConnects(int ignoreThis);
     void resetButtonsText();

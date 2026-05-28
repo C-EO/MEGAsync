@@ -528,7 +528,25 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel
             this,
             &NodeSelectorTreeViewWidget::notifyViewStateChanged);
 
+    connect(model.get(),
+            &QAbstractItemModel::rowsInserted,
+            this,
+            &NodeSelectorTreeViewWidgetSearch::searchCounterChanged);
+    connect(model.get(),
+            &QAbstractItemModel::rowsRemoved,
+            this,
+            &NodeSelectorTreeViewWidgetSearch::searchCounterChanged);
+    connect(model.get(),
+            &QAbstractItemModel::modelReset,
+            this,
+            &NodeSelectorTreeViewWidgetSearch::searchCounterChanged);
+
     return model;
+}
+
+int NodeSelectorTreeViewWidgetSearch::searchResultCount() const
+{
+    return searchModel() ? searchModel()->searchResultCount() : 0;
 }
 
 SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetSearch::getEmptyRootPageInfo()

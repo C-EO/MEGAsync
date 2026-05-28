@@ -59,7 +59,25 @@ void CloudDriveNodeSelector::specialisedTreeViewWidgetsCreated()
                 &NodeSelectorTreeViewWidgetSearch::searchTabTypeChanged,
                 this,
                 &CloudDriveNodeSelector::configureSearchWidget);
+        connect(mSearchWidget,
+                &NodeSelectorTreeViewWidgetSearch::searchCounterChanged,
+                this,
+                &CloudDriveNodeSelector::refreshSearchResultCount);
     }
+}
+
+void CloudDriveNodeSelector::refreshSearchResultCount()
+{
+    if (!mSearchWidget || ui->stackedWidget->currentWidget() != mSearchWidget)
+    {
+        ui->lSearchResultCount->setVisible(false);
+        ui->lSearchResultCount->clear();
+        return;
+    }
+
+    const int count = mSearchWidget->searchResultCount();
+    ui->lSearchResultCount->setText(tr("%n result", "", count));
+    ui->lSearchResultCount->setVisible(true);
 }
 
 void CloudDriveNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget)
