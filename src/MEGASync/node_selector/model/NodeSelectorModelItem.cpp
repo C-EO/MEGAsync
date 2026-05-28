@@ -502,6 +502,11 @@ bool NodeSelectorModelItem::isDeviceFolder() const
     return false;
 }
 
+bool NodeSelectorModelItem::isFile() const
+{
+    return getNode() && getNode()->isFile();
+}
+
 bool NodeSelectorModelItem::isInShare() const
 {
     return mNode->isInShare();

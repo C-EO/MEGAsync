@@ -100,8 +100,53 @@ void DuplicatedNodeDialog::fillDialog()
     processConflict(mConflictsBeingProcessed.first());
 }
 
+void DuplicatedNodeDialog::updateReservedNames(std::shared_ptr<DuplicatedNodeInfo> conflict)
+{
+    if (!conflict)
+    {
+        return;
+    }
+
+    auto parentNode = conflict->getParentNode();
+    if (!parentNode || !mConflicts)
+    {
+        conflict->setReservedNames(QStringList());
+        return;
+    }
+
+    conflict->setReservedNames(
+        mConflicts->mReservedNodeNamesByTargetParent.value(parentNode->getHandle()));
+}
+
+void DuplicatedNodeDialog::updateReservedNames(
+    const QList<std::shared_ptr<DuplicatedNodeInfo>>& conflictsBeingProcessed)
+{
+    for (const auto& conflict: conflictsBeingProcessed)
+    {
+        updateReservedNames(conflict);
+    }
+}
+
+void DuplicatedNodeDialog::reserveResolvedName(std::shared_ptr<DuplicatedNodeInfo> conflict)
+{
+    if (!conflict || !mConflicts || conflict->getSolution() != NodeItemType::UPLOAD_AND_RENAME)
+    {
+        return;
+    }
+
+    auto parentNode = conflict->getParentNode();
+    if (!parentNode)
+    {
+        return;
+    }
+
+    auto& reservedNames = mConflicts->mReservedNodeNamesByTargetParent[parentNode->getHandle()];
+    reservedNames.append(conflict->getNewName());
+}
+
 void DuplicatedNodeDialog::processConflict(std::shared_ptr<DuplicatedNodeInfo> conflict)
 {
+    updateReservedNames(conflict);
     conflict->checker()->fillUi(this, conflict);
 }
 
@@ -113,6 +158,7 @@ void DuplicatedNodeDialog::onConflictProcessed()
 
         if(conflict->getSolution() != NodeItemType::DONT_UPLOAD)
         {
+            reserveResolvedName(conflict);
             mConflicts->mResolvedConflicts.append(conflict);
         }
 
@@ -126,6 +172,7 @@ void DuplicatedNodeDialog::onConflictProcessed()
                 (*it)->setSolution(conflict->getSolution());
                 if((*it)->getSolution() != NodeItemType::DONT_UPLOAD)
                 {
+                    reserveResolvedName(*it);
                     mConflicts->mResolvedConflicts.append((*it));
                 }
 
@@ -164,6 +211,7 @@ void DuplicatedNodeDialog::processFolderConflicts()
         mConflictsBeingProcessed = mConflicts->mFolderConflicts;
         mConflicts->mFolderConflicts.clear();
         mChecker = mConflicts->mFolderCheck;
+        updateReservedNames(mConflictsBeingProcessed);
         fillDialog();
     }
 }
@@ -178,6 +226,7 @@ void DuplicatedNodeDialog::processFileConflicts()
         mConflictsBeingProcessed = mConflicts->mFileConflicts;
         mConflicts->mFileConflicts.clear();
         mChecker = mConflicts->mFileCheck;
+        updateReservedNames(mConflictsBeingProcessed);
         fillDialog();
     }
 }
@@ -192,6 +241,7 @@ void DuplicatedNodeDialog::processFileNameConflicts()
         mConflictsBeingProcessed = mConflicts->mFileNameConflicts;
         mConflicts->mFileNameConflicts.clear();
         mChecker = mConflicts->mFileCheck;
+        updateReservedNames(mConflictsBeingProcessed);
         fillDialog();
     }
 }
@@ -206,6 +256,7 @@ void DuplicatedNodeDialog::processFolderNameConflicts()
         mConflictsBeingProcessed = mConflicts->mFolderNameConflicts;
         mConflicts->mFolderNameConflicts.clear();
         mChecker = mConflicts->mFolderCheck;
+        updateReservedNames(mConflictsBeingProcessed);
         fillDialog();
     }
 }

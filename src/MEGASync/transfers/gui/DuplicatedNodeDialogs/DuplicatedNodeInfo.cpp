@@ -77,8 +77,13 @@ const QString &DuplicatedNodeInfo::getNewName()
     {
         if(mNewName.isEmpty() && mConflictNode)
         {
-            mNewName = Utilities::getNonDuplicatedNodeName(mConflictNode.get(), mParentNode.get(), mName, false, mChecker->getCheckedNames());
-            auto& checkedNames = mChecker->getCheckedNames();
+            const auto parentHandle = mParentNode ? mParentNode->getHandle() : mega::INVALID_HANDLE;
+            mNewName = Utilities::getNonDuplicatedNodeName(mConflictNode.get(),
+                                                           mParentNode.get(),
+                                                           mName,
+                                                           false,
+                                                           getUsedNamesForRename());
+            auto& checkedNames = mChecker->getCheckedNames(parentHandle);
             checkedNames.removeOne(mName);
             checkedNames.append(mNewName);
         }
@@ -91,7 +96,11 @@ const QString &DuplicatedNodeInfo::getDisplayNewName()
 {
     if(mDisplayNewName.isEmpty())
     {
-        mDisplayNewName = Utilities::getNonDuplicatedNodeName(mConflictNode.get(), mParentNode.get(), mName, false, mChecker->getCheckedNames());
+        mDisplayNewName = Utilities::getNonDuplicatedNodeName(mConflictNode.get(),
+                                                              mParentNode.get(),
+                                                              mName,
+                                                              false,
+                                                              getUsedNamesForRename());
     }
 
     return mDisplayNewName;
@@ -162,9 +171,25 @@ void DuplicatedNodeInfo::setNewName(const QString &newNewName)
     mNewName = newNewName;
 }
 
+void DuplicatedNodeInfo::setReservedNames(const QStringList& reservedNames)
+{
+    mReservedNames = reservedNames;
+    mNewName.clear();
+    mDisplayNewName.clear();
+}
+
 void DuplicatedNodeInfo::setName(const QString &newName)
 {
     mName = newName;
+}
+
+QStringList DuplicatedNodeInfo::getUsedNamesForRename() const
+{
+    auto usedNames = mReservedNames;
+    const auto parentHandle = mParentNode ? mParentNode->getHandle() : mega::INVALID_HANDLE;
+    usedNames.append(mChecker->getCheckedNames(parentHandle));
+
+    return usedNames;
 }
 
 mega::MegaHandle DuplicatedMoveNodeInfo::getSourceItemHandle() const
@@ -234,6 +259,13 @@ std::shared_ptr<ConflictTypes> CheckDuplicatedNodes::checkMoves(
 
         auto targetNode(moveHandleAndTarget.second);
         info->setParentNode(targetNode);
+
+        if (targetNode)
+        {
+            auto& reservedNodeNamesByTargetParent =
+                conflicts->mReservedNodeNamesByTargetParent[targetNode->getHandle()];
+            reservedNodeNamesByTargetParent.append(moveNodeName);
+        }
 
         // The rubbish accepts duplicate nodes
         if (targetNode && (targetNode->getHandle() != MegaSyncApp->getRubbishNode()->getHandle() &&
@@ -311,6 +343,9 @@ std::unique_ptr<ConflictTypes>
     auto counter(0);
     EventUpdater checkUpdater(nodePaths.size());
 
+    auto& reservedNamesForTarget =
+        conflicts->mReservedNodeNamesByTargetParent[targetNode->getHandle()];
+
     while (!nodePaths.isEmpty())
     {
         const auto item = nodePaths.dequeue();
@@ -324,6 +359,8 @@ std::unique_ptr<ConflictTypes>
         info->setParentNode(targetNode);
 
         const auto nodeToUploadName(localPathInfo.fileName());
+        reservedNamesForTarget.append(nodeToUploadName);
+
         auto node(nodesOnCloudDrive.value(nodeToUploadName.toLower()));
         if (node)
         {

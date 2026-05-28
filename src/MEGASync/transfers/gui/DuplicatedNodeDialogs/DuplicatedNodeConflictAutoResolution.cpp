@@ -11,7 +11,8 @@ void DuplicatedNodeConflictAutoResolution::resolveFolderConflictsForCopy(
 {
     if (!conflicts->isConflictFree())
     {
-        QHash<mega::MegaHandle, QStringList> usedNamesByParent;
+        QHash<mega::MegaHandle, QStringList> usedNamesByParent =
+            conflicts->mReservedNodeNamesByTargetParent;
 
         autoRenameFolderConflictsForCopy(conflicts, conflicts->mFolderConflicts, usedNamesByParent);
         autoRenameFolderConflictsForCopy(conflicts,
@@ -53,6 +54,8 @@ void DuplicatedNodeConflictAutoResolution::autoRenameFolderConflictsForCopy(
         }
 
         auto& usedNames = usedNamesByParent[parentHandle];
+        auto& reservedNames = conflicts->mReservedNodeNamesByTargetParent[parentHandle];
+
         moveConflict->setSolution(NodeItemType::UPLOAD_AND_RENAME);
         moveConflict->setNewName(Utilities::getNonDuplicatedNodeName(sourceNode.get(),
                                                                      parentNode.get(),
@@ -60,6 +63,7 @@ void DuplicatedNodeConflictAutoResolution::autoRenameFolderConflictsForCopy(
                                                                      false,
                                                                      usedNames));
         usedNames.append(moveConflict->getNewName());
+        reservedNames.append(moveConflict->getNewName());
         conflicts->mResolvedConflicts.append(moveConflict);
     }
 

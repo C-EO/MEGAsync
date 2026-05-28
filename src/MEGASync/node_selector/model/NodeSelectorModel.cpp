@@ -852,7 +852,14 @@ QVariant NodeSelectorModel::data(const QModelIndex& index, int role) const
                     }
                     else if (item->isTakenDown())
                     {
-                        return tr("This folder has been the subject of a takedown notice");
+                        if (item->isFile())
+                        {
+                            return tr("This file has been the subject of a takedown notice");
+                        }
+                        else
+                        {
+                            return tr("This folder has been the subject of a takedown notice");
+                        }
                     }
                     else if (mSyncSetupMode)
                     {
