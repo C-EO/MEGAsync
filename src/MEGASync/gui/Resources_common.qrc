@@ -1630,6 +1630,8 @@
         <file alias="reddish/tray_icon_logging_frame_1.svg">images/system_tray/reddish/tray_icon_logging_frame_1.svg</file>
         <file alias="folder-sync_small_thin_outline">images/themed/tokenizable/folder-sync_small_thin_outline.svg</file>
         <file alias="images/mega_info_background.png">images/mega_info_background.png</file>
+        <file alias="images/mega_info_background@2x.png">images/mega_info_background@2x.png</file>
+        <file alias="images/mega_info_background@3x.png">images/mega_info_background@3x.png</file>
         <file alias="images/mega_rec_icon.svg">images/mega_rec_icon.svg</file>
         <file alias="images/mega_icon.svg">images/mega_icon.svg</file>
         <file alias="message-alert_small_thin_outline">images/themed/tokenizable/message-alert_small_thin_outline.svg</file>
