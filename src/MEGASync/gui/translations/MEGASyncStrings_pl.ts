@@ -5016,6 +5016,11 @@ Wprowadź inną nazwę.</translation>
         <translation>Elementów nie można było przywrócić. Spróbuj ponownie później.</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>This file has been the subject of a takedown notice</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>Katalog został zgłoszony jako naruszenie praw autorskich</translation>
@@ -6330,9 +6335,9 @@ Wprowadź inną nazwę.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Łatwiejsze nadawanie nazw konfliktom przesyłania i duplikowanie elementów w tym samym folderze.
-- Okna dialogowe dotyczące Dysku w chmurze, synchronizacji, kopii zapasowej i ustawień są bardziej przejrzyste i spójne.
-- Poprawki błędów i ulepszenia wydajności.</translation>
+        <translation>- Konflikty z powodu zduplikowanych nazw folderów są teraz automatycznie rozwiązywane.
+- Okna dialogowe dotyczące dysku w chmurze, synchronizacji, kopii zapasowych i ustawień są jaśniejsze i bardziej spójne.
+- Naprawy błędów i usprawnienia wydajności.</translation>
     </message>
 </context>
 <context>
@@ -7656,12 +7661,12 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>File versions</translation>
+        <translation>Wersje plików</translation>
     </message>
     <message>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>File versions[BR]%1</translation>
+        <translation>Wersje pliku[BR]%1</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7692,16 +7697,6 @@ Czy mimo to chcesz je usunąć?</translation>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>Przesyłanie plików jest wyłączone, a synchronizacja folderów jest wstrzymana.</translation>
-    </message>
-    <message>
-        <source>Versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Wersje</translation>
-    </message>
-    <message>
-        <source>Versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Wersje[BR]%1</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>

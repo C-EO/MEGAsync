@@ -4980,6 +4980,11 @@ Bitte geben Sie einen anderen Namen ein.</translation>
         <translation>Die Inhalte konnten nicht wiederhergestellt werden. Versuchen Sie es später erneut.</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>This file has been the subject of a takedown notice</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>Dieser Ordner wurde wegen einer Beschwerde entfernt</translation>
@@ -6278,8 +6283,8 @@ Bitte geben Sie einen anderen Namen ein.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Umbenennungen bei Upload-Konflikten und doppelten Inhalten im selben Ordner wurden vereinfacht.
-- Die Dialoge für Cloud Drive, Synchronisierungen, Backups und Einstellungen wurden klarer und einheitlicher gestaltet.
+        <translation>- Konflikte aufgrund von doppelten Ordnernamen werden jetzt automatisch gelöst.
+- Die Dialoge für Cloud Drive, Synchronisierungen, Backups und Einstellungen wurden übersichtlicher und einheitlicher gestaltet.
 - Fehlerkorrekturen und Leistungsverbesserungen.</translation>
     </message>
 </context>
@@ -7595,17 +7600,17 @@ Trotzdem löschen?</translation>
     <message>
         <source>Consider upgrading to avoid interruptions to uploads and synchronisation.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is nearly full. DSN-2975</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Wir empfehlen Ihnen ein Upgrade, um Unterbrechungen bei Uploads und Synchronisierungen zu vermeiden.</translation>
     </message>
     <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>File versions</translation>
+        <translation>Dateiversionen</translation>
     </message>
     <message>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>File versions[BR]%1</translation>
+        <translation>Dateiversionen[BR]%1</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7635,17 +7640,7 @@ Trotzdem löschen?</translation>
     <message>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Versionen</translation>
-    </message>
-    <message>
-        <source>Versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Versionen[BR]%1</translation>
+        <translation>Uploads sind deaktiviert und die Ordnersynchronisierung ist pausiert.</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>

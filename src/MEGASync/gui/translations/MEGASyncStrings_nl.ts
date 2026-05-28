@@ -4980,6 +4980,11 @@ Voer een andere naam in.</translation>
         <translation>De items konden niet worden hersteld. Probeer het later nog eens.</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>This file has been the subject of a takedown notice</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>Deze map is het onderwerp geweest van een verwijderingsverzoek</translation>
@@ -6278,8 +6283,8 @@ Voer een andere naam in.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Hernoeming van uploadconflicten en duplicaten van items in dezelfde map zijn nu eenvoudiger.
-- De dialoogvensters voor Cloud Drive, synchronisatie, back-up en instellingen zijn overzichtelijker en consistenter.
+        <translation>- Dubbele map naam conflicten worden nu automatisch .
+-Cloud schijf, synchronisatie, backup en instellingen dialogen zijn nu overzichtelijker en consistent.
 - Bugfixes en prestatieverbeteringen.</translation>
     </message>
 </context>
@@ -7600,12 +7605,12 @@ Wilt u deze toch verwijderen?</translation>
     <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>File versions</translation>
+        <translation>Bestandsversies</translation>
     </message>
     <message>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>File versions[BR]%1</translation>
+        <translation>Bestandsversies [BR]%1</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7636,16 +7641,6 @@ Wilt u deze toch verwijderen?</translation>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>Uploaden is uitgeschakeld en mapsynchronisatie is gepauzeerd.</translation>
-    </message>
-    <message>
-        <source>Versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Versies</translation>
-    </message>
-    <message>
-        <source>Versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Versies[BR]%1</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
