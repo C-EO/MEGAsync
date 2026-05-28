@@ -164,6 +164,7 @@ private:
     void startRequestTaskbarPinningTimer();
     void initColorTheme();
     void onEmailClicked();
+    void updateSyncTabToolbarIcon();
 
     Ui::SettingsDialog* mUi;
     MegaApplication* mApp;

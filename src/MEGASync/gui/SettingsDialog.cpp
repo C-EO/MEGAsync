@@ -167,6 +167,10 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
 
     connect(mUi->bLearnMore, &QPushButton::clicked, this, &SettingsDialog::onBLearnMore);
     connect(mUi->bAboutMega, &QPushButton::clicked, this, &SettingsDialog::onBAboutMega);
+    connect(mModel,
+            &SyncInfo::syncDisabledListUpdated,
+            this,
+            &SettingsDialog::updateSyncTabToolbarIcon);
 
     // React to AppState changes
     connect(AppState::instance().get(),
@@ -175,6 +179,24 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
             &SettingsDialog::onAppStateChanged);
 
     startRequestTaskbarPinningTimer();
+    updateSyncTabToolbarIcon();
+}
+
+void SettingsDialog::updateSyncTabToolbarIcon()
+{
+    QString iconName;
+    if (mModel->syncWithErrorExist(MegaSync::TYPE_TWOWAY))
+    {
+        iconName = Utilities::getPixmapName(QLatin1String("settings-sync-warn"),
+                                            Utilities::AttributeType::NONE);
+    }
+    else
+    {
+        iconName = Utilities::getPixmapName(QLatin1String("settings-sync"),
+                                            Utilities::AttributeType::NONE);
+    }
+
+    mUi->bSyncs->setIcon(QIcon(iconName));
 }
 
 SettingsDialog::~SettingsDialog()
