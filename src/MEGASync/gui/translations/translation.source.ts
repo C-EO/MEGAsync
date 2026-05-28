@@ -4935,14 +4935,14 @@ Enter a different name.</translation>
         <translation>The items couldn’t be restored. Try again later.</translation>
     </message>
     <message>
-        <source>This folder has been the subject of a takedown notice</source>
-        <translatorcomment>Tooltip to explain the user that the node (folder) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>This folder has been the subject of a takedown notice</translation>
-    </message>
-    <message>
         <source>This file has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>This file has been the subject of a takedown notice</translation>
+    </message>
+    <message>
+        <source>This folder has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>This folder has been the subject of a takedown notice</translation>
     </message>
 </context>
 <context>
@@ -6209,7 +6209,7 @@ Enter a different name.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Rename upload conflicts and duplicate same-folder items more easily.
+        <translation>- Duplicated folder name conflicts are now resolved automatically.
 - Cloud drive, sync, backup, and settings dialogs are clearer and more consistent.
 - Bug fixes and performance improvements.</translation>
     </message>

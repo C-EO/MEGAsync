@@ -4943,6 +4943,11 @@ Enter a different name</source>
         <translation>項目を復元できませんでした。後でもう一度お試しください。</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>This file has been the subject of a takedown notice</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>このフォルダはテイクダウン通知（削除要請）の対象となっています</translation>
@@ -6225,7 +6230,7 @@ Enter a different name</source>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- アップロード時の競合や、同じフォルダ内の重複項目の名前変更がより簡単になりました。
+        <translation>- 重複したフォルダ名の競合が自動的に解決されるようになりました。
 - クラウドドライブ、同期、バックアップ、設定の各ダイアログがより分かりやすく、一貫性のあるデザインになりました。
 - バグを修正し、パフォーマンスが向上しました。</translation>
     </message>
@@ -7543,12 +7548,12 @@ Do you want to delete it anyway?</source>
     <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>File versions</translation>
+        <translation>ファイルバージョン</translation>
     </message>
     <message>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>File versions[BR]%1</translation>
+        <translation>ファイルバージョン[BR]%1</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7579,16 +7584,6 @@ Do you want to delete it anyway?</source>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>アップロードは無効になっており、フォルダの同期は一時停止されています。</translation>
-    </message>
-    <message>
-        <source>Versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>バージョン</translation>
-    </message>
-    <message>
-        <source>Versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>バージョン[BR]%1</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>

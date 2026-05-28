@@ -4944,6 +4944,11 @@ Enter a different name</source>
         <translation>항목을 복원할 수 없었습니다. 나중에 다시 시도하세요.</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>This file has been the subject of a takedown notice</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>이 폴더는 게시중단 통지의 대상입니다</translation>
@@ -6226,9 +6231,9 @@ Enter a different name</source>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- 업로드 충돌시 이름 변경과 중복 폴더 복제가 더욱 쉬워졌습니다.
+        <translation>- 중복 폴더 이름 충돌이 자동으로 해결됩니다.
 - 클라우드 드라이브, 동기화, 백업과 설정 대화창이 더욱 명확해지고 일관되게 되었습니다.
-- 버그 수정과 성능 향상.</translation>
+- 버그를 수정하고 성능을 향상시켰습니다.</translation>
     </message>
 </context>
 <context>
@@ -7544,12 +7549,12 @@ Do you want to delete it anyway?</source>
     <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>File versions</translation>
+        <translation>파일 버전</translation>
     </message>
     <message>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>File versions[BR]%1</translation>
+        <translation>파일 버전[BR]%1</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7580,16 +7585,6 @@ Do you want to delete it anyway?</source>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>업로드가 비활성화 되었고 폴더 동기화가 일시정지 되었습니다.</translation>
-    </message>
-    <message>
-        <source>Versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>버전</translation>
-    </message>
-    <message>
-        <source>Versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>버전[BR]%1</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -9683,7 +9678,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Clear all search results</source>
         <translatorcomment>Tooltip for clear button when the user is in the search category</translatorcomment>
-        <translation>모든 검색 결과 전송 삭제</translation>
+        <translation>모든 검색 결과 삭제</translation>
     </message>
     <message>
         <source>Clear all transfers</source>
@@ -9693,7 +9688,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Clear all videos</source>
         <translatorcomment>Tooltip for clear button when the user is in the videos category</translatorcomment>
-        <translation>모든 영상 전송 삭제</translation>
+        <translation>모든 동영상 전송 삭제</translation>
     </message>
     <message>
         <source>Details</source>
@@ -10084,7 +10079,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>%1 of %2</source>
         <translatorcomment>Label to indicate the amount of used and total space available. Keep %1 (used space) and %2 (total space) substitution placeholders because they will be filled with the required amounts of storage space dynamically including the unit (e.g. 1KB, 5MB, 8GB...). CON-944</translatorcomment>
-        <translation>%1 의 %2</translation>
+        <translation>%2 중 %1</translation>
     </message>
     <message>
         <source>%1 sec</source>

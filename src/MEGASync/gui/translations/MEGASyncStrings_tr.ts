@@ -6,7 +6,7 @@
     <message>
         <source>Account usage details</source>
         <translatorcomment>Title of the dialog that displays account usage details for the actual logged user.</translatorcomment>
-        <translation>Hesap kullanım detayları</translation>
+        <translation>Hesap kullanım ayrıntıları</translation>
     </message>
     <message>
         <source>Available storage</source>
@@ -639,12 +639,12 @@
     <message>
         <source>Please clearly describe the issue you encountered. The more details, the easier for us to resolve. Your submission will be reviewed by our development team.</source>
         <translatorcomment>Label to indicate the user that needs to describe the issue through the text edit field of bug report form.</translatorcomment>
-        <translation>Karşılaştığınız sorunu detaylıca açıklayın. Ne kadar çok ayrıntı verirseniz, sorunu çözmemiz o kadar kolay olur. Gönderiminiz geliştirme ekibimiz tarafından incelenecektir.</translation>
+        <translation>Karşılaştığınız sorunu ayrıntılı bir şekilde açıklayın. Ne kadar çok ayrıntı verirseniz, sorunu çözmemiz o kadar kolay olur. Gönderiminiz geliştirme ekibimiz tarafından incelenecektir.</translation>
     </message>
     <message>
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
-        <translation>Lütfen sorununuzu detaylıca açıklayın. En az 30 karakter olmalıdır.</translation>
+        <translation>Lütfen sorununuzu ayrıntılı bir şekilde açıklayın. En az 30 karakter olmalıdır.</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -4944,6 +4944,11 @@ Farklı bir ad girin.</translation>
         <translation>Öğeler geri yüklenemedi. Lütfen daha sonra tekrar deneyin.</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>This file has been the subject of a takedown notice</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>Bu klasör, içerik kaldırma bildirimine konu olmuştur</translation>
@@ -5839,7 +5844,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>To activate your account, you need to verify your email address. We&apos;ve sent you an email with a confirmation link. Click on the link to verify your email address, then you will be able to log in.</source>
         <translatorcomment>Text that describes how to confirm the account. CON-466</translatorcomment>
-        <translation>Hesabınızı etkinleştirmek için e-posta adresinizi doğrulamanız gerekir. Size bir onay bağlantısı içeren bir e-posta gönderdik. E-posta adresinizi doğrulamak için bağlantıya tıklayın, ardından giriş yapabileceksiniz.</translation>
+        <translation>Hesabınızı etkinleştirmek için e-posta adresinizi onaylamanız gerekir. Size bir onay bağlantısı içeren bir e-posta gönderdik. E-posta adresinizi onaylamak için bağlantıya tıklayın, ardından giriş yapabileceksiniz.</translation>
     </message>
     <message>
         <source>Upper and lower case letters</source>
@@ -6226,7 +6231,7 @@ Hata düzeltmeleri ve performans iyileştirmeleri yapıldı.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Yükleme çakışmalarını ve aynı klasördeki aynı adlı öğeleri daha kolay yeniden adlandırın.
+        <translation>- Aynı adlı klasör çakışmaları artık otomatik olarak çözülmekte.
 - Bulut depolama, senkronize, yedekleme ve ayarlar diyalogları daha net ve daha tutarlı hale getirildi.
 Hata düzeltmeleri ve performans iyileştirmeleri.</translation>
     </message>
@@ -7544,12 +7549,12 @@ Yine de silmek istiyor musunuz?</translation>
     <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>File versions</translation>
+        <translation>Dosya sürümleri</translation>
     </message>
     <message>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>File versions[BR]%1</translation>
+        <translation>Dosya sürümleri[BR]%1</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7580,16 +7585,6 @@ Yine de silmek istiyor musunuz?</translation>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>Yüklemeler devre dışı bırakıldı ve klasör senkronizasyonu duraklatıldı.</translation>
-    </message>
-    <message>
-        <source>Versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Sürümler</translation>
-    </message>
-    <message>
-        <source>Versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Sürümler[BR]%1</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
