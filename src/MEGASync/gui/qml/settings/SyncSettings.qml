@@ -185,16 +185,21 @@ Item {
         ListView {
             id: syncList
 
-            Layout.preferredHeight: Math.min(contentHeight, maxSyncListSize)
-            Layout.minimumHeight: listViewOfSyncItems
             Layout.preferredWidth: parent.width
+            Layout.minimumHeight: listViewOfSyncItems
+            Layout.fillHeight: true
+            Layout.maximumHeight: Math.max(listViewOfSyncItems, contentHeight)
+
             model: syncSettingsModel
             delegate: syncComponent
             spacing: syncTableSpacing
-            interactive: contentHeight > maxSyncListSize
+            interactive: contentHeight > height
             clip: true
+
             ScrollBar.vertical: ScrollBar {
-                policy: ScrollBar.AsNeeded
+                policy: syncList.contentHeight > syncList.height
+                      ? ScrollBar.AlwaysOn
+                      : ScrollBar.AlwaysOff
             }
         }
 
@@ -356,7 +361,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
                     Layout.preferredHeight: syncItemBackgroundHeight
-                    color: syncItem.syncItemContainsMouse || menu.opened ? ColorTheme.surface1 : ColorTheme.pageBackground
+                    color: syncItemContainsMouse || menu.opened ? ColorTheme.surface1 : ColorTheme.pageBackground
                     radius: syncItemBackgroundRadius
                     property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || nameAndFolderSearchMouseArea.containsMouse ||
                                                           menuIconMouseArea.containsMouse || statusSyncMouseArea.containsMouse
