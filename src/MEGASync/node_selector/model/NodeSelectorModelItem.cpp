@@ -61,7 +61,6 @@ bool NodeSelectorModelItem::isSpecialNode() const
 
 bool NodeSelectorModelItem::isTakenDown() const
 {
-    return QString::fromUtf8(mNode->getName()).contains(QLatin1String("TAKEN"));
     return mNode && mNode->isTakenDown();
 }
 
