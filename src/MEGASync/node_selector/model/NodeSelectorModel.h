@@ -42,6 +42,7 @@ enum class NodeSelectorModelRoles
     ICON_SIZE_ROLE,
     EXTRA_ROW_ROLE,
     LABEL_COLOR_ROLE,
+    LABEL_ORDER_ROLE,
     IS_EXPORTED_ROLE,
     last
 };
@@ -250,10 +251,12 @@ public:
     enum Column
     {
         NODE = 0,
+        LABEL,
         USER,
         ACCESS,
         ADDED_DATE,
         LAST_MODIFIED_DATE,
+        IS_EXPORTED,
         last
     };
 
@@ -350,6 +353,7 @@ public:
     QVariant getIcon(const QModelIndex& index, NodeSelectorModelItem* item) const;
     QVariant getText(const QModelIndex& index, NodeSelectorModelItem* item) const;
     virtual QVariant getDisplayText(NodeSelectorModelItem* item) const;
+    virtual QVariant getLabelText(NodeSelectorModelItem* item) const;
     virtual QVariant getAddedDateText(NodeSelectorModelItem* item) const;
     virtual QVariant getLastModifiedDateText(NodeSelectorModelItem* item) const;
     virtual QVariant getAccessText(NodeSelectorModelItem* item) const;

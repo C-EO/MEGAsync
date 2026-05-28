@@ -145,35 +145,31 @@ void FilePickerNodeSelector::onBreadcrumbClearRequested()
     }
 }
 
-void FilePickerNodeSelector::configureCloudDriveWidget()
+void FilePickerNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget)
 {
-    hideIncomingShareColumns(mCloudDriveWidget);
-}
+    if (!widget)
+    {
+        return;
+    }
 
-void FilePickerNodeSelector::configureIncomingSharesWidget()
-{
-    showIncomingShareColumns(mIncomingSharesWidget);
-}
-
-void FilePickerNodeSelector::configureBackupsWidget()
-{
-    hideIncomingShareColumns(mBackupsWidget);
-}
-
-void FilePickerNodeSelector::configureRubbishWidget()
-{
-    hideIncomingShareColumns(mRubbishWidget);
+    widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, true);
+    widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, true);
 }
 
 void FilePickerNodeSelector::configureSearchWidget(TabType type)
 {
+    if (!mSearchWidget)
+    {
+        return;
+    }
+
     if (type == TabType::INCOMING_SHARE)
     {
-        showIncomingShareColumns(mSearchWidget);
+        configureIncomingSharesTableColumns(mSearchWidget);
     }
     else
     {
-        hideIncomingShareColumns(mSearchWidget);
+        configureTableColumns(mSearchWidget);
     }
 }
 
@@ -333,41 +329,4 @@ std::shared_ptr<mega::MegaNode>
     }
 
     return nullptr;
-}
-
-void FilePickerNodeSelector::hideIncomingShareColumns(NodeSelectorTreeViewWidget* widget)
-{
-    if (!widget)
-    {
-        return;
-    }
-
-    widget->setColumnHidden(NodeSelectorModel::Column::USER, true);
-    widget->setColumnHidden(NodeSelectorModel::Column::ACCESS, true);
-    widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, false);
-    widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, false);
-}
-
-void FilePickerNodeSelector::showIncomingShareColumns(NodeSelectorTreeViewWidget* widget)
-{
-    if (!widget)
-    {
-        return;
-    }
-
-    const bool insideShare = widget->getCurrentRootIndex().isValid();
-    widget->setColumnHidden(NodeSelectorModel::Column::USER, insideShare);
-    widget->setColumnHidden(NodeSelectorModel::Column::ACCESS, insideShare);
-    widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, !insideShare);
-    widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, !insideShare);
-
-    if (insideShare)
-    {
-        widget->setNonInteractiveColumns({});
-    }
-    else
-    {
-        widget->setNonInteractiveColumns(
-            {NodeSelectorModel::Column::USER, NodeSelectorModel::Column::ACCESS});
-    }
 }

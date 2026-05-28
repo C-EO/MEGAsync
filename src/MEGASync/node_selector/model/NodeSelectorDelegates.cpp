@@ -1,6 +1,5 @@
 #include "NodeSelectorDelegates.h"
 
-#include "IconTokenizer.h"
 #include "MegaDelegateHoverManager.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorTreeView.h"
@@ -9,7 +8,6 @@
 #include <QAbstractItemView>
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
-#include <QBitmap>
 #include <QFontMetrics>
 #include <QPainter>
 #include <QPainterPath>
@@ -69,16 +67,7 @@ void NodeSelectorDelegate::paint(QPainter* painter,
         auxOpt.rect.adjust(3, 0, -5, 0);
 #endif
 
-        // Reserve space on the right of the NODE column for the indicators
-        // (public-link icon and label dot) so the text gets elided in time.
-        if (index.column() == NodeSelectorModel::Column::NODE)
-        {
-            const int reserved = rightIndicatorsWidth(index);
-            if (reserved > 0)
-            {
-                auxOpt.rect.adjust(0, 0, -reserved, 0);
-            }
-        }
+        adjustContentRect(&auxOpt, index);
     }
 
     auxOpt.state.setFlag(QStyle::State_MouseOver, false);
@@ -86,93 +75,6 @@ void NodeSelectorDelegate::paint(QPainter* painter,
     auxOpt.state.setFlag(QStyle::State_HasFocus, false);
 
     QStyledItemDelegate::paint(painter, auxOpt, index);
-
-    if (!index.data(toInt(NodeSelectorModelRoles::EXTRA_ROW_ROLE)).toBool() &&
-        index.column() == NodeSelectorModel::Column::NODE)
-    {
-        paintRightIndicators(painter, option, index);
-    }
-}
-
-int NodeSelectorDelegate::rightIndicatorsWidth(const QModelIndex& index) const
-{
-    static constexpr int DOT_SIZE = 8;
-    static constexpr int LINK_ICON_SIZE = 16;
-    static constexpr int SPACING = 8;
-    static constexpr int RIGHT_PADDING = 12;
-
-    const QColor labelColor =
-        index.data(toInt(NodeSelectorModelRoles::LABEL_COLOR_ROLE)).value<QColor>();
-    const bool hasLink = index.data(toInt(NodeSelectorModelRoles::IS_EXPORTED_ROLE)).toBool();
-
-    int width = 0;
-    if (labelColor.isValid())
-    {
-        width += DOT_SIZE;
-    }
-    if (hasLink)
-    {
-        if (width > 0)
-        {
-            width += SPACING;
-        }
-        width += LINK_ICON_SIZE;
-    }
-    if (width > 0)
-    {
-        width += RIGHT_PADDING + SPACING;
-    }
-    return width;
-}
-
-void NodeSelectorDelegate::paintRightIndicators(QPainter* painter,
-                                                const QStyleOptionViewItem& option,
-                                                const QModelIndex& index) const
-{
-    static constexpr int DOT_SIZE = 8;
-    static constexpr int LINK_ICON_SIZE = 16;
-    static constexpr int SPACING = 8;
-    static constexpr int RIGHT_PADDING = 20;
-
-    const QColor labelColor =
-        index.data(toInt(NodeSelectorModelRoles::LABEL_COLOR_ROLE)).value<QColor>();
-    const bool hasLink = index.data(toInt(NodeSelectorModelRoles::IS_EXPORTED_ROLE)).toBool();
-
-    if (!labelColor.isValid() && !hasLink)
-    {
-        return;
-    }
-
-    const int centerY = option.rect.center().y();
-    int x = option.rect.right() - RIGHT_PADDING;
-
-    // Link icon (rightmost).
-    if (hasLink)
-    {
-        static const QIcon linkIcon(QStringLiteral(":/link_01_small_thin_outline"));
-        const QRect iconRect(x - LINK_ICON_SIZE,
-                             centerY - LINK_ICON_SIZE / 2,
-                             LINK_ICON_SIZE,
-                             LINK_ICON_SIZE);
-        auto tokenizedPixmap =
-            IconTokenizer::changePixmapColor(
-                linkIcon.pixmap(iconRect.size()),
-                TokenParserWidgetManager::instance()->getColor(QLatin1String("icon-secondary")))
-                .value_or(QPixmap());
-        painter->drawPixmap(iconRect, tokenizedPixmap);
-        x -= LINK_ICON_SIZE + SPACING;
-    }
-
-    // Label dot (left of the link icon).
-    if (labelColor.isValid())
-    {
-        painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->setBrush(labelColor);
-        painter->setPen(Qt::NoPen);
-        painter->drawEllipse(QPointF(x - DOT_SIZE / 2.0, centerY), DOT_SIZE / 2.0, DOT_SIZE / 2.0);
-        painter->restore();
-    }
 }
 
 bool NodeSelectorDelegate::isHoverStateSet(const QModelIndex& index)
@@ -252,7 +154,16 @@ void NodeRowDelegate::paint(QPainter* painter,
 {
     QStyleOptionViewItem opt(option);
 
-    opt.displayAlignment = Qt::AlignVCenter | Qt::AlignLeft;
+    if (index.column() == NodeSelectorModel::Column::IS_EXPORTED)
+    {
+        opt.displayAlignment = Qt::AlignCenter;
+        opt.decorationAlignment = Qt::AlignCenter;
+    }
+    else
+    {
+        opt.displayAlignment = Qt::AlignVCenter | Qt::AlignLeft;
+        opt.decorationAlignment = Qt::AlignVCenter | Qt::AlignLeft;
+    }
     opt.decorationSize = index.data(toInt(NodeSelectorModelRoles::ICON_SIZE_ROLE)).toSize();
 
     NodeSelectorDelegate::paint(painter, opt, index);
@@ -338,6 +249,12 @@ bool NodeRowDelegate::helpEvent(QHelpEvent* event,
 
     if (event->type() == QEvent::ToolTip)
     {
+        if (index.column() == NodeSelectorModel::Column::IS_EXPORTED)
+        {
+            QToolTip::hideText();
+            return true;
+        }
+
         const auto rect = view->visualRect(index);
         const auto tooltipText = index.data(Qt::DisplayRole).toString();
         QFontMetrics fm = option.fontMetrics;
@@ -376,6 +293,94 @@ void NodeRowDelegate::initStyleOption(QStyleOptionViewItem* option, const QModel
     if (!index.flags().testFlag(Qt::ItemIsEnabled))
     {
         option->state &= ~QStyle::State_Enabled;
+    }
+}
+
+NodeLabelDelegate::NodeLabelDelegate(bool showLabelText, QObject* parent):
+    NodeSelectorDelegate(parent),
+    mShowLabelText(showLabelText)
+{}
+
+void NodeLabelDelegate::paint(QPainter* painter,
+                              const QStyleOptionViewItem& option,
+                              const QModelIndex& index) const
+{
+    static constexpr int LABEL_DOT_LEFT_MARGIN = 12;
+    static constexpr qreal LABEL_DOT_RADIUS = 4.0;
+
+    QStyleOptionViewItem opt(option);
+    opt.displayAlignment = Qt::AlignVCenter | Qt::AlignLeft;
+    opt.decorationAlignment = Qt::AlignVCenter | Qt::AlignLeft;
+
+    NodeSelectorDelegate::paint(painter, opt, index);
+
+    const auto labelColor =
+        index.data(toInt(NodeSelectorModelRoles::LABEL_COLOR_ROLE)).value<QColor>();
+    if (labelColor.isValid())
+    {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(labelColor);
+        painter->drawEllipse(QPointF(option.rect.x() + LABEL_DOT_LEFT_MARGIN + LABEL_DOT_RADIUS,
+                                     option.rect.center().y()),
+                             LABEL_DOT_RADIUS,
+                             LABEL_DOT_RADIUS);
+        painter->restore();
+    }
+}
+
+bool NodeLabelDelegate::helpEvent(QHelpEvent* event,
+                                  QAbstractItemView* view,
+                                  const QStyleOptionViewItem& option,
+                                  const QModelIndex& index)
+{
+    if (!event || !view || !index.isValid())
+    {
+        return false;
+    }
+
+    if (event->type() == QEvent::ToolTip)
+    {
+        QToolTip::hideText();
+        return true;
+    }
+
+    return QStyledItemDelegate::helpEvent(event, view, option, index);
+}
+
+QSize NodeLabelDelegate::sizeHint(const QStyleOptionViewItem& option,
+                                  const QModelIndex& index) const
+{
+    auto size = NodeSelectorDelegate::sizeHint(option, index);
+    size.setHeight(49); // 48 + 1 border pixel
+    return size;
+}
+
+void NodeLabelDelegate::initStyleOption(QStyleOptionViewItem* option,
+                                        const QModelIndex& index) const
+{
+    QStyledItemDelegate::initStyleOption(option, index);
+
+    option->icon = QIcon();
+
+    if (!mShowLabelText)
+    {
+        option->text.clear();
+    }
+
+    if (!index.flags().testFlag(Qt::ItemIsEnabled))
+    {
+        option->state &= ~QStyle::State_Enabled;
+    }
+}
+
+void NodeLabelDelegate::adjustContentRect(QStyleOptionViewItem* option, const QModelIndex&) const
+{
+    if (mShowLabelText)
+    {
+        static constexpr int LABEL_TEXT_LEFT_MARGIN = 24;
+        option->rect.adjust(LABEL_TEXT_LEFT_MARGIN, 0, 0, 0);
     }
 }
 

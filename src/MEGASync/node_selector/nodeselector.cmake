@@ -21,6 +21,7 @@ set(DESKTOP_APP_NODE_SELECTOR_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorLoadingDelegate.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSpecializations.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/FilePickerNodeSelector.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/FilePickerNodeSelectorSpecializations.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSelectTypes.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTabTypes.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorLabelColors.h
@@ -48,6 +49,7 @@ set(DESKTOP_APP_NODE_SELECTOR_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorLoadingDelegate.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSpecializations.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/FilePickerNodeSelector.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/FilePickerNodeSelectorSpecializations.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSelectTypes.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorLabelColors.cpp
 )

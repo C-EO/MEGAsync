@@ -3,6 +3,8 @@
 #include "megaapi.h"
 #include "TokenParserWidgetManager.h"
 
+#include <QCoreApplication>
+
 const QString NodeSelectorLabelColors::sTokens[8] = {
     QString(), // NODE_LBL_UNKNOWN
     QString(QStringLiteral("indicator-pink")), // NODE_LBL_RED
@@ -43,4 +45,46 @@ NodeSelectorLabelColors::LabelGradient NodeSelectorLabelColors::gradientForLabel
     }
 
     return sGradients[label];
+}
+
+QVariant NodeSelectorLabelColors::nameForLabel(int label)
+{
+    switch (label)
+    {
+        case mega::MegaNode::NODE_LBL_RED:
+        {
+            return QCoreApplication::translate("NodeSelectorLabelColors", "Red");
+        }
+        case mega::MegaNode::NODE_LBL_ORANGE:
+        {
+            return QCoreApplication::translate("NodeSelectorLabelColors", "Orange");
+        }
+        case mega::MegaNode::NODE_LBL_YELLOW:
+        {
+            return QCoreApplication::translate("NodeSelectorLabelColors", "Yellow");
+        }
+        case mega::MegaNode::NODE_LBL_GREEN:
+        {
+            return QCoreApplication::translate("NodeSelectorLabelColors", "Green");
+        }
+        case mega::MegaNode::NODE_LBL_BLUE:
+        {
+            return QCoreApplication::translate("NodeSelectorLabelColors", "Blue");
+        }
+        case mega::MegaNode::NODE_LBL_PURPLE:
+        {
+            return QCoreApplication::translate("NodeSelectorLabelColors", "Purple");
+        }
+        case mega::MegaNode::NODE_LBL_GREY:
+        {
+            return QCoreApplication::translate("NodeSelectorLabelColors", "Grey");
+        }
+        case mega::MegaNode::NODE_LBL_UNKNOWN:
+        default:
+        {
+            break;
+        }
+    }
+
+    return {};
 }

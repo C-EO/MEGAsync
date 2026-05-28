@@ -15,6 +15,7 @@
 
 #include <QApplication>
 #include <QFont>
+#include <QPainter>
 #include <QToolTip>
 
 const char* INDEX_PROPERTY = "INDEX";
@@ -1137,6 +1138,19 @@ QVariant NodeSelectorModel::data(const QModelIndex& index, int role) const
                     return node ? NodeSelectorLabelColors::colorForLabel(node->getLabel()) :
                                   QColor();
                 }
+                case toInt(NodeSelectorModelRoles::LABEL_ORDER_ROLE):
+                {
+                    auto node = item->getNode();
+                    if (!node)
+                    {
+                        return QVariant();
+                    }
+
+                    const auto label = node->getLabel();
+                    return label == mega::MegaNode::NODE_LBL_UNKNOWN ?
+                               mega::MegaNode::NODE_LBL_GREY + 1 :
+                               label;
+                }
                 case toInt(NodeSelectorModelRoles::IS_EXPORTED_ROLE):
                 {
                     auto node = item->getNode();
@@ -2135,6 +2149,10 @@ QVariant NodeSelectorModel::headerData(int section, Qt::Orientation orientation,
                 {
                     return tr("Name");
                 }
+                case NodeSelectorModel::Column::LABEL:
+                {
+                    return tr("Label");
+                }
                 case NodeSelectorModel::Column::USER:
                 {
                     return tr("Owner");
@@ -2151,12 +2169,20 @@ QVariant NodeSelectorModel::headerData(int section, Qt::Orientation orientation,
                 {
                     return tr("Last modified");
                 }
+                case NodeSelectorModel::Column::IS_EXPORTED:
+                {
+                    return QVariant();
+                }
             }
         }
         else if (role == Qt::ToolTipRole)
         {
             switch (section)
             {
+                case NodeSelectorModel::Column::LABEL:
+                {
+                    return tr("Sort by label");
+                }
                 case NodeSelectorModel::Column::USER:
                 {
                     return tr("Sort by owner name");
@@ -2860,6 +2886,25 @@ QVariant NodeSelectorModel::getIcon(const QModelIndex& index, NodeSelectorModelI
                             isDisabled ? disabledToken : QLatin1String("icon-primary")))
                         .value_or(QPixmap()));
             }
+            break;
+        }
+        case NodeSelectorModel::Column::IS_EXPORTED:
+        {
+            if (item->getNode() && item->getNode()->isExported())
+            {
+                auto iconSize(data(index, toInt(NodeSelectorModelRoles::ICON_SIZE_ROLE)).toSize());
+                auto pixmap = Utilities::getPixmap(QLatin1String("link_01"),
+                                                   Utilities::AttributeType::SMALL |
+                                                       Utilities::AttributeType::THIN |
+                                                       Utilities::AttributeType::OUTLINE,
+                                                   iconSize);
+                auto tokenizedPixmap =
+                    IconTokenizer::changePixmapColor(pixmap,
+                                                     TokenParserWidgetManager::instance()->getColor(
+                                                         QLatin1String("icon-secondary")));
+                return QVariant::fromValue<QPixmap>(tokenizedPixmap.value_or(pixmap));
+            }
+            break;
         }
         default:
         {
@@ -2877,6 +2922,10 @@ QVariant NodeSelectorModel::getText(const QModelIndex& index, NodeSelectorModelI
         {
             return getDisplayText(item);
         }
+        case Column::LABEL:
+        {
+            return getLabelText(item);
+        }
         case Column::ADDED_DATE:
         {
             return getAddedDateText(item);
@@ -2893,6 +2942,10 @@ QVariant NodeSelectorModel::getText(const QModelIndex& index, NodeSelectorModelI
         {
             return getUserText(item);
         }
+        case Column::IS_EXPORTED:
+        {
+            return {};
+        }
         default:
         {
             break;
@@ -2904,6 +2957,13 @@ QVariant NodeSelectorModel::getText(const QModelIndex& index, NodeSelectorModelI
 QVariant NodeSelectorModel::getDisplayText(NodeSelectorModelItem* item) const
 {
     return MegaNodeNames::getNodeName(item->getNode().get());
+}
+
+QVariant NodeSelectorModel::getLabelText(NodeSelectorModelItem* item) const
+{
+    return item && item->getNode() ?
+               NodeSelectorLabelColors::nameForLabel(item->getNode()->getLabel()) :
+               QVariant();
 }
 
 QVariant NodeSelectorModel::getAddedDateText(NodeSelectorModelItem* item) const

@@ -198,7 +198,7 @@ background: transparent;
            <number>0</number>
           </property>
           <property name="leftMargin">
-           <number>12</number>
+           <number>20</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -393,7 +393,7 @@ background: transparent;
                  </spacer>
                 </item>
                 <item>
-                 <widget class="TokenizableButton" name="bEmptyUpload" native="true">
+                 <widget class="TokenizableButton" name="bEmptyUpload">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -406,14 +406,14 @@ background: transparent;
                   <property name="visible">
                    <bool>false</bool>
                   </property>
-                  <property name="text" stdset="0">
+                  <property name="text">
                    <string notr="true">Upload</string>
                   </property>
-                  <property name="icon" stdset="0">
+                  <property name="icon">
                    <iconset resource="../../../gui/Resources_common.qrc">
                     <normaloff>:/arrow-up_small_thin_outline</normaloff>:/arrow-up_small_thin_outline</iconset>
                   </property>
-                  <property name="iconSize" stdset="0">
+                  <property name="iconSize">
                    <size>
                     <width>16</width>
                     <height>16</height>
@@ -428,7 +428,7 @@ background: transparent;
                  </widget>
                 </item>
                 <item>
-                 <widget class="TokenizableButton" name="bEmptyNewFolder" native="true">
+                 <widget class="TokenizableButton" name="bEmptyNewFolder">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -441,14 +441,14 @@ background: transparent;
                   <property name="visible">
                    <bool>false</bool>
                   </property>
-                  <property name="text" stdset="0">
+                  <property name="text">
                    <string notr="true">New folder</string>
                   </property>
-                  <property name="icon" stdset="0">
+                  <property name="icon">
                    <iconset resource="../../../gui/Resources_common.qrc">
                     <normaloff>:/folder-plus-01_small_thin_outline</normaloff>:/folder-plus-01_small_thin_outline</iconset>
                   </property>
-                  <property name="iconSize" stdset="0">
+                  <property name="iconSize">
                    <size>
                     <width>16</width>
                     <height>16</height>
@@ -610,15 +610,15 @@ background: transparent;
  </widget>
  <customwidgets>
   <customwidget>
+   <class>TokenizableButton</class>
+   <extends>QPushButton</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h</header>
+  </customwidget>
+  <customwidget>
    <class>TabSelector</class>
    <extends>QWidget</extends>
    <header>TabSelector.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>TokenizableButton</class>
-   <extends>QWidget</extends>
-   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
   </customwidget>
   <customwidget>
    <class>IconLabel</class>

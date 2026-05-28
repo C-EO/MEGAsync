@@ -2,6 +2,7 @@
 #define NODESELECTORLABELCOLORS_H
 
 #include <QColor>
+#include <QVariant>
 
 class NodeSelectorLabelColors
 {
@@ -22,6 +23,10 @@ public:
     /// Returns the two-tone gradient (bottom-to-top) for the given label index.
     /// Returns invalid colors when the label is NODE_LBL_UNKNOWN or out of range.
     static LabelGradient gradientForLabel(int label);
+
+    /// Returns the localized visible name for the given label index.
+    /// Returns an invalid QVariant when the label is NODE_LBL_UNKNOWN or out of range.
+    static QVariant nameForLabel(int label);
 
 private:
     // Indexed by mega::MegaNode::NODE_LBL_* (0 = UNKNOWN, 7 = GREY).

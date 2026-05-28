@@ -128,6 +128,23 @@ void NodeSelector::init()
     mInitialised = true;
 }
 
+void NodeSelector::changeEvent(QEvent* event)
+{
+    if (event && event->type() == QEvent::WindowStateChange && !isMaximized())
+    {
+        for (int index = 0; index < ui->stackedWidget->count(); ++index)
+        {
+            if (auto wid =
+                    qobject_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
+            {
+                wid->resetAutoColumnWidths();
+            }
+        }
+    }
+
+    QDialog::changeEvent(event);
+}
+
 void NodeSelector::updateNodeSelectorTabs()
 {
     auto updateTabTitle = [](TabSelector* tab, const QString& title)
@@ -849,6 +866,7 @@ void NodeSelector::initSpecialisedWidgets(NodeSelectorTreeViewWidget* viewContai
 {
     if (viewContainer)
     {
+        viewContainer->setInitialShowLabelText(initialShowLabelText());
         viewContainer->init();
 
         connect(viewContainer,
@@ -1142,45 +1160,28 @@ void NodeSelector::onNodesUpdate(mega::MegaApi* api, mega::MegaNodeList* nodes)
 
 void NodeSelector::specialisedTreeViewWidgetsCreated()
 {
-    if (mCloudDriveWidget)
-    {
-        connect(mCloudDriveWidget,
-                &NodeSelectorTreeViewWidget::viewReady,
-                this,
-                &NodeSelector::configureCloudDriveWidget);
-    }
+    connectViewConfiguration(mCloudDriveWidget, &NodeSelector::configureTableColumns);
+
     if (mIncomingSharesWidget)
     {
-        connect(mIncomingSharesWidget,
-                &NodeSelectorTreeViewWidget::viewReady,
-                this,
-                &NodeSelector::configureIncomingSharesWidget);
+        connectViewConfiguration(mIncomingSharesWidget,
+                                 &NodeSelector::configureIncomingSharesTableColumns);
         connect(mIncomingSharesWidget,
                 &NodeSelectorTreeViewWidget::viewStateChanged,
                 this,
-                &NodeSelector::configureIncomingSharesWidget);
+                [this]()
+                {
+                    configureIncomingSharesTableColumns(mIncomingSharesWidget);
+                });
         connect(mIncomingSharesWidget,
                 &NodeSelectorTreeViewWidgetIncomingShares::incomingShareAccessChanged,
                 this,
-                [this]()
-                {
-                    refreshBreadcrumbs();
-                });
+                &NodeSelector::refreshBreadcrumbs);
     }
-    if (mBackupsWidget)
-    {
-        connect(mBackupsWidget,
-                &NodeSelectorTreeViewWidget::viewReady,
-                this,
-                &NodeSelector::configureBackupsWidget);
-    }
-    if (mRubbishWidget)
-    {
-        connect(mRubbishWidget,
-                &NodeSelectorTreeViewWidget::viewReady,
-                this,
-                &NodeSelector::configureRubbishWidget);
-    }
+
+    connectViewConfiguration(mBackupsWidget, &NodeSelector::configureTableColumns);
+    connectViewConfiguration(mRubbishWidget, &NodeSelector::configureTableColumns);
+
     if (mSearchWidget)
     {
         connect(mSearchWidget,
@@ -1191,6 +1192,67 @@ void NodeSelector::specialisedTreeViewWidgetsCreated()
                     configureSearchWidget(TabType::NONE);
                 });
     }
+}
+
+void NodeSelector::connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
+                                            ViewConfigurationFunction configure)
+{
+    if (!widget)
+    {
+        return;
+    }
+
+    const auto refreshColumns = [this, widget, configure]()
+    {
+        (this->*configure)(widget);
+    };
+
+    connect(widget, &NodeSelectorTreeViewWidget::viewReady, this, refreshColumns);
+}
+
+void NodeSelector::configureTableColumns(NodeSelectorTreeViewWidget* widget)
+{
+    if (!widget)
+    {
+        return;
+    }
+
+    widget->setColumnHidden(NodeSelectorModel::Column::NODE, false);
+    widget->setColumnHidden(NodeSelectorModel::Column::LABEL, false);
+    widget->setColumnHidden(NodeSelectorModel::Column::IS_EXPORTED,
+                            (widget->getTabType() == NodeSelectorTreeViewWidget::TabItem::RUBBISH ||
+                             widget->getTabType() == NodeSelectorTreeViewWidget::TabItem::SHARES));
+
+    setIncomingShareColumnsVisibility(widget, false);
+    configureTypeSpecificColumns(widget);
+}
+
+void NodeSelector::configureIncomingSharesTableColumns(NodeSelectorTreeViewWidget* widget)
+{
+    if (!widget)
+    {
+        return;
+    }
+
+    configureTableColumns(widget);
+    setIncomingShareColumnsVisibility(widget, !widget->getCurrentRootIndex().isValid());
+}
+
+void NodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget)
+{
+    Q_UNUSED(widget)
+}
+
+void NodeSelector::setIncomingShareColumnsVisibility(NodeSelectorTreeViewWidget* widget,
+                                                     bool visible)
+{
+    if (!widget)
+    {
+        return;
+    }
+
+    widget->setColumnHidden(NodeSelectorModel::Column::USER, !visible);
+    widget->setColumnHidden(NodeSelectorModel::Column::ACCESS, !visible);
 }
 
 void NodeSelector::createSpecialisedTreeViewWidgets()

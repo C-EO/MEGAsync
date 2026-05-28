@@ -32,6 +32,7 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
     mMegaApi(MegaSyncApp->getMegaApi()),
     mSelectType(mode),
     mManuallyResizedColumn(false),
+    mShowLabelText(true),
     mResizeEventsReceived(0),
     first(true),
     mUiBlocked(false),
@@ -610,8 +611,22 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
     {
         int widthTotal(0);
         int minWidth(100);
+        int labelColumnMinWidth(88);
+        int labelColumnMaxWidth(120);
+        int compactLabelColumnWidth(labelColumnMinWidth);
         int maxSecondaryColumnWidth(200);
         double secondaryColumnProportion(0.2);
+        double labelColumnProportion(0.12);
+
+        if (auto* model = ui->tMegaFolders->model())
+        {
+            const auto headerText =
+                model->headerData(NodeSelectorModel::Column::LABEL, Qt::Horizontal, Qt::DisplayRole)
+                    .toString();
+            compactLabelColumnWidth = std::max(
+                ui->tMegaFolders->header()->fontMetrics().horizontalAdvance(headerText) + 24,
+                labelColumnMinWidth);
+        }
 
         for (QList<int>::const_reverse_iterator column = mVisibleColumns.crbegin();
              column != mVisibleColumns.crend();
@@ -623,6 +638,21 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
             {
                 // Total minus the rest of columns
                 width = std::max(ui->tMegaFolders->viewport()->width() - widthTotal, minWidth * 2);
+            }
+            else if ((*column) == NodeSelectorModel::Column::IS_EXPORTED)
+            {
+                width = 80;
+                widthTotal += width;
+            }
+            else if ((*column) == NodeSelectorModel::Column::LABEL)
+            {
+                width =
+                    !mShowLabelText ?
+                        compactLabelColumnWidth :
+                        std::max(std::min(qRound(ui->tMegaFolders->width() * labelColumnProportion),
+                                          labelColumnMaxWidth),
+                                 labelColumnMinWidth);
+                widthTotal += width;
             }
             else
             {
@@ -675,10 +705,14 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
         ui->tMegaFolders->header()->setDefaultAlignment(Qt::AlignLeft);
         ui->tMegaFolders->header()->setDefaultSectionSize(35);
         ui->tMegaFolders->setItemDelegate(createItemDelegate(ui->tMegaFolders));
+        ui->tMegaFolders->setItemDelegateForColumn(NodeSelectorModel::Column::LABEL,
+                                                   createLabelDelegate(ui->tMegaFolders));
         ui->tMegaFolders->setTextElideMode(Qt::ElideMiddle);
 
         ui->tMegaFolders->sortByColumn(NodeSelectorModel::Column::NODE, Qt::AscendingOrder);
         ui->tMegaFolders->setModel(mProxyModel.get());
+        updateColumnResizeModes();
+        setNonInteractiveColumns({});
 
         ui->tMegaFolders->header()->setVisible(true);
         ui->tMegaFolders->header()->setProperty("HeaderIconCenter", true);
@@ -1292,6 +1326,11 @@ NodeSelectorDelegate* NodeSelectorTreeViewWidget::createItemDelegate(QObject* pa
     return new NodeRowDelegate(parent);
 }
 
+NodeSelectorDelegate* NodeSelectorTreeViewWidget::createLabelDelegate(QObject* parent)
+{
+    return new NodeLabelDelegate(showLabelText(), parent);
+}
+
 void NodeSelectorTreeViewWidget::setColumnHidden(int column, bool hidden)
 {
     if (ui->tMegaFolders->isColumnHidden(column) == hidden)
@@ -1312,8 +1351,53 @@ void NodeSelectorTreeViewWidget::setNonInteractiveColumns(const QSet<int>& colum
 {
     if (auto header = qobject_cast<NodeSelectorHeaderView*>(ui->tMegaFolders->header()))
     {
-        header->setNonInteractiveSections(columns);
+        auto nonInteractiveColumns(columns);
+        nonInteractiveColumns.insert(NodeSelectorModel::Column::IS_EXPORTED);
+        header->setNonInteractiveSections(nonInteractiveColumns);
     }
+}
+
+void NodeSelectorTreeViewWidget::setInitialShowLabelText(bool show)
+{
+    if (ui->tMegaFolders->model())
+    {
+        Q_ASSERT_X(false,
+                   "NodeSelectorTreeViewWidget::setInitialShowLabelText",
+                   "Label text visibility must be configured before init().");
+        return;
+    }
+
+    if (mShowLabelText == show)
+    {
+        return;
+    }
+
+    mShowLabelText = show;
+}
+
+bool NodeSelectorTreeViewWidget::showLabelText() const
+{
+    return mShowLabelText;
+}
+
+void NodeSelectorTreeViewWidget::resetAutoColumnWidths()
+{
+    mManuallyResizedColumn = false;
+    mResizeEventsReceived = 0;
+    mResizeEventsTimer.stop();
+    updateColumnsWidth(true);
+}
+
+void NodeSelectorTreeViewWidget::updateColumnResizeModes()
+{
+    if (!ui || !ui->tMegaFolders || !ui->tMegaFolders->header())
+    {
+        return;
+    }
+
+    ui->tMegaFolders->header()->setSectionResizeMode(NodeSelectorModel::Column::LABEL,
+                                                     mShowLabelText ? QHeaderView::Interactive :
+                                                                      QHeaderView::Fixed);
 }
 
 QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelIndex idx) const

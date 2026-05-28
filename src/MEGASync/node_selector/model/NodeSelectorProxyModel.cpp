@@ -183,6 +183,12 @@ bool NodeSelectorProxyModel::lessThan(const QModelIndex& left, const QModelIndex
                 result = left.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt() <
                          right.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
             }
+            else if (left.column() == NodeSelectorModel::Column::LABEL &&
+                     right.column() == NodeSelectorModel::Column::LABEL)
+            {
+                result = left.data(toInt(NodeSelectorModelRoles::LABEL_ORDER_ROLE)).toInt() <
+                         right.data(toInt(NodeSelectorModelRoles::LABEL_ORDER_ROLE)).toInt();
+            }
             else
             {
                 result = mCollator.compare(left.data(Qt::DisplayRole).toString(),

@@ -1349,16 +1349,6 @@ void NodeSelectorHeaderView::paintSection(QPainter* painter,
 
     if (!mNonInteractiveSections.contains(logicalIndex))
     {
-        if (!sectionIsSorted)
-        {
-            QHeaderView::paintSection(painter, rect, logicalIndex);
-            return;
-        }
-
-        // The QSS-driven sort indicator with `subcontrol-position: center left`
-        // does not push the text rect to the right (Qt only reserves space when
-        // the indicator sits on the default right side). Draw the arrow manually
-        // so it stays tokenized and fixed at 16x16, then shift the label rect.
         QStyleOptionHeader opt;
         initStyleOption(&opt);
         opt.rect = rect;
@@ -1384,11 +1374,27 @@ void NodeSelectorHeaderView::paintSection(QPainter* painter,
             opt.textAlignment = defaultAlignment();
         }
 
+        if (!sectionIsSorted)
+        {
+            style()->drawControl(QStyle::CE_HeaderSection, &opt, painter, this);
+
+            QStyleOptionHeader labelOpt(opt);
+            // Margin to align header to delegate label
+            labelOpt.rect.adjust(3, 0, 0, 0);
+
+            style()->drawControl(QStyle::CE_HeaderLabel, &labelOpt, painter, this);
+            return;
+        }
+
+        // The QSS-driven sort indicator with `subcontrol-position: center left`
+        // does not push the text rect to the right (Qt only reserves space when
+        // the indicator sits on the default right side). Draw the arrow manually
+        // so it stays tokenized and fixed at 16x16, then shift the label rect.
         opt.sortIndicator = QStyleOptionHeader::None;
         style()->drawControl(QStyle::CE_HeaderSection, &opt, painter, this);
 
         constexpr int sortArrowSize = 16;
-        constexpr int sortArrowMargin = 8;
+        constexpr int sortArrowMargin = 0;
         constexpr int sortArrowSpacing = 4;
         const bool isRtl = layoutDirection() == Qt::RightToLeft;
 

@@ -136,6 +136,8 @@ public:
 
     void setColumnHidden(int column, bool hidden);
     void setNonInteractiveColumns(const QSet<int>& columns);
+    void setInitialShowLabelText(bool show);
+    void resetAutoColumnWidths();
 
     TabItem getTabType() const
     {
@@ -209,8 +211,10 @@ protected:
     virtual SelectType::EmptyPageInfo getEmptyRootPageInfo();
     void showRootEmptyState();
     void setCurrentPage(ViewType type);
+    bool showLabelText() const;
 
     virtual NodeSelectorDelegate* createItemDelegate(QObject* parent);
+    virtual NodeSelectorDelegate* createLabelDelegate(QObject* parent);
 
     Ui::NodeSelectorTreeViewWidget* ui;
     std::shared_ptr<NodeSelectorProxyModel> mProxyModel;
@@ -242,6 +246,7 @@ private slots:
 
 private:
     bool mManuallyResizedColumn;
+    bool mShowLabelText;
     int mResizeEventsReceived;
     QTimer mResizeEventsTimer;
 
@@ -286,6 +291,7 @@ private:
     // Column width
     QList<int> mVisibleColumns;
     void updateColumnsWidth(bool updateVisibleColumnCounter);
+    void updateColumnResizeModes();
 
     ButtonIconManager mButtonIconManager;
     bool first;

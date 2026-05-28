@@ -22,15 +22,7 @@ protected:
     bool event(QEvent* event) override;
     virtual QColor textColorForIndex(const QModelIndex& index, bool isTakenDown) const;
 
-    /// Width (in px) reserved on the right side of the NODE column for
-    /// the public-link icon + label dot. Returns 0 if neither is present.
-    int rightIndicatorsWidth(const QModelIndex& index) const;
-
-    /// Paints (if applicable) the public-link icon and the label-color dot
-    /// at the right edge of the NODE column.
-    void paintRightIndicators(QPainter* painter,
-                              const QStyleOptionViewItem& option,
-                              const QModelIndex& index) const;
+    virtual void adjustContentRect(QStyleOptionViewItem* option, const QModelIndex& index) const {}
 
 private:
     QModelIndex mLastHoverRow;
@@ -58,6 +50,30 @@ public:
 
 protected:
     void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override;
+};
+
+class NodeLabelDelegate: public NodeSelectorDelegate
+{
+public:
+    explicit NodeLabelDelegate(bool showLabelText, QObject* parent = nullptr);
+
+    void paint(QPainter* painter,
+               const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override;
+
+    bool helpEvent(QHelpEvent* event,
+                   QAbstractItemView* view,
+                   const QStyleOptionViewItem& option,
+                   const QModelIndex& index) override;
+
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+protected:
+    void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override;
+    void adjustContentRect(QStyleOptionViewItem* option, const QModelIndex& index) const override;
+
+private:
+    bool mShowLabelText = true;
 };
 
 class NodeSearchRowDelegate: public NodeRowDelegate

@@ -73,6 +73,7 @@ public:
 
 protected:
     bool event(QEvent* event) override;
+    void changeEvent(QEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void addBackupsView();
     std::shared_ptr<mega::MegaNode> getSelectedNode() const;
@@ -126,13 +127,15 @@ protected:
 
     virtual void specialisedTreeViewWidgetsCreated();
 
-    virtual void configureCloudDriveWidget() {}
+    virtual bool initialShowLabelText() const
+    {
+        return true;
+    }
 
-    virtual void configureIncomingSharesWidget() {}
-
-    virtual void configureBackupsWidget() {}
-
-    virtual void configureRubbishWidget() {}
+    virtual void configureTableColumns(NodeSelectorTreeViewWidget* widget);
+    virtual void configureIncomingSharesTableColumns(NodeSelectorTreeViewWidget* widget);
+    virtual void configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget);
+    void setIncomingShareColumnsVisibility(NodeSelectorTreeViewWidget* widget, bool visible);
 
     virtual void configureSearchWidget(TabType type)
     {
@@ -225,10 +228,14 @@ private slots:
     void onbNewFolderClicked();
 
 private:
+    using ViewConfigurationFunction = void (NodeSelector::*)(NodeSelectorTreeViewWidget*);
+
     NodeSelectorTreeViewWidget* widgetForTab(NodeSelectorTreeViewWidget::TabItem item) const;
     std::optional<NodeSelectorTreeViewWidget::TabItem>
         tabItemForWidget(const NodeSelectorTreeViewWidget* wid) const;
     void showTab(NodeSelectorTreeViewWidget::TabItem item);
+    void connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
+                                  ViewConfigurationFunction configure);
     QString folderNameForWidget(NodeSelectorTreeViewWidget* wid) const;
     void applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid);
     void applyHeaderButtonsState(NodeSelectorTreeViewWidget* wid);

@@ -41,10 +41,12 @@ protected:
         return false;
     }
 
-    void configureCloudDriveWidget() override;
-    void configureIncomingSharesWidget() override;
-    void configureBackupsWidget() override;
-    void configureRubbishWidget() override;
+    bool initialShowLabelText() const override
+    {
+        return false;
+    }
+
+    void configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget) override;
     void configureSearchWidget(TabType type) override;
     void clearSearch() override;
 
@@ -62,8 +64,6 @@ private:
                                           const std::shared_ptr<mega::MegaNode>& node) const;
     std::shared_ptr<mega::MegaNode>
         destinationNodeForBreadcrumb(NodeSelectorTreeViewWidget* wid) const;
-    void hideIncomingShareColumns(NodeSelectorTreeViewWidget* widget);
-    void showIncomingShareColumns(NodeSelectorTreeViewWidget* widget);
 };
 
 #endif // FILEPICKERNODESELECTOR_H
