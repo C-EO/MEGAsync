@@ -23,6 +23,7 @@ Item {
     readonly property int buttonActionSpacing: 0
     readonly property int buttonFocusBorder: 4
     readonly property int timeToResetActionButtonState: 5000
+    readonly property int buttonIconbusyAnimationDurationTime: 1000
 
     // error codes
     readonly property int k_LOCAL_PATH_TEMPORARY_UNAVAILABLE: 6
@@ -51,7 +52,6 @@ Item {
     function resetActionButtonsVisibility() {
         actionRetry.visible = false;
         actionGetMoreStorage.visible = false;
-        actionRemoveSyncedFolder.visible = false;
         actionEnableSync.visible = false;
         actionRestoreSyncedFolder.visible = false;
     }
@@ -65,23 +65,15 @@ Item {
     */
     states: [
         State {
-            when: (errorId == k_LOCAL_PATH_TEMPORARY_UNAVAILABLE || errorId == k_LOCAL_PATH_UNAVAILABLE ||
-                   errorId == k_COULD_NOT_CREATE_IGNORE_FILE || errorId == k_NOTIFICATION_SYSTEM_UNAVAILABLE ||
-                   errorId == k_UNABLE_TO_ADD_WATCH || errorId == k_INSUFFICIENT_DISK_SPACE ||
-                   errorId == k_FAILURE_ACCESSING_PERSISTENT_STORAGE || errorId == k_MISMATCH_OF_ROOT_FSID ||
-                   errorId == k_SYNC_CONFIG_WRITE_FAILURE || errorId == k_SYNC_CONFIG_READ_FAILURE ||
-                   errorId == k_UNABLE_TO_OPEN_DATABASE)
+            when: (errorId == k_LOCAL_PATH_TEMPORARY_UNAVAILABLE || errorId == k_COULD_NOT_CREATE_IGNORE_FILE ||
+                   errorId == k_NOTIFICATION_SYSTEM_UNAVAILABLE || errorId == k_UNABLE_TO_ADD_WATCH ||
+                   errorId == k_INSUFFICIENT_DISK_SPACE || errorId == k_FAILURE_ACCESSING_PERSISTENT_STORAGE ||
+                   errorId == k_MISMATCH_OF_ROOT_FSID || errorId == k_SYNC_CONFIG_WRITE_FAILURE ||
+                   errorId == k_SYNC_CONFIG_READ_FAILURE || errorId == k_UNABLE_TO_OPEN_DATABASE ||
+                   errorId == k_UNKNOWN_DRIVE_PATH || errorId == k_LOCAL_PATH_UNAVAILABLE)
 
             PropertyChanges {
                 target: actionRetry
-                visible: true
-            }
-        },
-        State {
-            when: errorId == k_REMOTE_NODE_NOT_FOUND
-
-            PropertyChanges {
-                target: actionRemoveSyncedFolder
                 visible: true
             }
         },
@@ -114,19 +106,6 @@ Item {
 
             PropertyChanges {
                 target: actionEnableSync
-                visible: true
-            }
-        },
-        State {
-            when: errorId == k_UNKNOWN_DRIVE_PATH
-
-            PropertyChanges {
-                target: actionRetry
-                visible: true
-            }
-
-            PropertyChanges {
-                target: actionRemoveSyncedFolder
                 visible: true
             }
         }
@@ -177,15 +156,25 @@ Item {
                     interval: root.timeToResetActionButtonState
                     repeat: false
 
-                    onTriggered: {
-                        actionRetry.checked = false;
+                    onRunningChanged: {
+                        if (running) {
+                            syncSettings.resumeSync(index);
+
+                            actionRetry.checked = true;
+                            actionRetry.buttonCursorShape = Qt.ArrowCursor
+                            actionRetry.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                            actionRetry.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                            actionRetry.leftIconRotation.start();
+                        }
+                        else {
+                            actionRetry.checked = false;
+                            actionRetry.buttonCursorShape = Qt.PointingHandCursor
+                        }
                     }
                 }
 
                 onClicked: {
                     if (!timerActionRetry.running) {
-                        syncSettings.resumeSync(index);
-                        actionRetry.checked = true;
                         timerActionRetry.start();
                     }
                 }
@@ -205,51 +194,23 @@ Item {
                     interval: root.timeToResetActionButtonState
                     repeat: false
 
-                    onTriggered: {
-                        actionGetMoreStorage.checked = false;
+                    onRunningChanged: {
+                        if (running) {
+                            syncSettings.openOverQuotaDialog();
+
+                            actionGetMoreStorage.checked = true;
+                            actionGetMoreStorage.buttonCursorShape = Qt.ArrowCursor
+                        }
+                        else {
+                            actionGetMoreStorage.checked = false;
+                            actionGetMoreStorage.buttonCursorShape = Qt.PointingHandCursor
+                        }
                     }
                 }
 
                 onClicked: {
                     if (!timerActionGetMoreStorage.running) {
-                        syncSettings.openOverQuotaDialog();
-                        actionGetMoreStorage.checked = true;
                         timerActionGetMoreStorage.start();
-                    }
-                }
-            }
-
-            PrimaryButton {
-                id: actionRemoveSyncedFolder
-
-                visible: false
-                colors.background: ColorTheme.buttonError
-                colors.pressed: ColorTheme.buttonErrorPressed
-                colors.hover: ColorTheme.buttonErrorHover
-                sizes: SmallSizes {}
-                text: SettingsStrings.solveIssueRemoveSyncedFolder
-                colors.text: ColorTheme.textOnColor
-                icons.source: Images.trash_small_thin_outline
-                icons.position: Icon.Position.LEFT
-                icons.colorEnabled: ColorTheme.textOnColor
-                checkable: true
-
-                Timer {
-                    id: timerActionRemoveSyncedFolder
-
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onTriggered: {
-                        actionRemoveSyncedFolder.checked = false;
-                    }
-                }
-
-                onClicked: {
-                    if (!timerActionRemoveSyncedFolder.running) {
-                        syncSettings.remove(index);
-                        actionRemoveSyncedFolder.checked = true;
-                        timerActionRemoveSyncedFolder.start();
                     }
                 }
             }
@@ -270,15 +231,25 @@ Item {
                     interval: root.timeToResetActionButtonState
                     repeat: false
 
-                    onTriggered: {
-                        actionEnableSync.checked = false;
+                    onRunningChanged: {
+                        if (running) {
+                            syncSettings.resumeSync(index);
+
+                            actionEnableSync.checked = true;
+                            actionEnableSync.buttonCursorShape = Qt.ArrowCursor
+                            actionEnableSync.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                            actionEnableSync.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                            actionEnableSync.leftIconRotation.start();
+                        }
+                        else {
+                            actionEnableSync.checked = false;
+                            actionEnableSync.buttonCursorShape = Qt.PointingHandCursor
+                        }
                     }
                 }
 
                 onClicked: {
                     if (!timerActionEnableSync.running) {
-                        syncSettings.resumeSync(index);
-                        actionEnableSync.checked = true;
                         timerActionEnableSync.start();
                     }
                 }
@@ -300,15 +271,22 @@ Item {
                     interval: root.timeToResetActionButtonState
                     repeat: false
 
-                    onTriggered: {
-                        actionRestoreSyncedFolder.checked = false;
+                    onRunningChanged: {
+                        if (running) {
+                            syncSettings.restoreSyncedFolder(index);
+
+                            actionRestoreSyncedFolder.checked = true;
+                            actionRestoreSyncedFolder.buttonCursorShape = Qt.ArrowCursor
+                        }
+                        else {
+                            actionRestoreSyncedFolder.checked = false;
+                            actionRestoreSyncedFolder.buttonCursorShape = Qt.PointingHandCursor
+                        }
                     }
                 }
 
                 onClicked: {
                     if (!timerActionRestoreSyncedFolder.running) {
-                        syncSettings.restoreSyncedFolder(index);
-                        actionRestoreSyncedFolder.checked = true;
                         timerActionRestoreSyncedFolder.start();
                     }
                 }
@@ -330,19 +308,70 @@ Item {
                     interval: root.timeToResetActionButtonState
                     repeat: false
 
-                    onTriggered: {
-                        actionStartNewSync.checked = false;
+                    onRunningChanged: {
+                        if (running) {
+                            syncSettings.addSync();
+
+                            actionStartNewSync.checked = true;
+                            actionStartNewSync.buttonCursorShape = Qt.ArrowCursor
+                            actionStartNewSync.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                            actionStartNewSync.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                            actionStartNewSync.leftIconRotation.start();
+                        }
+                        else {
+                            actionStartNewSync.checked = false;
+                            actionStartNewSync.buttonCursorShape = Qt.PointingHandCursor
+                        }
                     }
                 }
 
                 onClicked: {
                     if (!timerActionStartNewSync.running) {
-                        syncSettings.addSync();
-                        actionStartNewSync.checked = true;
                         timerActionStartNewSync.start();
                     }
                 }
+            }
 
+            PrimaryButton {
+                id: actionRemoveSyncedFolder
+
+                visible: true
+                colors.background: ColorTheme.buttonError
+                colors.pressed: ColorTheme.buttonErrorPressed
+                colors.hover: ColorTheme.buttonErrorHover
+                sizes: SmallSizes {}
+                text: SettingsStrings.solveIssueRemoveSyncedFolder
+                colors.text: ColorTheme.textOnColor
+                icons.source: Images.trash_small_thin_outline
+                icons.position: Icon.Position.LEFT
+                icons.colorEnabled: ColorTheme.textOnColor
+                checkable: true
+
+                Timer {
+                    id: timerActionRemoveSyncedFolder
+
+                    interval: root.timeToResetActionButtonState
+                    repeat: false
+
+                    onRunningChanged: {
+                        if (running) {
+                            syncSettings.removeNonConfirmation(index);
+
+                            actionRemoveSyncedFolder.checked = true;
+                            actionRemoveSyncedFolder.buttonCursorShape = Qt.ArrowCursor
+                        }
+                        else {
+                            actionRemoveSyncedFolder.checked = false;
+                            actionRemoveSyncedFolder.buttonCursorShape = Qt.PointingHandCursor
+                        }
+                    }
+                }
+
+                onClicked: {
+                    if (!timerActionRemoveSyncedFolder.running) {
+                        timerActionRemoveSyncedFolder.start();
+                    }
+                }
             }
         }
     }

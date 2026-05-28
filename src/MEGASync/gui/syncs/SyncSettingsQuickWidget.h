@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE void rescan(int index) const;
     Q_INVOKABLE void reboot(int index) const;
     Q_INVOKABLE void remove(int index) const;
+    Q_INVOKABLE void removeNonConfirmation(int index) const;
     Q_INVOKABLE void openOverQuotaDialog() const;
     Q_INVOKABLE void restoreSyncedFolder(int index);
 

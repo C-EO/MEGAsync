@@ -14,6 +14,7 @@ Qml.RoundButton {
 
     property alias progressValue: backgroundProgress.value
     property alias underlineText: buttonText.font.underline
+    property alias leftIconRotation: leftIconRotationItem
 
     property Colors colors: Colors {}
     property Icon icons: Icon {}
@@ -97,6 +98,16 @@ Qml.RoundButton {
             visible: root.icons.source !== "" && !root.icons.busyIndicatorVisible
                         && (root.icons.position === Icon.Position.LEFT
                             || root.icons.position === Icon.Position.BOTH)
+
+            RotationAnimation on rotation {
+                id: leftIconRotationItem
+
+                from: 0
+                to: 360
+                duration: 1000
+                running: false
+                loops: 5
+            }
         }
 
         BusyIndicator {

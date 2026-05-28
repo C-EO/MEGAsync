@@ -159,6 +159,12 @@ void SyncSettingsQuickWidget::remove(int index) const
     CreateRemoveSyncsManager::removeSync(sync, this->parentWidget());
 }
 
+void SyncSettingsQuickWidget::removeNonConfirmation(int index) const
+{
+    const auto& sync = mSyncModel->getSync(index);
+    SyncController::instance().removeSync(sync);
+}
+
 void SyncSettingsQuickWidget::rescan(int index) const
 {
     const auto& sync = mSyncModel->getSync(index);
