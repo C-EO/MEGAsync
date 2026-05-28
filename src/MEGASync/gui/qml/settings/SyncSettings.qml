@@ -341,7 +341,6 @@ Item {
                 }
             }
 
-
             ColumnLayout {
                 id: content
 
@@ -387,6 +386,13 @@ Item {
                         anchors.fill: parent
                         hoverEnabled: true
                         propagateComposedEvents: true
+                        acceptedButtons: Qt.RightButton
+
+                        onClicked: function(mouse) {
+                            if (mouse.button === Qt.RightButton) {
+                                menu.popup(mouse.x, mouse.y)
+                            }
+                        }
                     }
 
                     RowLayout {
@@ -655,7 +661,6 @@ Item {
                     Layout.preferredHeight: syncError.implicitHeight
                     color: ColorTheme.notificationError
                     radius: syncItemBackgroundRadius
-
 
                     SyncError {
                         id: syncError
