@@ -343,6 +343,9 @@ std::unique_ptr<ConflictTypes>
     auto counter(0);
     EventUpdater checkUpdater(nodePaths.size());
 
+    auto& reservedNamesForTarget =
+        conflicts->mReservedNodeNamesByTargetParent[targetNode->getHandle()];
+
     while (!nodePaths.isEmpty())
     {
         const auto item = nodePaths.dequeue();
@@ -356,6 +359,8 @@ std::unique_ptr<ConflictTypes>
         info->setParentNode(targetNode);
 
         const auto nodeToUploadName(localPathInfo.fileName());
+        reservedNamesForTarget.append(nodeToUploadName);
+
         auto node(nodesOnCloudDrive.value(nodeToUploadName.toLower()));
         if (node)
         {
