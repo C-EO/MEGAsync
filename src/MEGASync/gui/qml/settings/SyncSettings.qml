@@ -356,7 +356,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
                     Layout.preferredHeight: syncItemBackgroundHeight
-                    color: syncItem.syncItemContainsMouse ? ColorTheme.surface1 : ColorTheme.pageBackground
+                    color: syncItem.syncItemContainsMouse || menu.opened ? ColorTheme.surface1 : ColorTheme.pageBackground
                     radius: syncItemBackgroundRadius
                     property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || nameAndFolderSearchMouseArea.containsMouse ||
                                                           menuIconMouseArea.containsMouse || statusSyncMouseArea.containsMouse
