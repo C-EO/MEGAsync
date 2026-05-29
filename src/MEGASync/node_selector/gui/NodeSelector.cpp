@@ -312,6 +312,29 @@ void NodeSelector::applySearchToolVisibilityState(NodeSelectorTreeViewWidget* wi
     ui->leSearchTool->setVisible(shouldShowSearchTool);
 }
 
+void NodeSelector::updateHeaderTopRowVisibility()
+{
+    // isVisibleTo ignores the container's own state, so this still works when it was
+    // previously hidden.
+    const auto hasVisibleChild = [](QWidget* container)
+    {
+        auto* layout = container ? container->layout() : nullptr;
+        for (int i = 0; layout && i < layout->count(); ++i)
+        {
+            auto* child = layout->itemAt(i)->widget();
+            if (child && child->isVisibleTo(container))
+            {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Collapse the empty action buttons container so the row can hide when nothing is left.
+    ui->actionButtonsContainer->setVisible(hasVisibleChild(ui->actionButtonsContainer));
+    ui->headerTopRow->setVisible(hasVisibleChild(ui->headerTopRow));
+}
+
 void NodeSelector::refreshHeaderButtons(NodeSelectorTreeViewWidget* wid)
 {
     if (!wid || wid != getCurrentTreeViewWidget())
@@ -331,7 +354,9 @@ void NodeSelector::refreshHeader(NodeSelectorTreeViewWidget* wid)
 
     applyHeaderButtonsState(wid);
     applyHeaderFolderInfoState(wid);
+    applySearchToolVisibilityState(wid, wid->currentViewPage());
     refreshBreadcrumbs();
+    updateHeaderTopRowVisibility();
 }
 
 void NodeSelector::refreshBreadcrumbs()
@@ -1121,6 +1146,7 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
                                                  if (wid == getCurrentTreeViewWidget())
                                                  {
                                                      applySearchToolVisibilityState(wid, type);
+                                                     updateHeaderTopRowVisibility();
                                                  }
                                              });
         mViewButtonsStateConnection = connect(wid,

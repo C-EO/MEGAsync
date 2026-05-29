@@ -238,6 +238,7 @@ private:
     void applyHeaderButtonsState(NodeSelectorTreeViewWidget* wid);
     void applySearchToolVisibilityState(NodeSelectorTreeViewWidget* wid,
                                         NodeSelectorTreeViewWidget::ViewType type);
+    void updateHeaderTopRowVisibility();
     void refreshHeader(NodeSelectorTreeViewWidget* wid);
     void refreshHeaderButtons(NodeSelectorTreeViewWidget* wid);
     void updateOkButtonState(NodeSelectorTreeViewWidget* wid);
