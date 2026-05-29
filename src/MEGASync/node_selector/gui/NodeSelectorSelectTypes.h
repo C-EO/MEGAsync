@@ -204,7 +204,6 @@ class SyncType: public FilePickerType
 {
 public:
     explicit SyncType() = default;
-    bool isAllowedToNavigateInside(const QModelIndex& index) override;
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;

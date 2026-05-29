@@ -870,7 +870,12 @@ void NodeSelectorTreeViewWidget::onItemDoubleClick(const QModelIndex& index)
         }
     }
 
-    if (isAllowedToEnterInIndex(index))
+    if (mSelectType->isFilePicker())
+    {
+        // File pickers don't navigate into folders: double-click only toggles the tree branch.
+        ui->tMegaFolders->setExpanded(index, !ui->tMegaFolders->isExpanded(index));
+    }
+    else if (isAllowedToEnterInIndex(index))
     {
         setRootIndex(index);
     }

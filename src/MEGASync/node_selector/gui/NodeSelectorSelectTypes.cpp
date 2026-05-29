@@ -321,17 +321,6 @@ std::shared_ptr<NodeSelectorProxyModel> SyncType::createProxyModel()
     return std::make_shared<NodeSelectorProxyModelSync>();
 }
 
-bool SyncType::isAllowedToNavigateInside(const QModelIndex& index)
-{
-    if (!SelectType::isAllowedToNavigateInside(index))
-    {
-        return false;
-    }
-    auto item = NodeSelectorModel::getItemByIndex(index);
-    return !(item->getStatus() == NodeSelectorModelItem::Status::SYNC ||
-             item->getStatus() == NodeSelectorModelItem::Status::SYNC_CHILD);
-}
-
 ///////////////////////SYNC TYPE//////////////////////////////
 
 ///////////////////////STREAM TYPE//////////////////////////////
