@@ -20,7 +20,7 @@ QmlDialog {
 
     property MessageDialogMediumSizes sizes: MessageDialogMediumSizes {}
 
-    property real totalWidth: Math.max(sizes.defaultMinimumWidth, contentColum.implicitWidth + sizes.leftContentMargin + sizes.rightContentMargin)
+    property real totalWidth: Math.min(sizes.defaultMaximumWidth, Math.max(sizes.defaultMinimumWidth, contentColum.implicitWidth + sizes.leftContentMargin + sizes.rightContentMargin))
     property real totalHeight: Math.max(sizes.defaultMinimumHeight, contentColum.implicitHeight + sizes.topContentMargin + sizes.bottomContentMargin)
 
     width: window.totalWidth
