@@ -34,6 +34,7 @@ public:
     static const int MARGIN;
     static const int ICON_MARGIN;
     static const int DIFF_WITH_STD_ICON;
+    static const int ROW_HEIGHT;
 
     explicit NodeRowDelegate(QObject* parent = nullptr);
     void paint(QPainter* painter,

@@ -123,6 +123,16 @@ void NodeSelectorProxyModel::deleteNode(const QModelIndex& item)
 
 bool NodeSelectorProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
+    // Solo ordenar las filas que son hijas directas del root index actual.
+    // Los niveles más anidados conservan su orden original.
+    if (auto model = getMegaModel())
+    {
+        if (left.parent() != model->getCurrentRootIndex())
+        {
+            return false;
+        }
+    }
+
     auto lIsFileVar(left.data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)));
     auto rIsFileVar(right.data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)));
 

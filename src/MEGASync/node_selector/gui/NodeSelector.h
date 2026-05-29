@@ -137,10 +137,7 @@ protected:
     virtual void configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget);
     void setIncomingShareColumnsVisibility(NodeSelectorTreeViewWidget* widget, bool visible);
 
-    virtual void configureSearchWidget(TabType type)
-    {
-        Q_UNUSED(type);
-    }
+    virtual void configureSearchWidget(TabType type);
 
     virtual void clearSearch() {}
 
@@ -243,6 +240,7 @@ private:
                                         NodeSelectorTreeViewWidget::ViewType type);
     void refreshHeader(NodeSelectorTreeViewWidget* wid);
     void refreshHeaderButtons(NodeSelectorTreeViewWidget* wid);
+    void updateOkButtonState(NodeSelectorTreeViewWidget* wid);
     void refreshBreadcrumbs();
     void refreshNavigationBreadcrumb();
     void onNavigationBreadcrumbSegmentActivated(int segmentIndex);

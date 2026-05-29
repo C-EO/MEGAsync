@@ -3,6 +3,7 @@
 
 #include "BannerWidget.h"
 #include "NodeSelector.h"
+#include "NodeSelectorBreadcrumbSegment.h"
 
 class FilePickerNodeSelector: public NodeSelector
 {
@@ -47,7 +48,6 @@ protected:
     }
 
     void configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget) override;
-    void configureSearchWidget(TabType type) override;
     void clearSearch() override;
 
     void configureSidebar() override;
@@ -59,9 +59,10 @@ protected slots:
     void onBreadcrumbClearRequested();
 
 private:
-    QStringList destinationBreadcrumbSegments() const;
-    QStringList breadcrumbSegmentsForNode(NodeSelectorTreeViewWidget* wid,
-                                          const std::shared_ptr<mega::MegaNode>& node) const;
+    QList<NodeSelectorBreadcrumbSegment> destinationBreadcrumbSegments() const;
+    QList<NodeSelectorBreadcrumbSegment>
+        breadcrumbSegmentsForNode(NodeSelectorTreeViewWidget* wid,
+                                  const std::shared_ptr<mega::MegaNode>& node) const;
     std::shared_ptr<mega::MegaNode>
         destinationNodeForBreadcrumb(NodeSelectorTreeViewWidget* wid) const;
 };

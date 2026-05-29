@@ -4,6 +4,7 @@
 #include "ButtonIconManager.h"
 #include "IncomingShareHeaderWidget.h"
 #include "megaapi.h"
+#include "NodeSelectorBreadcrumbSegment.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorModelUpdateCoordinator.h"
 #include "NodeSelectorNodeActions.h"
@@ -94,7 +95,7 @@ public:
     NodeSelectorModelItem* rootItem();
     QModelIndex getCurrentRootIndex() const;
     NodeSelectorProxyModel* getProxyModel();
-    QStringList navigationBreadcrumbSegments() const;
+    QList<NodeSelectorBreadcrumbSegment> navigationBreadcrumbSegments() const;
     bool navigateToBreadcrumbSegment(int segmentIndex);
     bool isShowingEmptyPage() const;
     ViewType currentViewPage() const;

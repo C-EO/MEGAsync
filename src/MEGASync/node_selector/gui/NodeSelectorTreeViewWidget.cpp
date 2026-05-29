@@ -508,7 +508,8 @@ NodeSelectorProxyModel* NodeSelectorTreeViewWidget::getProxyModel()
     return mProxyModel.get();
 }
 
-QStringList NodeSelectorTreeViewWidget::navigationBreadcrumbSegments() const
+QList<NodeSelectorBreadcrumbSegment>
+    NodeSelectorTreeViewWidget::navigationBreadcrumbSegments() const
 {
     if (!mProxyModel)
     {
@@ -518,18 +519,21 @@ QStringList NodeSelectorTreeViewWidget::navigationBreadcrumbSegments() const
     const auto currentRoot = getCurrentRootIndex();
     if (!currentRoot.isValid())
     {
-        return QStringList() << getRootText();
+        return {{mega::INVALID_HANDLE, getRootText()}};
     }
 
-    QStringList segments;
+    QList<NodeSelectorBreadcrumbSegment> segments;
     for (QModelIndex index = currentRoot; index.isValid(); index = index.parent())
     {
-        segments.prepend(index.data(Qt::DisplayRole).toString());
+        auto node = mProxyModel->getNode(index);
+        const auto handle = node ? node->getHandle() : mega::INVALID_HANDLE;
+        segments.prepend({handle, index.data(Qt::DisplayRole).toString()});
     }
 
     if (!mProxyModel->getTopRootIndex().isValid())
     {
-        segments.prepend(getRootText());
+        // Synthetic tab root label, not a node.
+        segments.prepend({mega::INVALID_HANDLE, getRootText()});
     }
 
     return segments;

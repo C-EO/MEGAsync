@@ -139,7 +139,7 @@ void SyncNodeSelector::refreshDestinationBreadcrumb()
     {
         ui->destinationBanner->setVisible(false);
         ui->destinationBreadcrumb->setVisible(false);
-        ui->destinationBreadcrumb->setPathSegments({});
+        ui->destinationBreadcrumb->setSegments({});
         return;
     }
 

@@ -135,6 +135,10 @@ private slots:
 private:
     friend class NodeSelectorDelegate;
 
+    static const int ROW_SIDE_MARGIN;
+    static const int ROW_VERTICAL_MARGIN;
+    static const qreal ROW_RADIUS;
+
     void selectFromMouseEvent(const QModelIndex& index, Qt::KeyboardModifiers modifiers);
 
     QModelIndex getIndexFromSourceModel(const QModelIndex& index) const;

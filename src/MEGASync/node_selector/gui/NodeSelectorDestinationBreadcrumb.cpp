@@ -1,19 +1,22 @@
 #include "NodeSelectorDestinationBreadcrumb.h"
 
+#include "MegaApplication.h"
 #include "NodeSelectorDestinationOverflowPopup.h"
 #include "ui_NodeSelectorDestinationBreadcrumb.h"
+#include "Utilities.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLayoutItem>
-#include <QMouseEvent>
+#include <QResizeEvent>
 #include <QStyle>
 
 namespace
 {
 constexpr int MAX_VISIBLE_DESTINATION_LEVELS = 4;
 constexpr auto SEPARATOR_TEXT = ">";
-constexpr auto SEGMENT_INDEX_PROPERTY = "segmentIndex";
+constexpr int POPUP_HORIZONTAL_OFFSET = -20;
+constexpr int POPUP_VERTICAL_GAP = 4;
 }
 
 NodeSelectorDestinationBreadcrumb::NodeSelectorDestinationBreadcrumb(QWidget* parent):
@@ -28,10 +31,13 @@ NodeSelectorDestinationBreadcrumb::NodeSelectorDestinationBreadcrumb(QWidget* pa
     setAttribute(Qt::WA_StyledBackground, true);
     ui->bDestinationOverflow->setAttribute(Qt::WA_StyledBackground, true);
     ui->bDestinationOverflow->setAlignment(Qt::AlignCenter);
-    ui->bDestinationOverflow->installEventFilter(this);
     setProperty("displayMode", QLatin1String("destination"));
-    ui->bDestinationClear->setVisible(false);
     updateContentVisibility();
+
+    connect(ui->bDestinationOverflow,
+            &ClickableLabel::clicked,
+            this,
+            &NodeSelectorDestinationBreadcrumb::showOverflowPopup);
 
     connect(ui->bDestinationClear,
             &QToolButton::clicked,
@@ -44,23 +50,51 @@ NodeSelectorDestinationBreadcrumb::~NodeSelectorDestinationBreadcrumb()
     delete ui;
 }
 
-void NodeSelectorDestinationBreadcrumb::setPathSegments(const QStringList& segments)
+void NodeSelectorDestinationBreadcrumb::setSegments(
+    const QList<NodeSelectorBreadcrumbSegment>& segments,
+    bool clickable)
 {
-    closeOverflowPopup();
-    mSegmentsClickable = false;
-    mPathSegments = segments;
+    if (segments == mSegments && clickable == mSegmentsClickable)
+    {
+        return;
+    }
+
+    mSegmentsClickable = clickable;
+    mSegments = segments;
+    resolveSegmentNames();
+    recalculateSegmentMetrics();
     rebuildSegments();
     updateContentVisibility();
 }
 
-void NodeSelectorDestinationBreadcrumb::setNavigationSegments(const QStringList& segments,
-                                                              bool clickable)
+QString NodeSelectorDestinationBreadcrumb::resolveSegmentText(
+    const NodeSelectorBreadcrumbSegment& segment) const
 {
-    closeOverflowPopup();
-    mSegmentsClickable = clickable;
-    mPathSegments = segments;
-    rebuildSegments();
-    updateContentVisibility();
+    if (segment.handle != mega::INVALID_HANDLE)
+    {
+        if (auto* megaApi = MegaSyncApp->getMegaApi())
+        {
+            std::unique_ptr<mega::MegaNode> node(megaApi->getNodeByHandle(segment.handle));
+            if (node)
+            {
+                return QString::fromUtf8(node->getName());
+            }
+        }
+    }
+
+    // Fallback: synthetic segments (root labels, empty-state text) or a deleted node.
+    return segment.text;
+}
+
+void NodeSelectorDestinationBreadcrumb::resolveSegmentNames()
+{
+    mPathSegments.clear();
+    mPathSegments.reserve(mSegments.size());
+
+    for (const auto& segment: mSegments)
+    {
+        mPathSegments.push_back(resolveSegmentText(segment));
+    }
 }
 
 void NodeSelectorDestinationBreadcrumb::setDisplayMode(DisplayMode mode)
@@ -78,6 +112,12 @@ void NodeSelectorDestinationBreadcrumb::setDisplayMode(DisplayMode mode)
 
     style()->unpolish(this);
     style()->polish(this);
+
+    if (!mPathSegments.isEmpty())
+    {
+        recalculateSegmentMetrics();
+        rebuildSegments();
+    }
 }
 
 void NodeSelectorDestinationBreadcrumb::setTitleText(const QString& text)
@@ -99,35 +139,6 @@ void NodeSelectorDestinationBreadcrumb::setDefaultUploadOption(bool value)
 bool NodeSelectorDestinationBreadcrumb::getDefaultUploadOption() const
 {
     return ui->cbAlwaysUploadToLocation->isChecked();
-}
-
-bool NodeSelectorDestinationBreadcrumb::eventFilter(QObject* watched, QEvent* event)
-{
-    if (event->type() == QEvent::MouseButtonRelease)
-    {
-        if (watched == ui->bDestinationOverflow)
-        {
-            auto* mouseEvent = static_cast<QMouseEvent*>(event);
-            if (mouseEvent->button() == Qt::LeftButton)
-            {
-                showOverflowPopup();
-                return true;
-            }
-        }
-
-        auto segmentIndex = watched->property(SEGMENT_INDEX_PROPERTY);
-        if (segmentIndex.isValid())
-        {
-            auto* mouseEvent = static_cast<QMouseEvent*>(event);
-            if (mouseEvent->button() == Qt::LeftButton)
-            {
-                emit segmentActivated(segmentIndex.toInt());
-                return true;
-            }
-        }
-    }
-
-    return QFrame::eventFilter(watched, event);
 }
 
 void NodeSelectorDestinationBreadcrumb::clearSegmentWidgets()
@@ -165,7 +176,8 @@ void NodeSelectorDestinationBreadcrumb::clearSegmentWidgets()
 QWidget* NodeSelectorDestinationBreadcrumb::makeSegmentWidget(const QString& text,
                                                               const bool isFirst,
                                                               const bool isLast,
-                                                              const int segmentIndex)
+                                                              const int segmentIndex,
+                                                              const bool applyInteractivity)
 {
     bool highlightCurrentSegment{false};
     if (mDisplayMode == DisplayMode::DESTINATION)
@@ -177,7 +189,27 @@ QWidget* NodeSelectorDestinationBreadcrumb::makeSegmentWidget(const QString& tex
         highlightCurrentSegment = isLast;
     }
 
-    auto* label = new QLabel(ui->wDestinationSegments);
+    const bool interactive = mSegmentsClickable && applyInteractivity;
+
+    QLabel* label = nullptr;
+    if (interactive)
+    {
+        auto* clickableLabel = new ClickableLabel(ui->wDestinationSegments);
+        clickableLabel->setCursor(Qt::PointingHandCursor);
+        connect(clickableLabel,
+                &ClickableLabel::clicked,
+                this,
+                [this, segmentIndex]()
+                {
+                    emit segmentActivated(segmentIndex);
+                });
+        label = clickableLabel;
+    }
+    else
+    {
+        label = new QLabel(ui->wDestinationSegments);
+    }
+
     label->setText(text);
     label->setProperty("font-size", QLatin1String("body-2"));
     label->setProperty(highlightCurrentSegment ? "bold" : "regular", true);
@@ -191,13 +223,6 @@ QWidget* NodeSelectorDestinationBreadcrumb::makeSegmentWidget(const QString& tex
     auto font = label->font();
     font.setBold(highlightCurrentSegment);
     label->setFont(font);
-
-    if (mSegmentsClickable)
-    {
-        label->setCursor(Qt::PointingHandCursor);
-        label->setProperty(SEGMENT_INDEX_PROPERTY, segmentIndex);
-        label->installEventFilter(this);
-    }
 
     return label;
 }
@@ -238,8 +263,24 @@ void NodeSelectorDestinationBreadcrumb::updateContentVisibility()
     }
 }
 
-void NodeSelectorDestinationBreadcrumb::rebuildSegments()
+void NodeSelectorDestinationBreadcrumb::resizeEvent(QResizeEvent* event)
 {
+    QFrame::resizeEvent(event);
+
+    if (!mPathSegments.isEmpty() && event->size().width() != event->oldSize().width())
+    {
+        rebuildSegments(false);
+    }
+}
+
+void NodeSelectorDestinationBreadcrumb::rebuildSegments(bool force)
+{
+    const int newStartIndex = calculateVisibleStartIndex();
+    if (!force && newStartIndex == mRenderedStartIndex)
+    {
+        return;
+    }
+
     clearSegmentWidgets();
 
     auto* layout = qobject_cast<QHBoxLayout*>(ui->wDestinationSegments->layout());
@@ -248,11 +289,11 @@ void NodeSelectorDestinationBreadcrumb::rebuildSegments()
         return;
     }
 
-    const bool hasOverflow = mPathSegments.size() > MAX_VISIBLE_DESTINATION_LEVELS;
-    const auto visibleSegments =
-        hasOverflow ? mPathSegments.mid(mPathSegments.size() - MAX_VISIBLE_DESTINATION_LEVELS) :
-                      mPathSegments;
-    const int visibleStartIndex = mPathSegments.size() - visibleSegments.size();
+    mVisibleStartIndex = newStartIndex;
+    mRenderedStartIndex = newStartIndex;
+    const bool hasOverflow = mVisibleStartIndex > 0;
+    const auto visibleSegments = mPathSegments.mid(mVisibleStartIndex);
+    const int visibleStartIndex = mVisibleStartIndex;
 
     // Insert segments before the trailing spacer (the last item in the layout).
     int insertIndex = layout->count() - 1;
@@ -266,13 +307,13 @@ void NodeSelectorDestinationBreadcrumb::rebuildSegments()
         layout->insertWidget(insertIndex++, separator);
     }
 
-    const bool isFirst{visibleSegments.size() == 1};
-
     for (int i = 0; i < visibleSegments.size(); ++i)
     {
-        const bool isLast = (i == visibleSegments.size() - 1);
+        const int segmentIndex = visibleStartIndex + i;
+        const bool isFirst = segmentIndex == 0;
+        const bool isLast = segmentIndex == mPathSegments.size() - 1;
         auto* segmentLabel =
-            makeSegmentWidget(visibleSegments.at(i), isFirst, isLast, visibleStartIndex + i);
+            makeSegmentWidget(visibleSegments.at(i), isFirst, isLast, segmentIndex);
         layout->insertWidget(insertIndex++, segmentLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
 
         if (!isLast)
@@ -281,6 +322,8 @@ void NodeSelectorDestinationBreadcrumb::rebuildSegments()
             layout->insertWidget(insertIndex++, separator);
         }
     }
+
+    refreshOverflowPopup();
 }
 
 void NodeSelectorDestinationBreadcrumb::closeOverflowPopup()
@@ -301,9 +344,141 @@ void NodeSelectorDestinationBreadcrumb::updateOverflowButtonStyle(bool popupVisi
     ui->bDestinationOverflow->update();
 }
 
+void NodeSelectorDestinationBreadcrumb::refreshOverflowPopup()
+{
+    if (!mOverflowPopup)
+    {
+        return;
+    }
+
+    if (mVisibleStartIndex <= 0)
+    {
+        closeOverflowPopup();
+        return;
+    }
+
+    updateOverflowPopupContent();
+}
+
+void NodeSelectorDestinationBreadcrumb::updateOverflowPopupContent()
+{
+    if (!mOverflowPopup)
+    {
+        return;
+    }
+
+    // Resolve the hidden segments' names fresh from their handles at this moment, so the
+    // popup reflects renames done while the dialog is open (no node-update listener needed).
+    QStringList hiddenSegments;
+    hiddenSegments.reserve(mVisibleStartIndex);
+    for (int i = 0; i < mVisibleStartIndex && i < mSegments.size(); ++i)
+    {
+        hiddenSegments.push_back(resolveSegmentText(mSegments.at(i)));
+    }
+
+    mOverflowPopup->setSegments(hiddenSegments, mSegmentsClickable ? 0 : -1);
+
+    // Horizontal: anchored to the overflow button (shifted left). Vertical: anchored to the
+    // bottom of the path row, not the small 16px button, so the popup clears the whole row.
+    const int globalX =
+        ui->bDestinationOverflow->mapToGlobal(QPoint(POPUP_HORIZONTAL_OFFSET, 0)).x();
+    const int globalY =
+        ui->wDestinationPath->mapToGlobal(QPoint(0, ui->wDestinationPath->height())).y() +
+        POPUP_VERTICAL_GAP;
+    mOverflowPopup->move(globalX, globalY);
+}
+
+int NodeSelectorDestinationBreadcrumb::calculateVisibleStartIndex()
+{
+    const int totalSegments = mPathSegments.size();
+    if (totalSegments <= 1)
+    {
+        return 0;
+    }
+
+    const int minimumVisibleStartIndex = qMax(0, totalSegments - MAX_VISIBLE_DESTINATION_LEVELS);
+    const int availableWidth = ui->wDestinationSegments->contentsRect().width();
+
+    if (availableWidth <= 0)
+    {
+        return minimumVisibleStartIndex;
+    }
+
+    int visibleStartIndex = minimumVisibleStartIndex;
+    while (visibleStartIndex < totalSegments - 1 &&
+           calculateRequiredWidthForVisibleStartIndex(visibleStartIndex) > availableWidth)
+    {
+        ++visibleStartIndex;
+    }
+
+    return visibleStartIndex;
+}
+
+int NodeSelectorDestinationBreadcrumb::calculateRequiredWidthForVisibleStartIndex(
+    int visibleStartIndex)
+{
+    auto* layout = qobject_cast<QHBoxLayout*>(ui->wDestinationSegments->layout());
+    if (!layout)
+    {
+        return 0;
+    }
+
+    int requiredWidth = 0;
+    int itemCount = 0;
+
+    if (visibleStartIndex > 0)
+    {
+        requiredWidth += mOverflowWidth;
+        requiredWidth += mSeparatorWidth;
+        itemCount += 2;
+    }
+
+    for (int segmentIndex = visibleStartIndex; segmentIndex < mPathSegments.size(); ++segmentIndex)
+    {
+        requiredWidth += mSegmentWidths.value(segmentIndex);
+        ++itemCount;
+
+        if (segmentIndex != mPathSegments.size() - 1)
+        {
+            requiredWidth += mSeparatorWidth;
+            ++itemCount;
+        }
+    }
+
+    if (itemCount > 1)
+    {
+        requiredWidth += (itemCount - 1) * layout->spacing();
+    }
+
+    return requiredWidth;
+}
+
+void NodeSelectorDestinationBreadcrumb::recalculateSegmentMetrics()
+{
+    mSegmentWidths.clear();
+    mSegmentWidths.reserve(mPathSegments.size());
+
+    for (int i = 0; i < mPathSegments.size(); ++i)
+    {
+        auto* segmentWidget =
+            makeSegmentWidget(mPathSegments.at(i), i == 0, i == mPathSegments.size() - 1, i, false);
+        segmentWidget->ensurePolished();
+        mSegmentWidths.push_back(segmentWidget->sizeHint().width());
+        delete segmentWidget;
+    }
+
+    auto* separator = makeSeparatorLabel();
+    separator->ensurePolished();
+    mSeparatorWidth = separator->sizeHint().width();
+    delete separator;
+
+    ui->bDestinationOverflow->ensurePolished();
+    mOverflowWidth = ui->bDestinationOverflow->sizeHint().width();
+}
+
 void NodeSelectorDestinationBreadcrumb::showOverflowPopup()
 {
-    if (mPathSegments.size() <= MAX_VISIBLE_DESTINATION_LEVELS)
+    if (mVisibleStartIndex <= 0)
     {
         return;
     }
@@ -314,12 +489,7 @@ void NodeSelectorDestinationBreadcrumb::showOverflowPopup()
         return;
     }
 
-    // Show only the segments that are NOT already visible in the breadcrumb row.
-    const auto hiddenSegments =
-        mPathSegments.mid(0, mPathSegments.size() - MAX_VISIBLE_DESTINATION_LEVELS);
-
-    auto* popup = new NodeSelectorDestinationOverflowPopup(ui->wDestinationPath);
-    popup->setSegments(hiddenSegments, mSegmentsClickable ? 0 : -1);
+    auto* popup = new NodeSelectorDestinationOverflowPopup(this);
 
     connect(popup,
             &QObject::destroyed,
@@ -341,6 +511,8 @@ void NodeSelectorDestinationBreadcrumb::showOverflowPopup()
 
     mOverflowPopup = popup;
     updateOverflowButtonStyle(true);
-    popup->move(ui->wDestinationPath->mapToGlobal(QPoint(0, ui->wDestinationPath->height() + 4)));
+    // Show first, then size + position: a top-level Qt::Popup may ignore a move() issued
+    // before it is shown (notably on macOS), which would leave it mispositioned.
     popup->show();
+    updateOverflowPopupContent();
 }

@@ -17,18 +17,17 @@ background-color: transparent;
 border: none;
 }
 
-#NodeSelectorDestinationOverflowPopup QLabel,
-#NodeSelectorDestinationOverflowPopup QToolButton
+#NodeSelectorDestinationOverflowPopup QLabel
 {
-color: #303233; /*colorToken.text-primary*/
+text-align: left;
+background: transparent;
+border-radius: 8px;
+padding: 4px 8px 4px 8px; 
 }
 
-#NodeSelectorDestinationOverflowPopup QToolButton
+#NodeSelectorDestinationOverflowPopup ClickableLabel:hover
 {
-border: none;
-background: transparent;
-padding: 0px;
-text-align: left;
+background-color: #2A2B2C; /*Background---color-surface-2*/
 }
 
 #scrollArea
@@ -90,7 +89,7 @@ border: none;
         <x>0</x>
         <y>0</y>
         <width>198</width>
-        <height>132</height>
+        <height>130</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="overflowContent">

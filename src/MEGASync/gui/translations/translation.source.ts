@@ -678,6 +678,14 @@
         <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
         <translation>Empty Rubbish bin?</translation>
     </message>
+    <message numerus="yes">
+        <source>%n result</source>
+        <translatorcomment>Label showing the number of search results in the Cloud Drive node selector. %n is the number of results. SNC-6420</translatorcomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
 </context>
 <context>
     <name>CloudFingerprintMissingHeader</name>
@@ -4505,11 +4513,6 @@ Enter a different name.</translation>
         <translation>The item you selected has been removed. To reselect, close this window and try again.</translation>
     </message>
     <message>
-        <source>Files</source>
-        <translatorcomment>Sidebar title. SNC.5804</translatorcomment>
-        <translation>Files</translation>
-    </message>
-    <message>
         <source>Search</source>
         <translatorcomment>Search button header</translatorcomment>
         <translation>Search</translation>
@@ -4524,6 +4527,44 @@ Enter a different name.</translation>
     <message>
         <source>Always upload to this destination</source>
         <translation type="unfinished">Always upload to this destination</translation>
+    </message>
+</context>
+<context>
+    <name>NodeSelectorLabelColors</name>
+    <message>
+        <source>Red</source>
+        <translatorcomment>Color name for the &quot;Red&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Orange</source>
+        <translatorcomment>Color name for the &quot;Orange&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translatorcomment>Color name for the &quot;Yellow&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translatorcomment>Color name for the &quot;Green&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translatorcomment>Color name for the &quot;Blue&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Purple</source>
+        <translatorcomment>Color name for the &quot;Purple&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grey</source>
+        <translatorcomment>Color name for the &quot;Grey&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4803,6 +4844,16 @@ Enter a different name.</translation>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>This folder has been the subject of a takedown notice</translation>
     </message>
+    <message>
+        <source>Label</source>
+        <translatorcomment>Column header for the node label in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort by label</source>
+        <translatorcomment>Sort option to order nodes by their label in the node selector. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NodeSelectorTreeView</name>
@@ -4872,9 +4923,9 @@ Enter a different name.</translation>
         <translation>Upload</translation>
     </message>
     <message>
-        <source>Create folder</source>
-        <translatorcomment>Contextual menu text that appears when we right click on an empty space (or empty folder) on node selector. It creates a new folder. SNC-6426</translatorcomment>
-        <translation type="unfinished"></translation>
+        <source>New folder</source>
+        <translatorcomment>Contextual menu text in the node selector to create a new folder. SNC-6420</translatorcomment>
+        <translation type="unfinished">New folder</translation>
     </message>
 </context>
 <context>
@@ -4944,11 +4995,6 @@ Enter a different name.</translation>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Folder is empty</source>
-        <translatorcomment>Message on the view when there are no items in a folder. SNC-5804</translatorcomment>
-        <translation>Folder is empty</translation>
-    </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
         <translatorcomment>Main text of the confirmation messagebox to delete permanently a file(s) from the rubbish bin. %n is the number of files to delete. CON-1258</translatorcomment>
@@ -4998,7 +5044,33 @@ Enter a different name.</translation>
         </translation>
     </message>
     <message>
-        <source>Create folder</source>
+        <source>New folder</source>
+        <translatorcomment>Action button text in the node selector to create a new folder. SNC-6420</translatorcomment>
+        <translation type="unfinished">New folder</translation>
+    </message>
+    <message>
+        <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
+        <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drag and drop your files here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to drag and drop files. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing in your private vault yet</source>
+        <translatorcomment>Empty-state message shown in the node selector when the private vault has no items yet. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No folders in Cloud drive</source>
+        <translatorcomment>Empty-state message shown in the node selector when the Cloud drive has no folders. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a folder to move your content here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5011,14 +5083,6 @@ Enter a different name.</translation>
     </message>
 </context>
 <context>
-    <name>NodeSelectorTreeViewWidgetCloudDrive</name>
-    <message>
-        <source>Cloud drive is empty</source>
-        <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
-        <translation>Cloud drive is empty</translation>
-    </message>
-</context>
-<context>
     <name>NodeSelectorTreeViewWidgetIncomingShares</name>
     <message>
         <source>No incoming shares</source>
@@ -5026,22 +5090,17 @@ Enter a different name.</translation>
         <translation>No incoming shares</translation>
     </message>
     <message>
-        <source>No incoming shares you can sync</source>
-        <translatorcomment>Title message on the view when there are no items in the Sync view. SNC-5804</translatorcomment>
-        <translation>No incoming shares you can sync</translation>
-    </message>
-    <message>
-        <source>You can only sync a shared folder if you’ve been given full access</source>
-        <translatorcomment>Description message on the view when there are no items in the sync view. It says you don´t have shared folders with the needed rights. SNC-5804</translatorcomment>
-        <translation>You can only sync a shared folder if you’ve been given full access</translation>
+        <source>Folders shared with you will appear here</source>
+        <translatorcomment>Empty-state message in the node selector incoming shares view, shown when there are no shared folders. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>NodeSelectorTreeViewWidgetRubbish</name>
     <message>
-        <source>The Rubbish bin is empty</source>
-        <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
-        <translation>Rubbish bin is empty</translation>
+        <source>Rubbish bin is empty</source>
+        <translatorcomment>Empty-state message in the node selector rubbish bin view, shown when the rubbish bin has no items. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5055,9 +5114,14 @@ Enter a different name.</translation>
         </translation>
     </message>
     <message>
-        <source>No search results</source>
-        <translatorcomment>Message on the view when the search did not find any coincidence. SNC-5804</translatorcomment>
-        <translation>No search results</translation>
+        <source>No results found</source>
+        <translatorcomment>Empty-state title in the node selector search view, shown when the search returns no matches. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try a different name or check the spelling</source>
+        <translatorcomment>Empty-state hint in the node selector search view, suggesting the user refine their search. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

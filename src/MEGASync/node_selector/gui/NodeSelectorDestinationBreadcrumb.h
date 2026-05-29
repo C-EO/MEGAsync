@@ -1,12 +1,15 @@
 #ifndef NODESELECTORDESTINATIONBREADCRUMB_H
 #define NODESELECTORDESTINATIONBREADCRUMB_H
 
+#include "NodeSelectorBreadcrumbSegment.h"
+
 #include <QFrame>
 #include <QPointer>
 #include <QStringList>
 
 class QLabel;
 class NodeSelectorDestinationOverflowPopup;
+class QResizeEvent;
 
 namespace Ui
 {
@@ -27,8 +30,7 @@ public:
     explicit NodeSelectorDestinationBreadcrumb(QWidget* parent = nullptr);
     ~NodeSelectorDestinationBreadcrumb() override;
 
-    void setPathSegments(const QStringList& segments);
-    void setNavigationSegments(const QStringList& segments, bool clickable = true);
+    void setSegments(const QList<NodeSelectorBreadcrumbSegment>& segments, bool clickable = false);
     void setDisplayMode(DisplayMode mode);
     void setTitleText(const QString& text);
     void showDefaultUploadOption(bool show = true);
@@ -36,7 +38,7 @@ public:
     bool getDefaultUploadOption() const;
 
 protected:
-    bool eventFilter(QObject* watched, QEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 signals:
     void clearRequested();
@@ -46,18 +48,35 @@ private:
     void closeOverflowPopup();
     void showOverflowPopup();
     void updateOverflowButtonStyle(bool popupVisible);
-    void rebuildSegments();
+    void rebuildSegments(bool force = true);
+    void refreshOverflowPopup();
+    void updateOverflowPopupContent();
+    void resolveSegmentNames();
+    QString resolveSegmentText(const NodeSelectorBreadcrumbSegment& segment) const;
+    void recalculateSegmentMetrics();
     void clearSegmentWidgets();
-    QWidget* makeSegmentWidget(const QString& text, bool isFirst, bool isLast, int segmentIndex);
+    QWidget* makeSegmentWidget(const QString& text,
+                               bool isFirst,
+                               bool isLast,
+                               int segmentIndex,
+                               bool applyInteractivity = true);
     QLabel* makeSeparatorLabel();
     void updateContentVisibility();
+    int calculateVisibleStartIndex();
+    int calculateRequiredWidthForVisibleStartIndex(int visibleStartIndex);
 
     Ui::NodeSelectorDestinationBreadcrumb* ui;
     QPointer<NodeSelectorDestinationOverflowPopup> mOverflowPopup;
+    QList<NodeSelectorBreadcrumbSegment> mSegments;
     QStringList mPathSegments;
     DisplayMode mDisplayMode = DisplayMode::DESTINATION;
     bool mShouldShowDefaultUploadOption = false;
     bool mSegmentsClickable = false;
+    int mVisibleStartIndex = 0;
+    int mRenderedStartIndex = -1;
+    QList<int> mSegmentWidths;
+    int mSeparatorWidth = 0;
+    int mOverflowWidth = 0;
 };
 
 #endif // NODESELECTORDESTINATIONBREADCRUMB_H

@@ -286,6 +286,7 @@ public:
     bool canFetchMore(const QModelIndex& parent) const override;
 
     void setCurrentRootIndex(const QModelIndex& rootIndex);
+    QModelIndex getCurrentRootIndex() const;
     QModelIndex rootIndex(const QModelIndex& visualRootIndex) const;
     virtual QModelIndex getTopRootIndex() const;
 

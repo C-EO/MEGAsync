@@ -24,6 +24,9 @@
 #include <QUrl>
 
 QList<mega::MegaHandle> NodeSelectorTreeView::mCopiedHandles = QList<mega::MegaHandle>();
+const int NodeSelectorTreeView::ROW_SIDE_MARGIN = 0;
+const int NodeSelectorTreeView::ROW_VERTICAL_MARGIN = 4;
+const qreal NodeSelectorTreeView::ROW_RADIUS = 4.0;
 
 NodeSelectorTreeView::NodeSelectorTreeView(QWidget* parent):
     LoadingSceneView<NodeSelectorLoadingDelegate, QTreeView>(parent),
@@ -211,12 +214,11 @@ void NodeSelectorTreeView::drawRow(QPainter* painter,
 
             QPainterPath path;
             auto rect(option.rect);
-            // These are not magical numbers, they are taken from design
-            // Left margin is set on the UI (also 12px)
-            rect.setRight(option.rect.right() - 12);
-            rect.setTop(option.rect.top() + 3);
-            rect.setBottom(option.rect.bottom() - 5);
-            path.addRoundedRect(rect, 4, 4);
+            rect.adjust(ROW_SIDE_MARGIN,
+                        ROW_VERTICAL_MARGIN,
+                        -ROW_SIDE_MARGIN,
+                        -ROW_VERTICAL_MARGIN);
+            path.addRoundedRect(rect, ROW_RADIUS, ROW_RADIUS);
             painter->fillPath(path, TokenParserWidgetManager::instance()->getColor(token));
 
             painter->restore();

@@ -242,14 +242,17 @@ void NodeSelector::onUiIsBlocked(bool state)
 
 void NodeSelector::onSelectionChanged()
 {
-    auto wid = getCurrentTreeViewWidget();
+    updateOkButtonState(getCurrentTreeViewWidget());
+    refreshBreadcrumbs();
+}
+
+void NodeSelector::updateOkButtonState(NodeSelectorTreeViewWidget* wid)
+{
     if (wid)
     {
         auto isSelectionCorrect = mSelectType->okButtonEnabled(wid->getSelectedIndexes());
         ui->bOk->setEnabled(isSelectionCorrect);
     }
-
-    refreshBreadcrumbs();
 }
 
 QString NodeSelector::folderNameForWidget(NodeSelectorTreeViewWidget* wid) const
@@ -356,7 +359,7 @@ void NodeSelector::refreshNavigationBreadcrumb()
     ui->navigationBreadcrumb->setVisible(shouldShowBreadcrumb);
     if (!shouldShowBreadcrumb)
     {
-        ui->navigationBreadcrumb->setNavigationSegments({});
+        ui->navigationBreadcrumb->setSegments({});
         return;
     }
 
@@ -371,11 +374,12 @@ void NodeSelector::refreshNavigationBreadcrumb()
 
     if (breadcrumbMode == SelectType::NavigationBreadcrumbMode::TOP_ROOT_READ_ONLY)
     {
-        segments = segments.isEmpty() ? QStringList() : QStringList() << segments.first();
+        segments = segments.isEmpty() ? QList<NodeSelectorBreadcrumbSegment>() :
+                                        QList<NodeSelectorBreadcrumbSegment>{segments.first()};
         clickable = false;
     }
 
-    ui->navigationBreadcrumb->setNavigationSegments(segments, clickable);
+    ui->navigationBreadcrumb->setSegments(segments, clickable);
 }
 
 void NodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)
@@ -1127,7 +1131,7 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
                                                   refreshHeaderButtons(wid);
                                               });
 
-        onSelectionChanged();
+        updateOkButtonState(wid);
         refreshHeader(wid);
     }
 }
@@ -1192,6 +1196,10 @@ void NodeSelector::specialisedTreeViewWidgetsCreated()
                 {
                     configureSearchWidget(TabType::NONE);
                 });
+        connect(mSearchWidget,
+                &NodeSelectorTreeViewWidgetSearch::searchTabTypeChanged,
+                this,
+                &NodeSelector::configureSearchWidget);
     }
 }
 
@@ -1254,6 +1262,29 @@ void NodeSelector::setIncomingShareColumnsVisibility(NodeSelectorTreeViewWidget*
 
     widget->setColumnHidden(NodeSelectorModel::Column::USER, !visible);
     widget->setColumnHidden(NodeSelectorModel::Column::ACCESS, !visible);
+}
+
+void NodeSelector::configureSearchWidget(TabType type)
+{
+    if (!mSearchWidget)
+    {
+        return;
+    }
+
+    if (type == TabType::INCOMING_SHARE)
+    {
+        configureIncomingSharesTableColumns(mSearchWidget);
+    }
+    else
+    {
+        configureTableColumns(mSearchWidget);
+    }
+
+    // The search widget reports TabItem::SEARCH, so configureTableColumns cannot derive
+    // IS_EXPORTED visibility from it. Mirror the scoped tab's root rule so search results
+    // show the same columns as the originating tab.
+    mSearchWidget->setColumnHidden(NodeSelectorModel::Column::IS_EXPORTED,
+                                   (type == TabType::RUBBISH || type == TabType::INCOMING_SHARE));
 }
 
 void NodeSelector::createSpecialisedTreeViewWidgets()

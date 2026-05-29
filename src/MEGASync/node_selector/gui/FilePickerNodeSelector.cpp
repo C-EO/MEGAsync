@@ -81,7 +81,7 @@ void FilePickerNodeSelector::refreshDestinationBreadcrumb()
         ui->destinationBanner->setTitle(banner.text);
         ui->destinationBanner->setVisible(true);
         ui->destinationBreadcrumb->setVisible(false);
-        ui->destinationBreadcrumb->setPathSegments({});
+        ui->destinationBreadcrumb->setSegments({});
         return;
     }
 
@@ -90,7 +90,7 @@ void FilePickerNodeSelector::refreshDestinationBreadcrumb()
     if (!shouldShowPath)
     {
         ui->destinationBreadcrumb->setVisible(false);
-        ui->destinationBreadcrumb->setPathSegments({});
+        ui->destinationBreadcrumb->setSegments({});
         return;
     }
 
@@ -98,12 +98,12 @@ void FilePickerNodeSelector::refreshDestinationBreadcrumb()
     auto path{destinationBreadcrumbSegments()};
     if (path.isEmpty())
     {
-        ui->destinationBreadcrumb->setPathSegments(QStringList()
-                                                   << destinationBreadcrumbEmptyText());
+        ui->destinationBreadcrumb->setSegments(
+            {{mega::INVALID_HANDLE, destinationBreadcrumbEmptyText()}});
     }
     else
     {
-        ui->destinationBreadcrumb->setPathSegments(path);
+        ui->destinationBreadcrumb->setSegments(path);
     }
     ui->destinationBreadcrumb->setTitleText(destinationTitleText());
 }
@@ -154,23 +154,6 @@ void FilePickerNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWi
 
     widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, true);
     widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, true);
-}
-
-void FilePickerNodeSelector::configureSearchWidget(TabType type)
-{
-    if (!mSearchWidget)
-    {
-        return;
-    }
-
-    if (type == TabType::INCOMING_SHARE)
-    {
-        configureIncomingSharesTableColumns(mSearchWidget);
-    }
-    else
-    {
-        configureTableColumns(mSearchWidget);
-    }
 }
 
 void FilePickerNodeSelector::configureSidebar()
@@ -248,7 +231,7 @@ FilePickerNodeSelector::DestinationBannerInfo FilePickerNodeSelector::destinatio
     return {};
 }
 
-QStringList FilePickerNodeSelector::destinationBreadcrumbSegments() const
+QList<NodeSelectorBreadcrumbSegment> FilePickerNodeSelector::destinationBreadcrumbSegments() const
 {
     auto* destinationWidget = getSearchAwareTargetWidget();
     if (!destinationWidget)
@@ -277,7 +260,7 @@ QStringList FilePickerNodeSelector::destinationBreadcrumbSegments() const
     return {};
 }
 
-QStringList FilePickerNodeSelector::breadcrumbSegmentsForNode(
+QList<NodeSelectorBreadcrumbSegment> FilePickerNodeSelector::breadcrumbSegmentsForNode(
     NodeSelectorTreeViewWidget* wid,
     const std::shared_ptr<mega::MegaNode>& node) const
 {
@@ -286,7 +269,9 @@ QStringList FilePickerNodeSelector::breadcrumbSegmentsForNode(
         return {};
     }
 
-    QStringList segments{wid->getRootText()};
+    // Root label is a synthetic tab name, not a node: no handle, only fallback text.
+    QList<NodeSelectorBreadcrumbSegment> segments;
+    segments.append({mega::INVALID_HANDLE, wid->getRootText()});
     if (!node)
     {
         return segments;
@@ -298,9 +283,25 @@ QStringList FilePickerNodeSelector::breadcrumbSegmentsForNode(
         return segments;
     }
 
-    const auto nodeSegments =
-        QString::fromUtf8(path.get()).split(QLatin1Char('/'), Qt::SkipEmptyParts);
-    segments.append(nodeSegments);
+    const auto names = QString::fromUtf8(path.get()).split(QLatin1Char('/'), Qt::SkipEmptyParts);
+
+    // Capture one handle per path component by walking up from the node, so the
+    // breadcrumb can resolve fresh names later (e.g. when the overflow popup opens).
+    QList<mega::MegaHandle> handles;
+    handles.reserve(names.size());
+    std::shared_ptr<mega::MegaNode> current = node;
+    for (int i = 0; i < names.size() && current; ++i)
+    {
+        handles.prepend(current->getHandle());
+        current.reset(mMegaApi->getNodeByHandle(current->getParentHandle()));
+    }
+
+    for (int i = 0; i < names.size(); ++i)
+    {
+        const auto handle = i < handles.size() ? handles.at(i) : mega::INVALID_HANDLE;
+        segments.append({handle, names.at(i)});
+    }
+
     return segments;
 }
 

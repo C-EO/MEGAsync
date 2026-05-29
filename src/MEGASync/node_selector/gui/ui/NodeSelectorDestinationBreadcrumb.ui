@@ -126,7 +126,7 @@ background-color: #989A9C4D; /*colorToken.neutral-container-hover*/
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="bDestinationOverflow">
+          <widget class="ClickableLabel" name="bDestinationOverflow">
            <property name="minimumSize">
             <size>
              <width>20</width>
@@ -233,6 +233,11 @@ background-color: #989A9C4D; /*colorToken.neutral-container-hover*/
    <class>TokenizableToolButton</class>
    <extends>QToolButton</extends>
    <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
+  </customwidget>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">Utilities.h</header>
   </customwidget>
  </customwidgets>
  <resources>

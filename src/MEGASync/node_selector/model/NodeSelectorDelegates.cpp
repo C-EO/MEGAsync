@@ -143,6 +143,7 @@ QColor NodeSelectorDelegate::textColorForIndex(const QModelIndex& index, bool is
 const int NodeRowDelegate::MARGIN = 7;
 const int NodeRowDelegate::ICON_MARGIN = 37;
 const int NodeRowDelegate::DIFF_WITH_STD_ICON = 5;
+const int NodeRowDelegate::ROW_HEIGHT = 40;
 
 NodeRowDelegate::NodeRowDelegate(QObject* parent):
     NodeSelectorDelegate(parent)
@@ -282,7 +283,7 @@ bool NodeRowDelegate::helpEvent(QHelpEvent* event,
 QSize NodeRowDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     auto size = NodeSelectorDelegate::sizeHint(option, index);
-    size.setHeight(49); // 48 + 1 border pixel
+    size.setHeight(ROW_HEIGHT);
     return size;
 }
 
@@ -353,7 +354,7 @@ QSize NodeLabelDelegate::sizeHint(const QStyleOptionViewItem& option,
                                   const QModelIndex& index) const
 {
     auto size = NodeSelectorDelegate::sizeHint(option, index);
-    size.setHeight(49); // 48 + 1 border pixel
+    size.setHeight(NodeRowDelegate::ROW_HEIGHT);
     return size;
 }
 

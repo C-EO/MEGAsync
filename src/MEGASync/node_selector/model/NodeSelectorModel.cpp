@@ -3165,6 +3165,11 @@ void NodeSelectorModel::setCurrentRootIndex(const QModelIndex& index)
     }
 }
 
+QModelIndex NodeSelectorModel::getCurrentRootIndex() const
+{
+    return mCurrentRootIndex;
+}
+
 QModelIndex NodeSelectorModel::rootIndex(const QModelIndex& visualRootIndex) const
 {
     if (!visualRootIndex.isValid())

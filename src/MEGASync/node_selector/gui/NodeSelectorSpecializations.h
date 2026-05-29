@@ -28,7 +28,6 @@ protected:
     void handleSearchHidden() override;
 
     void configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget) override;
-    void configureSearchWidget(TabType type) override;
 
     void configureSidebar() override;
     void configureHeader() override;

@@ -10,6 +10,7 @@ set(DESKTOP_APP_NODE_SELECTOR_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorModelUpdateCoordinator.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorMergeTargetUtils.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/IncomingShareHeaderWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorBreadcrumbSegment.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorDestinationBreadcrumb.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorDestinationOverflowPopup.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNodeActions.h

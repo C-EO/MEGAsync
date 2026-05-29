@@ -56,10 +56,6 @@ void CloudDriveNodeSelector::specialisedTreeViewWidgetsCreated()
     if (mSearchWidget)
     {
         connect(mSearchWidget,
-                &NodeSelectorTreeViewWidgetSearch::searchTabTypeChanged,
-                this,
-                &CloudDriveNodeSelector::configureSearchWidget);
-        connect(mSearchWidget,
                 &NodeSelectorTreeViewWidgetSearch::searchCounterChanged,
                 this,
                 &CloudDriveNodeSelector::refreshSearchResultCount);
@@ -89,23 +85,6 @@ void CloudDriveNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWi
 
     widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, false);
     widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, false);
-}
-
-void CloudDriveNodeSelector::configureSearchWidget(TabType type)
-{
-    if (!mSearchWidget)
-    {
-        return;
-    }
-
-    if (type == TabType::INCOMING_SHARE)
-    {
-        configureIncomingSharesTableColumns(mSearchWidget);
-    }
-    else
-    {
-        configureTableColumns(mSearchWidget);
-    }
 }
 
 void CloudDriveNodeSelector::configureSidebar()

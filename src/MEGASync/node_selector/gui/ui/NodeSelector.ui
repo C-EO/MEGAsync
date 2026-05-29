@@ -602,7 +602,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                 <number>0</number>
                </property>
                <item>
-                <widget class="TokenizableButton" name="bUpload" native="true">
+                <widget class="TokenizableButton" name="bUpload">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -615,14 +615,14 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                  <property name="visible">
                   <bool>false</bool>
                  </property>
-                 <property name="text" stdset="0">
+                 <property name="text">
                   <string notr="true">Upload</string>
                  </property>
-                 <property name="icon" stdset="0">
+                 <property name="icon">
                   <iconset resource="../../../gui/Resources_common.qrc">
                    <normaloff>:/arrow-up_small_thin_outline</normaloff>:/arrow-up_small_thin_outline</iconset>
                  </property>
-                 <property name="iconSize" stdset="0">
+                 <property name="iconSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
@@ -637,7 +637,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                 </widget>
                </item>
                <item>
-                <widget class="TokenizableButton" name="bNewFolder" native="true">
+                <widget class="TokenizableButton" name="bNewFolder">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -650,14 +650,14 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                  <property name="visible">
                   <bool>false</bool>
                  </property>
-                 <property name="text" stdset="0">
+                 <property name="text">
                   <string notr="true">New Folder</string>
                  </property>
-                 <property name="icon" stdset="0">
+                 <property name="icon">
                   <iconset resource="../../../gui/Resources_common.qrc">
                    <normaloff>:/folder-plus-01_small_thin_outline</normaloff>:/folder-plus-01_small_thin_outline</iconset>
                  </property>
-                 <property name="iconSize" stdset="0">
+                 <property name="iconSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
@@ -672,7 +672,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                 </widget>
                </item>
                <item>
-                <widget class="TokenizableButton" name="bClearRubbish" native="true">
+                <widget class="TokenizableButton" name="bClearRubbish">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -685,14 +685,14 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                  <property name="visible">
                   <bool>false</bool>
                  </property>
-                 <property name="text" stdset="0">
-                  <string notr="true">Empty Rubbish bin</string>
+                 <property name="text">
+                  <string notr="true">Empty rubbish bin</string>
                  </property>
-                 <property name="icon" stdset="0">
+                 <property name="icon">
                   <iconset resource="../../../gui/Resources_common.qrc">
                    <normaloff>:/x_small_thin_outline</normaloff>:/x_small_thin_outline</iconset>
                  </property>
-                 <property name="iconSize" stdset="0">
+                 <property name="iconSize">
                   <size>
                    <width>16</width>
                    <height>16</height>
@@ -779,6 +779,11 @@ background-color: #FFFFFF; /*colorToken.page-background*/
  </widget>
  <customwidgets>
   <customwidget>
+   <class>TokenizableButton</class>
+   <extends>QPushButton</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h</header>
+  </customwidget>
+  <customwidget>
    <class>TabSelector</class>
    <extends>QWidget</extends>
    <header>TabSelector.h</header>
@@ -789,11 +794,6 @@ background-color: #FFFFFF; /*colorToken.page-background*/
    <extends>QFrame</extends>
    <header>SearchLineEdit.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>TokenizableButton</class>
-   <extends>QWidget</extends>
-   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
   </customwidget>
   <customwidget>
    <class>IncomingShareHeaderWidget</class>
