@@ -3,6 +3,7 @@
 
 #include <QColor>
 #include <QFileDialog>
+#include <QHash>
 #include <QMap>
 #include <QObject>
 #include <QPointer>
@@ -43,7 +44,7 @@ private:
 
     QMap<QString, ColorTokens> mColorThemedTokens;
     QMap<QString, QString> mThemedStandardComponentsStyleSheet;
-    QMap<QString, QString> mWidgetsStyleSheets;
+    QHash<QWidget*, QString> mWidgetsStyleSheets;
     QSet<QWidget*> mRegisteredWidgets;
 };
 

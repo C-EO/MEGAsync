@@ -270,17 +270,30 @@ void TokenParserWidgetManager::styleQFileDialog(QPointer<QFileDialog> dialog)
 
 void TokenParserWidgetManager::applyTheme(QWidget* widget, bool prependStandardComponents)
 {
+    if (!widget)
+    {
+        return;
+    }
+
     auto currentTheme = ThemeManager::instance()->getSelectedColorSchemaString();
 
     QString widgetStyleSheet;
-    if (mWidgetsStyleSheets.contains(widget->objectName()))
+    auto cacheIt = mWidgetsStyleSheets.find(widget);
+    if (cacheIt != mWidgetsStyleSheets.end())
     {
-        widgetStyleSheet = mWidgetsStyleSheets[widget->objectName()];
+        widgetStyleSheet = cacheIt.value();
     }
     else
     {
         widgetStyleSheet = widget->styleSheet();
-        mWidgetsStyleSheets[widget->objectName()] = widgetStyleSheet;
+        mWidgetsStyleSheets.insert(widget, widgetStyleSheet);
+        connect(widget,
+                &QObject::destroyed,
+                this,
+                [this, widget]()
+                {
+                    mWidgetsStyleSheets.remove(widget);
+                });
     }
 
     if (!mColorThemedTokens.contains(currentTheme))
@@ -291,7 +304,15 @@ void TokenParserWidgetManager::applyTheme(QWidget* widget, bool prependStandardC
 
     const auto& colorTokens = mColorThemedTokens.value(currentTheme);
 
-    replaceColorTokens(widgetStyleSheet, colorTokens);
+    // Skip the expensive regex pass for stylesheets that contain no color
+    // tokens — QString::contains is much cheaper than QRegularExpression
+    // globalMatch, and many widgets carry rules like "border: none;" with
+    // nothing to tokenize.
+    if (widgetStyleSheet.contains(QLatin1String("/*colorToken.")))
+    {
+        replaceColorTokens(widgetStyleSheet, colorTokens);
+    }
+
     replaceIconColorTokens(widget, widgetStyleSheet);
     tokenizeChildStyleSheets(widget);
     removeFrameOnDialogCombos(widget);
