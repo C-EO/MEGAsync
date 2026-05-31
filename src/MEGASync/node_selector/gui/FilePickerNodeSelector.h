@@ -13,10 +13,6 @@ public:
     explicit FilePickerNodeSelector(SelectTypeSPtr selectType, QWidget* parent = nullptr);
 
 protected:
-    ClearTypes searchClearType() const override;
-    void handleSearch(const QString& text) override;
-    void handleSearchHidden() override;
-
     void refreshDestinationBreadcrumb() override;
 
     virtual QString destinationBreadcrumbEmptyText()
@@ -37,18 +33,12 @@ protected:
 
     virtual DestinationBannerInfo destinationBannerInfo() const;
 
-    bool searchHasOwnTab() const override
-    {
-        return false;
-    }
-
     bool initialShowLabelText() const override
     {
         return false;
     }
 
     void configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget) override;
-    void clearSearch() override;
 
     void configureSidebar() override;
     void configureHeader() override;

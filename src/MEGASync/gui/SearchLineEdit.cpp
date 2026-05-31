@@ -7,7 +7,10 @@
 
 #include <QDebug>
 #include <QEvent>
+#include <QGraphicsEffect>
 #include <QKeyEvent>
+#include <QMoveEvent>
+#include <QResizeEvent>
 
 static int COLLAPSE_SIZE = 32; /* Square */
 
@@ -170,6 +173,33 @@ bool SearchLineEdit::event(QEvent* event)
     }
 
     return QFrame::event(event);
+}
+
+void SearchLineEdit::moveEvent(QMoveEvent* event)
+{
+    QFrame::moveEvent(event);
+    refreshClearButtonEffect();
+}
+
+void SearchLineEdit::resizeEvent(QResizeEvent* event)
+{
+    QFrame::resizeEvent(event);
+    refreshClearButtonEffect();
+}
+
+void SearchLineEdit::refreshClearButtonEffect()
+{
+    // A relayout of the parent header (e.g. when the action buttons collapse as the ghost
+    // search tab appears) can leave the clear button's opacity effect with a stale cached
+    // pixmap, so it renders clipped until a hover repaint re-grabs the source. effect->update()
+    // only recomposites that stale cache; toggling the effect off/on drops it and forces a
+    // full re-render at the current geometry.
+    if (auto* effect = ui->tSearchCancel->graphicsEffect())
+    {
+        const bool wasEnabled = effect->isEnabled();
+        effect->setEnabled(false);
+        effect->setEnabled(wasEnabled);
+    }
 }
 
 bool SearchLineEdit::eventFilter(QObject* obj, QEvent* evnt)

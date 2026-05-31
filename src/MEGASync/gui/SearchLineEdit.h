@@ -44,6 +44,8 @@ public:
 protected:
     bool eventFilter(QObject* obj, QEvent* evnt) override;
     bool event(QEvent* event) override;
+    void moveEvent(QMoveEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 signals:
     void search(const QString& text);
@@ -58,6 +60,7 @@ private slots:
     void animationFinished();
 
 private:
+    void refreshClearButtonEffect();
     void toggleClearButton(bool fadeIn);
     QPropertyAnimation* runWidthAnimation(QWidget* target, bool expand);
     QPropertyAnimation* runOpacityAnimation(QWidget* target, bool fadeIn);

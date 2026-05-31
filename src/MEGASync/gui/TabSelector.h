@@ -68,6 +68,9 @@ public:
     // Convenient method to select tab
     static void selectTabIf(QWidget* parent, const char* property, const QVariant& value);
 
+    // Convenient method to deselect every tab under a parent
+    static void deselectAll(QWidget* parent);
+
     // Convenient method to get the tabs
     static QList<TabSelector*> getTabSelectorByParent(QWidget* parent);
 

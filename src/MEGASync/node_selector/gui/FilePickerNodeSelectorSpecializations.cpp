@@ -187,14 +187,15 @@ FilePickerNodeSelector::DestinationBannerInfo SyncNodeSelector::destinationBanne
 {
     DestinationBannerInfo info{BannerWidget::Type::BANNER_WARNING, {}};
 
-    auto* contextWidget = getSearchAwareTargetWidget();
+    auto* contextWidget = selectedSearchChipTreeViewWidget();
     if (!contextWidget)
     {
         return info;
     }
 
-    // While searching, the selection lives in the search widget, not in the source tab
-    // returned by getSearchAwareTargetWidget(); consult the currently visible widget.
+    // While searching, the selection lives in the search widget, not in the chip returned
+    // by selectedSearchChipTreeViewWidget() (the selected chip); consult the currently
+    // visible widget.
     auto* selectionWidget = getCurrentTreeViewWidget();
     const auto selectedIndexes =
         selectionWidget ? selectionWidget->getSelectedIndexes() : QModelIndexList();

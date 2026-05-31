@@ -114,16 +114,7 @@ void NodeSelector::init()
     specialisedTreeViewWidgetsCreated();
     onCurrentTreeViewWidgetChanged(ui->stackedWidget->currentIndex());
 
-    if (searchClearType() & ClearType::CLEAR_ON_CLEAR_SEARCH_LINE_EDIT)
-    {
-        connect(ui->leSearchTool,
-                &SearchLineEdit::cleared,
-                this,
-                [this]()
-                {
-                    clearCurrentTabSearch(false);
-                });
-    }
+    connect(ui->leSearchTool, &SearchLineEdit::cleared, this, &NodeSelector::hideGhostSearch);
 
     mInitialised = true;
 }
@@ -166,8 +157,7 @@ void NodeSelector::onSearch(const QString& text)
 
 void NodeSelector::onbNewFolderClicked()
 {
-    auto sourceWidget = getSearchAwareTargetWidget();
-    const bool searchOnCurrentTab = isCurrentTabSearchActive();
+    auto sourceWidget = getCurrentTreeViewWidget();
 
     if (!sourceWidget)
     {
@@ -186,7 +176,7 @@ void NodeSelector::onbNewFolderClicked()
     dialog->init();
     DialogOpener::showDialog(
         dialog,
-        [this, dialog, sourceWidget, searchOnCurrentTab]()
+        [this, dialog, sourceWidget]()
         {
             auto newNode = dialog->getNewNode();
             // IF the dialog return a node, there are two scenarios:
@@ -195,10 +185,6 @@ void NodeSelector::onbNewFolderClicked()
             // exists. If so, select the existing folder
             if (newNode)
             {
-                if (searchOnCurrentTab)
-                {
-                    clearCurrentTabSearch(true);
-                }
                 sourceWidget->setNewFolderInfo({newNode->getHandle(), true});
 
                 // Focusing a widget whose top-level window is not the active
@@ -268,8 +254,7 @@ QString NodeSelector::folderNameForWidget(NodeSelectorTreeViewWidget* wid) const
         return rootIndex.data(Qt::DisplayRole).toString();
     }
 
-    return isCurrentTabSearchActive() ? getSearchAwareTargetWidget()->getRootText() :
-                                        wid->getRootText();
+    return wid->getRootText();
 }
 
 void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
@@ -369,17 +354,10 @@ void NodeSelector::refreshBreadcrumbs()
 void NodeSelector::refreshNavigationBreadcrumb()
 {
     auto* breadcrumbWidget = getCurrentTreeViewWidget();
-    if (mSelectType && mSelectType->isFilePicker())
-    {
-        breadcrumbWidget = getSearchAwareTargetWidget();
-    }
 
-    bool shouldShowBreadcrumb = breadcrumbWidget != nullptr;
-    if (shouldShowBreadcrumb)
-    {
-        shouldShowBreadcrumb =
-            breadcrumbWidget != mSearchWidget || !mSelectType || mSelectType->isFilePicker();
-    }
+    // The ghost search tab shows a flat result list across every chip, so the per-tab navigation
+    // breadcrumb does not apply while it is visible.
+    const bool shouldShowBreadcrumb = breadcrumbWidget && breadcrumbWidget != mSearchWidget;
 
     ui->navigationBreadcrumb->setVisible(shouldShowBreadcrumb);
     if (!shouldShowBreadcrumb)
@@ -582,11 +560,6 @@ void NodeSelector::onOptionSelected(int index)
             ui->fRubbish->setSelected(true);
             break;
         }
-        case NodeSelectorTreeViewWidget::TabItem::SEARCH:
-        {
-            ui->fSearch->setSelected(true);
-            break;
-        }
         default:
         {
             break;
@@ -654,45 +627,29 @@ void NodeSelector::resetButtonsText()
     ui->bCancel->setText(QCoreApplication::translate("NodeSelectorTreeViewWidget", "Cancel"));
 }
 
-TabType NodeSelector::tabTypeForItem(NodeSelectorTreeViewWidget::TabItem item) const
-{
-    switch (item)
-    {
-        case NodeSelectorTreeViewWidget::TabItem::CLOUD_DRIVE:
-        {
-            return TabType::CLOUD_DRIVE;
-        }
-        case NodeSelectorTreeViewWidget::TabItem::SHARES:
-        {
-            return TabType::INCOMING_SHARE;
-        }
-        case NodeSelectorTreeViewWidget::TabItem::BACKUPS:
-        {
-            return TabType::BACKUP;
-        }
-        case NodeSelectorTreeViewWidget::TabItem::RUBBISH:
-        {
-            return TabType::RUBBISH;
-        }
-        case NodeSelectorTreeViewWidget::TabItem::SEARCH:
-        default:
-        {
-            return TabType::NONE;
-        }
-    }
-}
-
 void NodeSelector::showTab(NodeSelectorTreeViewWidget::TabItem item)
 {
-    if (auto wid = widgetForTab(item))
+    auto wid = widgetForTab(item);
+    if (!wid)
     {
-        ui->stackedWidget->setCurrentWidget(wid);
+        return;
+    }
 
-        if (item != NodeSelectorTreeViewWidget::TabItem::SEARCH &&
-            searchClearType() & ClearType::CLEAR_ON_TAB_CHANGE)
+    // Switching to a real tab while the ghost search tab is shown dismisses the search.
+    const bool leavingSearch =
+        ui->stackedWidget->currentWidget() == mSearchWidget && wid != mSearchWidget;
+
+    ui->stackedWidget->setCurrentWidget(wid);
+
+    if (leavingSearch)
+    {
+        mActiveSearchTabType = TabType::NONE;
+        if (mSearchWidget)
         {
-            clearCurrentTabSearch(true);
+            mSearchWidget->stopSearch();
+            mSearchWidget->resetSearchState();
         }
+        ui->leSearchTool->onClearClicked();
     }
 }
 
@@ -734,47 +691,50 @@ std::optional<NodeSelectorTreeViewWidget::TabItem>
     return wid->getTabType();
 }
 
-bool NodeSelector::isCurrentTabSearchActive() const
+NodeSelectorTreeViewWidget* NodeSelector::widgetForTabType(TabType type) const
 {
-    return mSearchSourceTab.has_value() && ui->stackedWidget->currentWidget() == mSearchWidget;
-}
-
-std::optional<NodeSelectorTreeViewWidget::TabItem> NodeSelector::currentSearchSourceTab() const
-{
-    if (mSearchSourceTab.has_value())
+    switch (type)
     {
-        return mSearchSourceTab;
+        case TabType::CLOUD_DRIVE:
+        {
+            return mCloudDriveWidget;
+        }
+        case TabType::INCOMING_SHARE:
+        {
+            return mIncomingSharesWidget;
+        }
+        case TabType::BACKUP:
+        {
+            return mBackupsWidget;
+        }
+        case TabType::RUBBISH:
+        {
+            return mRubbishWidget;
+        }
+        default:
+        {
+            return nullptr;
+        }
     }
-
-    return tabItemForWidget(getCurrentTreeViewWidget());
 }
 
-void NodeSelector::clearCurrentTabSearch(bool clearLineEdit)
+void NodeSelector::handleSearch(const QString& text)
 {
-    if (!mSearchSourceTab.has_value())
+    if (!mSearchWidget || text.isEmpty())
     {
         return;
     }
 
-    const auto sourceTab = mSearchSourceTab;
-    mSearchSourceTab.reset();
-    mLastSearchText.clear();
+    // Search spans every chip: leaving the scope unset makes the in-view chips appear.
+    mSearchWidget->search(text);
+    ui->stackedWidget->setCurrentWidget(mSearchWidget);
+}
 
-    if (clearLineEdit)
+void NodeSelector::hideGhostSearch()
+{
+    if (ui->stackedWidget->currentWidget() == mSearchWidget)
     {
-        ui->leSearchTool->onClearClicked();
-    }
-
-    ui->leSearchTool->showTextEntry(false, true);
-
-    if (mSearchWidget)
-    {
-        mSearchWidget->resetSearchState();
-    }
-
-    if (sourceTab.has_value() && ui->stackedWidget->currentWidget() == mSearchWidget)
-    {
-        showTab(sourceTab.value());
+        showTab(mTabBeforeSearch);
     }
 }
 
@@ -793,17 +753,15 @@ NodeSelectorTreeViewWidget* NodeSelector::getCurrentTreeViewWidget() const
     return getTreeViewWidget(ui->stackedWidget->currentWidget());
 }
 
-NodeSelectorTreeViewWidget* NodeSelector::getSearchAwareTargetWidget() const
+NodeSelectorTreeViewWidget* NodeSelector::selectedSearchChipTreeViewWidget() const
 {
-    auto currentWidget = getCurrentTreeViewWidget();
-    if (currentWidget != mSearchWidget || !isCurrentTabSearchActive())
+    auto* currentWidget = getCurrentTreeViewWidget();
+    if (currentWidget == mSearchWidget && mActiveSearchTabType != TabType::NONE)
     {
-        return currentWidget;
-    }
-
-    if (auto sourceTab = currentSearchSourceTab(); sourceTab.has_value())
-    {
-        return widgetForTab(sourceTab.value());
+        if (auto* diskWidget = widgetForTabType(mActiveSearchTabType))
+        {
+            return diskWidget;
+        }
     }
 
     return currentWidget;
@@ -1097,17 +1055,16 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
 {
     if (auto wid = dynamic_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
     {
-        if (wid != mSearchWidget)
+        if (wid == mSearchWidget)
         {
-            clearSearch();
+            // Ghost search tab: no entry highlighted in the left sidebar.
+            TabSelector::deselectAll(ui->wLeftPaneNS);
         }
-
-        if (searchHasOwnTab() || wid != mSearchWidget)
+        else if (auto tabItem = tabItemForWidget(wid); tabItem.has_value())
         {
-            if (auto tabItem = tabItemForWidget(wid); tabItem.has_value())
-            {
-                onOptionSelected(static_cast<int>(tabItem.value()));
-            }
+            onOptionSelected(static_cast<int>(tabItem.value()));
+            // Remember the real tab so the search can be dismissed back to it.
+            mTabBeforeSearch = tabItem.value();
         }
 
         // Disconnect everything BEFORE mutating the selection / root index, so the
@@ -1181,7 +1138,7 @@ void NodeSelector::onNodesUpdate(mega::MegaApi* api, mega::MegaNodeList* nodes)
     {
         if (auto wid = dynamic_cast<NodeSelectorTreeViewWidget*>(ui->stackedWidget->widget(index)))
         {
-            if (wid != mSearchWidget || !ui->fSearch->isHidden() || isCurrentTabSearchActive())
+            if (wid != mSearchWidget || ui->stackedWidget->currentWidget() == mSearchWidget)
             {
                 wid->onNodesUpdate(api, nodes);
             }
@@ -1225,7 +1182,14 @@ void NodeSelector::specialisedTreeViewWidgetsCreated()
         connect(mSearchWidget,
                 &NodeSelectorTreeViewWidgetSearch::searchTabTypeChanged,
                 this,
-                &NodeSelector::configureSearchWidget);
+                [this](TabType type)
+                {
+                    // Track which chip is selected so the destination breadcrumb and
+                    // chip-specific banners resolve against the right tab while searching.
+                    mActiveSearchTabType = type;
+                    configureSearchWidget(type);
+                    refreshBreadcrumbs();
+                });
     }
 }
 
@@ -1367,11 +1331,6 @@ NodeSelectorTreeViewWidget* NodeSelector::addWidgetForTabType(TabType type)
             return nullptr;
         }
     }
-}
-
-NodeSelector::ClearTypes NodeSelector::searchClearType() const
-{
-    return ClearTypes();
 }
 
 NodeSelectorTreeViewWidget* NodeSelector::addCloudDrive()

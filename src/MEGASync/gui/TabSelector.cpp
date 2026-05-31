@@ -342,6 +342,15 @@ void TabSelector::applyActionToTabSelectors(QWidget* parent, std::function<void(
     }
 }
 
+void TabSelector::deselectAll(QWidget* parent)
+{
+    applyActionToTabSelectors(parent,
+                              [](TabSelector* tab)
+                              {
+                                  tab->setSelected(false);
+                              });
+}
+
 void TabSelector::toggleOffSiblings()
 {
     if (!mTabSelectorGroupParent)

@@ -48,14 +48,6 @@ class NodeSelector: public QDialog, public mega::MegaListener
     Q_OBJECT
 
 public:
-    enum class ClearType
-    {
-        CLEAR_ON_CLOSE_SEARCH_TAB = 0x0,
-        CLEAR_ON_CLEAR_SEARCH_LINE_EDIT = 0x1,
-        CLEAR_ON_TAB_CHANGE = 0x2
-    };
-    Q_DECLARE_FLAGS(ClearTypes, ClearType)
-
     explicit NodeSelector(SelectTypeSPtr selectType, QWidget* parent = 0);
     ~NodeSelector();
 
@@ -91,7 +83,11 @@ protected:
     NodeSelectorTreeViewWidget* getTreeViewWidget(int page) const;
     NodeSelectorTreeViewWidget* getTreeViewWidget(QObject* object) const;
     NodeSelectorTreeViewWidget* getCurrentTreeViewWidget() const;
-    NodeSelectorTreeViewWidget* getSearchAwareTargetWidget() const;
+
+    // While the ghost search tab is shown, the browsed tab is the one whose search chip is
+    // selected. Outside of search it is simply the current tab. Used to resolve the
+    // destination breadcrumb root and chip-specific banners.
+    NodeSelectorTreeViewWidget* selectedSearchChipTreeViewWidget() const;
 
     enum class IncreaseOrDecrease
     {
@@ -139,22 +135,18 @@ protected:
 
     virtual void configureSearchWidget(TabType type);
 
-    virtual void clearSearch() {}
+    // Unified search behaviour for every NodeSelector: the search results live in a "ghost"
+    // tab (no entry selected in the left sidebar) that spans every chip, with the in-view
+    // chips driving which one is shown. handleSearch() shows it; hideGhostSearch() restores
+    // the previously visible tab.
+    void handleSearch(const QString& text);
+    void hideGhostSearch();
 
-    virtual ClearTypes searchClearType() const;
-    virtual bool searchHasOwnTab() const = 0;
-
-    virtual void handleSearch(const QString& /*text*/) {}
-
-    virtual void handleSearchHidden() {}
-
-    bool isCurrentTabSearchActive() const;
-    std::optional<NodeSelectorTreeViewWidget::TabItem> currentSearchSourceTab() const;
-    void clearCurrentTabSearch(bool clearLineEdit);
-    TabType tabTypeForItem(NodeSelectorTreeViewWidget::TabItem item) const;
-
-    std::optional<NodeSelectorTreeViewWidget::TabItem> mSearchSourceTab;
-    QString mLastSearchText;
+    // The active search chip type, or TabType::NONE when the ghost search tab is not shown.
+    TabType mActiveSearchTabType = TabType::NONE;
+    // The last real tab shown before the ghost search tab, restored when search is dismissed.
+    NodeSelectorTreeViewWidget::TabItem mTabBeforeSearch =
+        NodeSelectorTreeViewWidget::TabItem::CLOUD_DRIVE;
 
     virtual void onLanguageChangeEvent() {}
 
@@ -228,6 +220,7 @@ private:
     using ViewConfigurationFunction = void (NodeSelector::*)(NodeSelectorTreeViewWidget*);
 
     NodeSelectorTreeViewWidget* widgetForTab(NodeSelectorTreeViewWidget::TabItem item) const;
+    NodeSelectorTreeViewWidget* widgetForTabType(TabType type) const;
     std::optional<NodeSelectorTreeViewWidget::TabItem>
         tabItemForWidget(const NodeSelectorTreeViewWidget* wid) const;
     void showTab(NodeSelectorTreeViewWidget::TabItem item);
@@ -278,7 +271,5 @@ private:
     QMetaObject::Connection mCurrentViewPageConnection;
     QMetaObject::Connection mViewButtonsStateConnection;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(NodeSelector::ClearTypes)
 
 #endif // NODESELECTOR_H

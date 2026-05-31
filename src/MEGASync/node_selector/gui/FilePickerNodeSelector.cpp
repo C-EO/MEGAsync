@@ -18,58 +18,10 @@ FilePickerNodeSelector::FilePickerNodeSelector(SelectTypeSPtr selectType, QWidge
             &FilePickerNodeSelector::onBreadcrumbClearRequested);
 }
 
-NodeSelector::ClearTypes FilePickerNodeSelector::searchClearType() const
-{
-    return (ClearType::CLEAR_ON_CLEAR_SEARCH_LINE_EDIT | ClearType::CLEAR_ON_TAB_CHANGE);
-}
-
-void FilePickerNodeSelector::handleSearch(const QString& text)
-{
-    if (!mSearchWidget)
-    {
-        return;
-    }
-
-    auto sourceTab = currentSearchSourceTab();
-    if (!sourceTab.has_value())
-    {
-        return;
-    }
-
-    const bool sameAsActiveSearch = isCurrentTabSearchActive() && text == mLastSearchText;
-
-    if (!sameAsActiveSearch)
-    {
-        mSearchSourceTab = sourceTab;
-        mLastSearchText = text;
-        mSearchWidget->setSearchScope(tabTypeForItem(sourceTab.value()));
-        mSearchWidget->search(text);
-    }
-
-    ui->stackedWidget->setCurrentWidget(mSearchWidget);
-}
-
-void FilePickerNodeSelector::handleSearchHidden()
-{
-    clearCurrentTabSearch(true);
-}
-
-void FilePickerNodeSelector::clearSearch()
-{
-    ui->leSearchTool->onClearClicked();
-    mLastSearchText.clear();
-    mSearchSourceTab.reset();
-
-    if (mSearchWidget)
-    {
-        mSearchWidget->resetSearchState();
-    }
-}
-
 void FilePickerNodeSelector::refreshDestinationBreadcrumb()
 {
-    const bool shouldShowPath =
-        mSelectType && mSelectType->showsDestinationBreadcrumb() && getSearchAwareTargetWidget();
+    const bool shouldShowPath = mSelectType && mSelectType->showsDestinationBreadcrumb() &&
+                                selectedSearchChipTreeViewWidget();
     const auto banner = destinationBannerInfo();
 
     const bool shouldShowBanner = !banner.text.isEmpty() && banner.type != BannerWidget::Type::NONE;
@@ -182,7 +134,6 @@ void FilePickerNodeSelector::configureSidebar()
     collapseTab(ui->fIncomingShares);
     collapseTab(ui->fBackups);
     collapseTab(ui->fRubbish);
-    collapseTab(ui->fSearch);
 
     const auto applyHeaderStyle = [](TokenizableButton* btn)
     {
@@ -199,8 +150,6 @@ void FilePickerNodeSelector::configureSidebar()
     {
         applyHeaderStyle(btn);
     }
-
-    ui->wSearch->setVisible(false);
 }
 
 void FilePickerNodeSelector::configureHeader()
@@ -233,14 +182,15 @@ FilePickerNodeSelector::DestinationBannerInfo FilePickerNodeSelector::destinatio
 
 QList<NodeSelectorBreadcrumbSegment> FilePickerNodeSelector::destinationBreadcrumbSegments() const
 {
-    auto* destinationWidget = getSearchAwareTargetWidget();
+    auto* destinationWidget = selectedSearchChipTreeViewWidget();
     if (!destinationWidget)
     {
         return {};
     }
 
     // Selection lives in the currently visible widget (the search widget when
-    // searching); destinationWidget only provides the root context for the path.
+    // searching); destinationWidget (the selected chip) only provides the root
+    // context for the path.
     auto* selectionWidget = getCurrentTreeViewWidget();
     if (!selectionWidget)
     {
