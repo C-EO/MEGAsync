@@ -504,14 +504,33 @@ void AccountDetailsManager::handleFolderInfoReply(mega::MegaRequest* request,
 
 void AccountDetailsManager::commitStorageBreakdownLocal()
 {
-    mPreferences->setCloudDriveStorage(mPendingBreakdown.rootCurrent);
-    mPreferences->setVaultStorage(mPendingBreakdown.vaultCurrent);
-    mPreferences->setRubbishStorage(mPendingBreakdown.rubbishCurrent);
-    mPreferences->setVersionsStorage(mPendingBreakdown.rootVersions +
-                                     mPendingBreakdown.vaultVersions +
-                                     mPendingBreakdown.rubbishVersions);
+    const long long cloudDriveStorage = mPendingBreakdown.rootCurrent;
+    const long long vaultStorage = mPendingBreakdown.vaultCurrent;
+    const long long rubbishStorage = mPendingBreakdown.rubbishCurrent;
+    const long long versionsStorage = mPendingBreakdown.rootVersions +
+                                      mPendingBreakdown.vaultVersions +
+                                      mPendingBreakdown.rubbishVersions;
 
     mPendingBreakdown = PendingBreakdown();
+
+    // A move within the same root (e.g. reorganising inside Cloud Drive) leaves every
+    // per-root total unchanged. Detect that here and skip the commit/notify so such moves
+    // don't churn the storage UIs; only moves that actually shift bytes between roots
+    // (Cloud Drive / Backups / Rubbish) get through.
+    const bool changed = mPreferences->cloudDriveStorage() != cloudDriveStorage ||
+                         mPreferences->vaultStorage() != vaultStorage ||
+                         mPreferences->rubbishStorage() != rubbishStorage ||
+                         mPreferences->versionsStorage() != versionsStorage;
+
+    if (!changed)
+    {
+        return;
+    }
+
+    mPreferences->setCloudDriveStorage(cloudDriveStorage);
+    mPreferences->setVaultStorage(vaultStorage);
+    mPreferences->setRubbishStorage(rubbishStorage);
+    mPreferences->setVersionsStorage(versionsStorage);
 
     if (!MegaSyncApp->finished())
     {
