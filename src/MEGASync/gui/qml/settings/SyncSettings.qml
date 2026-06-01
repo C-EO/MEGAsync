@@ -20,14 +20,14 @@ Item {
     readonly property int syncTableSpacing: 4
     readonly property int titleTextPixelSize: 10
     readonly property int syncTablePadding: 12
-    readonly property int syncNameLabelWidth: 412
+    readonly property int syncStatusLabelWidth: 156
     readonly property int listViewOfSyncItems: 270
     readonly property int syncItemBackgroundRadius: 6
     readonly property int syncItemBackgroundHeight: 32
     readonly property int syncItemHoritzontalPadding: 12
     readonly property int errorSyncItemHoritzontalPadding: 10
     readonly property int syncItemContentSpacing: 4
-    readonly property int syncItemContentNameWidth: 404
+    readonly property int syncItemContentStatusWidth: 160
     readonly property int folderSearchIconSize: 16
     readonly property int verticalAddSyncButtonSeparator: 16
     readonly property int leftPaddingAddSyncButton: 12
@@ -147,12 +147,12 @@ Item {
         spacing: syncTableSpacing
         visible: syncList.count > 0
 
-        Row {
+        RowLayout {
             id: syncsColumnsLabels
 
             Layout.preferredWidth: parent.width
-            rightPadding: syncTablePadding
-            leftPadding: rightPadding
+            Layout.rightMargin: syncTablePadding
+            Layout.leftMargin: syncTablePadding
 
             Text {
                 id: syncNameColumn
@@ -161,7 +161,7 @@ Item {
                 font.pixelSize: root.titleTextPixelSize
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
-                width: syncNameLabelWidth
+                Layout.fillWidth: true
             }
 
             Text {
@@ -171,6 +171,7 @@ Item {
                 font.pixelSize: root.titleTextPixelSize
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
+                Layout.preferredWidth: syncStatusLabelWidth
             }
         }
 
@@ -361,7 +362,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
                     Layout.preferredHeight: syncItemBackgroundHeight
-                    color: syncItemContainsMouse || menu.opened ? ColorTheme.surface1 : ColorTheme.pageBackground
+                    color: syncItemContainsMouse || menu.visible ? ColorTheme.surface1 : ColorTheme.pageBackground
                     radius: syncItemBackgroundRadius
                     property bool syncItemContainsMouse : syncItemMouseArea.containsMouse || nameAndFolderSearchMouseArea.containsMouse ||
                                                           menuIconMouseArea.containsMouse || statusSyncMouseArea.containsMouse
@@ -411,34 +412,37 @@ Item {
                         Item {
                             id: syncParentNameContent
 
-                            Layout.preferredHeight: parent.height
-                            Layout.preferredWidth: syncItemContentNameWidth
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
 
-                            Row {
+                            RowLayout {
                                 id: syncNameContent
 
                                 anchors.fill: parent
-                                spacing: syncItemContentSpacing
 
                                 Item {
                                     id: nameAndFolderSearch
 
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: syncNameWrapper.implicitWidth
-                                    height: parent.height
+                                    Layout.alignment: Qt.AlignVCenter
+                                    Layout.preferredWidth: syncNameWrapper.implicitWidth
+                                    Layout.preferredHeight: parent.height
 
                                     RowLayout {
                                         id: syncNameWrapper
 
                                         anchors.verticalCenter: parent.verticalCenter
                                         height: parent.height
+                                        spacing: syncItemContentSpacing
 
                                         Text {
                                             id: syncName
 
                                             text: name
                                             Layout.alignment: Qt.AlignVCenter
+                                            wrapMode: Text.NoWrap
+                                            elide: Text.ElideRight
+                                            Layout.preferredWidth: Math.min(implicitWidth, syncNameContent.width - folderSearchIcon.width - 2 * syncItemContentSpacing)
                                             color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : getSyncTextColor()
                                         }
 
@@ -450,15 +454,15 @@ Item {
                                             sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                             visible: nameAndFolderSearchMouseArea.containsMouse
                                             Layout.alignment: Qt.AlignVCenter
+                                        }
 
-                                            ToolTip {
-                                                id: showInFolderTooltip
+                                        ToolTip {
+                                            id: showInFolderTooltip
 
-                                                visible: nameAndFolderSearchMouseArea.containsMouse
-                                                text: SettingsStrings.toolTipShowInFolder
-                                                delay: toolTipShowDelay
-                                                timeout: toolTipTimeoutToHide
-                                            }
+                                            visible: nameAndFolderSearchMouseArea.containsMouse
+                                            text: SettingsStrings.toolTipShowInFolder
+                                            delay: toolTipShowDelay
+                                            timeout: toolTipTimeoutToHide
                                         }
                                     }
 
@@ -473,6 +477,11 @@ Item {
                                         }
                                     }
                                 }
+
+                                Item {
+                                    id: nameHoritzontalSpacer
+                                    Layout.fillWidth: true
+                                }
                             }
                         }
 
@@ -480,7 +489,7 @@ Item {
                             id: syncSatusContent
 
                             spacing: syncItemContentSpacing
-                            Layout.fillWidth: true
+                            Layout.preferredWidth: syncItemContentStatusWidth
                             Layout.preferredHeight: parent.height
 
                             Item {
@@ -525,10 +534,6 @@ Item {
                                         }
                                     }
                                 }
-                            }
-
-                            Item {
-                                Layout.fillWidth: true
                             }
 
                             SvgImage {
