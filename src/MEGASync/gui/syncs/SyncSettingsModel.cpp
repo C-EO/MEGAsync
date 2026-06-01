@@ -30,7 +30,22 @@ void SyncSettingsModel::sortByName(bool ascending)
               {
                   const auto result =
                       mQCollator.compare(sync1->name(false, true), sync2->name(false, true));
-                  return ascending ? result < 0 : result > 0;
+                  return ascending ? result <= 0 : result > 0;
+              });
+    endResetModel();
+}
+
+void SyncSettingsModel::sortByStatus(bool ascending)
+{
+    mSortAscending = ascending;
+
+    beginResetModel();
+    std::sort(mList.begin(),
+              mList.end(),
+              [this, ascending](const auto& sync1, const auto& sync2)
+              {
+                  return ascending ? getState(sync1) <= getState(sync2) :
+                                     getState(sync1) > getState(sync2);
               });
     endResetModel();
 }

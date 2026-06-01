@@ -34,6 +34,7 @@ public:
     QVariant data(const QModelIndex& index, int role) const override;
     std::shared_ptr<SyncSettings> getSync(int index) const;
     void sortByName(bool ascending = true);
+    void sortByStatus(bool ascending = true);
 
     enum SyncStates
     {

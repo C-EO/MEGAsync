@@ -28,6 +28,7 @@ public:
     Q_INVOKABLE void openOverQuotaDialog() const;
     Q_INVOKABLE void restoreSyncedFolder(int index);
     Q_INVOKABLE void sortModelByName(bool ascending = true);
+    Q_INVOKABLE void sortModelByStatus(bool ascending = true);
 
     bool getAutomaticSyncIssueResolverEnabled() const;
     void setAutomaticSyncIssueResolverEnabled(bool enable);

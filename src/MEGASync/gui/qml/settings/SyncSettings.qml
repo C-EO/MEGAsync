@@ -178,11 +178,22 @@ Item {
             Text {
                 id: syncStatusColumn
 
+                property bool sortByStatusAscending: true
                 text: SettingsStrings.tableSyncsStatusColumn
                 font.pixelSize: root.titleTextPixelSize
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
                 Layout.preferredWidth: syncStatusLabelWidth
+
+                MouseArea {
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
+                      onClicked: {
+                          syncStatusColumn.sortByStatusAscending = !syncStatusColumn.sortByStatusAscending
+                          syncSettings.sortModelByStatus(syncStatusColumn.sortByStatusAscending)
+                    }
+                }
             }
         }
 

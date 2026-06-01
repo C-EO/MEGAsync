@@ -164,6 +164,11 @@ void SyncSettingsQuickWidget::sortModelByName(bool ascending)
     mSyncModel->sortByName(ascending);
 }
 
+void SyncSettingsQuickWidget::sortModelByStatus(bool ascending)
+{
+    mSyncModel->sortByStatus(ascending);
+}
+
 void SyncSettingsQuickWidget::removeNonConfirmation(int index) const
 {
     const auto& sync = mSyncModel->getSync(index);
