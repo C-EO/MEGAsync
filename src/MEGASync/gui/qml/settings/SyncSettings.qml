@@ -433,74 +433,68 @@ Item {
 
                                 anchors.fill: parent
 
-                                Item {
-                                    id: nameAndFolderSearch
+                                RowLayout {
+                                    id: syncNameWrapper
 
                                     Layout.alignment: Qt.AlignVCenter
                                     Layout.preferredWidth: syncNameWrapper.implicitWidth
                                     Layout.preferredHeight: parent.height
 
-                                    RowLayout {
-                                        id: syncNameWrapper
+                                    spacing: syncItemContentSpacing
 
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        height: parent.height
-                                        spacing: syncItemContentSpacing
+                                    Text {
+                                        id: syncName
 
-                                        Text {
-                                            id: syncName
+                                        text: name
+                                        Layout.alignment: Qt.AlignVCenter
+                                        wrapMode: Text.NoWrap
+                                        elide: Text.ElideRight
+                                        Layout.preferredWidth: Math.min(implicitWidth, syncNameContent.width - folderSearchIcon.width - 2 * syncItemContentSpacing)
+                                        color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : syncItemBackground.getSyncTextColor()
 
+                                        ToolTip {
+                                            id: fullNameTooltip
+
+                                            visible: nameMouseArea.containsMouse && (syncName.implicitWidth > (syncNameContent.width - folderSearchIcon.width - 2 * syncItemContentSpacing))
                                             text: name
-                                            Layout.alignment: Qt.AlignVCenter
-                                            wrapMode: Text.NoWrap
-                                            elide: Text.ElideRight
-                                            Layout.preferredWidth: Math.min(implicitWidth, syncNameContent.width - folderSearchIcon.width - 2 * syncItemContentSpacing)
-                                            color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : syncItemBackground.getSyncTextColor()
-
-                                            ToolTip {
-                                                id: fullNameTooltip
-
-                                                visible: nameMouseArea.containsMouse && (syncName.implicitWidth > (syncNameContent.width - folderSearchIcon.width - 2 * syncItemContentSpacing))
-                                                text: name
-                                                delay: toolTipShowDelay
-                                                timeout: toolTipTimeoutToHide
-                                            }
-
-                                            MouseArea {
-                                                id: nameMouseArea
-
-                                                anchors.fill: parent
-                                                hoverEnabled: true
-                                            }
+                                            delay: toolTipShowDelay
+                                            timeout: toolTipTimeoutToHide
                                         }
 
-                                        SvgImage {
-                                            id: folderSearchIcon
+                                        MouseArea {
+                                            id: nameMouseArea
 
-                                            color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.iconPrimary : syncItemBackground.getSyncIconColor()
-                                            source: Images.folder_search_small_thin_outline
-                                            sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
-                                            visible: syncItem.syncItemContainsMouse
-                                            Layout.alignment: Qt.AlignVCenter
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                        }
+                                    }
 
-                                            ToolTip {
-                                                id: showInFolderTooltip
+                                    SvgImage {
+                                        id: folderSearchIcon
 
-                                                visible: nameAndFolderSearchMouseArea.containsMouse
-                                                text: SettingsStrings.toolTipShowInFolder
-                                                delay: toolTipShowDelay
-                                                timeout: toolTipTimeoutToHide
-                                            }
+                                        color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.iconPrimary : syncItemBackground.getSyncIconColor()
+                                        source: Images.folder_search_small_thin_outline
+                                        sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
+                                        visible: syncItem.syncItemContainsMouse
+                                        Layout.alignment: Qt.AlignVCenter
 
-                                            MouseArea {
-                                                id: nameAndFolderSearchMouseArea
+                                        ToolTip {
+                                            id: showInFolderTooltip
 
-                                                anchors.fill: parent
-                                                hoverEnabled: true
-                                                cursorShape: Qt.PointingHandCursor
-                                                onClicked: {
-                                                    syncSettings.exploreLocalSync(folder);
-                                                }
+                                            visible: nameAndFolderSearchMouseArea.containsMouse
+                                            text: SettingsStrings.toolTipShowInFolder
+                                            delay: toolTipShowDelay
+                                            timeout: toolTipTimeoutToHide
+                                        }
+
+                                        MouseArea {
+                                            id: nameAndFolderSearchMouseArea
+
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                syncSettings.exploreLocalSync(folder);
                                             }
                                         }
                                     }
