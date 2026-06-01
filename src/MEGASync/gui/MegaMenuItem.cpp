@@ -32,15 +32,20 @@ MegaMenuItem::MegaMenuItem(const QString& text,
 
     // Create icon label
     m_iconLabel = new IconLabel(this);
+    m_iconLabel->setObjectName(QLatin1String("megaMenuItemIcon"));
     m_iconLabel->setProperty("disabled_off", QLatin1String("button-disabled"));
     m_iconLabel->setFixedSize(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
 
-    // Create text label
+    // Create text label.
+    // Unique objectName: TokenParserWidgetManager caches stylesheets by
+    // objectName, and unnamed widgets collide on the empty-string key.
     m_textLabel = new QLabel(text, this);
+    m_textLabel->setObjectName(QLatin1String("megaMenuItemText"));
     m_textLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     m_textLabel->setStyleSheet(QLatin1String("background-color: transparent"));
     // Create arrow label for submenu indicator
     m_arrowLabel = new QLabel(this);
+    m_arrowLabel->setObjectName(QLatin1String("megaMenuItemArrow"));
     m_arrowLabel->setAlignment(Qt::AlignCenter);
     m_arrowLabel->setFixedSize(16, 16);
     m_arrowLabel->setStyleSheet(QLatin1String("background-color: transparent"));
