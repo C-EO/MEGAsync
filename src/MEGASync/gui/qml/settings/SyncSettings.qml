@@ -171,8 +171,8 @@ Item {
                       onClicked: {
                           syncNameColumn.sortByNameAscending = !syncNameColumn.sortByNameAscending
                           syncSettings.sortModelByName(syncNameColumn.sortByNameAscending)
-                      }
-                  }
+                    }
+                }
             }
 
             Text {
