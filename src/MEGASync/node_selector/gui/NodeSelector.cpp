@@ -831,6 +831,7 @@ void NodeSelector::createActionButtons()
         {SelectType::ButtonId::UPLOAD, ui->bUpload},
         {SelectType::ButtonId::NEW_FOLDER, ui->bNewFolder},
         {SelectType::ButtonId::CLEAR_RUBBISH, ui->bClearRubbish},
+        {SelectType::ButtonId::ADD_BACKUP, ui->bAddBackup},
     };
 
     for (auto it = mButtons.cbegin(); it != mButtons.cend(); ++it)

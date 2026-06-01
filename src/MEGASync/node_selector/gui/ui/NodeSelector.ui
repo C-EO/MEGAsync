@@ -656,6 +656,44 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="TokenizableButton" name="bAddBackup">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string notr="true">Add backup</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../gui/Resources_common.qrc">
+                   <normaloff>:/database-plus_small_thin_outline</normaloff>:/database-plus_small_thin_outline</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="type" stdset="0">
+                  <string notr="true">primary</string>
+                 </property>
+                 <property name="dimension" stdset="0">
+                  <string notr="true">medium</string>
+                 </property>
+                 <property name="normal_off" stdset="0">
+                  <string notr="true">icon-inverse-accent</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>

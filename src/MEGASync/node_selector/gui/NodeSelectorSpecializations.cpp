@@ -1,5 +1,6 @@
 #include "NodeSelectorSpecializations.h"
 
+#include "CreateRemoveBackupsManager.h"
 #include "DialogOpener.h"
 #include "megaapi.h"
 #include "MessageDialogOpener.h"
@@ -140,8 +141,9 @@ void CloudDriveNodeSelector::configureActionButtonsPlacement()
     applyHeaderStyle(ui->bUpload, QLatin1String("primary"));
     applyHeaderStyle(ui->bClearRubbish, QLatin1String("primary"));
     applyHeaderStyle(ui->bNewFolder, QLatin1String("secondary"));
+    applyHeaderStyle(ui->bAddBackup, QLatin1String("primary"));
 
-    for (auto* btn: {ui->bUpload, ui->bNewFolder, ui->bClearRubbish})
+    for (auto* btn: {ui->bUpload, ui->bNewFolder, ui->bClearRubbish, ui->bAddBackup})
     {
         ui->actionButtonsLayout->addWidget(btn);
     }
@@ -248,6 +250,12 @@ void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
             }
         };
         MessageDialogOpener::warning(msgInfo);
+    }
+    else if (id == SelectType::ADD_BACKUP)
+    {
+        CreateRemoveBackupsManager::addBackup(SyncInfo::SyncOrigin::CLOUD_DRIVE_DIALOG_ORIGIN,
+                                              QStringList(),
+                                              this);
     }
 
     NodeSelector::onCustomButtonClicked(id);

@@ -274,6 +274,7 @@ SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetBackups::getEmptyRootPageInf
     info.title = tr("No backups");
     info.icon.addFile(
         Utilities::getPixmapName(QLatin1String("empty_backups"), Utilities::AttributeType::NONE));
+    info.buttons = SelectType::ButtonId::ADD_BACKUP;
     return info;
 }
 

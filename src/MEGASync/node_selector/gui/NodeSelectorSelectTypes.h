@@ -56,6 +56,7 @@ public:
 
     virtual bool showEmptyStateUploadButton(NodeSelectorTreeViewWidget* wdg) const;
     virtual bool showEmptyStateNewFolderButton(NodeSelectorTreeViewWidget* wdg) const;
+    virtual bool showEmptyStateAddBackupButton(NodeSelectorTreeViewWidget* wdg) const;
 
     virtual bool flattenSearchResults() const
     {
@@ -82,7 +83,8 @@ public:
         NONE = 0x0,
         UPLOAD = 0x1,
         NEW_FOLDER = 0x2,
-        CLEAR_RUBBISH = 0x4
+        CLEAR_RUBBISH = 0x4,
+        ADD_BACKUP = 0x8
     };
     Q_DECLARE_FLAGS(ButtonIds, ButtonId)
 
@@ -151,6 +153,7 @@ public:
     bool acceptDrops(int tabItem) override;
 
     bool showEmptyStateUploadButton(NodeSelectorTreeViewWidget* wdg) const override;
+    bool showEmptyStateAddBackupButton(NodeSelectorTreeViewWidget* wdg) const override;
 
     bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;

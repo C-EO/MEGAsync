@@ -138,6 +138,11 @@ bool SelectType::showEmptyStateNewFolderButton(NodeSelectorTreeViewWidget* wdg) 
            !wdg->isCurrentSelectionReadOnly();
 }
 
+bool SelectType::showEmptyStateAddBackupButton(NodeSelectorTreeViewWidget*) const
+{
+    return false;
+}
+
 ///////////////////////SELECT TYPE//////////////////////////////
 
 ///////////////////////CLOUD DRIVE TYPE//////////////////////////////
@@ -201,6 +206,10 @@ QString CloudDriveType::getCustomButtonText(uint buttonId) const
         {
             return NodeSelectorTreeViewWidget::tr("Empty Rubbish bin");
         }
+        case ButtonId::ADD_BACKUP:
+        {
+            return NodeSelectorTreeViewWidget::tr("Add backup");
+        }
         default:
         {
             return SelectType::getCustomButtonText(buttonId);
@@ -214,6 +223,11 @@ bool CloudDriveType::showEmptyStateUploadButton(NodeSelectorTreeViewWidget* wdg)
            !wdg->isCurrentRootIndexReadOnly();
 }
 
+bool CloudDriveType::showEmptyStateAddBackupButton(NodeSelectorTreeViewWidget* wdg) const
+{
+    return wdg && wdg->getTabType() == NodeSelectorTreeViewWidget::TabItem::BACKUPS;
+}
+
 bool CloudDriveType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg, uint buttonId)
 {
     auto result(false);
@@ -223,18 +237,24 @@ bool CloudDriveType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg
         return result;
     }
 
-    auto rubbishWidget = dynamic_cast<NodeSelectorTreeViewWidgetRubbish*>(wdg);
+    const bool isRubbish = wdg->getTabType() == NodeSelectorTreeViewWidget::TabItem::RUBBISH;
 
     switch (buttonId)
     {
         case SelectType::ButtonId::UPLOAD:
         {
-            result = rubbishWidget ? false : !wdg->isCurrentRootIndexReadOnly();
+            result = isRubbish ? false : !wdg->isCurrentRootIndexReadOnly();
             break;
         }
         case SelectType::ButtonId::CLEAR_RUBBISH:
         {
-            result = rubbishWidget ? !rubbishWidget->isEmpty() : false;
+            result = isRubbish ? !wdg->isEmpty() : false;
+            break;
+        }
+        case SelectType::ButtonId::ADD_BACKUP:
+        {
+            result = wdg->getTabType() == NodeSelectorTreeViewWidget::TabItem::BACKUPS &&
+                     !wdg->isEmpty();
             break;
         }
         default:

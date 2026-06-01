@@ -89,8 +89,13 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
     {
         emit onCustomButtonClicked(SelectType::ButtonId::NEW_FOLDER);
     };
+    auto emitAddBackup = [this]()
+    {
+        emit onCustomButtonClicked(SelectType::ButtonId::ADD_BACKUP);
+    };
     connect(ui->bEmptyUpload, &QPushButton::clicked, this, emitUpload);
     connect(ui->bEmptyNewFolder, &QPushButton::clicked, this, emitNewFolder);
+    connect(ui->bEmptyAddBackup, &QPushButton::clicked, this, emitAddBackup);
 
     mNodeActions.setDialogParent(Utilities::getTopParent<QDialog>(ui->tMegaFolders));
 }
@@ -363,10 +368,14 @@ void NodeSelectorTreeViewWidget::setEmptyStateButtonsVisibility(
     const bool showNewFolder = mSelectType &&
                                info.buttons.testFlag(SelectType::ButtonId::NEW_FOLDER) &&
                                mSelectType->showEmptyStateNewFolderButton(this);
+    const bool showAddBackup = mSelectType &&
+                               info.buttons.testFlag(SelectType::ButtonId::ADD_BACKUP) &&
+                               mSelectType->showEmptyStateAddBackupButton(this);
 
     ui->bEmptyUpload->setVisible(showUpload);
     ui->bEmptyNewFolder->setVisible(showNewFolder);
-    ui->emptyPageButtonsWidget->setVisible(showUpload || showNewFolder);
+    ui->bEmptyAddBackup->setVisible(showAddBackup);
+    ui->emptyPageButtonsWidget->setVisible(showUpload || showNewFolder || showAddBackup);
 }
 
 bool NodeSelectorTreeViewWidget::event(QEvent* event)
