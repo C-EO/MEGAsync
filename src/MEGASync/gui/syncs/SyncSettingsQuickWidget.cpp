@@ -159,6 +159,11 @@ void SyncSettingsQuickWidget::remove(int index) const
     CreateRemoveSyncsManager::removeSync(sync, this->parentWidget());
 }
 
+void SyncSettingsQuickWidget::sortModelByName(bool ascending)
+{
+    mSyncModel->sortByName(ascending);
+}
+
 void SyncSettingsQuickWidget::removeNonConfirmation(int index) const
 {
     const auto& sync = mSyncModel->getSync(index);

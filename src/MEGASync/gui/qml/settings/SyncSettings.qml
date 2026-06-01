@@ -157,11 +157,22 @@ Item {
             Text {
                 id: syncNameColumn
 
+                property bool sortByNameAscending: true
                 text: SettingsStrings.tableSyncsNameColumn
                 font.pixelSize: root.titleTextPixelSize
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
                 Layout.fillWidth: true
+
+                MouseArea {
+                      anchors.fill: parent
+                      hoverEnabled: true
+                      cursorShape: Qt.PointingHandCursor
+                      onClicked: {
+                          syncNameColumn.sortByNameAscending = !syncNameColumn.sortByNameAscending
+                          syncSettings.sortModelByName(syncNameColumn.sortByNameAscending)
+                      }
+                  }
             }
 
             Text {

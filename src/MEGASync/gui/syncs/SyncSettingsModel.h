@@ -4,6 +4,7 @@
 #include "megaapi.h"
 
 #include <QAbstractListModel>
+#include <QCollator>
 
 #include <memory>
 
@@ -32,6 +33,7 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;
     std::shared_ptr<SyncSettings> getSync(int index) const;
+    void sortByName(bool ascending = true);
 
     enum SyncStates
     {
@@ -54,6 +56,8 @@ private slots:
 private:
     SyncInfo* mSyncInfo;
     QList<std::shared_ptr<SyncSettings>> mList;
+    bool mSortAscending = true;
+    QCollator mQCollator;
 
     SyncStates getState(std::shared_ptr<SyncSettings> sync) const;
     void sendDataChanged(int row);
