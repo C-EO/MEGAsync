@@ -454,13 +454,13 @@ Item {
                                             wrapMode: Text.NoWrap
                                             elide: Text.ElideRight
                                             Layout.preferredWidth: Math.min(implicitWidth, syncNameContent.width - folderSearchIcon.width - 2 * syncItemContentSpacing)
-                                            color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : getSyncTextColor()
+                                            color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : syncItemBackground.getSyncTextColor()
                                         }
 
                                         SvgImage {
                                             id: folderSearchIcon
 
-                                            color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.iconPrimary : getSyncIconColor()
+                                            color: nameAndFolderSearchMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.iconPrimary : syncItemBackground.getSyncIconColor()
                                             source: Images.folder_search_small_thin_outline
                                             sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                             visible: nameAndFolderSearchMouseArea.containsMouse
@@ -519,7 +519,7 @@ Item {
                                         id: folderStatusIcon
 
                                         Layout.alignment: Qt.AlignVCenter
-                                        color: statusSyncMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED? ColorTheme.iconPrimary : getSyncIconColor()
+                                        color: statusSyncMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.iconPrimary : syncItemBackground.getSyncIconColor()
                                         source: syncItem.getStatusSyncIcon(status)
                                         sourceSize: Qt.size(folderSearchIconSize, folderSearchIconSize)
                                     }
@@ -529,7 +529,7 @@ Item {
 
                                         Layout.alignment: Qt.AlignVCenter
                                         text: getStatusDescription(status)
-                                        color: statusSyncMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : getSyncTextColor()
+                                        color: statusSyncMouseArea.containsMouse && status === SyncSettingsModel.SUSPENDED ? ColorTheme.textPrimary : syncItemBackground.getSyncTextColor()
                                     }
                                 }
 
