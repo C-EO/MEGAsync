@@ -14,7 +14,7 @@
    <string/>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget
+   <string notr="true">TransfersAccountInfoWidget, #wTop, #wBottom
 {
 background-color: #fff7f7f7; /*colorToken.surface-1*/
 }
