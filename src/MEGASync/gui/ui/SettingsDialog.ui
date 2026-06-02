@@ -2335,7 +2335,7 @@ border: none
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>0</height>
+                 <height>26</height>
                 </size>
                </property>
                <property name="maximumSize">
@@ -2504,7 +2504,7 @@ border: none
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>0</height>
+                 <height>26</height>
                 </size>
                </property>
                <property name="maximumSize">
