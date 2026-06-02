@@ -21,6 +21,18 @@ public:
 
     bool isRootContextPropertySet(QObject* value);
 
+    // Derives the QML-side identifier from a QObject's class name
+    // (e.g. "MessageDialogData" -> "messageDialogDataAccess").
+    //
+    // Exposed publicly (SNC-6567 Phase 1) so QmlDialogWrapper can register the
+    // same name on a per-dialog child QQmlContext before qmlComponent.create()
+    // runs. Both this getter and setRootContextProperty(QObject*) derive names
+    // through this single helper, so the C++ side and the QML side agree on
+    // identifiers without anyone having to spell them as string literals.
+    //
+    // Pure function, no state mutation.
+    QString getObjectRootContextName(QObject* value);
+
     void addImageProvider(const QString& id, QQmlImageProviderBase*);
     void removeImageProvider(const QString& id);
 
@@ -33,7 +45,6 @@ private:
 
     QmlManager();
     void registerCommonQmlElements();
-    QString getObjectRootContextName(QObject* value);
     void createPlatformSelectorsFlags();
 };
 

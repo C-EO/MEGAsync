@@ -15,13 +15,35 @@ import MessageDialogData 1.0
 QmlDialog {
     id: window
 
-    property QtObject messageDialogComponentAccess: instancesManager.instances["messageDialogComponentAccess"] || null
-    property QtObject messageDialogDataAccess: instancesManager.instances["messageDialogDataAccess"] || null
+    // SNC-6567 (Phase 2a): The identifiers `messageDialogComponentAccess` and
+    // `messageDialogDataAccess` are now provided as CHILD QQmlContext properties
+    // registered by QmlDialogWrapper::create() BEFORE this QML tree is built
+    // (see Phase 1 in QmlDialogWrapper.h). QML identifier resolution falls
+    // through the local QML scope (which used to declare these as local
+    // properties) to the child context, where they are guaranteed to be
+    // non-null on the very first binding evaluation.
+    //
+    // Removing the previous local declarations:
+    //
+    //   property QtObject messageDialogComponentAccess:
+    //       instancesManager.instances["messageDialogComponentAccess"] || null
+    //   property QtObject messageDialogDataAccess:
+    //       instancesManager.instances["messageDialogDataAccess"] || null
+    //
+    // eliminates the construction-time race where those expressions used to
+    // read from an empty `instancesManager.instances` map and resolve to null,
+    // leaving every dependent binding (icon, title, description, buttons,
+    // checkbox) in its null/empty terminal state.
 
     property MessageDialogMediumSizes sizes: MessageDialogMediumSizes {}
 
     property real totalWidth: Math.min(sizes.defaultMaximumWidth, Math.max(sizes.defaultMinimumWidth, contentColum.implicitWidth + sizes.leftContentMargin + sizes.rightContentMargin))
-    property real totalHeight: Math.max(sizes.defaultMinimumHeight, contentColum.implicitHeight + sizes.topContentMargin + sizes.bottomContentMargin)
+    // SNC-6567: cap totalHeight with Math.min to break the implicit-height
+    // feedback loop between contentColum.implicitHeight and the wrapping text's
+    // implicitHeight that produced "Binding loop detected for property
+    // totalHeight" QML warnings on every RichText dialog. Symmetrical with
+    // the existing Math.min clamp on totalWidth.
+    property real totalHeight: Math.min(sizes.defaultMaximumHeight, Math.max(sizes.defaultMinimumHeight, contentColum.implicitHeight + sizes.topContentMargin + sizes.bottomContentMargin))
 
     width: window.totalWidth
     height: window.totalHeight
