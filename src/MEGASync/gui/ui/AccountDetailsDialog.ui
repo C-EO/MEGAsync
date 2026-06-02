@@ -38,18 +38,7 @@
    <iconset theme="mega"/>
   </property>
   <property name="styleSheet">
-   <string notr="true">/*ColorTokenIcon;Button;bCloudDrive;active;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bCloudDrive;normal;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bVault;active;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bVault;normal;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bRubbish;normal;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bRubbish;active;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bAvailable;normal;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bAvailable;active;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bVersionIcon;normal;off;colorToken.icon-primary*/
-/*ColorTokenIcon;Button;bVersionIcon;active;off;colorToken.icon-primary*/
-
-QWidget
+   <string notr="true">QWidget
 {
 background-color: #FFFFFFFF; /*colorToken.page-background*/
 color: #ff303233; /*colorToken.text-primary*/
@@ -759,7 +748,7 @@ background-color: transparent;
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="bCloudDrive">
+          <widget class="TokenizableButton" name="bCloudDrive">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -787,6 +776,12 @@ background-color: transparent;
              <width>24</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
            </property>
           </widget>
          </item>
@@ -867,7 +862,7 @@ background-color: transparent;
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="bVault">
+          <widget class="TokenizableButton" name="bVault">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -895,6 +890,12 @@ background-color: transparent;
              <width>24</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
            </property>
           </widget>
          </item>
@@ -975,7 +976,7 @@ background-color: transparent;
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="bRubbish">
+          <widget class="TokenizableButton" name="bRubbish">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1003,6 +1004,12 @@ background-color: transparent;
              <width>24</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
            </property>
           </widget>
          </item>
@@ -1083,7 +1090,7 @@ background-color: transparent;
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="bAvailable">
+          <widget class="TokenizableButton" name="bAvailable">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1111,6 +1118,12 @@ background-color: transparent;
              <width>24</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="normal_off" stdset="0">
+            <string notr="true">icon-secondary</string>
+           </property>
+           <property name="normal_on" stdset="0">
+            <string notr="true">icon-primary</string>
            </property>
           </widget>
          </item>
@@ -1168,7 +1181,7 @@ background-color: transparent;
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <widget class="QPushButton" name="bVersionIcon">
+         <widget class="TokenizableButton" name="bVersionIcon">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -1196,6 +1209,12 @@ background-color: transparent;
             <width>24</width>
             <height>24</height>
            </size>
+          </property>
+          <property name="normal_off" stdset="0">
+           <string notr="true">icon-secondary</string>
+          </property>
+          <property name="normal_on" stdset="0">
+           <string notr="true">icon-primary</string>
           </property>
          </widget>
         </item>
@@ -1232,6 +1251,11 @@ background-color: transparent;
    <extends>QWidget</extends>
    <header>CircularUsageProgressBar.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TokenizableButton</class>
+   <extends>QPushButton</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h</header>
   </customwidget>
  </customwidgets>
  <resources>

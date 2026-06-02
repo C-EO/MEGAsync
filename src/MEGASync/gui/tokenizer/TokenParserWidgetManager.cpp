@@ -1,7 +1,6 @@
 #include "TokenParserWidgetManager.h"
 
 #include "DialogOpener.h"
-#include "IconTokenizer.h"
 #include "MegaApplication.h"
 #include "ThemeManager.h"
 
@@ -19,8 +18,6 @@ namespace // anonymous namespace to hide names from other translation units
 {
 static QRegularExpression
     COLOR_TOKEN_REGULAR_EXPRESSION(QLatin1String("(#.*) *; *\\/\\* *colorToken\\.(.*)\\*\\/"));
-static QRegularExpression ICON_COLOR_TOKEN_REGULAR_EXPRESSION(
-    QLatin1String(" *\\/\\* *ColorTokenIcon;(.*);(.*);(.*);(.*);colorToken\\.(.*) *\\*\\/"));
 
 static const QString JSON_THEMED_COLOR_TOKEN_FILE =
     QLatin1String(":/colors/ColorThemedTokens.json");
@@ -65,7 +62,6 @@ TokenParserWidgetManager::TokenParserWidgetManager(QObject* parent):
             Qt::QueuedConnection);
 
     COLOR_TOKEN_REGULAR_EXPRESSION.optimize();
-    ICON_COLOR_TOKEN_REGULAR_EXPRESSION.optimize();
 
     loadColorThemeJson();
     loadStandardStyleSheetComponents();
@@ -158,8 +154,8 @@ void TokenParserWidgetManager::applyCurrentTheme(QWidget* dialog)
     std::chrono::duration<float> elapsed = end - start;
 
     qDebug() << "Time used to apply the theme : "
-             << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << " ms";
-    qDebug() << "to the following dialog : " << dialog->objectName();
+             << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() << " µs"
+             << "to the following dialog : " << dialog->objectName();
 #endif
 }
 
@@ -277,24 +273,7 @@ void TokenParserWidgetManager::applyTheme(QWidget* widget, bool prependStandardC
 
     auto currentTheme = ThemeManager::instance()->getSelectedColorSchemaString();
 
-    QString widgetStyleSheet;
-    auto cacheIt = mWidgetsStyleSheets.find(widget);
-    if (cacheIt != mWidgetsStyleSheets.end())
-    {
-        widgetStyleSheet = cacheIt.value();
-    }
-    else
-    {
-        widgetStyleSheet = widget->styleSheet();
-        mWidgetsStyleSheets.insert(widget, widgetStyleSheet);
-        connect(widget,
-                &QObject::destroyed,
-                this,
-                [this, widget]()
-                {
-                    mWidgetsStyleSheets.remove(widget);
-                });
-    }
+    QString widgetStyleSheet = widget->styleSheet();
 
     if (!mColorThemedTokens.contains(currentTheme))
     {
@@ -308,12 +287,11 @@ void TokenParserWidgetManager::applyTheme(QWidget* widget, bool prependStandardC
     // tokens — QString::contains is much cheaper than QRegularExpression
     // globalMatch, and many widgets carry rules like "border: none;" with
     // nothing to tokenize.
-    if (widgetStyleSheet.contains(QLatin1String("/*colorToken.")))
+    if (widgetStyleSheet.contains(QLatin1String("colorToken.")))
     {
         replaceColorTokens(widgetStyleSheet, colorTokens);
     }
 
-    replaceIconColorTokens(widget, widgetStyleSheet);
     tokenizeChildStyleSheets(widget);
     removeFrameOnDialogCombos(widget);
 
@@ -371,36 +349,6 @@ void TokenParserWidgetManager::replaceColorTokens(QString& styleSheet,
                 match->capturedStart(COLOR_TOKEN_CAPTURE_INDEX::COLOR_HEX_COLOR_VALUE);
             auto endIndex = match->capturedEnd(COLOR_TOKEN_CAPTURE_INDEX::COLOR_HEX_COLOR_VALUE);
             styleSheet.replace(startIndex, endIndex - startIndex, tokenValue);
-        }
-    }
-}
-
-void TokenParserWidgetManager::replaceIconColorTokens(QWidget* widget, QString& styleSheet)
-{
-    QRegularExpressionMatchIterator matchIterator =
-        ICON_COLOR_TOKEN_REGULAR_EXPRESSION.globalMatch(styleSheet);
-    while (matchIterator.hasNext())
-    {
-        QRegularExpressionMatch match = matchIterator.next();
-
-        if (match.lastCapturedIndex() == ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_DESIGN_TOKEN_NAME)
-        {
-            const QString& targetElementProperty =
-                match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_TARGET_PROPERTY);
-            const QString& targetElementId =
-                match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_TARGET_ELEMENT_ID);
-            const QString& mode = match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_TARGET_MODE);
-            const QString& state =
-                match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_TARGET_STATE);
-            const QString& tokenId =
-                match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_DESIGN_TOKEN_NAME);
-
-            IconTokenizer::process(widget,
-                                   mode,
-                                   state,
-                                   targetElementId,
-                                   targetElementProperty,
-                                   tokenId);
         }
     }
 }

@@ -1019,14 +1019,6 @@ void SettingsDialog::on_bMyAccount_clicked()
     Utilities::openUrl(ServiceUrls::getAccountUrl());
 }
 
-void SettingsDialog::onStorageDetailsClicked()
-{
-    MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
-        AppStatsEvents::EventType::SETTINGS_DETAILS_CLICKED);
-    auto accountDetailsDialog = new AccountDetailsDialog(this);
-    DialogOpener::showNonModalDialog<AccountDetailsDialog>(accountDetailsDialog);
-}
-
 void SettingsDialog::on_bLogout_clicked()
 {
     MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
