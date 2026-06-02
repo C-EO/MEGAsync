@@ -988,10 +988,19 @@ void NodeSelectorTreeView::dragMoveEvent(QDragMoveEvent* event)
     {
         // get drop index
         const QModelIndex posIndex = indexAt(event->pos());
-        QModelIndex dropIndex(posIndex);
-        if (!dropIndex.isValid())
+
+        // When dropping over a row, the target is resolved from that item; when dropping over
+        // the empty area of the view, the target is the current folder (the view's root index).
+        int dropRow(posIndex.row());
+        int dropColumn(posIndex.column());
+        QModelIndex dropParent(posIndex.parent());
+
+        // Empty space, invalid index, take the current root index (open folder)
+        if (!posIndex.isValid())
         {
-            dropIndex = rootIndex();
+            dropRow = -1;
+            dropColumn = -1;
+            dropParent = rootIndex();
         }
 
         // clear selection and select only the drop index
@@ -999,9 +1008,9 @@ void NodeSelectorTreeView::dragMoveEvent(QDragMoveEvent* event)
 
         if (!proxyModel()->canDropMimeData(event->mimeData(),
                                            Qt::MoveAction,
-                                           dropIndex.row(),
-                                           dropIndex.column(),
-                                           dropIndex.parent()))
+                                           dropRow,
+                                           dropColumn,
+                                           dropParent))
         {
             event->ignore();
             return;
