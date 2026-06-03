@@ -14,8 +14,8 @@ class QmlDialog: public QQuickWindow
     Q_PROPERTY(bool closeOnEscapePressed READ getCloseOnEscapePressed WRITE setCloseOnEscapePressed)
     Q_PROPERTY(QmlInstancesManager* instancesManager READ getInstancesManager NOTIFY
                    instancesManagerChanged)
-    Q_PROPERTY(bool initialLayoutComplete READ initialLayoutComplete NOTIFY
-                   initialLayoutCompleteChanged)
+    Q_PROPERTY(
+        bool initialLayoutComplete READ initialLayoutComplete NOTIFY initialLayoutCompleteChanged)
 
 public:
     explicit QmlDialog(QWindow* parent = nullptr);

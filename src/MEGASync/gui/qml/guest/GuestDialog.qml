@@ -9,6 +9,10 @@ GuestQmlDialog {
 
     width: 400
     height: 560
+    minimumWidth: 400
+    maximumWidth: 400
+    minimumHeight: 560
+    maximumHeight: 560
     color: "transparent"
     visible: false
 
