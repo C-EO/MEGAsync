@@ -4980,11 +4980,6 @@ Inserisci un nome differente.</translation>
         <translation>Gli oggetti non possono essere ripristinati. Riprova più tardi.</translation>
     </message>
     <message>
-        <source>This file has been the subject of a takedown notice</source>
-        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>This file has been the subject of a takedown notice</translation>
-    </message>
-    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>Questa cartella è stata oggetto di una notifica di rimozione</translation>
