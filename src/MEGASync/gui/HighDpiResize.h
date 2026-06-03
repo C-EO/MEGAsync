@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QDialog>
 #include <QEvent>
+#include <QGuiApplication>
 #include <QPointer>
 #include <QTimer>
 
@@ -44,13 +45,26 @@ public:
 
     void queueRedraw()
     {
-    #if defined(WIN32)
+        // No-op on Wayland. This workaround pokes the window size (resize(1,1)
+        // for fixed-size dialogs, resize-down-then-up for sizable ones) to
+        // force a redraw after a cross-monitor DPI change — an X11/Windows
+        // artifact. On Wayland the compositor handles per-output scaling
+        // natively, so the poke is unnecessary; worse, the resize is forwarded
+        // to the inner QQuickWindow and collapses the surface (the fixed-size
+        // branch never resizes back), leaving QML dialogs at a tiny / very
+        // narrow width.
+        if (QGuiApplication::platformName().startsWith(QLatin1String("wayland")))
+        {
+            return;
+        }
+
+#if defined(WIN32)
         // waiting one second means we don't cause the window to be resized multiple times when dragged from one screen to another with a different scaling
         QTimer::singleShot(1000, this, SLOT(forceRedraw()));
-    #elif defined(Q_OS_LINUX)
+#elif defined(Q_OS_LINUX)
         // in linux multiple resizes seems more or less bearable, whereas the 1s delay appears buggy when moving between screens
         QTimer::singleShot(100, this, SLOT(forceRedraw()));
-    #endif
+#endif
     }
 
     void forceRedraw()
