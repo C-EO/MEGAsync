@@ -349,6 +349,12 @@ void NodeSelectorTreeViewWidgetSearch::resetSearchState()
 
 void NodeSelectorTreeViewWidgetSearch::search(const QString& text)
 {
+    // The search destroys the model items in the worker thread. Clear the selection
+    // now (while the items are still alive) so no dangling ranges remain that would
+    // later dereference freed memory. The model reset also clears it (see the
+    // modelAboutToBeReset connection); this is the first line of defense.
+    clearSelection();
+
     mSearchController->beginSearch(text);
     setStyleSheet(styleSheet());
 
@@ -466,7 +472,6 @@ void NodeSelectorTreeViewWidgetSearch::onItemDoubleClick(const QModelIndex& inde
 void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(TabType type)
 {
     emit searchTabTypeChanged(type);
-    onRootIndexChanged(QModelIndex());
 }
 
 void NodeSelectorTreeViewWidgetSearch::expandSearchResults()

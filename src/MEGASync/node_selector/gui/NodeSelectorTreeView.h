@@ -91,6 +91,13 @@ public:
     bool containsTakenDownItem(const QModelIndexList& selectedIndexes) const;
 
 protected:
+    // Detach the model while the loading scene is shown, so the view never queries the
+    // proxy while it is being re-sorted in another thread (avoids broken layouts).
+    bool detachModelDuringLoading() const override
+    {
+        return true;
+    }
+
     void drawBranches(QPainter* painter,
                       const QRect& rect,
                       const QModelIndex& index) const override;

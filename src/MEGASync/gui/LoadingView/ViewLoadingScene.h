@@ -5,7 +5,9 @@
 
 #include <QDateTime>
 #include <QEvent>
+#include <QHash>
 #include <QHeaderView>
+#include <QItemSelection>
 #include <QLayout>
 #include <QPainter>
 #include <QPointer>
@@ -308,6 +310,13 @@ protected:
 
     virtual QWidget* getTopParent();
 
+    // Hooks to defer hiding while the proxy is still sorting in another thread.
+    // Implemented by the template, which knows the view's model.
+    virtual bool isViewModelBusy() const
+    {
+        return false;
+    }
+
 signals:
     void sceneVisibilityChange(bool value);
 
@@ -469,10 +478,6 @@ public:
                 mDelayTimerToShow.stop();
             }
 
-            mView->blockSignals(false);
-            mView->header()->blockSignals(false);
-            mView->setViewPortEventsBlocked(false);
-
             if (mLoadingViewSet == LoadingViewType::LOADING_VIEW)
             {
                 qint64 timeFromStart(QDateTime::currentMSecsSinceEpoch() - mStartTime);
@@ -486,21 +491,31 @@ public:
         }
     }
 
+public:
     inline void hideLoadingScene() override
     {
         ViewLoadingSceneBase::hideLoadingScene();
 
         setLoadingViewSet(LoadingViewType::NONE);
-        emit sceneVisibilityChange(false);
 
         mLoadingModel->setRowCount(0);
         mViewLayout->replaceWidget(mLoadingSceneUI, mView);
         hide();
+        mView->restoreLoadingViewState();
+        // Notify AFTER the model is reattached, so consumers' post-load logic (e.g.
+        // selectPendingIndexes) operates on the attached model and not the detached one.
+        emit sceneVisibilityChange(false);
         if (mWasFocused)
         {
             mView->setFocus();
         }
+        // showViewCopy/showLoadingScene block viewport events for every view (detaching
+        // or not); re-enable here unconditionally or the view stays blank.
+        mView->setViewPortEventsBlocked(false);
+        mView->setUpdatesEnabled(false);
         mView->show();
+        mView->applyLoadingViewScroll();
+        mView->setUpdatesEnabled(true);
         mView->viewport()->update();
         mLoadingDelegate->setLoading(false);
     }
@@ -522,19 +537,18 @@ private:
     {
         ViewLoadingSceneBase::showViewCopy();
 
+        mView->saveLoadingViewState();
         setLoadingViewSet(LoadingViewType::COPY_VIEW);
 
-        mView->setViewPortEventsBlocked(true);
         mViewLayout->replaceWidget(mView, mLoadingSceneUI);
         show();
         mView->hide();
-        mView->blockSignals(true);
-        mView->header()->blockSignals(true);
     }
 
     void showLoadingScene() override
     {
         ViewLoadingSceneBase::showLoadingScene();
+        mView->saveLoadingViewState();
         setLoadingViewSet(LoadingViewType::LOADING_VIEW);
 
         int visibleRows(0);
@@ -572,12 +586,9 @@ private:
             mLoadingModel->appendRow(new QStandardItem());
         }
 
-        mView->setViewPortEventsBlocked(true);
         mViewLayout->replaceWidget(mView, mLoadingSceneUI);
         show();
         mView->hide();
-        mView->blockSignals(true);
-        mView->header()->blockSignals(true);
         mStartTime = QDateTime::currentMSecsSinceEpoch();
         mLoadingDelegate->setLoading(true);
 
@@ -603,6 +614,219 @@ public:
         ViewType(parent)
     {
         mLoadingView.setView(this);
+    }
+
+    void setRootIndex(const QModelIndex& index) override
+    {
+        // setModel() internally calls reset() -> setRootIndex(QModelIndex()). That is
+        // our own detach/reattach, not a navigation: let the base handle it but DO NOT
+        // touch the saved state (it would clobber the real saved root).
+        if (!mSwappingModel && mDetachedModel)
+        {
+            // The model is detached while the loading scene is shown, so the view cannot
+            // take this root now. Record it (as a source persistent index) so the pending
+            // restore applies THIS root instead of the stale one captured when detaching.
+            auto* proxy = qobject_cast<QSortFilterProxyModel*>(mDetachedModel.data());
+            mSavedRootIndex = (proxy && index.isValid()) ?
+                                  QPersistentModelIndex(proxy->mapToSource(index)) :
+                                  QPersistentModelIndex();
+            return;
+        }
+
+        ViewType::setRootIndex(index);
+    }
+
+    // Defers column-hidden changes while the model is detached (the header has no columns
+    // then, so the change would be a no-op). Re-applied on reattach in restoreLoadingViewState.
+    void setColumnHidden(int column, bool hide)
+    {
+        if (mDetachedModel)
+        {
+            mPendingColumnHidden[column] = hide;
+            return;
+        }
+
+        ViewType::setColumnHidden(column, hide);
+    }
+
+    // Called by the loading scene when it shows/hides. When detachModelDuringLoading()
+    // is enabled, the model is detached from the view while loading so the view never
+    // queries the proxy while it is being re-sorted in another thread (which produced
+    // broken layouts). State (scroll, expanded rows, selection, current) is captured as
+    // SOURCE persistent indexes -> survives the proxy re-sort and the detach, and is
+    // generic for any QSortFilterProxyModel.
+    virtual void saveLoadingViewState()
+    {
+        if (!detachModelDuringLoading() || mDetachedModel || !this->model())
+        {
+            return; // disabled or already detached (idempotent)
+        }
+
+        ViewType::blockSignals(true);
+        ViewType::header()->blockSignals(true);
+        setViewPortEventsBlocked(true);
+
+        // setModel resets the header; save its layout (column sizes, hidden columns,
+        // resize modes, visual order) so the columns don't come back compact.
+        mSavedHeaderState = ViewType::header()->saveState();
+
+        auto* proxy = qobject_cast<QSortFilterProxyModel*>(this->model());
+
+        mSavedHasVScroll = this->verticalScrollBar()->isVisible();
+        mSavedVScroll = mSavedHasVScroll ? this->verticalScrollBar()->value() : 0;
+        mSavedHasHScroll = this->horizontalScrollBar()->isVisible();
+        mSavedHScroll = mSavedHasHScroll ? this->horizontalScrollBar()->value() : 0;
+
+        mSavedSelected.clear();
+        mSavedCurrent = QPersistentModelIndex();
+        if (proxy && this->selectionModel())
+        {
+            const auto rows = this->selectionModel()->selectedRows();
+            for (const auto& idx: rows)
+            {
+                mSavedSelected.append(QPersistentModelIndex(proxy->mapToSource(idx)));
+            }
+            const auto current = this->selectionModel()->currentIndex();
+            if (current.isValid())
+            {
+                mSavedCurrent = QPersistentModelIndex(proxy->mapToSource(current));
+            }
+        }
+
+        mSavedExpanded.clear();
+        if (proxy)
+        {
+            collectExpandedSource(this->rootIndex(), proxy, mSavedExpanded);
+        }
+
+        mSavedRootIndex = proxy ? QPersistentModelIndex(proxy->mapToSource(this->rootIndex())) :
+                                  QPersistentModelIndex();
+
+        // Preserve the selection model object so external connections to it survive the
+        // model swap (the view would otherwise create a brand new one).
+        mPreservedSelectionModel = this->selectionModel();
+        if (mPreservedSelectionModel)
+        {
+            mPreservedSelectionModel->setParent(this->window());
+        }
+
+        mDetachedModel = this->model();
+        mSwappingModel = true;
+        this->setModel(nullptr);
+        mSwappingModel = false;
+    }
+
+    virtual void restoreLoadingViewState()
+    {
+        if (!mDetachedModel)
+        {
+            return;
+        }
+
+        mSwappingModel = true;
+        this->setModel(mDetachedModel);
+        mSwappingModel = false;
+        mDetachedModel = nullptr;
+
+        // Use the model actually set on the view. If it changed while loading (e.g. a
+        // navigation swapped/reset it), the preserved selection model and the saved
+        // indexes belong to a different model -> skip them instead of warning.
+        auto* proxy = qobject_cast<QSortFilterProxyModel*>(this->model());
+
+        if (!mSavedHeaderState.isEmpty())
+        {
+            ViewType::header()->restoreState(mSavedHeaderState);
+            mSavedHeaderState.clear();
+        }
+
+        // Apply column-hidden changes requested while detached (they override the restored
+        // header state, which predates that configuration).
+        for (auto it = mPendingColumnHidden.cbegin(); it != mPendingColumnHidden.cend(); ++it)
+        {
+            ViewType::setColumnHidden(it.key(), it.value());
+        }
+        mPendingColumnHidden.clear();
+
+        if (mPreservedSelectionModel)
+        {
+            if (mPreservedSelectionModel->model() == this->model())
+            {
+                this->setSelectionModel(mPreservedSelectionModel);
+            }
+            mPreservedSelectionModel = nullptr;
+        }
+
+        if (proxy)
+        {
+            // Restore the view's root (folder the user navigated into) before expansion
+            // and selection, so those operate on the right subtree.
+            const QModelIndex root =
+                mSavedRootIndex.isValid() ? proxy->mapFromSource(mSavedRootIndex) : QModelIndex();
+            this->setRootIndex(root);
+
+            for (const auto& src: mSavedExpanded)
+            {
+                const auto idx = src.isValid() ? proxy->mapFromSource(src) : QModelIndex();
+                if (idx.isValid())
+                {
+                    this->setExpanded(idx, true);
+                }
+            }
+
+            if (this->selectionModel())
+            {
+                QItemSelection selection;
+                for (const auto& src: mSavedSelected)
+                {
+                    const auto idx = src.isValid() ? proxy->mapFromSource(src) : QModelIndex();
+                    if (idx.isValid())
+                    {
+                        selection.select(idx, idx);
+                    }
+                }
+                if (!selection.isEmpty())
+                {
+                    this->selectionModel()->select(selection,
+                                                   QItemSelectionModel::Select |
+                                                       QItemSelectionModel::Rows);
+                }
+                const auto current =
+                    mSavedCurrent.isValid() ? proxy->mapFromSource(mSavedCurrent) : QModelIndex();
+                if (current.isValid())
+                {
+                    this->selectionModel()->setCurrentIndex(current, QItemSelectionModel::NoUpdate);
+                }
+            }
+        }
+
+        mSavedExpanded.clear();
+        mSavedSelected.clear();
+        mSavedCurrent = QPersistentModelIndex();
+        mSavedRootIndex = QPersistentModelIndex();
+
+        // Unblock only after the whole reattach (setModel + root + expand + select) so
+        // none of those intermediate changes propagate (avoids the breadcrumb flicker).
+        ViewType::header()->blockSignals(false);
+        ViewType::blockSignals(false);
+    }
+
+    // Applied AFTER the view is shown: the scrollbars only have a valid range once the
+    // view is visible, so setting it earlier would clamp a high value back to 0.
+    void applyLoadingViewScroll()
+    {
+        this->doItemsLayout(); // force range computation now that the view is visible
+        if (mSavedHasVScroll)
+        {
+            this->verticalScrollBar()->setValue(mSavedVScroll);
+        }
+        if (mSavedHasHScroll)
+        {
+            this->horizontalScrollBar()->setValue(mSavedHScroll);
+        }
+        mSavedHasVScroll = false;
+        mSavedHasHScroll = false;
+        mSavedVScroll = 0;
+        mSavedHScroll = 0;
     }
 
     void setTopParent(QWidget* widget)
@@ -637,9 +861,44 @@ protected:
         return ViewType::viewportEvent(event);
     }
 
+    // Views that must detach their model during loading override this to return true.
+    virtual bool detachModelDuringLoading() const
+    {
+        return false;
+    }
+
 private:
+    void collectExpandedSource(const QModelIndex& parent,
+                               QSortFilterProxyModel* proxy,
+                               QList<QPersistentModelIndex>& out) const
+    {
+        const int rows = proxy->rowCount(parent);
+        for (int row = 0; row < rows; ++row)
+        {
+            const auto idx = proxy->index(row, 0, parent);
+            if (this->isExpanded(idx))
+            {
+                out.append(QPersistentModelIndex(proxy->mapToSource(idx)));
+                collectExpandedSource(idx, proxy, out);
+            }
+        }
+    }
+
     bool mViewPortEventsBlocked = false;
     ViewLoadingScene<DelegateWidget, ViewType> mLoadingView;
+    QPointer<QAbstractItemModel> mDetachedModel;
+    QPointer<QItemSelectionModel> mPreservedSelectionModel;
+    QList<QPersistentModelIndex> mSavedExpanded;
+    QList<QPersistentModelIndex> mSavedSelected;
+    QPersistentModelIndex mSavedCurrent;
+    QPersistentModelIndex mSavedRootIndex;
+    bool mSwappingModel = false;
+    QByteArray mSavedHeaderState;
+    QHash<int, bool> mPendingColumnHidden;
+    bool mSavedHasVScroll = false;
+    int mSavedVScroll = 0;
+    bool mSavedHasHScroll = false;
+    int mSavedHScroll = 0;
 };
 
 #endif // VIEWLOADINGSCENE_H

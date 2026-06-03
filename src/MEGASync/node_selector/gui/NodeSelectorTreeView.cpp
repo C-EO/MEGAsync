@@ -95,10 +95,16 @@ QList<MegaHandle>
 void NodeSelectorTreeView::setModel(QAbstractItemModel* model)
 {
     QTreeView::setModel(model);
-    connect(proxyModel(),
-            &NodeSelectorProxyModel::navigateReady,
-            this,
-            &NodeSelectorTreeView::onNavigateReady);
+    // setModel may be called repeatedly (the loading scene detaches/reattaches the
+    // model). Guard against a null model and against duplicating the connection.
+    if (auto* proxy = proxyModel())
+    {
+        connect(proxy,
+                &NodeSelectorProxyModel::navigateReady,
+                this,
+                &NodeSelectorTreeView::onNavigateReady,
+                Qt::UniqueConnection);
+    }
 }
 
 void NodeSelectorTreeView::setRootIndexReadOnly(bool state)

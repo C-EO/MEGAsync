@@ -463,6 +463,7 @@ signals:
     void showDuplicatedNodeDialog(std::shared_ptr<ConflictTypes> conflicts, MoveActionType type);
     void modelIsBeingModifiedChanged(bool status);
     void modelModified();
+    void currentRootIndexChanged();
     void itemsMoved();
     void itemsAboutToBeMoved(const QList<mega::MegaHandle> handles, int actionType);
     void itemsAboutToBeMovedFailed(const QList<mega::MegaHandle> handles, int actionType);

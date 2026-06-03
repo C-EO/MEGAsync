@@ -1,8 +1,10 @@
 #include "NodeSelectorDestinationBreadcrumb.h"
 
 #include "MegaApplication.h"
+#include "MegaNodeNames.h"
 #include "NodeSelectorDestinationOverflowPopup.h"
 #include "ui_NodeSelectorDestinationBreadcrumb.h"
+#include "UserAttributesRequests/MyBackupsHandle.h"
 #include "Utilities.h"
 
 #include <QHBoxLayout>
@@ -77,12 +79,26 @@ QString NodeSelectorDestinationBreadcrumb::resolveSegmentText(
             std::unique_ptr<mega::MegaNode> node(megaApi->getNodeByHandle(segment.handle));
             if (node)
             {
-                return QString::fromUtf8(node->getName());
+                const bool isDevice = !QString::fromUtf8(node->getDeviceId()).isEmpty();
+                const bool isRoot = node->getType() > mega::MegaNode::TYPE_FOLDER;
+                const auto backupsHandle =
+                    UserAttributes::MyBackupsHandle::requestMyBackupsHandle()->getMyBackupsHandle();
+                const bool isBackupsRoot =
+                    backupsHandle != mega::INVALID_HANDLE && segment.handle == backupsHandle;
+
+                // Normal nodes: resolve fresh from the handle so renames are reflected. Root,
+                // device and the My Backups folder carry special/translated names that
+                // MegaNode::getName() can't produce, so keep the model-resolved text.
+                if (!isDevice && !isRoot && !isBackupsRoot)
+                {
+                    return MegaNodeNames::getNodeName(node.get());
+                }
             }
         }
     }
 
-    // Fallback: synthetic segments (root labels, empty-state text) or a deleted node.
+    // Synthetic segments (root labels, empty-state text), deleted nodes, or special nodes
+    // (root/device/My Backups) whose translated name is already in the segment text.
     return segment.text;
 }
 

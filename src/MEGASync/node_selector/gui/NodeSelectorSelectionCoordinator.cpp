@@ -99,6 +99,9 @@ void NodeSelectorSelectionCoordinator::selectPendingIndexes()
         return;
     }
 
+    // Move to the top root to see all the selected handles in case they have different parents
+    mSetRootIndexToTop();
+
     mWithSelectionSilenced(
         [&]() -> bool
         {

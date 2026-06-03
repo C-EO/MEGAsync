@@ -229,7 +229,7 @@ void NodeSelector::onUiIsBlocked(bool state)
 void NodeSelector::onSelectionChanged()
 {
     updateOkButtonState(getCurrentTreeViewWidget());
-    refreshBreadcrumbs();
+    refreshDestinationBreadcrumb();
 }
 
 void NodeSelector::updateOkButtonState(NodeSelectorTreeViewWidget* wid)
@@ -347,8 +347,21 @@ void NodeSelector::refreshHeader(NodeSelectorTreeViewWidget* wid)
 void NodeSelector::refreshBreadcrumbs()
 {
     refreshDestinationBreadcrumb();
-    refreshNavigationBreadcrumb();
     refreshSearchResultCount();
+}
+
+void NodeSelector::addCurrentWidgetConnection(const QMetaObject::Connection& connection)
+{
+    mCurrentWidgetConnections.append(connection);
+}
+
+void NodeSelector::disconnectCurrentWidgetConnections()
+{
+    for (const auto& connection: mCurrentWidgetConnections)
+    {
+        disconnect(connection);
+    }
+    mCurrentWidgetConnections.clear();
 }
 
 void NodeSelector::refreshNavigationBreadcrumb()
@@ -428,6 +441,8 @@ bool NodeSelector::event(QEvent* event)
         {
             refreshBreadcrumbs();
         }
+
+        refreshNavigationBreadcrumb();
     }
 
     return QDialog::event(event);
@@ -1072,10 +1087,7 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
         // cascade of signals triggered by clearSelection() and setSelectedNodeHandle()
         // (selectionChanged, viewStateChanged) does not re-enter refreshDestinationBreadcrumb
         // while the proxy model is mid-transition inside loadTreeFromNode/setRootIndex.
-        disconnect(mSelectionChangedConnection);
-        disconnect(mViewStateConnection);
-        disconnect(mCurrentViewPageConnection);
-        disconnect(mViewButtonsStateConnection);
+        disconnectCurrentWidgetConnections();
 
         if (mNodeToBeSelected)
         {
@@ -1084,39 +1096,42 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
             mNodeToBeSelected.reset();
         }
 
-        mSelectionChangedConnection = connect(wid,
-                                              &NodeSelectorTreeViewWidget::selectionHasChanged,
-                                              this,
-                                              &NodeSelector::onSelectionChanged,
-                                              Qt::UniqueConnection);
-        mViewStateConnection = connect(wid,
-                                       &NodeSelectorTreeViewWidget::viewStateChanged,
-                                       this,
-                                       [this, wid]()
-                                       {
-                                           refreshHeader(wid);
-                                       });
-        mCurrentViewPageConnection = connect(wid,
-                                             &NodeSelectorTreeViewWidget::currentViewPageChanged,
-                                             this,
-                                             [this, wid](NodeSelectorTreeViewWidget::ViewType type)
-                                             {
-                                                 if (wid == getCurrentTreeViewWidget())
-                                                 {
-                                                     applySearchToolVisibilityState(wid, type);
-                                                     updateHeaderTopRowVisibility();
-                                                 }
-                                             });
-        mViewButtonsStateConnection = connect(wid,
-                                              &NodeSelectorTreeViewWidget::viewButtonsStateChanged,
-                                              this,
-                                              [this, wid]()
-                                              {
-                                                  refreshHeaderButtons(wid);
-                                              });
+        addCurrentWidgetConnection(connect(wid,
+                                           &NodeSelectorTreeViewWidget::selectionHasChanged,
+                                           this,
+                                           &NodeSelector::onSelectionChanged,
+                                           Qt::UniqueConnection));
+        addCurrentWidgetConnection(connect(wid,
+                                           &NodeSelectorTreeViewWidget::viewStateChanged,
+                                           this,
+                                           [this, wid]()
+                                           {
+                                               refreshHeader(wid);
+                                           }));
+        addCurrentWidgetConnection(connect(wid,
+                                           &NodeSelectorTreeViewWidget::currentViewPageChanged,
+                                           this,
+                                           [this, wid](NodeSelectorTreeViewWidget::ViewType type)
+                                           {
+                                               if (wid == getCurrentTreeViewWidget())
+                                               {
+                                                   applySearchToolVisibilityState(wid, type);
+                                                   updateHeaderTopRowVisibility();
+                                               }
+                                           }));
+        addCurrentWidgetConnection(connect(wid,
+                                           &NodeSelectorTreeViewWidget::viewButtonsStateChanged,
+                                           this,
+                                           [this, wid]()
+                                           {
+                                               refreshHeaderButtons(wid);
+                                           }));
 
         updateOkButtonState(wid);
         refreshHeader(wid);
+        // The current widget changed (tab switch): its root didn't fire rootIndexChanged,
+        // so refresh the navigation breadcrumb explicitly here.
+        refreshNavigationBreadcrumb();
     }
 }
 
@@ -1208,6 +1223,14 @@ void NodeSelector::connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
     };
 
     connect(widget, &NodeSelectorTreeViewWidget::viewReady, this, refreshColumns);
+    // Permanent (not per-current-widget) so it exists before the first setRootIndex.
+    // refreshNavigationBreadcrumb resolves against the current widget, so a non-current
+    // widget firing this is harmless.
+    connect(widget,
+            &NodeSelectorTreeViewWidget::rootIndexChanged,
+            this,
+            &NodeSelector::refreshNavigationBreadcrumb,
+            Qt::UniqueConnection);
 }
 
 void NodeSelector::configureTableColumns(NodeSelectorTreeViewWidget* widget)

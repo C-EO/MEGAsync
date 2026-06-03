@@ -147,6 +147,8 @@ public:
 
 public slots:
     virtual void checkViewOnModelChange();
+    // Only forwards to checkViewOnModelChange when the current root toggles empty<->non-empty.
+    void onModelRowsChanged();
     void setLoadingSceneVisible(bool visible);
     void notifyViewStateChanged();
     void notifyButtonsStateChanged();
@@ -162,11 +164,11 @@ signals:
     void currentViewPageChanged(ViewType type);
     void viewButtonsStateChanged();
     void modelModified();
+    void rootIndexChanged();
 
 protected:
     bool event(QEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
-    void showEvent(QShowEvent* event) override;
     void selectionChanged(const QModelIndexList& selected);
     QModelIndex getParentIncomingShareByIndex(QModelIndex idx) const;
 
@@ -189,7 +191,6 @@ protected:
         return false;
     }
 
-    void onRootIndexChanged(const QModelIndex& source_idx);
     virtual QModelIndex getAddedNodeParent(mega::MegaHandle parentHandle);
     QModelIndex getRootIndexFromIndex(const QModelIndex& index);
     void selectIndex(const QModelIndex& index, bool setCurrent, bool exclusiveSelect = false);
@@ -292,13 +293,18 @@ private:
     // Column width
     QList<int> mVisibleColumns;
     void updateColumnsWidth(bool updateVisibleColumnCounter);
+    // Rebuilds mVisibleColumns from the header. No-op while the model is detached (header
+    // has 0 columns); widths are recomputed on the next real viewport resize / reattach.
+    void rebuildVisibleColumns();
     void updateColumnResizeModes();
 
     ButtonIconManager mButtonIconManager;
     bool first;
     bool mUiBlocked;
     bool mWasEmpty;
+    bool mRootWasEmpty = true;
     bool mNewFolderButtonVisible = true;
+    bool mViewInitialized = false;
     ViewType mCurrentViewType = ViewType::VIEW;
 
     // Containers used to ignore specific nodes updates

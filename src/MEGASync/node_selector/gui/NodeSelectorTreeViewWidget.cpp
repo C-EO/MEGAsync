@@ -13,6 +13,7 @@
 #include "TokenizableItems/TokenPropertySetter.h"
 #include "ui_NodeSelectorTreeViewWidget.h"
 
+#include <QGuiApplication>
 #include <QKeyEvent>
 #include <QLayout>
 
@@ -211,19 +212,25 @@ void NodeSelectorTreeViewWidget::init()
     connect(mProxyModel.get(),
             &NodeSelectorProxyModel::modelSorted,
             this,
-            &NodeSelectorTreeViewWidget::checkViewOnModelChange);
+            &NodeSelectorTreeViewWidget::onModelRowsChanged);
     connect(mModel.get(),
             &QAbstractItemModel::rowsInserted,
             this,
-            &NodeSelectorTreeViewWidget::checkViewOnModelChange);
+            &NodeSelectorTreeViewWidget::onModelRowsChanged);
     connect(mModel.get(),
             &QAbstractItemModel::rowsRemoved,
             this,
-            &NodeSelectorTreeViewWidget::checkViewOnModelChange);
+            &NodeSelectorTreeViewWidget::onModelRowsChanged);
     connect(mModel.get(),
             &NodeSelectorModel::blockUi,
             this,
             &NodeSelectorTreeViewWidget::setLoadingSceneVisible);
+    // Re-emit when the model commits the current root (possibly deferred until children
+    // load), so the navigation breadcrumb refreshes against the committed root.
+    connect(mModel.get(),
+            &NodeSelectorModel::currentRootIndexChanged,
+            this,
+            &NodeSelectorTreeViewWidget::rootIndexChanged);
     connect(mModel.get(),
             &NodeSelectorModel::modelModified,
             this,
@@ -525,7 +532,11 @@ QList<NodeSelectorBreadcrumbSegment>
         return {};
     }
 
-    const auto currentRoot = getCurrentRootIndex();
+    // Use the model's authoritative current root mapped to the proxy, not the view's
+    // rootIndex(): the latter is transiently reset to invalid while the loading scene
+    // detaches the model, which would collapse the breadcrumb to just the root.
+    const auto currentRoot = mProxyModel->mapFromSource(mModel->getCurrentRootIndex());
+
     if (!currentRoot.isValid())
     {
         return {{mega::INVALID_HANDLE, getRootText()}};
@@ -600,27 +611,37 @@ void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)
                                                QAbstractItemView::NoDragDrop);
 }
 
-void NodeSelectorTreeViewWidget::onRootIndexChanged(const QModelIndex&)
+void NodeSelectorTreeViewWidget::onSectionResized()
 {
-    updateColumnsWidth(true);
+    if (!mManuallyResizedColumn && ui->tMegaFolders->header()->rect().contains(
+                                       ui->tMegaFolders->mapFromGlobal(QCursor::pos())))
+    {
+        mResizeEventsReceived++;
+    }
+
+    // Protect against clicking on the header to show the sort indicator.
+    // Only if the event is received 3 times in an span of 10ms, it is a real resize
+    if (!mResizeEventsTimer.isActive())
+    {
+        mResizeEventsTimer.start();
+    }
 }
 
 void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCounter)
 {
-    if (updateVisibleColumnCounter)
+    // The loading scene detaches the model; with no model the header has 0 columns, so any
+    // computation here would be wrong. Skip until the model is reattached.
+    if (!ui->tMegaFolders->model() || ui->tMegaFolders->header()->count() == 0)
     {
-        mVisibleColumns.clear();
-
-        for (int column = 0; column < ui->tMegaFolders->header()->count(); ++column)
-        {
-            if (!ui->tMegaFolders->header()->isSectionHidden(column))
-            {
-                mVisibleColumns.append(column);
-            }
-        }
+        return;
     }
 
-    if (!mVisibleColumns.isEmpty() && !mManuallyResizedColumn)
+    if (updateVisibleColumnCounter)
+    {
+        rebuildVisibleColumns();
+    }
+
+    if (!mVisibleColumns.isEmpty())
     {
         int widthTotal(0);
         int minWidth(100);
@@ -681,18 +702,21 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
     }
 }
 
-void NodeSelectorTreeViewWidget::onSectionResized()
+void NodeSelectorTreeViewWidget::rebuildVisibleColumns()
 {
-    if (!mManuallyResizedColumn && ui->tMegaFolders->header()->rect().contains(
-                                       ui->tMegaFolders->mapFromGlobal(QCursor::pos())))
+    // While the model is detached the header has no columns; keep the last known visible
+    // set instead of clearing it to empty.
+    if (!ui->tMegaFolders->model() || ui->tMegaFolders->header()->count() == 0)
     {
-        mResizeEventsReceived++;
+        return;
+    }
 
-        // Protect against clicking on the header to show the sort indicator.
-        // Only if the event is received 3 times in an span of 10ms, it is a real resize
-        if (!mResizeEventsTimer.isActive())
+    mVisibleColumns.clear();
+    for (int column = 0; column < ui->tMegaFolders->header()->count(); ++column)
+    {
+        if (!ui->tMegaFolders->header()->isSectionHidden(column))
         {
-            mResizeEventsTimer.start();
+            mVisibleColumns.append(column);
         }
     }
 }
@@ -703,6 +727,19 @@ void NodeSelectorTreeViewWidget::checkViewOnModelChange()
     emit viewStateChanged();
 }
 
+void NodeSelectorTreeViewWidget::onModelRowsChanged()
+{
+    // rowsInserted/rowsRemoved fire on every change (e.g. expanding a subfolder loads its
+    // children under a child parent). Only refresh when the current root itself toggles
+    // between empty and non-empty; otherwise the breadcrumb/header flickers on expansion.
+    const bool nowEmpty = (mProxyModel->rowCount(getCurrentRootIndex()) == 0);
+    if (nowEmpty != mRootWasEmpty)
+    {
+        mRootWasEmpty = nowEmpty;
+        checkViewOnModelChange();
+    }
+}
+
 void NodeSelectorTreeViewWidget::setNewFolderInfo(const NewFolderInfo& newNewFolderInfo)
 {
     mSelectionCoordinator->setNewFolderInfo(newNewFolderInfo);
@@ -710,8 +747,10 @@ void NodeSelectorTreeViewWidget::setNewFolderInfo(const NewFolderInfo& newNewFol
 
 void NodeSelectorTreeViewWidget::onLevelLoaded()
 {
-    // Initialise the view only the first time, but always refresh the empty/nav state below
-    if (ui->tMegaFolders->model() == nullptr)
+    // Initialise the view only the first time, but always refresh the empty/nav state below.
+    // Use an explicit flag, not model()==nullptr: the loading scene detaches the model
+    // temporarily, which would otherwise re-run the whole init (duplicate connects, etc.).
+    if (!mViewInitialized)
     {
         ui->tMegaFolders->setContextMenuPolicy(Qt::DefaultContextMenu);
         ui->tMegaFolders->setExpandsOnDoubleClick(false);
@@ -735,6 +774,21 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
                 &QItemSelectionModel::selectionChanged,
                 this,
                 &NodeSelectorTreeViewWidget::onSelectionChanged);
+        // When a model reset begins (e.g. a search) the items backing the model are
+        // destroyed, but QItemSelectionModel only clears its ranges on endResetModel.
+        // In that window, reading the selection (selectedRows) dereferences already
+        // freed items -> crash. Clear the selection at the START of the reset, while
+        // the items are still valid.
+        connect(mProxyModel.get(),
+                &QAbstractItemModel::modelAboutToBeReset,
+                this,
+                [this]()
+                {
+                    if (auto selModel = ui->tMegaFolders->selectionModel())
+                    {
+                        selModel->clear();
+                    }
+                });
         connect(ui->tMegaFolders,
                 &NodeSelectorTreeView::deleteNodeClicked,
                 this,
@@ -786,10 +840,8 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
 
         // View ready to work with it > View init and model loaded
         emit viewReady();
+        mViewInitialized = true;
     }
-
-    // Check empty view page and forward/backward navigation buttons
-    checkViewOnModelChange();
 }
 
 void NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot(const QModelIndex& indexToRemove)
@@ -990,6 +1042,9 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
         onSelectionHasChanged();
         mSelectionCoordinator->expandPendingIndexes();
         mSelectionCoordinator->selectPendingIndexes();
+        // The model is reattached now (the loading scene hid), so the header has its
+        // columns back: recompute widths that were skipped while detached.
+        updateColumnsWidth(true);
     }
 }
 
@@ -1303,7 +1358,6 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
         selectionModel->setCurrentIndex(currentIndex, QItemSelectionModel::NoUpdate);
     }
 
-    onRootIndexChanged(node_column_idx);
     setCurrentViewWidget();
     notifyViewStateChanged();
 }
@@ -1356,13 +1410,10 @@ void NodeSelectorTreeViewWidget::setColumnHidden(int column, bool hidden)
         return;
     }
     ui->tMegaFolders->setColumnHidden(column, hidden);
-    updateColumnsWidth(true);
-}
-
-void NodeSelectorTreeViewWidget::showEvent(QShowEvent* event)
-{
-    QWidget::showEvent(event);
-    updateColumnsWidth(true);
+    // Don't recompute widths here (the model may be detached / viewport unsettled during
+    // column configuration). Just refresh the visible set; widths are recomputed on the
+    // next real viewport resize and after the model is reattached.
+    rebuildVisibleColumns();
 }
 
 void NodeSelectorTreeViewWidget::setNonInteractiveColumns(const QSet<int>& columns)

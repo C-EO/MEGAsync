@@ -239,6 +239,11 @@ private:
     void refreshNavigationBreadcrumb();
     void onNavigationBreadcrumbSegmentActivated(int segmentIndex);
 
+    // Connections to the current tree view widget. Register every per-current-widget
+    // connection here so they are all torn down together when the current widget changes.
+    void addCurrentWidgetConnection(const QMetaObject::Connection& connection);
+    void disconnectCurrentWidgetConnections();
+
     virtual void refreshDestinationBreadcrumb() {}
 
     virtual void refreshSearchResultCount() {}
@@ -266,10 +271,7 @@ private:
     NodeSelectorTreeViewWidget* mTargetWid;
 
     // Selection changed signal
-    QMetaObject::Connection mSelectionChangedConnection;
-    QMetaObject::Connection mViewStateConnection;
-    QMetaObject::Connection mCurrentViewPageConnection;
-    QMetaObject::Connection mViewButtonsStateConnection;
+    QList<QMetaObject::Connection> mCurrentWidgetConnections;
 };
 
 #endif // NODESELECTOR_H

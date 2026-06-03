@@ -7,6 +7,7 @@
 #include "NodeSelectorModel.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
 #include "Preferences.h"
+#include "RequestListenerManager.h"
 #include "StatsEventHandler.h"
 #include "TabSelector.h"
 #include "tokenizer/TokenizableItems/TokenizableButtons.h"
@@ -246,7 +247,17 @@ void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
             if (msg->result() == QMessageBox::Yes)
             {
                 mRubbishWidget->setLoadingSceneVisible(true);
-                MegaSyncApp->getMegaApi()->cleanRubbishBin();
+                // cleanRubbishBin does not go through the moving-nodes accounting that
+                // emits blockUi(false), so hide the loading scene when the request finishes;
+                // otherwise the view stays stuck in the loading scene forever.
+                auto listener =
+                    RequestListenerManager::instance().registerAndGetCustomFinishListener(
+                        this,
+                        [this](mega::MegaRequest*, mega::MegaError*)
+                        {
+                            mRubbishWidget->setLoadingSceneVisible(false);
+                        });
+                MegaSyncApp->getMegaApi()->cleanRubbishBin(listener.get());
             }
         };
         MessageDialogOpener::warning(msgInfo);

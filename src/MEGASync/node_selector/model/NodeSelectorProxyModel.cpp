@@ -123,15 +123,20 @@ void NodeSelectorProxyModel::deleteNode(const QModelIndex& item)
 
 bool NodeSelectorProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
 {
-    // Solo ordenar las filas que son hijas directas del root index actual.
-    // Los niveles más anidados conservan su orden original.
-    if (auto model = getMegaModel())
-    {
-        if (left.parent() != model->getCurrentRootIndex())
-        {
-            return false;
-        }
-    }
+    // On a user-initiated column sort (header click) only sort the current root's direct
+    // children, keeping nested levels in their original order. For sorts caused by loading
+    // or adding items (invalidateModel sets mPendingSortIsLevelLoad), sort every level so
+    // new/restored items land in their correct sorted position.
+    // if (!mPendingSortIsLevelLoad)
+    // {
+    //     if (auto model = getMegaModel())
+    //     {
+    //         if (left.parent() != model->getCurrentRootIndex())
+    //         {
+    //             return false;
+    //         }
+    //     }
+    // }
 
     auto lIsFileVar(left.data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)));
     auto rIsFileVar(right.data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)));

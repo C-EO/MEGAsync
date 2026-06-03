@@ -1001,6 +1001,10 @@ void NodeSelectorModel::executeExtraSpaceLogic()
     executeAddExtraSpaceLogic(mCurrentRootIndex);
 
     mPendingRootIndex = QModelIndex();
+
+    // The current root is committed here (it may be deferred until children load), not when
+    // setCurrentRootIndex is called. Notify so the breadcrumb refreshes with the right root.
+    emit currentRootIndexChanged();
 }
 
 bool NodeSelectorModel::isExtraSpaceIndex(const QModelIndex& index) const
