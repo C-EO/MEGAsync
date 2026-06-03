@@ -4946,7 +4946,7 @@ Enter a different name</source>
     <message>
         <source>This file has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>This file has been the subject of a takedown notice</translation>
+        <translation>이 파일은 게시중단 통지의 대상입니다</translation>
     </message>
     <message>
         <source>This folder has been the subject of a takedown notice</source>

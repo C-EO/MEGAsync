@@ -5016,11 +5016,6 @@ Introdu un alt nume.</translation>
         <translation>Elementele nu au putut fi restaurate. Încercați din nou mai târziu.</translation>
     </message>
     <message>
-        <source>This file has been the subject of a takedown notice</source>
-        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>This file has been the subject of a takedown notice</translation>
-    </message>
-    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>Acest folder a fost obiectul unei notificări de eliminare</translation>

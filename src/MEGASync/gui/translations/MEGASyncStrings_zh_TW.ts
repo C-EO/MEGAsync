@@ -4944,11 +4944,6 @@ Enter a different name</source>
         <translation>無法恢復項目。稍後再試。</translation>
     </message>
     <message>
-        <source>This file has been the subject of a takedown notice</source>
-        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
-        <translation>This file has been the subject of a takedown notice</translation>
-    </message>
-    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>此資料夾已遭檢舉移除</translation>
