@@ -299,6 +299,16 @@ const QString Preferences::lastSyncReminderStateKey = QString::fromLatin1("lastS
 const QString Preferences::gfxWorkerEndpointKey = QString::fromLatin1("gfxWorkerEndpoint");
 #endif
 
+// reclamation file system settings.
+const QString Preferences::maxPayloadLogSize = QString::fromLatin1("maxPayloadLogSize");
+const QString Preferences::reclaimAgeThresholdMinutes =
+    QString::fromLatin1("reclaimAgeThresholdMinutes");
+const QString Preferences::reclaimBatchSize = QString::fromLatin1("reclaimBatchSize");
+const QString Preferences::reclaimDelaySeconds = QString::fromLatin1("reclaimDelaySeconds");
+const QString Preferences::reclaimPeriodSeconds = QString::fromLatin1("reclaimPeriodSeconds");
+const QString Preferences::reclaimTargetBytes = QString::fromLatin1("reclaimTargetBytes");
+const QString Preferences::reclaimThresholdBytes = QString::fromLatin1("reclaimThresholdBytes");
+
 //Sleep settings
 const QString Preferences::awakeIfActiveKey = QString::fromLatin1("sleepIfInactiveEnabledKey");
 const bool Preferences::defaultAwakeIfActive = false;
@@ -317,6 +327,15 @@ const unsigned long long Preferences::defaultTransferIdentifier = 1;
 const int Preferences::defaultCleanerDaysLimitValue = 30;
 const int Preferences::defaultFolderPermissions = 0;
 const int Preferences::defaultFilePermissions   = 0;
+
+constexpr auto MAX_PAY_LOAD_LOG_SIZE = std::size_t{10240};
+constexpr auto RECLAIM_AGE_THRESHOLD_MINUTES = 3 * 24 * 60;
+constexpr auto RECLAIM_BATCH_SIZE = std::size_t{4};
+constexpr auto RECLAIM_DELAY_SECONDS = std::uint64_t{30 * 60};
+constexpr auto RECLAIM_PERIOD_SECONDS = std::uint64_t{2 * 60 * 60};
+constexpr auto RECLAIM_TARGET_BYTES = std::uint64_t{1024 * 1024 * 1024};
+constexpr auto RECLAIM_THRESHOLD_BYTES = std::int64_t{10 * RECLAIM_TARGET_BYTES};
+
 #ifdef WIN32
 const int  Preferences::defaultProxyType            = Preferences::PROXY_TYPE_AUTO;
 #else
@@ -3016,4 +3035,85 @@ void Preferences::setFullName(const QString& newFirstName, const QString& newLas
     {
         setLastName(newLastName);
     }
+}
+
+std::size_t Preferences::getMaxPayloadLogSize()
+{
+    return static_cast<std::size_t>(
+        getValueConcurrent<quint64>(maxPayloadLogSize,
+                                    static_cast<quint64>(MAX_PAY_LOAD_LOG_SIZE)));
+}
+
+void Preferences::setMaxPayloadLogSize(std::size_t value)
+{
+    setValueConcurrently(maxPayloadLogSize, static_cast<quint64>(value));
+}
+
+int Preferences::getReclaimAgeThresholdMinutes()
+{
+    return getValueConcurrent<int>(reclaimAgeThresholdMinutes, RECLAIM_AGE_THRESHOLD_MINUTES);
+}
+
+void Preferences::setReclaimAgeThresholdMinutes(int value)
+{
+    setValueConcurrently(reclaimAgeThresholdMinutes, value);
+}
+
+std::size_t Preferences::getReclaimBatchSize()
+{
+    return static_cast<std::size_t>(
+        getValueConcurrent<quint64>(reclaimBatchSize, static_cast<quint64>(RECLAIM_BATCH_SIZE)));
+}
+
+void Preferences::setReclaimBatchSize(std::size_t value)
+{
+    setValueConcurrently(reclaimBatchSize, static_cast<quint64>(value));
+}
+
+uint64_t Preferences::getReclaimDelaySeconds()
+{
+    return static_cast<uint64_t>(
+        getValueConcurrent<quint64>(reclaimDelaySeconds,
+                                    static_cast<quint64>(RECLAIM_DELAY_SECONDS)));
+}
+
+void Preferences::setReclaimDelaySeconds(uint64_t value)
+{
+    setValueConcurrently(reclaimDelaySeconds, static_cast<quint64>(value));
+}
+
+uint64_t Preferences::getReclaimPeriodSeconds()
+{
+    return static_cast<uint64_t>(
+        getValueConcurrent<quint64>(reclaimPeriodSeconds,
+                                    static_cast<quint64>(RECLAIM_PERIOD_SECONDS)));
+}
+
+void Preferences::setReclaimPeriodSeconds(uint64_t value)
+{
+    setValueConcurrently(reclaimPeriodSeconds, static_cast<quint64>(value));
+}
+
+uint64_t Preferences::getReclaimTargetBytes()
+{
+    return static_cast<uint64_t>(
+        getValueConcurrent<quint64>(reclaimTargetBytes,
+                                    static_cast<quint64>(RECLAIM_TARGET_BYTES)));
+}
+
+void Preferences::setReclaimTargetBytes(uint64_t value)
+{
+    setValueConcurrently(reclaimTargetBytes, static_cast<quint64>(value));
+}
+
+int64_t Preferences::getReclaimThresholdBytes()
+{
+    return static_cast<int64_t>(
+        getValueConcurrent<qint64>(reclaimThresholdBytes,
+                                   static_cast<qint64>(RECLAIM_THRESHOLD_BYTES)));
+}
+
+void Preferences::setReclaimThresholdBytes(int64_t value)
+{
+    setValueConcurrently(reclaimThresholdBytes, static_cast<qint64>(value));
 }

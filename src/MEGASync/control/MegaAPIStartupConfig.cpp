@@ -1,26 +1,32 @@
 #include "MegaAPIStartupConfig.h"
 
 #include "megaapi.h"
+#include "Preferences.h"
 
-#include <cstddef>
-#include <cstdint>
 #include <memory>
 
-namespace
+void MegaApiStartupConfig::configure(mega::MegaApi* primaryApi, mega::MegaApi* secondaryApi)
 {
+    if (Preferences::instance()->accountStateInGeneral() == Preferences::STATE_LOGGED_OK)
+    {
+        QString errorMessage =
+            QStringLiteral("configure shouldn't be called if we are already logged.");
 
-// Prevents large glitches (Mac beachball) caused by network logging hundreds of MB
-constexpr auto maxPayloadLogSize = std::size_t{10240};
+#ifdef QT_DEBUG
+        throw std::logic_error(errorMessage.toStdString().c_str());
+#endif
 
-constexpr auto reclaimAgeThresholdMinutes = 3 * 24 * 60;
-constexpr auto reclaimBatchSize = std::size_t{4};
-constexpr auto reclaimDelaySeconds = std::uint64_t{30 * 60};
-constexpr auto reclaimPeriodSeconds = std::uint64_t{2 * 60 * 60};
-constexpr auto reclaimTargetBytes = std::uint64_t{1024} * 1024 * 1024;
-constexpr auto reclaimThresholdBytes =
-    std::int64_t{10} * static_cast<std::int64_t>(reclaimTargetBytes);
+        mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_WARNING, errorMessage.toStdString().c_str());
+    }
 
-void applyFileServiceReclaimOptions(mega::MegaApi& api)
+    primaryApi->setMaxPayloadLogSize(Preferences::instance()->getMaxPayloadLogSize());
+    secondaryApi->setMaxPayloadLogSize(Preferences::instance()->getMaxPayloadLogSize());
+
+    applyFileServiceReclaimOptions(primaryApi);
+    applyFileServiceReclaimOptions(secondaryApi);
+}
+
+void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* api)
 {
     std::unique_ptr<mega::MegaFileServiceReclaimOptions> options{
         mega::MegaFileServiceReclaimOptions::create()};
@@ -32,25 +38,15 @@ void applyFileServiceReclaimOptions(mega::MegaApi& api)
         return;
     }
 
-    options->setAgeThreshold(reclaimAgeThresholdMinutes);
-    options->setBatchSize(reclaimBatchSize);
-    options->setDelay(reclaimDelaySeconds);
-    options->setPeriod(reclaimPeriodSeconds);
-    options->setReclaimTarget(reclaimTargetBytes);
-    options->setReclaimThreshold(reclaimThresholdBytes);
+    options->setAgeThreshold(Preferences::instance()->getReclaimAgeThresholdMinutes());
+    options->setBatchSize(Preferences::instance()->getReclaimBatchSize());
+    options->setDelay(Preferences::instance()->getReclaimDelaySeconds());
+    options->setPeriod(Preferences::instance()->getReclaimPeriodSeconds());
+    options->setReclaimTarget(Preferences::instance()->getReclaimTargetBytes());
+    options->setReclaimThreshold(Preferences::instance()->getReclaimThresholdBytes());
 
-    api.fileServiceSetReclaimOptions(options.get());
+    api->fileServiceSetReclaimOptions(options.get());
 
     mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_INFO,
                        "FileService reclaim options configured for MEGAsync.");
-}
-
-} // namespace
-
-void MegaAPIStartupConfig::apply(mega::MegaApi& primaryApi, mega::MegaApi& secondaryApi)
-{
-    primaryApi.setMaxPayloadLogSize(maxPayloadLogSize);
-    secondaryApi.setMaxPayloadLogSize(maxPayloadLogSize);
-
-    applyFileServiceReclaimOptions(primaryApi);
 }

@@ -413,6 +413,21 @@ public:
     void setDontShowExportLinkDialog(bool value);
     bool getDontShowExportLinkDialog();
 
+    std::size_t getMaxPayloadLogSize();
+    void setMaxPayloadLogSize(std::size_t value);
+    int getReclaimAgeThresholdMinutes();
+    void setReclaimAgeThresholdMinutes(int value);
+    std::size_t getReclaimBatchSize();
+    void setReclaimBatchSize(std::size_t value);
+    uint64_t getReclaimDelaySeconds();
+    void setReclaimDelaySeconds(uint64_t value);
+    uint64_t getReclaimPeriodSeconds();
+    void setReclaimPeriodSeconds(uint64_t value);
+    uint64_t getReclaimTargetBytes();
+    void setReclaimTargetBytes(uint64_t value);
+    int64_t getReclaimThresholdBytes();
+    void setReclaimThresholdBytes(int64_t value);
+
     enum class ThemeType
     {
         UNINITIALIZED = -1,
@@ -845,6 +860,14 @@ protected:
     static const ThemeType defaultTheme;
 
     static const QString dontShowExportLinkDialogKey;
+
+    static const QString maxPayloadLogSize;
+    static const QString reclaimAgeThresholdMinutes;
+    static const QString reclaimBatchSize;
+    static const QString reclaimDelaySeconds;
+    static const QString reclaimPeriodSeconds;
+    static const QString reclaimTargetBytes;
+    static const QString reclaimThresholdBytes;
 
 private:
     void updateFullName();

@@ -1,18 +1,20 @@
-#ifndef MEGAAPISTARTUPCONFIG_H
-#define MEGAAPISTARTUPCONFIG_H
+#ifndef MEGA_API_STARTUP_CONFIG_H
+#define MEGA_API_STARTUP_CONFIG_H
 
 namespace mega
 {
 class MegaApi;
 }
 
-class MegaAPIStartupConfig
+class MegaApiStartupConfig
 {
 public:
-    static void apply(mega::MegaApi& primaryApi, mega::MegaApi& secondaryApi);
+    MegaApiStartupConfig() = delete;
+
+    static void configure(mega::MegaApi* primaryApi, mega::MegaApi* secondaryApi);
 
 private:
-    MegaAPIStartupConfig() = delete;
+    static void applyFileServiceReclaimOptions(mega::MegaApi* api);
 };
 
-#endif // MEGAAPISTARTUPCONFIG_H
+#endif

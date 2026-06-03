@@ -612,7 +612,7 @@ void MegaApplication::initialize()
     // Init the Service Urls instance with the newly created API
     ServiceUrls::instance()->reset(megaApi);
 
-    MegaAPIStartupConfig::apply(*megaApi, *megaApiFolders);
+    MegaApiStartupConfig::configure(megaApi, megaApiFolders);
 
     mStatsEventHandler = std::make_unique<ProxyStatsEventHandler>(megaApi);
     QmlManager::instance()->setRootContextProperty(mStatsEventHandler.get());
