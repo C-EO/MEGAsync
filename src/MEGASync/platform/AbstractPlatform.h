@@ -51,6 +51,11 @@ public:
     virtual bool startOnStartup(bool value) = 0;
     virtual bool isStartOnStartupActive() = 0;
     virtual bool isTilingWindowManager();
+    // Are we running on the Wayland platform? Default uses the live
+    // QGuiApplication's platform name (authoritative once the app exists). The
+    // Linux override additionally handles the pre-QApplication case (e.g. the
+    // scale-factor setup) via environment detection.
+    virtual bool isWayland();
     virtual QPoint initialDialogPosition(const QSize& dialogSize) const;
     virtual QPoint initialDialogPosition(const QSize& dialogSize,
                                          const QRect& parentGeometry) const;
