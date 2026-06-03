@@ -81,9 +81,6 @@ public:
     Q_ENUM(TextFormat)
 
     explicit MessageDialogTextInfo(QObject* parent = nullptr);
-    MessageDialogTextInfo(const QString& text,
-                          TextFormat format = TextFormat::PLAIN,
-                          QObject* parent = nullptr);
 
     QString text() const;
     void setText(const QString& value);

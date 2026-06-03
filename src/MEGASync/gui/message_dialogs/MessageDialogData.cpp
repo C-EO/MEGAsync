@@ -54,14 +54,6 @@ MessageDialogTextInfo::MessageDialogTextInfo(QObject* parent):
     QObject(parent)
 {}
 
-MessageDialogTextInfo::MessageDialogTextInfo(const QString& newText,
-                                             TextFormat textFormat,
-                                             QObject* parent):
-    QObject(parent),
-    mText(newText),
-    mFormat(textFormat)
-{}
-
 QString MessageDialogTextInfo::text() const
 {
     return mText;
