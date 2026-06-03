@@ -342,9 +342,13 @@ Item {
                 sizes: SmallSizes {}
                 text: SettingsStrings.solveIssueRemoveSyncedFolder
                 colors.text: ColorTheme.textOnColor
+                colors.textHover: ColorTheme.textOnColor
+                colors.textPressed: ColorTheme.textOnColor
                 icons.source: Images.trash_small_thin_outline
                 icons.position: Icon.Position.LEFT
                 icons.colorEnabled: ColorTheme.textOnColor
+                icons.colorHovered: ColorTheme.textOnColor
+                icons.colorPressed: ColorTheme.textOnColor
                 checkable: true
 
                 Timer {
