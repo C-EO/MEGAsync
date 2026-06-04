@@ -22,14 +22,14 @@ Item {
     property int textSize: Texts.Text.Size.NORMAL
     property bool colorizeText: true
 
-    readonly property color _typeColor: {
+    readonly property color typeColor: {
         switch (type) {
             case Constants.MessageType.WARNING: return ColorTheme.textWarning;
             case Constants.MessageType.ERROR:   return ColorTheme.textError;
             default: return enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled;
         }
     }
-    readonly property url _typeIcon: {
+    readonly property url typeIcon: {
         switch (type) {
             case Constants.MessageType.WARNING: return Images.alertTriangle;
             case Constants.MessageType.ERROR:   return Images.xCircle;
@@ -49,8 +49,8 @@ Item {
         SvgImage {
             id: hintIcon
 
-            source: root._typeIcon
-            color: root._typeColor
+            source: root.typeIcon
+            color: root.typeColor
             sourceSize: Qt.size(16, 16)
             opacity: enabled ? 1.0 : 0.2
         }
@@ -65,7 +65,7 @@ Item {
                 id: hintTitle
 
                 color: root.colorizeText
-                       ? root._typeColor
+                       ? root.typeColor
                        : (enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled)
                 height: rawText !== "" ? implicitHeight : 0
                 width: parent.width
@@ -81,7 +81,7 @@ Item {
                 id: hintText
 
                 color: root.colorizeText
-                       ? root._typeColor
+                       ? root.typeColor
                        : (enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled)
                 height: rawText !== "" ? implicitHeight : 0
                 width: parent.width

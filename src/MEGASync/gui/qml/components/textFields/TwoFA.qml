@@ -129,8 +129,8 @@ FocusScope {
         Texts.NotificationText {
             id: notification
 
-            Layout.leftMargin: 0
-            Layout.preferredWidth: mainLayout.width
+            Layout.leftMargin: Constants.focusBorderWidth
+            Layout.preferredWidth: mainLayout.width + 2 * Constants.focusAdjustment
             Layout.preferredHeight: notification.height
             title: qsTranslate("OnboardingStrings", "Incorrect 2FA code")
             text: Strings.tryAgain
