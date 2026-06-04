@@ -14,6 +14,10 @@ IncomingShareHeaderWidget::IncomingShareHeaderWidget(QWidget* parent):
     QWidget(parent),
     ui(new Ui::IncomingShareHeaderWidget)
 {
+    // A bare QWidget subclass ignores stylesheet background-color/border-radius from its own
+    // type selector unless styled-background painting is enabled
+    setAttribute(Qt::WA_StyledBackground, true);
+
     ui->setupUi(this);
 
     clear();

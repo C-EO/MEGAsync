@@ -1474,6 +1474,18 @@ void NodeSelectorHeaderView::mouseReleaseEvent(QMouseEvent* event)
     QHeaderView::mouseReleaseEvent(event);
 }
 
+bool NodeSelectorHeaderView::event(QEvent* e)
+{
+    // Refresh sort icons
+    if (e->type() == ThemeManager::ThemeChanged)
+    {
+        mAscendingSortArrow = QPixmap();
+        mDescendingSortArrow = QPixmap();
+    }
+
+    return QHeaderView::event(e);
+}
+
 QStyleOptionHeader::SectionPosition NodeSelectorHeaderView::sectionPosition(int logicalIndex) const
 {
     if (count() == 1)

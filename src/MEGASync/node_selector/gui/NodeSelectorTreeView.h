@@ -29,6 +29,7 @@ protected:
     void paintSection(QPainter* painter, const QRect& rect, int logicalIndex) const override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    bool event(QEvent* e) override;
 
 private:
     QStyleOptionHeader::SectionPosition sectionPosition(int logicalIndex) const;
