@@ -5068,6 +5068,11 @@ Enter a different name.</translation>
         <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add backup</source>
+        <translatorcomment>Empty-state button in the node selector to start adding a backup. SNC-6420</translatorcomment>
+        <translation type="unfinished">Add backup</translation>
+    </message>
 </context>
 <context>
     <name>NodeSelectorTreeViewWidgetBackups</name>
@@ -9697,6 +9702,11 @@ Please delete the folder sync from settings to cancel them.</source>
         <source>You need Read &amp; Write or Full access rights to be able to upload to the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying upload files to a non compatible folder</translatorcomment>
         <translation>To upload this folder, you need to have read and write or full-access permissions to it.</translation>
+    </message>
+    <message>
+        <source>Select a shared folder to upload your items to</source>
+        <translatorcomment>Guidance banner in the upload node selector, shown in Incoming Shares when no folder is selected, prompting the user to pick a shared folder as the upload destination. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

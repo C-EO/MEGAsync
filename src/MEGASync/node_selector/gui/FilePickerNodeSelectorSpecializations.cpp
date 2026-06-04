@@ -14,6 +14,23 @@ UploadNodeSelector::UploadNodeSelector(QWidget* parent):
     FilePickerNodeSelector(SelectTypeSPtr(new UploadType), parent)
 {}
 
+FilePickerNodeSelector::DestinationBannerInfo UploadNodeSelector::destinationBannerInfo() const
+{
+    // In Incoming Shares the top root is a read-only list of shares, not a real upload
+    // destination. Until the user picks an actual shared folder, show a guidance banner
+    // instead of an empty breadcrumb (same pattern as StreamNodeSelector).
+    auto* contextWidget = selectedSearchChipTreeViewWidget();
+    if (contextWidget &&
+        contextWidget->getTabType() == NodeSelectorTreeViewWidget::TabItem::SHARES &&
+        !getSelectedNode())
+    {
+        return {BannerWidget::Type::BANNER_MESSAGE,
+                tr("Select a shared folder to upload your items to")};
+    }
+
+    return {};
+}
+
 void UploadNodeSelector::onOkButtonClicked()
 {
     auto node = getSelectedNode();

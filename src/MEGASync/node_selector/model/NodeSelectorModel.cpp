@@ -988,25 +988,6 @@ void NodeSelectorModel::executeAddExtraSpaceLogic(const QModelIndex& currentInde
     }
 }
 
-void NodeSelectorModel::executeExtraSpaceLogic()
-{
-    if (isBeingModified())
-    {
-        mAddExpaceWhenLoadingFinish = true;
-        return;
-    }
-
-    executeRemoveExtraSpaceLogic(mCurrentRootIndex);
-    mCurrentRootIndex = mPendingRootIndex;
-    executeAddExtraSpaceLogic(mCurrentRootIndex);
-
-    mPendingRootIndex = QModelIndex();
-
-    // The current root is committed here (it may be deferred until children load), not when
-    // setCurrentRootIndex is called. Notify so the breadcrumb refreshes with the right root.
-    emit currentRootIndexChanged();
-}
-
 bool NodeSelectorModel::isExtraSpaceIndex(const QModelIndex& index) const
 {
     if (!mExtraSpaceAdded || !index.isValid() || index.internalPointer() != nullptr ||
@@ -3121,7 +3102,19 @@ void NodeSelectorModel::loadLevelFinished()
 {
     if (mAddExpaceWhenLoadingFinish)
     {
-        executeExtraSpaceLogic();
+        // Full deferral (the root change happened while the model was mid-change): now do the
+        // whole transition. mCurrentRootIndex still holds the previous root here, so the phantom
+        // row is removed from it correctly before committing the pending root.
+        if (mPendingRootIndex.isValid())
+        {
+            executeRemoveExtraSpaceLogic(mCurrentRootIndex);
+            mCurrentRootIndex = mPendingRootIndex;
+            mPendingRootIndex = QModelIndex();
+            emit currentRootIndexChanged();
+        }
+        // Otherwise the root was already committed and only the phantom row add was deferred
+        // until its children loaded.
+        executeAddExtraSpaceLogic(mCurrentRootIndex);
         mAddExpaceWhenLoadingFinish = false;
     }
 
@@ -3152,16 +3145,37 @@ bool NodeSelectorModel::canFetchMore(const QModelIndex& parent) const
 
 void NodeSelectorModel::setCurrentRootIndex(const QModelIndex& index)
 {
-    mPendingRootIndex = index.isValid() ? index : getTopRootIndex();
-
-    NodeSelectorModelItem* item =
-        static_cast<NodeSelectorModelItem*>(mPendingRootIndex.internalPointer());
-
-    if (item && item->areChildrenInitialized())
+    const auto newRootIndex = index.isValid() ? index : getTopRootIndex();
+    if (mCurrentRootIndex == newRootIndex)
     {
-        executeExtraSpaceLogic();
+        return;
+    }
+
+    // While the model is mid-change we cannot mutate rows: keep the old fully-deferred behaviour
+    // (remove + commit + add applied together once the level finishes loading). This is not the
+    // first-folder-entry case the immediate commit targets, so deferring the commit here is fine.
+    if (isBeingModified())
+    {
+        mPendingRootIndex = newRootIndex;
+        mAddExpaceWhenLoadingFinish = true;
+        return;
+    }
+
+    // Remove the phantom "extra space" row from the previous root WHILE it is still the current
+    // root, so rowCount() still accounts for it and the correct (last) row is removed. Only then
+    // commit the new root immediately, so breadcrumb/header/columns update even before the new
+    // children load.
+    executeRemoveExtraSpaceLogic(mCurrentRootIndex);
+    mCurrentRootIndex = newRootIndex;
+    emit currentRootIndexChanged();
+
+    // Adding the phantom row needs the new root's children loaded to know where to insert it.
+    NodeSelectorModelItem* item =
+        static_cast<NodeSelectorModelItem*>(mCurrentRootIndex.internalPointer());
+    if (!mCurrentRootIndex.isValid() || (item && item->areChildrenInitialized()))
+    {
+        executeAddExtraSpaceLogic(mCurrentRootIndex);
         mAddExpaceWhenLoadingFinish = false;
-        mPendingRootIndex = QModelIndex();
     }
     else
     {

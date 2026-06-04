@@ -1132,6 +1132,8 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
         // The current widget changed (tab switch): its root didn't fire rootIndexChanged,
         // so refresh the navigation breadcrumb explicitly here.
         refreshNavigationBreadcrumb();
+        configureTableColumns(wid);
+        wid->resetAutoColumnWidths();
     }
 }
 
@@ -1168,14 +1170,13 @@ void NodeSelector::specialisedTreeViewWidgetsCreated()
 
     if (mIncomingSharesWidget)
     {
-        connectViewConfiguration(mIncomingSharesWidget,
-                                 &NodeSelector::configureIncomingSharesTableColumns);
+        connectViewConfiguration(mIncomingSharesWidget, &NodeSelector::configureTableColumns);
         connect(mIncomingSharesWidget,
                 &NodeSelectorTreeViewWidget::viewStateChanged,
                 this,
                 [this]()
                 {
-                    configureIncomingSharesTableColumns(mIncomingSharesWidget);
+                    configureTableColumns(mIncomingSharesWidget);
                 });
         connect(mIncomingSharesWidget,
                 &NodeSelectorTreeViewWidgetIncomingShares::incomingShareAccessChanged,
@@ -1219,7 +1220,10 @@ void NodeSelector::connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
 
     const auto refreshColumns = [this, widget, configure]()
     {
-        (this->*configure)(widget);
+        if (widget == getCurrentTreeViewWidget())
+        {
+            (this->*configure)(widget);
+        }
     };
 
     connect(widget, &NodeSelectorTreeViewWidget::viewReady, this, refreshColumns);
@@ -1231,6 +1235,21 @@ void NodeSelector::connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
             this,
             &NodeSelector::refreshNavigationBreadcrumb,
             Qt::UniqueConnection);
+    // After a deferred root commit (first entry into a not-yet-cached folder), the header and
+    // column visibility must be recomputed against the now-valid committed root.
+    connect(
+        widget,
+        &NodeSelectorTreeViewWidget::rootIndexChanged,
+        this,
+        [this, widget, configure]()
+        {
+            if (widget == getCurrentTreeViewWidget())
+            {
+                (this->*configure)(widget);
+                refreshHeader(widget);
+            }
+        },
+        Qt::UniqueConnection);
 }
 
 void NodeSelector::configureTableColumns(NodeSelectorTreeViewWidget* widget)
@@ -1246,19 +1265,12 @@ void NodeSelector::configureTableColumns(NodeSelectorTreeViewWidget* widget)
                             (widget->getTabType() == NodeSelectorTreeViewWidget::TabItem::RUBBISH ||
                              widget->getTabType() == NodeSelectorTreeViewWidget::TabItem::SHARES));
 
-    setIncomingShareColumnsVisibility(widget, false);
+    // Show incoming shares when we are in the incoming shares tab and the root index
+    setIncomingShareColumnsVisibility(widget,
+                                      widget->getTabType() ==
+                                              NodeSelectorTreeViewWidget::TabItem::SHARES &&
+                                          !widget->getCurrentRootIndex().isValid());
     configureTypeSpecificColumns(widget);
-}
-
-void NodeSelector::configureIncomingSharesTableColumns(NodeSelectorTreeViewWidget* widget)
-{
-    if (!widget)
-    {
-        return;
-    }
-
-    configureTableColumns(widget);
-    setIncomingShareColumnsVisibility(widget, !widget->getCurrentRootIndex().isValid());
 }
 
 void NodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget)
@@ -1285,20 +1297,18 @@ void NodeSelector::configureSearchWidget(TabType type)
         return;
     }
 
-    if (type == TabType::INCOMING_SHARE)
-    {
-        configureIncomingSharesTableColumns(mSearchWidget);
-    }
-    else
-    {
-        configureTableColumns(mSearchWidget);
-    }
-
-    // The search widget reports TabItem::SEARCH, so configureTableColumns cannot derive
-    // IS_EXPORTED visibility from it. Mirror the scoped tab's root rule so search results
-    // show the same columns as the originating tab.
+    mSearchWidget->setColumnHidden(NodeSelectorModel::Column::NODE, false);
+    mSearchWidget->setColumnHidden(NodeSelectorModel::Column::LABEL, false);
     mSearchWidget->setColumnHidden(NodeSelectorModel::Column::IS_EXPORTED,
                                    (type == TabType::RUBBISH || type == TabType::INCOMING_SHARE));
+
+    // Show incoming shares when we are in the incoming shares tab and the root index
+    setIncomingShareColumnsVisibility(mSearchWidget,
+                                      type == TabType::INCOMING_SHARE &&
+                                          !mSearchWidget->getCurrentRootIndex().isValid());
+    configureTypeSpecificColumns(mSearchWidget);
+
+    mSearchWidget->resetAutoColumnWidths();
 }
 
 void NodeSelector::createSpecialisedTreeViewWidgets()

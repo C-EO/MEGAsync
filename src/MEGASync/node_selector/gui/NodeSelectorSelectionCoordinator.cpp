@@ -61,7 +61,6 @@ void NodeSelectorSelectionCoordinator::setSelectedNodeHandle(const mega::MegaHan
     }
 
     mProxyModel->setExpandMapped(true);
-    mSetRootIndexToTop();
     mModel->selectIndexesByHandleAsync(QSet<mega::MegaHandle>() << node->getHandle());
     mModel->loadTreeFromNode(node);
 }
@@ -99,12 +98,18 @@ void NodeSelectorSelectionCoordinator::selectPendingIndexes()
         return;
     }
 
-    // Move to the top root to see all the selected handles in case they have different parents
-    mSetRootIndexToTop();
+    // Only a restore jumps to the top root (nodes may have different parents); a move/merge
+    // stays in the current folder.
+    if (!mSkipTopRootOnSelect)
+    {
+        mSetRootIndexToTop();
+    }
+    mSkipTopRootOnSelect = false;
 
     mWithSelectionSilenced(
         [&]() -> bool
         {
+            mClearSelection();
             bool allSelected = true;
             for (const auto& item: indexesToBeSelected)
             {
@@ -137,6 +142,9 @@ void NodeSelectorSelectionCoordinator::resetMoveNodesToSelect()
 
 void NodeSelectorSelectionCoordinator::onItemsMoved()
 {
+    // A move/merge stays in the current folder; only a restore jumps to the top root.
+    mSkipTopRootOnSelect = mParentOfRestoredNodes.isEmpty();
+
     if (!mMovedHandlesToSelect.isEmpty() || !mMergeTargetFolders.isEmpty())
     {
         mClearSelection();
@@ -152,9 +160,42 @@ void NodeSelectorSelectionCoordinator::onItemsMoved()
         mModel->selectIndexesByHandleAsync(mMergeTargetFolders.values());
     }
 
-    mMovedHandlesToSelect.clear();
+    // Keep mMovedHandlesToSelect populated: the moved node's model item is recreated
+    // (remove + re-insert) while the move settles, which drops the selection of its row.
+    // reapplyMovedSelection() re-selects it by handle whenever its row reappears.
     mParentOfRestoredNodes.clear();
     mMergeTargetFolders.clear();
+}
+
+void NodeSelectorSelectionCoordinator::reapplyMovedSelection()
+{
+    if (mMovedHandlesToSelect.isEmpty())
+    {
+        return;
+    }
+
+    mWithSelectionSilenced(
+        [&]() -> bool
+        {
+            // Clear first so only the moved nodes remain selected: the restored selection
+            // model keeps the pre-move selection (e.g. the destination folder the user had
+            // open), which must not stay selected after the move.
+            mClearSelection();
+            for (const auto& handle: std::as_const(mMovedHandlesToSelect))
+            {
+                auto proxyIndex = mProxyModel->getIndexFromHandle(handle);
+                if (proxyIndex.isValid())
+                {
+                    mSelectIndex(proxyIndex, true, false);
+                }
+            }
+            return false;
+        });
+}
+
+void NodeSelectorSelectionCoordinator::clearMovedSelection()
+{
+    mMovedHandlesToSelect.clear();
 }
 
 void NodeSelectorSelectionCoordinator::onNodesAdded(

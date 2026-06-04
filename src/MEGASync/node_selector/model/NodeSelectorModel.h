@@ -505,8 +505,6 @@ protected:
 
     virtual bool showAccess(mega::MegaNode* node) const;
 
-    void executeExtraSpaceLogic();
-
     bool mSyncSetupMode;
     NodeRequester* mNodeRequesterWorker;
     QList<std::shared_ptr<mega::MegaNode>> mNodesToLoad;
@@ -577,6 +575,9 @@ private:
     // Current root index
     QModelIndex mCurrentRootIndex;
     bool mAddExpaceWhenLoadingFinish = false;
+    // Set only when a root change is deferred because the model was mid-change; holds the root to
+    // commit once loading finishes. Invalid means the root was already committed and only the
+    // phantom-row add was deferred.
     QModelIndex mPendingRootIndex;
     bool mExtraSpaceAdded;
     bool mExtraSpaceRemoved;

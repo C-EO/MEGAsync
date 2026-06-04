@@ -12,6 +12,7 @@ public:
 
 private:
     void onOkButtonClicked() override;
+    DestinationBannerInfo destinationBannerInfo() const override;
 };
 
 class DownloadNodeSelector: public FilePickerNodeSelector

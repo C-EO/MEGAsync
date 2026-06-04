@@ -221,6 +221,17 @@ void NodeSelectorTreeViewWidget::init()
             &QAbstractItemModel::rowsRemoved,
             this,
             &NodeSelectorTreeViewWidget::onModelRowsChanged);
+    // The proxy sorts asynchronously: layoutAboutToBeChanged() is emitted before the
+    // selection of a moved node is applied, and the matching layoutChanged() arrives
+    // afterwards, so QItemSelectionModel rebuilds the selection from a snapshot that
+    // predates it and drops the moved node. Re-select the pending moved handles AFTER
+    // layoutChanged is fully processed (queued -> runs once the selection model has
+    // already applied its clobbering rebuild).
+    connect(mProxyModel.get(),
+            &QAbstractItemModel::layoutChanged,
+            mSelectionCoordinator.get(),
+            &NodeSelectorSelectionCoordinator::reapplyMovedSelection,
+            Qt::QueuedConnection);
     connect(mModel.get(),
             &NodeSelectorModel::blockUi,
             this,
@@ -414,20 +425,27 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
     {
         if (auto dropEvent = static_cast<QDragEnterEvent*>(event))
         {
-            auto proxyIndex = ui->tMegaFolders->indexAt(dropEvent->pos());
-            auto sourceIndex = mProxyModel->mapToSource(proxyIndex);
-
             if (!dropEvent->mimeData()->urls().isEmpty())
             {
                 ui->tMegaFolders->dragEnterEvent(dropEvent);
             }
-            else if (mModel->canDropMimeData(dropEvent->mimeData(),
-                                             Qt::MoveAction,
-                                             sourceIndex.row(),
-                                             sourceIndex.column(),
-                                             sourceIndex.parent()))
+            else
             {
-                dropEvent->acceptProposedAction();
+                // On the empty page the drop target is the current folder; on the tree it is
+                // the hovered item.
+                auto sourceIndex =
+                    (ui->stackedWidget->currentWidget() != ui->treeViewPage) ?
+                        mModel->getCurrentRootIndex() :
+                        mProxyModel->mapToSource(ui->tMegaFolders->indexAt(dropEvent->pos()));
+
+                if (mModel->canDropMimeData(dropEvent->mimeData(),
+                                            Qt::MoveAction,
+                                            sourceIndex.row(),
+                                            sourceIndex.column(),
+                                            sourceIndex.parent()))
+                {
+                    dropEvent->acceptProposedAction();
+                }
             }
         }
     }
@@ -438,6 +456,20 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
             if (!moveEvent->mimeData()->urls().isEmpty())
             {
                 ui->tMegaFolders->dragMoveEvent(moveEvent);
+            }
+            else if (ui->stackedWidget->currentWidget() != ui->treeViewPage)
+            {
+                // Internal move over the empty page: the target is the current folder
+                // (there is no tree item to delegate the drag to).
+                auto target = mModel->getCurrentRootIndex();
+                if (mModel->canDropMimeData(moveEvent->mimeData(),
+                                            Qt::MoveAction,
+                                            target.row(),
+                                            target.column(),
+                                            target.parent()))
+                {
+                    moveEvent->acceptProposedAction();
+                }
             }
         }
     }
@@ -516,7 +548,11 @@ NodeSelectorModelItem* NodeSelectorTreeViewWidget::rootItem()
 
 QModelIndex NodeSelectorTreeViewWidget::getCurrentRootIndex() const
 {
-    return ui->tMegaFolders->rootIndex();
+    // The model's committed root mapped to the proxy. It is the single source of truth for the
+    // current folder and, unlike the view's rootIndex(), is not transiently invalidated by the
+    // loading-scene detach.
+    return (mProxyModel && mModel) ? mProxyModel->mapFromSource(mModel->getCurrentRootIndex()) :
+                                     QModelIndex();
 }
 
 NodeSelectorProxyModel* NodeSelectorTreeViewWidget::getProxyModel()
@@ -617,13 +653,13 @@ void NodeSelectorTreeViewWidget::onSectionResized()
                                        ui->tMegaFolders->mapFromGlobal(QCursor::pos())))
     {
         mResizeEventsReceived++;
-    }
 
-    // Protect against clicking on the header to show the sort indicator.
-    // Only if the event is received 3 times in an span of 10ms, it is a real resize
-    if (!mResizeEventsTimer.isActive())
-    {
-        mResizeEventsTimer.start();
+        // Protect against clicking on the header to show the sort indicator.
+        // Only if the event is received 3 times in an span of 10ms, it is a real resize
+        if (!mResizeEventsTimer.isActive())
+        {
+            mResizeEventsTimer.start();
+        }
     }
 }
 
@@ -676,7 +712,6 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
             else if ((*column) == NodeSelectorModel::Column::IS_EXPORTED)
             {
                 width = 80;
-                widthTotal += width;
             }
             else if ((*column) == NodeSelectorModel::Column::LABEL)
             {
@@ -686,7 +721,6 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
                         std::max(std::min(qRound(ui->tMegaFolders->width() * labelColumnProportion),
                                           labelColumnMaxWidth),
                                  labelColumnMinWidth);
-                widthTotal += width;
             }
             else
             {
@@ -694,8 +728,9 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
                     std::max(std::min(qRound(ui->tMegaFolders->width() * secondaryColumnProportion),
                                       maxSecondaryColumnWidth),
                              minWidth);
-                widthTotal += width;
             }
+
+            widthTotal += width;
 
             ui->tMegaFolders->setColumnWidth((*column), width);
         }
@@ -839,9 +874,10 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
         setStyleSheet(styleSheet());
 
         // View ready to work with it > View init and model loaded
-        emit viewReady();
         mViewInitialized = true;
     }
+
+    emit viewReady();
 }
 
 void NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot(const QModelIndex& indexToRemove)
@@ -1045,6 +1081,12 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
         // The model is reattached now (the loading scene hid), so the header has its
         // columns back: recompute widths that were skipped while detached.
         updateColumnsWidth(true);
+
+        // Button visibility was computed while the model was detached (the read-only
+        // fallback hid Upload/New folder). Now that the live model is back, re-emit so
+        // the header recomputes against the real root access. viewStateChanged() drives
+        // refreshHeader(), which already recomputes button visibility.
+        emit viewStateChanged();
     }
 }
 
@@ -1052,10 +1094,17 @@ void NodeSelectorTreeViewWidget::onSelectionChanged(const QItemSelection& select
                                                     const QItemSelection& deselected)
 {
     Q_UNUSED(deselected)
-    Q_UNUSED(selected)
 
     if (!mUiBlocked)
     {
+        // A non-empty user selection (our own re-selection is silenced, the post-select
+        // notify passes an empty selection) means the user took over: stop re-applying
+        // the moved node's selection.
+        if (!selected.isEmpty())
+        {
+            mSelectionCoordinator->clearMovedSelection();
+        }
+
         onSelectionHasChanged();
     }
 }
@@ -1270,11 +1319,13 @@ bool NodeSelectorTreeViewWidget::isUiBlocked()
 
 void NodeSelectorTreeViewWidget::dropIntoRootIndex(QDropEvent* event)
 {
+    // On the empty page the drop target is the current folder, not the top root.
+    auto target = mModel->getCurrentRootIndex();
     if (!event->mimeData()->urls().isEmpty() || mModel->canDropMimeData(event->mimeData(),
                                                                         Qt::MoveAction,
-                                                                        -1,
-                                                                        -1,
-                                                                        mModel->getTopRootIndex()))
+                                                                        target.row(),
+                                                                        target.column(),
+                                                                        target.parent()))
     {
         ui->tMegaFolders->dropEvent(event);
     }
@@ -1341,7 +1392,14 @@ void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
         node_column_idx = proxy_idx.sibling(proxy_idx.row(), NodeSelectorModel::Column::NODE);
     }
 
-    mModel->setCurrentRootIndex(mProxyModel->mapToSource(node_column_idx));
+    auto modelRootIndex(mProxyModel->mapToSource(node_column_idx));
+
+    if (mModel->getCurrentRootIndex() == modelRootIndex)
+    {
+        return;
+    }
+
+    mModel->setCurrentRootIndex(modelRootIndex);
     ui->tMegaFolders->setRootIndex(node_column_idx);
     ui->tMegaFolders->setRootIndexReadOnly(isCurrentRootIndexReadOnly());
     if (auto selectionModel = ui->tMegaFolders->selectionModel())
@@ -1372,8 +1430,15 @@ void NodeSelectorTreeViewWidget::setCurrentViewWidget()
     auto currentRootIndex(getCurrentRootIndex());
     auto topRootIndex(mProxyModel->getTopRootIndex());
 
+    // Keep the empty-state flags in sync with the shown folder so a later content change
+    // (e.g. an async OS upload into an empty folder) is detected as a toggle and the view
+    // switches away from the empty page.
+    const bool isEmpty = (mProxyModel->rowCount(currentRootIndex) == 0);
+    mWasEmpty = isEmpty;
+    mRootWasEmpty = isEmpty;
+
     // If we are inside a folder, show the "Empty folder" page.
-    if ((currentRootIndex != topRootIndex) && mProxyModel->rowCount(currentRootIndex) == 0)
+    if ((currentRootIndex != topRootIndex) && isEmpty)
     {
         if (ui && ui->tMegaFolders->loadingView().isLoadingViewSet())
         {
@@ -1467,6 +1532,21 @@ void NodeSelectorTreeViewWidget::updateColumnResizeModes()
     ui->tMegaFolders->header()->setSectionResizeMode(NodeSelectorModel::Column::LABEL,
                                                      mShowLabelText ? QHeaderView::Interactive :
                                                                       QHeaderView::Fixed);
+
+    if (mSelectType->isFilePicker())
+    {
+        ui->tMegaFolders->header()->setSectionResizeMode(NodeSelectorModel::Column::NODE,
+                                                         QHeaderView::Stretch);
+    }
+    else
+    {
+        ui->tMegaFolders->header()->setSectionResizeMode(
+            NodeSelectorModel::Column::LAST_MODIFIED_DATE,
+            QHeaderView::Stretch);
+    }
+
+    ui->tMegaFolders->header()->setSectionResizeMode(NodeSelectorModel::Column::IS_EXPORTED,
+                                                     QHeaderView::Fixed);
 }
 
 QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelIndex idx) const

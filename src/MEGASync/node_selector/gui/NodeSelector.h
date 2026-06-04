@@ -129,7 +129,6 @@ protected:
     }
 
     virtual void configureTableColumns(NodeSelectorTreeViewWidget* widget);
-    virtual void configureIncomingSharesTableColumns(NodeSelectorTreeViewWidget* widget);
     virtual void configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget);
     void setIncomingShareColumnsVisibility(NodeSelectorTreeViewWidget* widget, bool visible);
 

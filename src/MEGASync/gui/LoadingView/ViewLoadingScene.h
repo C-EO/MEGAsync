@@ -501,6 +501,8 @@ public:
         mLoadingModel->setRowCount(0);
         mViewLayout->replaceWidget(mLoadingSceneUI, mView);
         hide();
+        mView->setUpdatesEnabled(false);
+        mView->setViewPortEventsBlocked(false);
         mView->restoreLoadingViewState();
         // Notify AFTER the model is reattached, so consumers' post-load logic (e.g.
         // selectPendingIndexes) operates on the attached model and not the detached one.
@@ -511,8 +513,6 @@ public:
         }
         // showViewCopy/showLoadingScene block viewport events for every view (detaching
         // or not); re-enable here unconditionally or the view stays blank.
-        mView->setViewPortEventsBlocked(false);
-        mView->setUpdatesEnabled(false);
         mView->show();
         mView->applyLoadingViewScroll();
         mView->setUpdatesEnabled(true);
@@ -677,21 +677,10 @@ public:
         mSavedHasHScroll = this->horizontalScrollBar()->isVisible();
         mSavedHScroll = mSavedHasHScroll ? this->horizontalScrollBar()->value() : 0;
 
-        mSavedSelected.clear();
-        mSavedCurrent = QPersistentModelIndex();
-        if (proxy && this->selectionModel())
-        {
-            const auto rows = this->selectionModel()->selectedRows();
-            for (const auto& idx: rows)
-            {
-                mSavedSelected.append(QPersistentModelIndex(proxy->mapToSource(idx)));
-            }
-            const auto current = this->selectionModel()->currentIndex();
-            if (current.isValid())
-            {
-                mSavedCurrent = QPersistentModelIndex(proxy->mapToSource(current));
-            }
-        }
+        // The selection contents are not saved here: the selection model object is preserved
+        // (mPreservedSelectionModel) and reattached as-is in restoreLoadingViewState. Since the
+        // model is only detached/reattached (not reset) during loading, its selection survives
+        // the swap, so no manual save/restore of selected indexes is needed.
 
         mSavedExpanded.clear();
         if (proxy)
@@ -723,6 +712,11 @@ public:
             return;
         }
 
+        // Unblock only after the whole reattach (setModel + root + expand + select) so
+        // none of those intermediate changes propagate (avoids the breadcrumb flicker).
+        ViewType::header()->blockSignals(false);
+        ViewType::blockSignals(false);
+
         mSwappingModel = true;
         this->setModel(mDetachedModel);
         mSwappingModel = false;
@@ -753,6 +747,7 @@ public:
             {
                 this->setSelectionModel(mPreservedSelectionModel);
             }
+
             mPreservedSelectionModel = nullptr;
         }
 
@@ -764,50 +759,28 @@ public:
                 mSavedRootIndex.isValid() ? proxy->mapFromSource(mSavedRootIndex) : QModelIndex();
             this->setRootIndex(root);
 
-            for (const auto& src: mSavedExpanded)
+            // A pending "expand all" requested while detached: now that the model is back
+            // (with the freshly loaded rows) apply it here.
+            if (mExpandAllOnRestore)
             {
-                const auto idx = src.isValid() ? proxy->mapFromSource(src) : QModelIndex();
-                if (idx.isValid())
-                {
-                    this->setExpanded(idx, true);
-                }
+                this->expandAll();
             }
-
-            if (this->selectionModel())
+            else
             {
-                QItemSelection selection;
-                for (const auto& src: mSavedSelected)
+                for (const auto& src: mSavedExpanded)
                 {
                     const auto idx = src.isValid() ? proxy->mapFromSource(src) : QModelIndex();
                     if (idx.isValid())
                     {
-                        selection.select(idx, idx);
+                        this->setExpanded(idx, true);
                     }
-                }
-                if (!selection.isEmpty())
-                {
-                    this->selectionModel()->select(selection,
-                                                   QItemSelectionModel::Select |
-                                                       QItemSelectionModel::Rows);
-                }
-                const auto current =
-                    mSavedCurrent.isValid() ? proxy->mapFromSource(mSavedCurrent) : QModelIndex();
-                if (current.isValid())
-                {
-                    this->selectionModel()->setCurrentIndex(current, QItemSelectionModel::NoUpdate);
                 }
             }
         }
 
         mSavedExpanded.clear();
-        mSavedSelected.clear();
-        mSavedCurrent = QPersistentModelIndex();
+        mExpandAllOnRestore = false;
         mSavedRootIndex = QPersistentModelIndex();
-
-        // Unblock only after the whole reattach (setModel + root + expand + select) so
-        // none of those intermediate changes propagate (avoids the breadcrumb flicker).
-        ViewType::header()->blockSignals(false);
-        ViewType::blockSignals(false);
     }
 
     // Applied AFTER the view is shown: the scrollbars only have a valid range once the
@@ -832,6 +805,21 @@ public:
     void setTopParent(QWidget* widget)
     {
         mLoadingView.setTopParent(widget);
+    }
+
+    // Expands all rows once the data is ready. While the model is detached during loading,
+    // expandAll() would be a no-op, so the request is deferred and applied on reattach
+    // (restoreLoadingViewState).
+    void expandAllWhenReady()
+    {
+        if (mDetachedModel)
+        {
+            mExpandAllOnRestore = true;
+        }
+        else
+        {
+            this->expandAll();
+        }
     }
 
     void setViewPortEventsBlocked(bool newViewPortEventsBlocked)
@@ -889,8 +877,7 @@ private:
     QPointer<QAbstractItemModel> mDetachedModel;
     QPointer<QItemSelectionModel> mPreservedSelectionModel;
     QList<QPersistentModelIndex> mSavedExpanded;
-    QList<QPersistentModelIndex> mSavedSelected;
-    QPersistentModelIndex mSavedCurrent;
+    bool mExpandAllOnRestore = false;
     QPersistentModelIndex mSavedRootIndex;
     bool mSwappingModel = false;
     QByteArray mSavedHeaderState;

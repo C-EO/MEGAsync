@@ -25,6 +25,7 @@
 
 QList<mega::MegaHandle> NodeSelectorTreeView::mCopiedHandles = QList<mega::MegaHandle>();
 const int NodeSelectorTreeView::ROW_SIDE_MARGIN = 0;
+const int NodeSelectorTreeView::ROW_RIGHT_MARGIN = 16;
 const int NodeSelectorTreeView::ROW_VERTICAL_MARGIN = 4;
 const qreal NodeSelectorTreeView::ROW_RADIUS = 4.0;
 
@@ -222,7 +223,7 @@ void NodeSelectorTreeView::drawRow(QPainter* painter,
             auto rect(option.rect);
             rect.adjust(ROW_SIDE_MARGIN,
                         ROW_VERTICAL_MARGIN,
-                        -ROW_SIDE_MARGIN,
+                        -ROW_RIGHT_MARGIN,
                         -ROW_VERTICAL_MARGIN);
             path.addRoundedRect(rect, ROW_RADIUS, ROW_RADIUS);
             painter->fillPath(path, TokenParserWidgetManager::instance()->getColor(token));

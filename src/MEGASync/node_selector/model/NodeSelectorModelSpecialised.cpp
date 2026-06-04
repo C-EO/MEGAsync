@@ -193,35 +193,28 @@ bool NodeSelectorModelIncomingShares::canDropMimeData(const QMimeData* data,
                                                       int column,
                                                       const QModelIndex& parent) const
 {
-    if (action == Qt::CopyAction || action == Qt::MoveAction)
+    if (action != Qt::CopyAction && action != Qt::MoveAction)
     {
-        if (parent.isValid())
-        {
-            auto item = getItemByIndex(parent);
-            if (item)
-            {
-                auto node = item->getNode();
-                if (node && node->isFolder())
-                {
-                    auto access = Utilities::getNodeAccess(node->getHandle());
-                    if (access >= MegaShare::ACCESS_READWRITE)
-                    {
-                        if (action == Qt::CopyAction)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            auto dropIndex(index(row, column));
-                            return checkDraggedMimeData(data, dropIndex);
-                        }
-                    }
-                }
-            }
-        }
+        return false;
     }
 
-    return false;
+    // The drop target is the hovered folder itself (the view passes its row/col/parent),
+    // including top-level shares whose parent is the invalid root.
+    auto dropIndex(index(row, column, parent));
+    auto item = getItemByIndex(dropIndex);
+    if (!item)
+    {
+        return false;
+    }
+
+    auto node = item->getNode();
+    if (!node || !node->isFolder() ||
+        Utilities::getNodeAccess(node->getHandle()) < MegaShare::ACCESS_READWRITE)
+    {
+        return false;
+    }
+
+    return action == Qt::CopyAction ? true : checkDraggedMimeData(data, dropIndex);
 }
 
 QModelIndex NodeSelectorModelIncomingShares::getTopRootIndex() const

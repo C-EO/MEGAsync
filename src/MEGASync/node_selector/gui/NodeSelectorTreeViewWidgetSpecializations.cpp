@@ -476,7 +476,8 @@ void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(TabType type)
 
 void NodeSelectorTreeViewWidgetSearch::expandSearchResults()
 {
-    ui->tMegaFolders->expandAll();
+    // Expand once the data is ready; the view defers it if the model is detached.
+    ui->tMegaFolders->expandAllWhenReady();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()

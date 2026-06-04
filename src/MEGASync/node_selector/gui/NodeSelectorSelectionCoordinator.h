@@ -55,6 +55,8 @@ public:
     void expandPendingIndexes();
     void selectPendingIndexes();
     void resetMoveNodesToSelect();
+    void reapplyMovedSelection();
+    void clearMovedSelection();
 
     QSet<mega::MegaHandle>& movedHandlesToSelect();
     QSet<mega::MegaHandle>& parentOfRestoredNodes();
@@ -82,6 +84,11 @@ private:
     QSet<mega::MegaHandle> mParentOfRestoredNodes;
     QMultiHash<mega::MegaHandle, mega::MegaHandle> mMergeTargetFolders;
     NewFolderInfo mNewFolderInfo;
+
+    // Only a restore jumps to the top root (its nodes may return to different parents); a
+    // move/merge stays in the current folder. Set in onItemsMoved (before mParentOfRestoredNodes
+    // is cleared) and consumed in selectPendingIndexes.
+    bool mSkipTopRootOnSelect = false;
 };
 
 #endif // NODESELECTORSELECTIONCOORDINATOR_H
