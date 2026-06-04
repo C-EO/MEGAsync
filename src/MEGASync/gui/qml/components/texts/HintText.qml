@@ -10,7 +10,7 @@ import ServiceUrls 1.0
 Item {
     id: root
 
-    property alias icon: hintIcon.source
+    property url icon: ""
     property alias title: hintTitle.rawText
     property alias text: hintText.rawText
     property alias iconColor: hintIcon.color
@@ -43,13 +43,13 @@ Item {
         id: mainRow
 
         height: root.visible ? textColumn.implicitHeight : 0
-        spacing: root.icon !== "" ? 8 : 0
+        spacing: hintIcon.source.toString() !== "" ? 8 : 0
         width: root.width
 
         SvgImage {
             id: hintIcon
 
-            source: root.typeIcon
+            source: root.icon.toString() !== "" ? root.icon : root.typeIcon
             color: root.typeColor
             sourceSize: Qt.size(16, 16)
             opacity: enabled ? 1.0 : 0.2
