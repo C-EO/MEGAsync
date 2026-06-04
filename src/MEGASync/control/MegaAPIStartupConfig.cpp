@@ -5,7 +5,8 @@
 
 #include <memory>
 
-void MegaApiStartupConfig::configure(mega::MegaApi* primaryApi, mega::MegaApi* secondaryApi)
+void MegaApiStartupConfig::configure(mega::MegaApi* megaApi,
+                                     bool configureFileServiceCacheReclamation)
 {
     if (Preferences::instance()->accountStateInGeneral() == Preferences::STATE_LOGGED_OK)
     {
@@ -14,19 +15,20 @@ void MegaApiStartupConfig::configure(mega::MegaApi* primaryApi, mega::MegaApi* s
 
 #ifdef QT_DEBUG
         throw std::logic_error(errorMessage.toStdString().c_str());
+#else
+        mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_ERROR, errorMessage.toStdString().c_str());
 #endif
-
-        mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_WARNING, errorMessage.toStdString().c_str());
     }
 
-    primaryApi->setMaxPayloadLogSize(Preferences::instance()->getMaxPayloadLogSize());
-    secondaryApi->setMaxPayloadLogSize(Preferences::instance()->getMaxPayloadLogSize());
+    megaApi->setMaxPayloadLogSize(Preferences::instance()->getMaxPayloadLogSize());
 
-    applyFileServiceReclaimOptions(primaryApi);
-    applyFileServiceReclaimOptions(secondaryApi);
+    if (configureFileServiceCacheReclamation)
+    {
+        applyFileServiceReclaimOptions(megaApi);
+    }
 }
 
-void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* api)
+void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* megaApi)
 {
     std::unique_ptr<mega::MegaFileServiceReclaimOptions> options{
         mega::MegaFileServiceReclaimOptions::create()};
@@ -45,7 +47,7 @@ void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* api)
     options->setReclaimTarget(Preferences::instance()->getReclaimTargetBytes());
     options->setReclaimThreshold(Preferences::instance()->getReclaimThresholdBytes());
 
-    api->fileServiceSetReclaimOptions(options.get());
+    megaApi->fileServiceSetReclaimOptions(options.get());
 
     mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_INFO,
                        "FileService reclaim options configured for MEGAsync.");

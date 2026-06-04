@@ -590,6 +590,7 @@ void MegaApplication::initialize()
                                     Preferences::USER_AGENT.toUtf8().constData(),
                                     !preferences->SSLcertificateException());
     megaApi->disableGfxFeatures(mDisableGfx);
+    MegaApiStartupConfig::configure(megaApi, true);
 
     QTMegaApiManager::createMegaApi(megaApiFolders,
                                     Preferences::CLIENT_KEY,
@@ -598,6 +599,7 @@ void MegaApplication::initialize()
                                     Preferences::USER_AGENT.toUtf8().constData(),
                                     !preferences->SSLcertificateException());
     megaApiFolders->disableGfxFeatures(true);
+    MegaApiStartupConfig::configure(megaApiFolders);
 
     model = SyncInfo::instance();
     connect(model, &SyncInfo::syncStateChanged, this, &MegaApplication::onSyncModelUpdated);
@@ -611,8 +613,6 @@ void MegaApplication::initialize()
 
     // Init the Service Urls instance with the newly created API
     ServiceUrls::instance()->reset(megaApi);
-
-    MegaApiStartupConfig::configure(megaApi, megaApiFolders);
 
     mStatsEventHandler = std::make_unique<ProxyStatsEventHandler>(megaApi);
     QmlManager::instance()->setRootContextProperty(mStatsEventHandler.get());

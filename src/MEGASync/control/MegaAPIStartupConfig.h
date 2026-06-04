@@ -11,10 +11,11 @@ class MegaApiStartupConfig
 public:
     MegaApiStartupConfig() = delete;
 
-    static void configure(mega::MegaApi* primaryApi, mega::MegaApi* secondaryApi);
+    static void configure(mega::MegaApi* megaApi,
+                          bool configureFileServiceCacheReclamation = false);
 
 private:
-    static void applyFileServiceReclaimOptions(mega::MegaApi* api);
+    static void applyFileServiceReclaimOptions(mega::MegaApi* megaApi);
 };
 
 #endif
