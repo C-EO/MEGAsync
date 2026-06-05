@@ -519,8 +519,8 @@ Item {
 
                                             visible: nameMouseArea.containsMouse && (syncName.implicitWidth > (syncNameContent.width - folderSearchIcon.width - 2 * syncItemContentSpacing))
                                             text: name
-                                            delay: toolTipShowDelay
-                                            timeout: toolTipTimeoutToHide
+                                            delay: root.toolTipShowDelay
+                                            maxWidth: syncNameContent.width - folderSearchIcon.width - 2 * syncItemContentSpacing
                                         }
 
                                         MouseArea {
@@ -545,8 +545,7 @@ Item {
 
                                             visible: nameAndFolderSearchMouseArea.containsMouse
                                             text: SettingsStrings.toolTipShowInFolder
-                                            delay: toolTipShowDelay
-                                            timeout: toolTipTimeoutToHide
+                                            delay: root.toolTipShowDelay
                                         }
 
                                         MouseArea {
