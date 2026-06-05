@@ -5,6 +5,7 @@
 #include "NodeSelectorModel.h"
 #include "QThread"
 
+#include <QCoreApplication>
 #include <QDebug>
 
 NodeSelectorProxyModel::NodeSelectorProxyModel(QObject* parent):
@@ -407,6 +408,33 @@ void NodeSelectorProxyModelSync::applyProxyModelFlags(Qt::ItemFlags& flags,
     {
         flags &= ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
+}
+
+QVariant NodeSelectorProxyModelSync::data(const QModelIndex& index, int role) const
+{
+    // Whole-row tooltip for incoming-share folders that cannot be synced because the user does not
+    // have full access. Overrides the base per-cell ToolTipRole on every column so the styled
+    // tooltip covers the whole row (owner/takedown tooltips still apply to full-access folders).
+    if (role == Qt::ToolTipRole && index.isValid())
+    {
+        if (auto* item = NodeSelectorModel::getItemByIndex(index))
+        {
+            const auto node = item->getNode();
+            const int access = item->getNodeAccess();
+            if (node && node->isFolder() && access < mega::MegaShare::ACCESS_FULL)
+            {
+                return access == mega::MegaShare::ACCESS_READWRITE ?
+                           QCoreApplication::translate(
+                               "NodeSelectorTreeViewWidget",
+                               "This folder is read and write. Ask for full access to sync") :
+                           QCoreApplication::translate(
+                               "NodeSelectorTreeViewWidget",
+                               "This folder is read-only. Ask for full access to sync");
+            }
+        }
+    }
+
+    return NodeSelectorProxyModel::data(index, role);
 }
 
 NodeSelectorProxyModelSearch::NodeSelectorProxyModelSearch(

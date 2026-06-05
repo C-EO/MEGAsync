@@ -1,5 +1,6 @@
 #include "NodeSelectorTreeView.h"
 
+#include "ArrowTooltip.h"
 #include "CreateRemoveSyncsManager.h"
 #include "DialogOpener.h"
 #include "MegaApplication.h"
@@ -16,6 +17,7 @@
 #include "Utilities.h"
 
 #include <QDrag>
+#include <QHelpEvent>
 #include <QMenu>
 #include <QMetaEnum>
 #include <QMouseEvent>
@@ -246,6 +248,8 @@ void NodeSelectorTreeView::drawRow(QPainter* painter,
 
 void NodeSelectorTreeView::mousePressEvent(QMouseEvent* event)
 {
+    mTooltip.hide();
+
 #ifndef Q_OS_MACOS
     auto index = indexAt(event->pos());
     auto expanded(isExpanded(index));
@@ -276,6 +280,60 @@ void NodeSelectorTreeView::mouseReleaseEvent(QMouseEvent* event)
         selectFromMouseEvent(index, event->modifiers());
     }
 #endif
+}
+
+bool NodeSelectorTreeView::viewportEvent(QEvent* event)
+{
+    // Every NodeSelector row tooltip is rendered through the styled tooltip, reading the model's
+    // ToolTipRole (the sync proxy returns a whole-row access tooltip there for read-only folders).
+    const bool consumed = mTooltip.handleViewportEvent(
+        event,
+        this,
+        mTooltipIndex,
+        [this](const QPoint& pos)
+        {
+            const QModelIndex index = indexAt(pos);
+            const QString text = index.data(Qt::ToolTipRole).toString();
+            const int anchorBottomGlobalY =
+                text.isEmpty() ? 0 : viewport()->mapToGlobal(visualRect(index).bottomLeft()).y();
+            return NodeSelectorStyledTooltip::Target<QPersistentModelIndex>{
+                text,
+                anchorBottomGlobalY,
+                QPersistentModelIndex(index)};
+        });
+
+    // Call the loading-scene base (not QTreeView directly) so viewport-event blocking during
+    // the loading scene is preserved.
+    return consumed ||
+           LoadingSceneView<NodeSelectorLoadingDelegate, QTreeView>::viewportEvent(event);
+}
+
+void NodeSelectorStyledTooltip::show(QWidget* parent,
+                                     const QString& text,
+                                     const QPoint& globalCursorPos,
+                                     int anchorBottomGlobalY)
+{
+    hide();
+
+    mTooltip = new ArrowTooltip(parent);
+    mTooltip->setFontSize(QLatin1String("caption"), false); // Caption, Regular
+    mTooltip->setText(text);
+    mTooltip->setArrow(ArrowTooltip::Arrow::Up);
+
+    // Centered on the cursor, just below the hovered element, arrow pointing up at it.
+    const int x = globalCursorPos.x() - mTooltip->width() / 2;
+    const int y = anchorBottomGlobalY + V_GAP;
+    mTooltip->move(x, y);
+    mTooltip->show();
+}
+
+void NodeSelectorStyledTooltip::hide()
+{
+    if (mTooltip)
+    {
+        mTooltip->close();
+        mTooltip = nullptr;
+    }
 }
 
 void NodeSelectorTreeView::mouseDoubleClickEvent(QMouseEvent* event)
@@ -1456,6 +1514,8 @@ void NodeSelectorHeaderView::paintSection(QPainter* painter,
 
 void NodeSelectorHeaderView::mousePressEvent(QMouseEvent* event)
 {
+    mTooltip.hide();
+
     if (mNonInteractiveSections.contains(logicalIndexAt(event->pos())))
     {
         event->ignore();
@@ -1484,6 +1544,27 @@ bool NodeSelectorHeaderView::event(QEvent* e)
     }
 
     return QHeaderView::event(e);
+}
+
+bool NodeSelectorHeaderView::viewportEvent(QEvent* e)
+{
+    // Header section tooltips ("Sort by ...") share the tree's styled tooltip.
+    const bool consumed = mTooltip.handleViewportEvent(
+        e,
+        this,
+        mTooltipSection,
+        [this](const QPoint& pos)
+        {
+            const int section = logicalIndexAt(pos);
+            const QString text =
+                (model() && section >= 0) ?
+                    model()->headerData(section, orientation(), Qt::ToolTipRole).toString() :
+                    QString();
+            const int anchorBottomGlobalY = mapToGlobal(QPoint(0, height())).y();
+            return NodeSelectorStyledTooltip::Target<int>{text, anchorBottomGlobalY, section};
+        });
+
+    return consumed || QHeaderView::viewportEvent(e);
 }
 
 QStyleOptionHeader::SectionPosition NodeSelectorHeaderView::sectionPosition(int logicalIndex) const

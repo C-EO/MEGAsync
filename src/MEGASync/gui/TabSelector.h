@@ -11,7 +11,7 @@ class TabSelector;
 }
 
 class TokenPropertySetter;
-class TabSelectorTooltip;
+class ArrowTooltip;
 
 class TabSelector: public QWidget
 {
@@ -100,7 +100,7 @@ private:
     QString mNormalOff;
     QString mNormalOn;
 
-    QPointer<TabSelectorTooltip> mTooltip;
+    QPointer<ArrowTooltip> mTooltip;
 
     void showCollapsedTooltip();
     void closeCollapsedTooltip();

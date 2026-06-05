@@ -282,8 +282,14 @@ class MoveBackupType: public FilePickerType
 {
 public:
     explicit MoveBackupType() = default;
+    void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     TabTypes allowedTabTypes() override;
     QString okButtonText() const override;
+
+    bool showsDestinationBreadcrumb() const override
+    {
+        return true;
+    }
 };
 
 #endif // NODESELECTORSELECTTYPES_H

@@ -5039,11 +5039,6 @@ Enter a different name.</translation>
         </translation>
     </message>
     <message>
-        <source>New folder</source>
-        <translatorcomment>Action button text in the node selector to create a new folder. SNC-6420</translatorcomment>
-        <translation type="unfinished">New folder</translation>
-    </message>
-    <message>
         <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
         <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
         <translation type="unfinished"></translation>
@@ -5072,6 +5067,36 @@ Enter a different name.</translation>
         <source>Add backup</source>
         <translatorcomment>Empty-state button in the node selector to start adding a backup. SNC-6420</translatorcomment>
         <translation type="unfinished">Add backup</translation>
+    </message>
+    <message>
+        <source>Create folder</source>
+        <translatorcomment>Action button in the node selector to create a new folder. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sync</source>
+        <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
+        <translation type="unfinished">Sync</translation>
+    </message>
+    <message>
+        <source>Upload</source>
+        <translatorcomment>Action button in the node selector to upload to the selected folder. SNC-6420</translatorcomment>
+        <translation type="unfinished">Upload</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translatorcomment>Action button in the node selector to download the selected folder. SNC-6420</translatorcomment>
+        <translation type="unfinished">Download</translation>
+    </message>
+    <message>
+        <source>This folder is read and write. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-and-write shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This folder is read-only. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

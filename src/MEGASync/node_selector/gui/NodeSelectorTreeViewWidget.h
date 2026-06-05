@@ -328,6 +328,7 @@ private:
     friend class UploadType;
     friend class StreamType;
     friend class CloudDriveType;
+    friend class MoveBackupType;
     friend class SelectType;
 };
 

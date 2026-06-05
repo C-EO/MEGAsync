@@ -452,6 +452,14 @@ QString DownloadType::okButtonText() const
 ///////////////////////DOWNLOAD TYPE//////////////////////////////
 
 ///////////////////////MOVE BACKUP TYPE//////////////////////////////
+void MoveBackupType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
+{
+    SelectType::initTreeViewWidget(wdg);
+
+    wdg->mModel->showFiles(false);
+    wdg->mModel->showReadOnlyFolders(false);
+}
+
 TabTypes MoveBackupType::allowedTabTypes()
 {
     return TabType::CLOUD_DRIVE;

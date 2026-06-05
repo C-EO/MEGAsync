@@ -650,7 +650,10 @@ public:
     // then, so the change would be a no-op). Re-applied on reattach in restoreLoadingViewState.
     void setColumnHidden(int column, bool hide)
     {
-        if (mDetachedModel)
+        // Defer while the model is detached, and also before it has ever been attached (fresh
+        // view: the header has no sections yet, so the change would be a no-op and lost).
+        // Re-applied on the next reattach in restoreLoadingViewState.
+        if (mDetachedModel || ViewType::header()->count() == 0)
         {
             mPendingColumnHidden[column] = hide;
             return;

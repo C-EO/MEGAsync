@@ -6,6 +6,8 @@
 #include "ViewLoadingScene.h"
 
 #include <QHeaderView>
+#include <QHelpEvent>
+#include <QPointer>
 #include <QSet>
 #include <QShortcut>
 #include <QTreeView>
@@ -15,6 +17,70 @@
 class NodeSelectorProxyModel;
 class NodeSelectorModel;
 class MegaDelegateHoverManager;
+class ArrowTooltip;
+
+// Styled tooltip shared across the node selector (tree rows and header sections): Caption/Regular
+// text in an ArrowTooltip with an up-pointing arrow, anchored just below the hovered element
+// and horizontally centered on the cursor.
+class NodeSelectorStyledTooltip
+{
+public:
+    // Element under the cursor that the tooltip should describe, returned by the resolver passed
+    // to handleViewportEvent(). An empty text means "no tooltip here"; id identifies the element
+    // (compared with Id::operator!=) so the tooltip is re-anchored only when moving onto a
+    // different one, which avoids the cursor-following motion-blur.
+    template<typename Id>
+    struct Target
+    {
+        QString text;
+        int anchorBottomGlobalY = 0;
+        Id id = {};
+    };
+
+    // Drives the tooltip from a view's viewportEvent: on QEvent::ToolTip it calls
+    // resolve(viewportPos) -> Target and shows/hides accordingly; Leave/Wheel hide it. Returns
+    // true when the event was consumed (the caller should then return true without calling base).
+    template<typename Id, typename Resolver>
+    bool handleViewportEvent(QEvent* e, QWidget* parent, Id& lastId, Resolver resolve)
+    {
+        if (e->type() == QEvent::ToolTip)
+        {
+            auto* helpEvent = static_cast<QHelpEvent*>(e);
+            const auto target = resolve(helpEvent->pos());
+            if (!target.text.isEmpty())
+            {
+                if (!isVisible() || lastId != target.id)
+                {
+                    show(parent, target.text, helpEvent->globalPos(), target.anchorBottomGlobalY);
+                    lastId = target.id;
+                }
+                return true;
+            }
+            hide();
+        }
+        else if (e->type() == QEvent::Leave || e->type() == QEvent::Wheel)
+        {
+            hide();
+        }
+        return false;
+    }
+
+    void hide();
+
+    bool isVisible() const
+    {
+        return !mTooltip.isNull();
+    }
+
+private:
+    void show(QWidget* parent,
+              const QString& text,
+              const QPoint& globalCursorPos,
+              int anchorBottomGlobalY);
+
+    static constexpr int V_GAP = 8;
+    QPointer<ArrowTooltip> mTooltip;
+};
 
 class NodeSelectorHeaderView: public QHeaderView
 {
@@ -30,6 +96,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     bool event(QEvent* e) override;
+    bool viewportEvent(QEvent* e) override;
 
 private:
     QStyleOptionHeader::SectionPosition sectionPosition(int logicalIndex) const;
@@ -38,6 +105,9 @@ private:
     QSet<int> mNonInteractiveSections;
     mutable QPixmap mAscendingSortArrow;
     mutable QPixmap mDescendingSortArrow;
+
+    NodeSelectorStyledTooltip mTooltip;
+    int mTooltipSection = -1; // Header section the tooltip is currently anchored to.
 };
 
 using namespace mega;
@@ -115,6 +185,7 @@ protected:
     void startDrag(Qt::DropActions supportedActions) override;
 
     bool event(QEvent* event) override;
+    bool viewportEvent(QEvent* event) override;
 
 signals:
     void deleteNodeClicked(const QList<MegaHandle>& handles,
@@ -220,6 +291,11 @@ private:
     // Branch pixmaps
     mutable QPixmap mRightChevron;
     mutable QPixmap mDownChevron;
+
+    // All NodeSelector row tooltips are rendered through this styled tooltip instead of native
+    // QToolTip. The whole-row access role takes priority over the per-cell ToolTipRole.
+    NodeSelectorStyledTooltip mTooltip;
+    QPersistentModelIndex mTooltipIndex; // Row the styled tooltip is currently anchored to.
 };
 
 #endif // NODESELECTORTREEVIEW_H

@@ -82,6 +82,7 @@ class NodeSelectorProxyModelSync: public NodeSelectorProxyModel
 public:
     explicit NodeSelectorProxyModelSync(QObject* parent = nullptr);
     void applyProxyModelFlags(Qt::ItemFlags& flags, const QModelIndex& index) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 };
 
 class NodeSelectorProxyModelSearch: public NodeSelectorProxyModel

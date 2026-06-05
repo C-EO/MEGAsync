@@ -1,6 +1,6 @@
 #include "TabSelector.h"
 
-#include "TabSelectorTooltip.h"
+#include "ArrowTooltip.h"
 #include "TokenizableItems/TokenPropertySetter.h"
 #include "TokenParserWidgetManager.h"
 #include "ui_TabSelector.h"
@@ -396,7 +396,7 @@ void TabSelector::showCollapsedTooltip()
 
     closeCollapsedTooltip();
 
-    auto* tooltip = new TabSelectorTooltip(this);
+    auto* tooltip = new ArrowTooltip(this);
     tooltip->setText(mTitle);
 
     static constexpr int H_GAP = 8;

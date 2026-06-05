@@ -107,6 +107,8 @@ void RemoveBackupDialog::onChangeButtonClicked()
     clearTargetFolderError();
 
     auto nodeSelector = new MoveBackupNodeSelector(this);
+    std::shared_ptr<mega::MegaNode> defaultNode(mMegaApi->getNodeByHandle(mTargetFolder));
+    nodeSelector->setSelectedNodeHandle(defaultNode);
     nodeSelector->init();
     DialogOpener::showDialog<NodeSelector>(
         nodeSelector,

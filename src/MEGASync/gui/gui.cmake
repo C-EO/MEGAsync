@@ -54,7 +54,7 @@ set(DESKTOP_APP_GUI_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/BannerWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/ApiImageLabel.h
     ${CMAKE_CURRENT_LIST_DIR}/TabSelector.h
-    ${CMAKE_CURRENT_LIST_DIR}/TabSelectorTooltip.h
+    ${CMAKE_CURRENT_LIST_DIR}/ArrowTooltip.h
     ${CMAKE_CURRENT_LIST_DIR}/SearchLineEdit.h
     ${CMAKE_CURRENT_LIST_DIR}/TrayIconManager.h
     ${CMAKE_CURRENT_LIST_DIR}/NodeNameSetterDialog/NodeNameSetterDialog.h
@@ -203,7 +203,7 @@ set(DESKTOP_APP_GUI_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/BannerWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ApiImageLabel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/TabSelector.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/TabSelectorTooltip.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ArrowTooltip.cpp
     ${CMAKE_CURRENT_LIST_DIR}/SearchLineEdit.cpp
     ${CMAKE_CURRENT_LIST_DIR}/TrayIconManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/NodeNameSetterDialog/NodeNameSetterDialog.cpp
@@ -440,7 +440,7 @@ set (DESKTOP_APP_GUI_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/ui/PasteMegaLinksDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/SearchLineEdit.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/TabSelector.ui
-    ${CMAKE_CURRENT_LIST_DIR}/ui/TabSelectorTooltip.ui
+    ${CMAKE_CURRENT_LIST_DIR}/ui/ArrowTooltip.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/InfoDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/StatusInfo.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/PSAwidget.ui
