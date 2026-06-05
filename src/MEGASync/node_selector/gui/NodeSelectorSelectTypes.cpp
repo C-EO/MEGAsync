@@ -7,6 +7,8 @@
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
 #include "ui_NodeSelectorTreeViewWidget.h"
 
+#include <QCoreApplication>
+
 #include <algorithm>
 
 ///////////////////////SELECT TYPE//////////////////////////////
@@ -43,6 +45,11 @@ bool SelectType::okButtonEnabled(const QModelIndexList& selected)
                });
 }
 
+QString SelectType::okButtonText() const
+{
+    return QCoreApplication::translate("NodeSelectorTreeViewWidget", "Ok");
+}
+
 void SelectType::initTreeViewWidget(NodeSelectorTreeViewWidget* wdg)
 {
     wdg->ui->tMegaFolders->setAllowContextMenu(areActionsAllowed());
@@ -74,7 +81,7 @@ QString SelectType::getCustomButtonText(uint buttonId) const
     {
         case ButtonId::NEW_FOLDER:
         {
-            return QCoreApplication::translate("NodeSelectorTreeViewWidget", "New folder");
+            return QCoreApplication::translate("NodeSelectorTreeViewWidget", "Create folder");
         }
         default:
         {
@@ -86,6 +93,11 @@ QString SelectType::getCustomButtonText(uint buttonId) const
 std::shared_ptr<NodeSelectorProxyModel> SelectType::createProxyModel()
 {
     return std::make_shared<NodeSelectorProxyModel>();
+}
+
+QSet<int> SelectType::nonInteractiveColumns() const
+{
+    return {};
 }
 
 void SelectType::checkActionButtonsVisibility(NodeSelectorTreeViewWidget* wdg,
@@ -297,6 +309,19 @@ SelectType::EmptyPageInfo FilePickerType::getEmptyFolderPageInfo() const
     return info;
 }
 
+QSet<int> FilePickerType::nonInteractiveColumns() const
+{
+    // Only NODE carries a header label and is sortable; mark every other column non-interactive
+    // (no name, no sort).
+    QSet<int> columns;
+    for (int column = NodeSelectorModel::Column::NODE + 1; column < NodeSelectorModel::Column::last;
+         ++column)
+    {
+        columns.insert(column);
+    }
+    return columns;
+}
+
 ///////////////////////FILE PICKER TYPE/////////////////////////
 
 ///////////////////////SYNC TYPE//////////////////////////////
@@ -325,6 +350,11 @@ bool SyncType::okButtonEnabled(const QModelIndexList& selected)
 TabTypes SyncType::allowedTabTypes()
 {
     return TabType::CLOUD_DRIVE | TabType::INCOMING_SHARE;
+}
+
+QString SyncType::okButtonText() const
+{
+    return QCoreApplication::translate("NodeSelectorTreeViewWidget", "Sync");
 }
 
 SelectType::EmptyPageInfo SyncType::getEmptyFolderPageInfo() const
@@ -389,6 +419,11 @@ TabTypes UploadType::allowedTabTypes()
     return TabType::CLOUD_DRIVE | TabType::INCOMING_SHARE;
 }
 
+QString UploadType::okButtonText() const
+{
+    return QCoreApplication::translate("NodeSelectorTreeViewWidget", "Upload");
+}
+
 ///////////////////////UPLOAD TYPE//////////////////////////////
 
 ///////////////////////DOWNLOAD TYPE//////////////////////////////
@@ -409,11 +444,21 @@ bool DownloadType::isDownloadAllowed() const
     return true;
 }
 
+QString DownloadType::okButtonText() const
+{
+    return QCoreApplication::translate("NodeSelectorTreeViewWidget", "Download");
+}
+
 ///////////////////////DOWNLOAD TYPE//////////////////////////////
 
 ///////////////////////MOVE BACKUP TYPE//////////////////////////////
 TabTypes MoveBackupType::allowedTabTypes()
 {
     return TabType::CLOUD_DRIVE;
+}
+
+QString MoveBackupType::okButtonText() const
+{
+    return QCoreApplication::translate("NodeSelectorTreeViewWidget", "Move");
 }
 ///////////////////////MOVE BACKUP TYPE//////////////////////////////

@@ -36,6 +36,11 @@ background-color: transparent;
 border: 2px dotted #B0B1B366;/*colorToken.border-strong*/
 border-radius: 16px;
 background: transparent;
+}
+
+#headerDivider
+{
+background-color: #F6F6F7; /*colorToken.border-subtle*/
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -198,13 +203,13 @@ background: transparent;
            <number>0</number>
           </property>
           <property name="leftMargin">
-           <number>20</number>
+           <number>12</number>
           </property>
           <property name="topMargin">
            <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>1</number>
+           <number>16</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
@@ -265,6 +270,22 @@ background: transparent;
            </widget>
           </item>
          </layout>
+         <widget class="QWidget" name="headerDivider" native="true">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>35</y>
+            <width>612</width>
+            <height>1</height>
+           </rect>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>1</height>
+           </size>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="emptyPage">
          <property name="acceptDrops">

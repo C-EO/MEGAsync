@@ -113,7 +113,7 @@ protected:
 
     virtual void configureActionButtonsPlacement() {}
 
-    virtual void configureFooterVisibility() {}
+    virtual void configureFooter() {}
 
     virtual bool shouldClearSelectionOnBackgroundClick(const QPoint& pos) const
     {

@@ -22,7 +22,7 @@ protected:
     void configureSidebar() override;
     void configureHeader() override;
     void configureActionButtonsPlacement() override;
-    void configureFooterVisibility() override;
+    void configureFooter() override;
 
     void refreshSearchResultCount() override;
 

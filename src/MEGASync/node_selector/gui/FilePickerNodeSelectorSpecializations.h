@@ -10,9 +10,11 @@ class UploadNodeSelector: public FilePickerNodeSelector
 public:
     explicit UploadNodeSelector(QWidget* parent = 0);
 
+protected:
+    QString destinationBreadcrumbEmptyText() override;
+
 private:
     void onOkButtonClicked() override;
-    DestinationBannerInfo destinationBannerInfo() const override;
 };
 
 class DownloadNodeSelector: public FilePickerNodeSelector

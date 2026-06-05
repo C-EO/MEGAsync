@@ -106,7 +106,7 @@ void NodeSelector::init()
     configureSidebar();
     configureHeader();
     configureActionButtonsPlacement();
-    configureFooterVisibility();
+    configureFooter();
 
     createActionButtons();
     createSpecialisedTreeViewWidgets();
@@ -638,7 +638,7 @@ void NodeSelector::shortCutConnects(int ignoreThis)
 void NodeSelector::resetButtonsText()
 {
     // Done here to re-use contexts
-    ui->bOk->setText(QCoreApplication::translate("NodeSelectorTreeViewWidget", "Ok"));
+    ui->bOk->setText(mSelectType->okButtonText());
     ui->bCancel->setText(QCoreApplication::translate("NodeSelectorTreeViewWidget", "Cancel"));
 }
 

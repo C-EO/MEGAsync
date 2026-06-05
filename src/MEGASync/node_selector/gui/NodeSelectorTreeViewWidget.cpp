@@ -99,6 +99,8 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
     connect(ui->bEmptyAddBackup, &QPushButton::clicked, this, emitAddBackup);
 
     mNodeActions.setDialogParent(Utilities::getTopParent<QDialog>(ui->tMegaFolders));
+
+    setupHeaderDivider();
 }
 
 NodeSelectorTreeViewWidget::~NodeSelectorTreeViewWidget()
@@ -424,6 +426,10 @@ bool NodeSelectorTreeViewWidget::event(QEvent* event)
     {
         clearSelection();
     }
+    else if (event->type() == QEvent::Resize)
+    {
+        updateHeaderDividerGeometry();
+    }
 
     return QWidget::event(event);
 }
@@ -492,6 +498,7 @@ bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
         if (watched == ui->tMegaFolders->viewport())
         {
             updateColumnsWidth(false);
+            updateHeaderDividerGeometry();
         }
     }
     // Propagate key events to the view
@@ -656,6 +663,34 @@ void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)
                                                QAbstractItemView::NoDragDrop);
 }
 
+void NodeSelectorTreeViewWidget::setupHeaderDivider()
+{
+    // headerDivider is declared in the .ui as a free (non-layout) overlay child of treeViewPage,
+    // which spans the full widget width, so the separator can reach edge to edge, past the tree
+    // view's left/right layout margins. Its position depends on the runtime header height, so it
+    // is placed here rather than statically.
+    ui->headerDivider->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
+    connect(ui->tMegaFolders->header(),
+            &QHeaderView::geometriesChanged,
+            this,
+            &NodeSelectorTreeViewWidget::updateHeaderDividerGeometry);
+
+    // The header geometry is not valid during construction; defer the first placement.
+    QTimer::singleShot(0, this, &NodeSelectorTreeViewWidget::updateHeaderDividerGeometry);
+}
+
+void NodeSelectorTreeViewWidget::updateHeaderDividerGeometry()
+{
+    auto* header = ui->tMegaFolders->header();
+    const int dividerY = header->mapTo(ui->treeViewPage, QPoint(0, header->height())).y();
+    ui->headerDivider->setGeometry(0,
+                                   dividerY,
+                                   ui->treeViewPage->width(),
+                                   ui->headerDivider->height());
+    ui->headerDivider->raise();
+}
+
 void NodeSelectorTreeViewWidget::onSectionResized()
 {
     if (!mManuallyResizedColumn && ui->tMegaFolders->header()->rect().contains(
@@ -689,20 +724,10 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
         int minWidth(100);
         int labelColumnMinWidth(88);
         int labelColumnMaxWidth(120);
-        int compactLabelColumnWidth(labelColumnMinWidth);
+        int compactLabelColumnWidth(16);
         int maxSecondaryColumnWidth(200);
         double secondaryColumnProportion(0.2);
         double labelColumnProportion(0.12);
-
-        if (auto* model = ui->tMegaFolders->model())
-        {
-            const auto headerText =
-                model->headerData(NodeSelectorModel::Column::LABEL, Qt::Horizontal, Qt::DisplayRole)
-                    .toString();
-            compactLabelColumnWidth = std::max(
-                ui->tMegaFolders->header()->fontMetrics().horizontalAdvance(headerText) + 24,
-                labelColumnMinWidth);
-        }
 
         for (QList<int>::const_reverse_iterator column = mVisibleColumns.crbegin();
              column != mVisibleColumns.crend();
@@ -719,7 +744,7 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
 
             if ((*column) == NodeSelectorModel::Column::IS_EXPORTED)
             {
-                width = 80;
+                width = 32;
             }
             else if ((*column) == NodeSelectorModel::Column::LABEL)
             {
@@ -811,6 +836,7 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
         ui->tMegaFolders->setExpandsOnDoubleClick(false);
         ui->tMegaFolders->header()->setDefaultAlignment(Qt::AlignLeft);
         ui->tMegaFolders->header()->setDefaultSectionSize(35);
+        ui->tMegaFolders->header()->setFixedHeight(40);
         ui->tMegaFolders->setItemDelegate(createItemDelegate(ui->tMegaFolders));
         ui->tMegaFolders->setItemDelegateForColumn(NodeSelectorModel::Column::LABEL,
                                                    createLabelDelegate(ui->tMegaFolders));
@@ -819,7 +845,7 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
         ui->tMegaFolders->sortByColumn(NodeSelectorModel::Column::NODE, Qt::AscendingOrder);
         ui->tMegaFolders->setModel(mProxyModel.get());
         updateColumnResizeModes();
-        setNonInteractiveColumns({});
+        setNonInteractiveColumns(mSelectType->nonInteractiveColumns());
 
         ui->tMegaFolders->header()->setVisible(true);
         ui->tMegaFolders->header()->setProperty("HeaderIconCenter", true);

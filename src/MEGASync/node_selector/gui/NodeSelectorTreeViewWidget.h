@@ -302,6 +302,11 @@ private:
     // be skipped until it is reattached.
     bool isTreeViewReady() const;
 
+    // Full-width separator under the tree view column header (declared in the .ui as
+    // headerDivider; positioned at runtime).
+    void setupHeaderDivider();
+    void updateHeaderDividerGeometry();
+
     ButtonIconManager mButtonIconManager;
     bool first;
     bool mUiBlocked;

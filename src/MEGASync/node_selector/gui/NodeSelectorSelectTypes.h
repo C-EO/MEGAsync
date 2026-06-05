@@ -7,6 +7,7 @@
 #include <QMap>
 #include <QModelIndex>
 #include <QPushButton>
+#include <QSet>
 #include <QString>
 
 #include <memory>
@@ -43,6 +44,7 @@ public:
     virtual bool isDownloadAllowed() const;
     virtual void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg);
     virtual bool okButtonEnabled(const QModelIndexList& selected);
+    virtual QString okButtonText() const;
 
     virtual bool hasNewFolderButton() const
     {
@@ -123,6 +125,10 @@ public:
 
     virtual std::shared_ptr<NodeSelectorProxyModel> createProxyModel();
 
+    // Header sections that show no label and ignore sort clicks. Default: none (every visible
+    // column is interactive). NODE is always interactive.
+    virtual QSet<int> nonInteractiveColumns() const;
+
 protected:
     bool cloudDriveIsCurrentRootIndex(NodeSelectorTreeViewWidget* wdg);
 };
@@ -192,6 +198,9 @@ public:
     {
         return NavigationBreadcrumbMode::TOP_ROOT_READ_ONLY;
     }
+
+    // In the file picker only NODE has a header label and is sortable.
+    QSet<int> nonInteractiveColumns() const override;
 };
 
 class DownloadType: public FilePickerType
@@ -201,6 +210,7 @@ public:
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     TabTypes allowedTabTypes() override;
     bool isDownloadAllowed() const override;
+    QString okButtonText() const override;
 };
 
 class SyncType: public FilePickerType
@@ -210,6 +220,7 @@ public:
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
+    QString okButtonText() const override;
     EmptyPageInfo getEmptyFolderPageInfo() const override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
 
@@ -254,6 +265,7 @@ public:
     void initTreeViewWidget(NodeSelectorTreeViewWidget* wdg) override;
     bool okButtonEnabled(const QModelIndexList& selected) override;
     TabTypes allowedTabTypes() override;
+    QString okButtonText() const override;
 
     bool hasNewFolderButton() const override
     {
@@ -271,6 +283,7 @@ class MoveBackupType: public FilePickerType
 public:
     explicit MoveBackupType() = default;
     TabTypes allowedTabTypes() override;
+    QString okButtonText() const override;
 };
 
 #endif // NODESELECTORSELECTTYPES_H

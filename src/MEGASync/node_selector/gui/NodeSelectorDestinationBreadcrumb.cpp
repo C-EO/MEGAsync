@@ -262,7 +262,7 @@ void NodeSelectorDestinationBreadcrumb::updateContentVisibility()
     const bool isDestinationMode = mDisplayMode == DisplayMode::DESTINATION;
 
     ui->lDestinationTitle->setVisible(isDestinationMode);
-    ui->cbAlwaysUploadToLocation->setVisible(isDestinationMode && mShouldShowDefaultUploadOption);
+    ui->cbContainer->setVisible(isDestinationMode && mShouldShowDefaultUploadOption);
     ui->bDestinationClear->setVisible(isDestinationMode && !mPathSegments.isEmpty());
 
     if (!isDestinationMode)

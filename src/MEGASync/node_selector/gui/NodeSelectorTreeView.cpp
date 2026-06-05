@@ -25,7 +25,7 @@
 
 QList<mega::MegaHandle> NodeSelectorTreeView::mCopiedHandles = QList<mega::MegaHandle>();
 const int NodeSelectorTreeView::ROW_SIDE_MARGIN = 0;
-const int NodeSelectorTreeView::ROW_RIGHT_MARGIN = 16;
+const int NodeSelectorTreeView::ROW_RIGHT_MARGIN = 0;
 const int NodeSelectorTreeView::ROW_VERTICAL_MARGIN = 4;
 const qreal NodeSelectorTreeView::ROW_RADIUS = 4.0;
 

@@ -53,7 +53,7 @@ void NodeSelectorDelegate::paint(QPainter* painter,
             int leftX = index.column() == 0 ? 4 : option.rect.x();
             int rightX = option.rect.x();
             rightX += index.column() == index.model()->columnCount() - 1 ?
-                          (option.rect.width() - 14) :
+                          (option.rect.width() - 4) :
                           option.rect.width();
 
             painter->drawLine(QLine(QPoint(leftX, y), QPoint(rightX, y)));
