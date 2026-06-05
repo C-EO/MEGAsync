@@ -10,7 +10,7 @@ import ServiceUrls 1.0
 Item {
     id: root
 
-    property alias icon: hintIcon.source
+    property url icon: ""
     property alias title: hintTitle.rawText
     property alias text: hintText.rawText
     property alias iconColor: hintIcon.color
@@ -20,48 +20,37 @@ Item {
 
     property int type: Constants.MessageType.NONE
     property int textSize: Texts.Text.Size.NORMAL
+    property bool colorizeText: true
 
-    implicitHeight: mainRow.height
-
-    onTypeChanged: {
-        switch(type) {
-            case Constants.MessageType.NONE:
-            case Constants.MessageType.SUCCESS:
-            case Constants.MessageType.INFO:
-                console.warn("HintText: Constants.MessageType -> " + type + " not defined yet");
-                break;
-            case Constants.MessageType.WARNING:
-                if(icon.length === 0) {
-                    icon = Images.alertTriangle;
-                }
-                iconColor = ColorTheme.textWarning;
-                titleColor = ColorTheme.textWarning;
-                textColor = ColorTheme.textWarning;
-                break;
-            case Constants.MessageType.ERROR:
-                if(icon.length === 0) {
-                    icon = Images.xCircle;
-                }
-                iconColor = ColorTheme.textError;
-                titleColor = ColorTheme.textError;
-                textColor = ColorTheme.textError;
-                break;
-            default:
-                console.error("HintText: Constants.MessageType -> " + type + " does not exist");
-                break;
+    readonly property color typeColor: {
+        switch (type) {
+            case Constants.MessageType.WARNING: return ColorTheme.textWarning;
+            case Constants.MessageType.ERROR:   return ColorTheme.textError;
+            default: return enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled;
         }
     }
+    readonly property url typeIcon: {
+        switch (type) {
+            case Constants.MessageType.WARNING: return Images.alertTriangle;
+            case Constants.MessageType.ERROR:   return Images.xCircle;
+            default: return "";
+        }
+    }
+
+    implicitHeight: mainRow.height
 
     Row {
         id: mainRow
 
         height: root.visible ? textColumn.implicitHeight : 0
-        spacing: root.icon !== "" ? 8 : 0
+        spacing: hintIcon.source.toString() !== "" ? 8 : 0
         width: root.width
 
         SvgImage {
             id: hintIcon
 
+            source: root.icon.toString() !== "" ? root.icon : root.typeIcon
+            color: root.typeColor
             sourceSize: Qt.size(16, 16)
             opacity: enabled ? 1.0 : 0.2
         }
@@ -75,6 +64,9 @@ Item {
             Texts.RichText {
                 id: hintTitle
 
+                color: root.colorizeText
+                       ? root.typeColor
+                       : (enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled)
                 height: rawText !== "" ? implicitHeight : 0
                 width: parent.width
                 opacity: enabled ? 1.0 : 0.2
@@ -88,6 +80,9 @@ Item {
             Texts.RichText {
                 id: hintText
 
+                color: root.colorizeText
+                       ? root.typeColor
+                       : (enabled ? ColorTheme.textPrimary : ColorTheme.textDisabled)
                 height: rawText !== "" ? implicitHeight : 0
                 width: parent.width
                 opacity: enabled ? 1.0 : 0.2

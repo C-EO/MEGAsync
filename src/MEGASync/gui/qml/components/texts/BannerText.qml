@@ -27,10 +27,6 @@ Item {
     Layout.preferredHeight: backgroundRect.height
     visible: false
 
-    onTypeChanged: {
-        hint.type = type;
-    }
-
     function getBackgroundRectColor()
     {
         switch(type) {
@@ -82,6 +78,8 @@ Item {
                 margins: root.margin
             }
             textSpacing: 4
+            type: root.type
+            colorizeText: false
         }
     }
 
