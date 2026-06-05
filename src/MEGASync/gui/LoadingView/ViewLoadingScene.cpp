@@ -72,11 +72,16 @@ void ViewLoadingSceneBase::onDelayTimerToShowTimeout()
     showLoadingScene();
 }
 
+void ViewLoadingSceneBase::hideViewCopy()
+{
+    ui->wParentViewCopy->hide();
+}
+
 void ViewLoadingSceneBase::hideLoadingScene()
 {
     if (mLoadingViewSet == LoadingViewType::COPY_VIEW)
     {
-        ui->wParentViewCopy->hide();
+        hideViewCopy();
     }
 }
 

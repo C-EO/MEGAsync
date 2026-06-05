@@ -79,8 +79,14 @@ void CloudDriveNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWi
         return;
     }
 
-    widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, false);
-    widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, false);
+    // Hide the date columns on the Incoming Shares top-level list (the share roots), where
+    // USER/ACCESS are shown instead. They remain visible everywhere else.
+    const bool incomingSharesTopRoot =
+        widget->getTabType() == NodeSelectorTreeViewWidget::TabItem::SHARES &&
+        !widget->getCurrentRootIndex().isValid();
+
+    widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, incomingSharesTopRoot);
+    widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, incomingSharesTopRoot);
 }
 
 void CloudDriveNodeSelector::configureSidebar()

@@ -156,6 +156,7 @@ bool NodeSelectorModelIncomingShares::rootNodeUpdated(mega::MegaNode* node)
                 }
                 else
                 {
+                    emit rootNodeAboutToBeRemoved(folderIndex);
                     beginRemoveRowsAsync(node->getHandle());
                     return true;
                 }
@@ -171,6 +172,7 @@ bool NodeSelectorModelIncomingShares::rootNodeUpdated(mega::MegaNode* node)
             auto index = findIndexByNodeHandle(node->getHandle(), QModelIndex());
             if (index.isValid())
             {
+                emit rootNodeAboutToBeRemoved(index);
                 beginRemoveRowsAsync(node->getHandle());
                 return true;
             }

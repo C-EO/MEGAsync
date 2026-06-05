@@ -191,6 +191,15 @@ void NodeSelectorTreeViewWidget::init()
             &NodeSelectorModelUpdateCoordinator::indexRemovedAffectingCurrentPath,
             this,
             &NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot);
+    // A root node removed while the user is inside it would leave the open root dangling.
+    // Reuse the same navigate-away path, mapping the model's source index to the proxy.
+    connect(mModel.get(),
+            &NodeSelectorModel::rootNodeAboutToBeRemoved,
+            this,
+            [this](const QModelIndex& sourceIndex)
+            {
+                onRemovedIndexAffectsCurrentRoot(mProxyModel->mapFromSource(sourceIndex));
+            });
     connect(mModelUpdateCoordinator.get(),
             &NodeSelectorModelUpdateCoordinator::viewStateChanged,
             this,
@@ -665,9 +674,7 @@ void NodeSelectorTreeViewWidget::onSectionResized()
 
 void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCounter)
 {
-    // The loading scene detaches the model; with no model the header has 0 columns, so any
-    // computation here would be wrong. Skip until the model is reattached.
-    if (!ui->tMegaFolders->model() || ui->tMegaFolders->header()->count() == 0)
+    if (!isTreeViewReady())
     {
         return;
     }
@@ -679,7 +686,6 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
 
     if (!mVisibleColumns.isEmpty())
     {
-        int widthTotal(0);
         int minWidth(100);
         int labelColumnMinWidth(88);
         int labelColumnMaxWidth(120);
@@ -702,14 +708,16 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
              column != mVisibleColumns.crend();
              ++column)
         {
-            int width(0);
-
+            // NODE stretches to fill the remaining space (QHeaderView::Stretch); never size it
+            // manually here or it would fight the header's stretch logic.
             if ((*column) == NodeSelectorModel::Column::NODE)
             {
-                // Total minus the rest of columns
-                width = std::max(ui->tMegaFolders->viewport()->width() - widthTotal, minWidth * 2);
+                continue;
             }
-            else if ((*column) == NodeSelectorModel::Column::IS_EXPORTED)
+
+            int width(0);
+
+            if ((*column) == NodeSelectorModel::Column::IS_EXPORTED)
             {
                 width = 80;
             }
@@ -722,6 +730,20 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
                                           labelColumnMaxWidth),
                                  labelColumnMinWidth);
             }
+            else if ((*column) == NodeSelectorModel::Column::ADDED_DATE)
+            {
+                // Initial width; still user-resizable (Interactive).
+                width = 130;
+            }
+            else if ((*column) == NodeSelectorModel::Column::LAST_MODIFIED_DATE)
+            {
+                // QHeaderView has no per-section maximum, so emulate "stretch up to 200px": grow
+                // with the window but cap at 200; NODE (Stretch) absorbs the remaining space.
+                width =
+                    std::max(std::min(qRound(ui->tMegaFolders->width() * secondaryColumnProportion),
+                                      maxSecondaryColumnWidth),
+                             minWidth);
+            }
             else
             {
                 width =
@@ -729,8 +751,6 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
                                       maxSecondaryColumnWidth),
                              minWidth);
             }
-
-            widthTotal += width;
 
             ui->tMegaFolders->setColumnWidth((*column), width);
         }
@@ -741,7 +761,7 @@ void NodeSelectorTreeViewWidget::rebuildVisibleColumns()
 {
     // While the model is detached the header has no columns; keep the last known visible
     // set instead of clearing it to empty.
-    if (!ui->tMegaFolders->model() || ui->tMegaFolders->header()->count() == 0)
+    if (!isTreeViewReady())
     {
         return;
     }
@@ -1078,8 +1098,11 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
         onSelectionHasChanged();
         mSelectionCoordinator->expandPendingIndexes();
         mSelectionCoordinator->selectPendingIndexes();
-        // The model is reattached now (the loading scene hid), so the header has its
-        // columns back: recompute widths that were skipped while detached.
+        // The model is reattached now (the loading scene hid), so the header has its columns
+        // back. QHeaderView::restoreState() (run by the loading scene on reattach) does NOT
+        // restore per-section resize modes, so NODE loses its Stretch on every reattach; re-assert
+        // the modes before recomputing the widths that were skipped while detached.
+        updateColumnResizeModes();
         updateColumnsWidth(true);
 
         // Button visibility was computed while the model was detached (the read-only
@@ -1522,31 +1545,39 @@ void NodeSelectorTreeViewWidget::resetAutoColumnWidths()
     updateColumnsWidth(true);
 }
 
+bool NodeSelectorTreeViewWidget::isTreeViewReady() const
+{
+    return ui && ui->tMegaFolders && ui->tMegaFolders->model() &&
+           ui->tMegaFolders->header()->count() > 0;
+}
+
 void NodeSelectorTreeViewWidget::updateColumnResizeModes()
 {
-    if (!ui || !ui->tMegaFolders || !ui->tMegaFolders->header())
+    if (!isTreeViewReady())
     {
         return;
     }
 
-    ui->tMegaFolders->header()->setSectionResizeMode(NodeSelectorModel::Column::LABEL,
-                                                     mShowLabelText ? QHeaderView::Interactive :
-                                                                      QHeaderView::Fixed);
+    auto* header = ui->tMegaFolders->header();
 
-    if (mSelectType->isFilePicker())
+    // NODE is the only elastic column: it stretches to fill the remaining space, so resizing
+    // any other column steals space from NODE alone. Disable stretchLastSection (QTreeView
+    // enables it by default), otherwise the last column would also stretch and fight NODE.
+    header->setStretchLastSection(false);
+    header->setSectionResizeMode(NodeSelectorModel::Column::NODE, QHeaderView::Stretch);
+
+    header->setSectionResizeMode(NodeSelectorModel::Column::LABEL,
+                                 mShowLabelText ? QHeaderView::Interactive : QHeaderView::Fixed);
+
+    if (!mSelectType->isFilePicker())
     {
-        ui->tMegaFolders->header()->setSectionResizeMode(NodeSelectorModel::Column::NODE,
-                                                         QHeaderView::Stretch);
-    }
-    else
-    {
-        ui->tMegaFolders->header()->setSectionResizeMode(
-            NodeSelectorModel::Column::LAST_MODIFIED_DATE,
-            QHeaderView::Stretch);
+        header->setSectionResizeMode(NodeSelectorModel::Column::ADDED_DATE,
+                                     QHeaderView::Interactive);
+        header->setSectionResizeMode(NodeSelectorModel::Column::LAST_MODIFIED_DATE,
+                                     QHeaderView::Interactive);
     }
 
-    ui->tMegaFolders->header()->setSectionResizeMode(NodeSelectorModel::Column::IS_EXPORTED,
-                                                     QHeaderView::Fixed);
+    header->setSectionResizeMode(NodeSelectorModel::Column::IS_EXPORTED, QHeaderView::Fixed);
 }
 
 QModelIndex NodeSelectorTreeViewWidget::getParentIncomingShareByIndex(QModelIndex idx) const

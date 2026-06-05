@@ -297,6 +297,10 @@ private:
     // has 0 columns); widths are recomputed on the next real viewport resize / reattach.
     void rebuildVisibleColumns();
     void updateColumnResizeModes();
+    // True when the tree view has a model attached and its header has columns. The loading
+    // scene detaches the model, leaving the header with 0 columns; column computations must
+    // be skipped until it is reattached.
+    bool isTreeViewReady() const;
 
     ButtonIconManager mButtonIconManager;
     bool first;

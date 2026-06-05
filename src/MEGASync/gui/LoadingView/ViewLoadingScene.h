@@ -307,6 +307,7 @@ protected:
     virtual void showLoadingScene();
     virtual void showViewCopy();
     virtual void hideLoadingScene();
+    void hideViewCopy();
 
     virtual QWidget* getTopParent();
 
@@ -494,7 +495,7 @@ public:
 public:
     inline void hideLoadingScene() override
     {
-        ViewLoadingSceneBase::hideLoadingScene();
+        const bool copyWasShown = (mLoadingViewSet == LoadingViewType::COPY_VIEW);
 
         setLoadingViewSet(LoadingViewType::NONE);
 
@@ -516,8 +517,17 @@ public:
         mView->show();
         mView->applyLoadingViewScroll();
         mView->setUpdatesEnabled(true);
-        mView->viewport()->update();
+        // Paint the restored view synchronously so a real frame exists underneath the (raised)
+        // copy BEFORE we lift it. update() only schedules a paint -> would leave a blank gap.
+        mView->viewport()->repaint();
         mLoadingDelegate->setLoading(false);
+
+        // Lift the copy snapshot LAST, now that the restored view is already painted behind it.
+        // Hiding it at the top (as before) left a ~5ms blank gap that showed as a flicker.
+        if (copyWasShown)
+        {
+            hideViewCopy();
+        }
     }
 
 protected:

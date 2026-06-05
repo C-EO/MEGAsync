@@ -464,6 +464,9 @@ signals:
     void modelIsBeingModifiedChanged(bool status);
     void modelModified();
     void currentRootIndexChanged();
+    // Emitted right before a root node is removed (e.g. an incoming share un-shared) while it
+    // still exists, so the view can navigate out of it first if it is the open folder.
+    void rootNodeAboutToBeRemoved(const QModelIndex& sourceIndex);
     void itemsMoved();
     void itemsAboutToBeMoved(const QList<mega::MegaHandle> handles, int actionType);
     void itemsAboutToBeMovedFailed(const QList<mega::MegaHandle> handles, int actionType);

@@ -35,6 +35,7 @@ bool NodeSelectorModelUpdateCoordinator::onNodesUpdate(mega::MegaNodeList* nodes
     {
         auto node = nodes->get(i);
 
+        // Some specialised model could take the update with special logic
         if (mModel->rootNodeUpdated(node))
         {
             continue;

@@ -424,13 +424,17 @@ void NodeSelectorProxyModelSearch::setMode(TabTypes mode, bool forceFilter)
         return;
     }
 
-    getMegaModel()->sendBlockUiSignal(true);
     mMode = mode;
+    // Only block/invalidate when actually re-filtering. Doing it unconditionally emitted a
+    // blockUi(false) during the initial-mode setup (forceFilter=false), which reached the view
+    // before its model/header were attached and crashed. Invalidate first so rowCount() below
+    // reflects the new mode when deciding whether the result set is empty.
     if (forceFilter)
     {
+        getMegaModel()->sendBlockUiSignal(true);
         invalidateFilter();
+        getMegaModel()->sendBlockUiSignal(false);
     }
-    getMegaModel()->sendBlockUiSignal(false);
     if (rowCount() == 0)
     {
         emit modeEmpty();
