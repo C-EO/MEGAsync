@@ -48,6 +48,7 @@ Item {
     readonly property int backgroundColorAnimationTime: 200
     readonly property int toolTipShowDelay: 500
     readonly property int toolTipTimeoutToHide: 5000
+    readonly property size iconOrderFlagSize: Qt.size(12, 12)
 
     function getStatusDescription(status){
         switch(status) {
@@ -153,6 +154,7 @@ Item {
             Layout.preferredWidth: parent.width
             Layout.rightMargin: syncTablePadding
             Layout.leftMargin: syncTablePadding
+            spacing: 0
 
             Text {
                 id: syncNameColumn
@@ -162,7 +164,6 @@ Item {
                 font.pixelSize: root.titleTextPixelSize
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
-                Layout.fillWidth: true
 
                 MouseArea {
                       anchors.fill: parent
@@ -177,45 +178,73 @@ Item {
                 }
             }
 
+            Item {
+                id: nameOrderIconSpacer
+                Layout.preferredWidth: root.syncItemContentSpacing
+            }
+
             SvgImage {
                 id: syncNameColumnOrderSymbol
 
-                source: syncNameColumn.sortByNameAscending ? Images.arrow_down_medium_regular_outline : Images.arrow_up_medium_regular_outline
+                source: syncNameColumn.sortByNameAscending ? Images.arrow_up_medium_regular_outline : Images.arrow_down_medium_regular_outline
                 visible: true
-                sourceSize: Qt.size(12, 12)
+                sourceSize: iconOrderFlagSize
                 color: ColorTheme.iconPrimary
             }
 
-            Text {
-                id: syncStatusColumn
+            Item {
+                Layout.fillWidth: true
+            }
 
-                property bool sortByStatusAscending: true
-                text: SettingsStrings.tableSyncsStatusColumn
-                font.pixelSize: root.titleTextPixelSize
-                font.weight: Font.DemiBold
-                elide: Text.ElideRight
+            RowLayout {
+                id: syncStatusColumnSpace
+
+                Layout.preferredHeight: parent.height
                 Layout.preferredWidth: syncStatusLabelWidth
+                Layout.maximumWidth: syncStatusLabelWidth
+                Layout.alignment: Qt.AlignVCenter
+                spacing: 0
 
-                MouseArea {
-                      anchors.fill: parent
-                      hoverEnabled: true
-                      cursorShape: Qt.PointingHandCursor
-                      onClicked: {
-                          syncStatusColumn.sortByStatusAscending = !syncStatusColumn.sortByStatusAscending
-                          syncSettings.sortModelByStatus(syncStatusColumn.sortByStatusAscending)
-                          syncNameColumnOrderSymbol.visible = false
-                          syncStatusColumnOrderSymbol.visible = true
+                Text {
+                    id: syncStatusColumn
+
+                    property bool sortByStatusAscending: true
+                    text: SettingsStrings.tableSyncsStatusColumn
+                    font.pixelSize: root.titleTextPixelSize
+                    font.weight: Font.DemiBold
+                    elide: Text.ElideRight
+
+                    MouseArea {
+                          anchors.fill: parent
+                          hoverEnabled: true
+                          cursorShape: Qt.PointingHandCursor
+                          onClicked: {
+                              syncStatusColumn.sortByStatusAscending = !syncStatusColumn.sortByStatusAscending
+                              syncSettings.sortModelByStatus(syncStatusColumn.sortByStatusAscending)
+                              syncNameColumnOrderSymbol.visible = false
+                              syncStatusColumnOrderSymbol.visible = true
+                        }
                     }
                 }
-            }
 
-            SvgImage {
-                id: syncStatusColumnOrderSymbol
+                Item {
+                    id: statusOrderIconSpacer
+                    Layout.preferredWidth: root.syncItemContentSpacing
+                    Layout.maximumWidth: root.syncItemContentSpacing
+                }
 
-                source: syncStatusColumn.sortByStatusAscending ? Images.arrow_down_medium_regular_outline : Images.arrow_up_medium_regular_outline
-                visible: false
-                color: ColorTheme.iconPrimary
-                sourceSize: Qt.size(12, 12)
+                SvgImage {
+                    id: syncStatusColumnOrderSymbol
+
+                    source: syncStatusColumn.sortByStatusAscending ? Images.arrow_up_medium_regular_outline : Images.arrow_down_medium_regular_outline
+                    visible: false
+                    color: ColorTheme.iconPrimary
+                    sourceSize: iconOrderFlagSize
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
             }
         }
 
