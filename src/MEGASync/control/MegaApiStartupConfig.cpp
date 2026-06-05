@@ -1,14 +1,20 @@
-#include "MegaAPIStartupConfig.h"
+#include "MegaApiStartupConfig.h"
 
 #include "megaapi.h"
 #include "Preferences.h"
 
+#include <QDebug>
+
 #include <memory>
 
-void MegaApiStartupConfig::configure(mega::MegaApi* megaApi,
-                                     bool configureFileServiceCacheReclamation)
+void MegaApiStartupConfig::initialConfiguration(mega::MegaApi* megaApi)
 {
-    if (Preferences::instance()->accountStateInGeneral() == Preferences::STATE_LOGGED_OK)
+    megaApi->setMaxPayloadLogSize(Preferences::instance()->getMaxPayloadLogSize());
+}
+
+void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* megaApi)
+{
+    if (megaApi->isLoggedIn())
     {
         QString errorMessage =
             QStringLiteral("configure shouldn't be called if we are already logged.");
@@ -20,16 +26,6 @@ void MegaApiStartupConfig::configure(mega::MegaApi* megaApi,
 #endif
     }
 
-    megaApi->setMaxPayloadLogSize(Preferences::instance()->getMaxPayloadLogSize());
-
-    if (configureFileServiceCacheReclamation)
-    {
-        applyFileServiceReclaimOptions(megaApi);
-    }
-}
-
-void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* megaApi)
-{
     std::unique_ptr<mega::MegaFileServiceReclaimOptions> options{
         mega::MegaFileServiceReclaimOptions::create()};
 

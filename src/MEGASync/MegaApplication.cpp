@@ -27,7 +27,7 @@
 #include "IntervalExecutioner.h"
 #include "LoginController.h"
 #include "mega/types.h"
-#include "MegaAPIStartupConfig.h"
+#include "MegaApiStartupConfig.h"
 #include "MegaMenuItemAction.h"
 #include "MegaProxyStyle.h"
 #include "MessageDialogOpener.h"
@@ -590,7 +590,8 @@ void MegaApplication::initialize()
                                     Preferences::USER_AGENT.toUtf8().constData(),
                                     !preferences->SSLcertificateException());
     megaApi->disableGfxFeatures(mDisableGfx);
-    MegaApiStartupConfig::configure(megaApi, true);
+    MegaApiStartupConfig::initialConfiguration(megaApi);
+    MegaApiStartupConfig::applyFileServiceReclaimOptions(megaApi);
 
     QTMegaApiManager::createMegaApi(megaApiFolders,
                                     Preferences::CLIENT_KEY,
@@ -599,7 +600,7 @@ void MegaApplication::initialize()
                                     Preferences::USER_AGENT.toUtf8().constData(),
                                     !preferences->SSLcertificateException());
     megaApiFolders->disableGfxFeatures(true);
-    MegaApiStartupConfig::configure(megaApiFolders);
+    MegaApiStartupConfig::initialConfiguration(megaApiFolders);
 
     model = SyncInfo::instance();
     connect(model, &SyncInfo::syncStateChanged, this, &MegaApplication::onSyncModelUpdated);
