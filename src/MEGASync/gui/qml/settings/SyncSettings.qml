@@ -171,8 +171,19 @@ Item {
                       onClicked: {
                           syncNameColumn.sortByNameAscending = !syncNameColumn.sortByNameAscending
                           syncSettings.sortModelByName(syncNameColumn.sortByNameAscending)
+                          syncNameColumnOrderSymbol.visible = true
+                          syncStatusColumnOrderSymbol.visible = false
                     }
                 }
+            }
+
+            SvgImage {
+                id: syncNameColumnOrderSymbol
+
+                source: syncNameColumn.sortByNameAscending ? Images.arrow_down_medium_regular_outline : Images.arrow_up_medium_regular_outline
+                visible: true
+                sourceSize: Qt.size(12, 12)
+                color: ColorTheme.iconPrimary
             }
 
             Text {
@@ -192,8 +203,19 @@ Item {
                       onClicked: {
                           syncStatusColumn.sortByStatusAscending = !syncStatusColumn.sortByStatusAscending
                           syncSettings.sortModelByStatus(syncStatusColumn.sortByStatusAscending)
+                          syncNameColumnOrderSymbol.visible = false
+                          syncStatusColumnOrderSymbol.visible = true
                     }
                 }
+            }
+
+            SvgImage {
+                id: syncStatusColumnOrderSymbol
+
+                source: syncStatusColumn.sortByStatusAscending ? Images.arrow_down_medium_regular_outline : Images.arrow_up_medium_regular_outline
+                visible: false
+                color: ColorTheme.iconPrimary
+                sourceSize: Qt.size(12, 12)
             }
         }
 

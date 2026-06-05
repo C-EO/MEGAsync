@@ -141,6 +141,8 @@ QtObject {
     readonly property url trash_off_small_thin_outline: "qrc:/trash-off_small_thin_outline.svg"
     readonly property url power_small_thin_outline: "qrc:/power_small_thin_outline.svg"
     readonly property url sync_plus_small_thin_outline: "qrc:/sync-plus_small_thin_outline.svg"
+    readonly property url arrow_up_medium_regular_outline: "qrc:/arrow-up_medium_regular_outline.svg"
+    readonly property url arrow_down_medium_regular_outline: "qrc:/arrow-down_medium_regular_outline.svg"
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //   Standard Icons

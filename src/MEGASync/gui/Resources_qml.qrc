@@ -139,5 +139,7 @@
         <file alias="trash-off_small_thin_outline.svg">images/qml/trash-off_small_thin_outline.svg</file>
         <file alias="power_small_thin_outline.svg">images/qml/power_small_thin_outline.svg</file>
         <file alias="sync-plus_small_thin_outline.svg">images/qml/sync-plus_small_thin_outline.svg</file>
+        <file alias="arrow-up_medium_regular_outline.svg">images/qml/arrow-up_medium_regular_outline.svg</file>
+        <file alias="arrow-down_medium_regular_outline.svg">images/qml/arrow-down_medium_regular_outline.svg</file>
     </qresource>
 </RCC>
