@@ -109,7 +109,7 @@ Item {
             Layout.leftMargin: root.errorLabelMargin
             Layout.bottomMargin: root.issueHandlerSpacing
             Layout.fillWidth: true
-            text: "(" + root.errorId + ") " + root.errorMessage
+            text: SettingsStrings.backupErrorFormat.arg("(" + root.errorId + ") " + root.errorMessage)
             font.pixelSize: root.issueLabelPixelSize
             font.weight: Font.Normal
             elide: Text.ElideRight

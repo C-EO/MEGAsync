@@ -72,6 +72,7 @@ QtObject {
     readonly property string solveIssueEnableBackup: qsTr("Enable backup")
     readonly property string menuActionsStopBackup: qsTr("Stop backup")
     readonly property string menuActionsRebootBackup: qsTr("Reboot backup")
+    readonly property string backupErrorFormat: qsTr("Backup error: %1")
     readonly property string backupFolderLabel: qsTr("Backup folder")
     readonly property string viewInMega: qsTr("View in MEGA")
 }
