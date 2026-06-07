@@ -4,6 +4,7 @@
 #include "DialogOpener.h"
 #include "megaapi.h"
 #include "MessageDialogOpener.h"
+#include "NavigationBreadcrumb.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
 #include "Preferences.h"
@@ -28,6 +29,16 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
 
     ui->destinationBreadcrumb->setVisible(false);
 
+    connect(ui->navigationBreadcrumb,
+            &NavigationBreadcrumb::segmentActivated,
+            this,
+            &CloudDriveNodeSelector::onNavigationBreadcrumbSegmentActivated);
+    connect(ui->navigationBreadcrumb,
+            &NavigationBreadcrumb::lastSegmentMenuRequested,
+            this,
+            &CloudDriveNodeSelector::onNavigationBreadcrumbMenuRequested);
+    refreshNavigationBreadcrumb();
+
     setAcceptDrops(true);
 
 #ifndef Q_OS_MACOS
@@ -43,6 +54,40 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
 
     // Send stats in case we didn´t send them in the current hour
     sendStats();
+}
+
+void CloudDriveNodeSelector::refreshNavigationBreadcrumb()
+{
+    auto* breadcrumbWidget = getCurrentTreeViewWidget();
+
+    // The ghost search tab shows a flat result list across every chip, so the per-tab navigation
+    // breadcrumb does not apply while it is visible.
+    const bool shouldShowBreadcrumb = breadcrumbWidget && breadcrumbWidget != mSearchWidget;
+
+    ui->navigationBreadcrumb->setVisible(shouldShowBreadcrumb);
+    if (!shouldShowBreadcrumb)
+    {
+        ui->navigationBreadcrumb->setSegments({});
+        return;
+    }
+
+    ui->navigationBreadcrumb->setSegments(breadcrumbWidget->navigationBreadcrumbSegments());
+}
+
+void CloudDriveNodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)
+{
+    if (auto* widget = getCurrentTreeViewWidget(); widget && widget != mSearchWidget)
+    {
+        widget->navigateToBreadcrumbSegment(segmentIndex);
+    }
+}
+
+void CloudDriveNodeSelector::onNavigationBreadcrumbMenuRequested(const QPoint& globalPos)
+{
+    if (auto* widget = getCurrentTreeViewWidget(); widget && widget != mSearchWidget)
+    {
+        widget->showCurrentRootContextMenu(globalPos);
+    }
 }
 
 void CloudDriveNodeSelector::specialisedTreeViewWidgetsCreated()

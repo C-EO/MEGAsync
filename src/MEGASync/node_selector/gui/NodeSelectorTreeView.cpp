@@ -825,10 +825,6 @@ void NodeSelectorTreeView::contextMenuEvent(QContextMenuEvent* event)
         return;
     }
 
-    QMenu customMenu(this);
-    customMenu.setProperty("icon-token", QLatin1String("icon-primary"));
-    customMenu.setProperty("class", QLatin1String("MegaMenu"));
-
     if (!selectionModel())
     {
         return;
@@ -836,7 +832,6 @@ void NodeSelectorTreeView::contextMenuEvent(QContextMenuEvent* event)
 
     auto proxyModel = static_cast<NodeSelectorProxyModel*>(model());
 
-    QList<mega::MegaHandle> selectionHandles;
     mega::MegaHandle clickedHandle(mega::INVALID_HANDLE);
     bool clickedEmptySpace(false);
 
@@ -849,19 +844,44 @@ void NodeSelectorTreeView::contextMenuEvent(QContextMenuEvent* event)
     // You just may click the extra row or an empty folder
     if (clickedHandle == mega::INVALID_HANDLE)
     {
-        clickedHandle = proxyModel->getHandle(rootIndex());
         indexClicked = rootIndex();
         clickedEmptySpace = true;
         clearSelection();
     }
 
-    // If it is still invalid, don´t show anything
+    showContextMenu(selectedRows(), indexClicked, clickedEmptySpace, mapToGlobal(event->pos()));
+}
+
+void NodeSelectorTreeView::showContextMenu(const QModelIndexList& selectedRowsList,
+                                           const QModelIndex& clickedIndex,
+                                           bool clickedEmptySpace,
+                                           const QPoint& globalPos)
+{
+    if (!selectionModel())
+    {
+        return;
+    }
+
+    auto proxyModel = static_cast<NodeSelectorProxyModel*>(model());
+    if (!proxyModel)
+    {
+        return;
+    }
+
+    QMenu customMenu(this);
+    customMenu.setProperty("icon-token", QLatin1String("icon-primary"));
+    customMenu.setProperty("class", QLatin1String("MegaMenu"));
+
+    QList<mega::MegaHandle> selectionHandles;
+    mega::MegaHandle clickedHandle = proxyModel->getHandle(clickedIndex);
+
+    // If it is invalid, don´t show anything
     if (clickedHandle == mega::INVALID_HANDLE)
     {
         return;
     }
 
-    QModelIndexList selectedIndexes = selectedRows();
+    QModelIndexList selectedIndexes = selectedRowsList;
     auto currentSelectionHandles(getMultiSelectionNodeHandle(selectedIndexes));
 
     if (currentSelectionHandles.contains(clickedHandle))
@@ -870,7 +890,7 @@ void NodeSelectorTreeView::contextMenuEvent(QContextMenuEvent* event)
     }
     else
     {
-        selectedIndexes = QModelIndexList() << indexClicked;
+        selectedIndexes = QModelIndexList() << clickedIndex;
         selectionHandles.append(clickedHandle);
     }
 
@@ -973,7 +993,7 @@ void NodeSelectorTreeView::contextMenuEvent(QContextMenuEvent* event)
 
     if (!customMenu.actions().isEmpty())
     {
-        customMenu.exec(mapToGlobal(event->pos()));
+        customMenu.exec(globalPos);
     }
 }
 

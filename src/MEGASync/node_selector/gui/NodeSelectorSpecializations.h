@@ -25,6 +25,7 @@ protected:
     void configureFooter() override;
 
     void refreshSearchResultCount() override;
+    void refreshNavigationBreadcrumb() override;
 
     void onLanguageChangeEvent() override;
 
@@ -47,6 +48,10 @@ protected slots:
     void onItemsAboutToBeMergedFailed(
         const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,
         int actionType) override;
+
+private slots:
+    void onNavigationBreadcrumbSegmentActivated(int segmentIndex);
+    void onNavigationBreadcrumbMenuRequested(const QPoint& globalPos);
 
 private:
     void performMergeAction(const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,

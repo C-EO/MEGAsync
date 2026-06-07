@@ -1,5 +1,6 @@
 #include "NodeSelector.h"
 
+#include "DestinationBreadcrumb.h"
 #include "DialogOpener.h"
 #include "DuplicatedNodeDialog.h"
 #include "IncomingShareHeaderWidget.h"
@@ -8,7 +9,6 @@
 #include "MegaNodeNames.h"
 #include "MessageDialogOpener.h"
 #include "NewFolderDialog.h"
-#include "NodeSelectorDestinationBreadcrumb.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorProxyModel.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
@@ -41,18 +41,11 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
 {
     ui->setupUi(this);
     ui->destinationBreadcrumb->showDefaultUploadOption(false);
-    ui->navigationBreadcrumb->setDisplayMode(
-        NodeSelectorDestinationBreadcrumb::DisplayMode::NAVIGATION);
 
     connect(ui->stackedWidget,
             &QStackedWidget::currentChanged,
             this,
             &NodeSelector::onCurrentTreeViewWidgetChanged);
-
-    connect(ui->navigationBreadcrumb,
-            &NodeSelectorDestinationBreadcrumb::segmentActivated,
-            this,
-            &NodeSelector::onNavigationBreadcrumbSegmentActivated);
 
     mMegaApi->addListener(mDelegateListener.get());
 
@@ -362,48 +355,6 @@ void NodeSelector::disconnectCurrentWidgetConnections()
         disconnect(connection);
     }
     mCurrentWidgetConnections.clear();
-}
-
-void NodeSelector::refreshNavigationBreadcrumb()
-{
-    auto* breadcrumbWidget = getCurrentTreeViewWidget();
-
-    // The ghost search tab shows a flat result list across every chip, so the per-tab navigation
-    // breadcrumb does not apply while it is visible.
-    const bool shouldShowBreadcrumb = breadcrumbWidget && breadcrumbWidget != mSearchWidget;
-
-    ui->navigationBreadcrumb->setVisible(shouldShowBreadcrumb);
-    if (!shouldShowBreadcrumb)
-    {
-        ui->navigationBreadcrumb->setSegments({});
-        return;
-    }
-
-    auto segments = breadcrumbWidget->navigationBreadcrumbSegments();
-    auto clickable = true;
-
-    auto breadcrumbMode = SelectType::NavigationBreadcrumbMode::FULL;
-    if (mSelectType)
-    {
-        breadcrumbMode = mSelectType->navigationBreadcrumbMode();
-    }
-
-    if (breadcrumbMode == SelectType::NavigationBreadcrumbMode::TOP_ROOT_READ_ONLY)
-    {
-        segments = segments.isEmpty() ? QList<NodeSelectorBreadcrumbSegment>() :
-                                        QList<NodeSelectorBreadcrumbSegment>{segments.first()};
-        clickable = false;
-    }
-
-    ui->navigationBreadcrumb->setSegments(segments, clickable);
-}
-
-void NodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)
-{
-    if (auto* widget = getCurrentTreeViewWidget(); widget && widget != mSearchWidget)
-    {
-        widget->navigateToBreadcrumbSegment(segmentIndex);
-    }
 }
 
 void NodeSelector::showDefaultUploadOption(bool show)

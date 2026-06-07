@@ -452,9 +452,25 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
           </widget>
          </item>
          <item>
-          <widget class="NodeSelectorDestinationBreadcrumb" name="navigationBreadcrumb" native="true">
+          <widget class="NavigationBreadcrumb" name="navigationBreadcrumb" native="true">
            <property name="visible">
             <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lNavigationRoot">
+           <property name="visible">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string notr="true"/>
+           </property>
+           <property name="font-size" stdset="0">
+            <string notr="true">body-2</string>
+           </property>
+           <property name="bold" stdset="0">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -540,7 +556,7 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
           </widget>
          </item>
          <item>
-          <widget class="NodeSelectorDestinationBreadcrumb" name="destinationBreadcrumb" native="true"/>
+          <widget class="DestinationBreadcrumb" name="destinationBreadcrumb" native="true"/>
          </item>
          <item>
           <widget class="QWidget" name="bLayout" native="true">
@@ -829,9 +845,14 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>NodeSelectorDestinationBreadcrumb</class>
+   <class>NavigationBreadcrumb</class>
    <extends>QWidget</extends>
-   <header>NodeSelectorDestinationBreadcrumb.h</header>
+   <header>NavigationBreadcrumb.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DestinationBreadcrumb</class>
+   <extends>QWidget</extends>
+   <header>DestinationBreadcrumb.h</header>
   </customwidget>
   <customwidget>
    <class>BannerWidget</class>

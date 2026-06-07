@@ -1,11 +1,11 @@
-#include "NodeSelectorDestinationBreadcrumb.h"
+#include "Breadcrumb.h"
 
+#include "BreadcrumbSegment.h"
 #include "MegaApplication.h"
 #include "MegaNodeNames.h"
 #include "NodeSelectorDestinationOverflowPopup.h"
-#include "ui_NodeSelectorDestinationBreadcrumb.h"
+#include "ui_Breadcrumb.h"
 #include "UserAttributesRequests/MyBackupsHandle.h"
-#include "Utilities.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -21,56 +21,51 @@ constexpr int POPUP_HORIZONTAL_OFFSET = -20;
 constexpr int POPUP_VERTICAL_GAP = 4;
 }
 
-NodeSelectorDestinationBreadcrumb::NodeSelectorDestinationBreadcrumb(QWidget* parent):
+Breadcrumb::Breadcrumb(QWidget* parent):
     QFrame(parent),
-    ui(new Ui::NodeSelectorDestinationBreadcrumb)
+    ui(new Ui::Breadcrumb)
 {
     ui->setupUi(this);
 
-    setFrameStyle(QFrame::NoFrame);
-    setLineWidth(0);
-    setMidLineWidth(0);
     setAttribute(Qt::WA_StyledBackground, true);
-    ui->bDestinationOverflow->setAttribute(Qt::WA_StyledBackground, true);
-    ui->bDestinationOverflow->setAlignment(Qt::AlignCenter);
-    setProperty("displayMode", QLatin1String("destination"));
-    updateContentVisibility();
+    ui->bOverflow->setAttribute(Qt::WA_StyledBackground, true);
+    ui->bOverflow->setAlignment(Qt::AlignCenter);
 
-    connect(ui->bDestinationOverflow,
-            &ClickableLabel::clicked,
-            this,
-            &NodeSelectorDestinationBreadcrumb::showOverflowPopup);
-
-    connect(ui->bDestinationClear,
-            &QToolButton::clicked,
-            this,
-            &NodeSelectorDestinationBreadcrumb::clearRequested);
+    connect(ui->bOverflow, &ClickableLabel::clicked, this, &Breadcrumb::showOverflowPopup);
 }
 
-NodeSelectorDestinationBreadcrumb::~NodeSelectorDestinationBreadcrumb()
+Breadcrumb::~Breadcrumb()
 {
     delete ui;
 }
 
-void NodeSelectorDestinationBreadcrumb::setSegments(
-    const QList<NodeSelectorBreadcrumbSegment>& segments,
-    bool clickable)
+void Breadcrumb::setSegmentFactory(SegmentFactory factory)
 {
-    if (segments == mSegments && clickable == mSegmentsClickable)
+    mSegmentFactory = std::move(factory);
+    if (!mPathSegments.isEmpty())
+    {
+        recalculateSegmentMetrics();
+        rebuildSegments();
+    }
+}
+
+void Breadcrumb::setSegments(const QList<NodeSelectorBreadcrumbSegment>& segments,
+                             bool overflowSegmentsNavigable)
+{
+    mOverflowSegmentsNavigable = overflowSegmentsNavigable;
+
+    if (segments == mSegments)
     {
         return;
     }
 
-    mSegmentsClickable = clickable;
     mSegments = segments;
     resolveSegmentNames();
     recalculateSegmentMetrics();
     rebuildSegments();
-    updateContentVisibility();
 }
 
-QString NodeSelectorDestinationBreadcrumb::resolveSegmentText(
-    const NodeSelectorBreadcrumbSegment& segment) const
+QString Breadcrumb::resolveSegmentText(const NodeSelectorBreadcrumbSegment& segment) const
 {
     if (segment.handle != mega::INVALID_HANDLE)
     {
@@ -102,7 +97,7 @@ QString NodeSelectorDestinationBreadcrumb::resolveSegmentText(
     return segment.text;
 }
 
-void NodeSelectorDestinationBreadcrumb::resolveSegmentNames()
+void Breadcrumb::resolveSegmentNames()
 {
     mPathSegments.clear();
     mPathSegments.reserve(mSegments.size());
@@ -113,60 +108,16 @@ void NodeSelectorDestinationBreadcrumb::resolveSegmentNames()
     }
 }
 
-void NodeSelectorDestinationBreadcrumb::setDisplayMode(DisplayMode mode)
+void Breadcrumb::clearSegmentWidgets()
 {
-    if (mDisplayMode == mode)
-    {
-        return;
-    }
-
-    mDisplayMode = mode;
-    setProperty("displayMode",
-                mDisplayMode == DisplayMode::DESTINATION ? QLatin1String("destination") :
-                                                           QLatin1String("navigation"));
-    updateContentVisibility();
-
-    style()->unpolish(this);
-    style()->polish(this);
-
-    if (!mPathSegments.isEmpty())
-    {
-        recalculateSegmentMetrics();
-        rebuildSegments();
-    }
-}
-
-void NodeSelectorDestinationBreadcrumb::setTitleText(const QString& text)
-{
-    ui->lDestinationTitle->setText(text);
-}
-
-void NodeSelectorDestinationBreadcrumb::showDefaultUploadOption(bool show)
-{
-    mShouldShowDefaultUploadOption = show;
-    updateContentVisibility();
-}
-
-void NodeSelectorDestinationBreadcrumb::setDefaultUploadOption(bool value)
-{
-    ui->cbAlwaysUploadToLocation->setChecked(value);
-}
-
-bool NodeSelectorDestinationBreadcrumb::getDefaultUploadOption() const
-{
-    return ui->cbAlwaysUploadToLocation->isChecked();
-}
-
-void NodeSelectorDestinationBreadcrumb::clearSegmentWidgets()
-{
-    auto* layout = qobject_cast<QHBoxLayout*>(ui->wDestinationSegments->layout());
+    auto* layout = qobject_cast<QHBoxLayout*>(ui->wSegments->layout());
     if (!layout)
     {
         return;
     }
 
     // Keep only the trailing spacer. Dynamic segments, separators and the overflow button
-    // are reinserted as needed so navigation mode does not reserve leading space for overflow.
+    // are reinserted as needed so navigation does not reserve leading space for overflow.
     for (int i = layout->count() - 2; i >= 0; --i)
     {
         auto* item = layout->takeAt(i);
@@ -176,7 +127,7 @@ void NodeSelectorDestinationBreadcrumb::clearSegmentWidgets()
         }
         if (auto* w = item->widget())
         {
-            if (w == ui->bDestinationOverflow)
+            if (w == ui->bOverflow)
             {
                 w->hide();
             }
@@ -189,63 +140,29 @@ void NodeSelectorDestinationBreadcrumb::clearSegmentWidgets()
     }
 }
 
-QWidget* NodeSelectorDestinationBreadcrumb::makeSegmentWidget(const QString& text,
-                                                              const bool isFirst,
-                                                              const bool isLast,
-                                                              const int segmentIndex,
-                                                              const bool applyInteractivity)
+QWidget* Breadcrumb::createSegmentWidget(const QString& text,
+                                         const int index,
+                                         const bool isFirst,
+                                         const bool isLast)
 {
-    bool highlightCurrentSegment{false};
-    if (mDisplayMode == DisplayMode::DESTINATION)
-    {
-        highlightCurrentSegment = !isFirst && isLast;
-    }
-    else
-    {
-        highlightCurrentSegment = isLast;
-    }
+    QWidget* widget = mSegmentFactory ? mSegmentFactory(text, index, isFirst, isLast) : nullptr;
 
-    const bool interactive = mSegmentsClickable && applyInteractivity;
-
-    QLabel* label = nullptr;
-    if (interactive)
+    if (!widget)
     {
-        auto* clickableLabel = new ClickableLabel(ui->wDestinationSegments);
-        clickableLabel->setCursor(Qt::PointingHandCursor);
-        connect(clickableLabel,
-                &ClickableLabel::clicked,
-                this,
-                [this, segmentIndex]()
-                {
-                    emit segmentActivated(segmentIndex);
-                });
-        label = clickableLabel;
-    }
-    else
-    {
-        label = new QLabel(ui->wDestinationSegments);
+        // Fallback: a plain, non-interactive segment.
+        auto* segment = new BreadcrumbSegment;
+        segment->setText(text);
+        segment->setHighlighted(isLast);
+        widget = segment;
     }
 
-    label->setText(text);
-    label->setProperty("font-size", QLatin1String("body-2"));
-    label->setProperty(highlightCurrentSegment ? "bold" : "regular", true);
-    label->setProperty("current", highlightCurrentSegment);
-    label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    label->setContentsMargins(0, 0, 0, 0);
-    label->setMargin(0);
-    label->setIndent(0);
-    label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-
-    auto font = label->font();
-    font.setBold(highlightCurrentSegment);
-    label->setFont(font);
-
-    return label;
+    widget->setParent(ui->wSegments);
+    return widget;
 }
 
-QLabel* NodeSelectorDestinationBreadcrumb::makeSeparatorLabel()
+QLabel* Breadcrumb::makeSeparatorLabel()
 {
-    auto* label = new QLabel(ui->wDestinationSegments);
+    auto* label = new QLabel(ui->wSegments);
     label->setText(QLatin1String(SEPARATOR_TEXT));
     label->setProperty("font-size", QLatin1String("body-2"));
     label->setProperty("regular", true);
@@ -257,29 +174,7 @@ QLabel* NodeSelectorDestinationBreadcrumb::makeSeparatorLabel()
     return label;
 }
 
-void NodeSelectorDestinationBreadcrumb::updateContentVisibility()
-{
-    const bool isDestinationMode = mDisplayMode == DisplayMode::DESTINATION;
-
-    ui->lDestinationTitle->setVisible(isDestinationMode);
-    ui->cbContainer->setVisible(isDestinationMode && mShouldShowDefaultUploadOption);
-    ui->bDestinationClear->setVisible(isDestinationMode && !mPathSegments.isEmpty());
-
-    if (!isDestinationMode)
-    {
-        ui->wDestinationPath->setMinimumHeight(0);
-        if (mSegmentsClickable)
-        {
-            ui->breadcrumbLayout->setContentsMargins(0, 0, 0, 0);
-        }
-        else
-        {
-            ui->breadcrumbLayout->setContentsMargins(0, 12, 0, 12);
-        }
-    }
-}
-
-void NodeSelectorDestinationBreadcrumb::resizeEvent(QResizeEvent* event)
+void Breadcrumb::resizeEvent(QResizeEvent* event)
 {
     QFrame::resizeEvent(event);
 
@@ -289,7 +184,7 @@ void NodeSelectorDestinationBreadcrumb::resizeEvent(QResizeEvent* event)
     }
 }
 
-void NodeSelectorDestinationBreadcrumb::rebuildSegments(bool force)
+void Breadcrumb::rebuildSegments(bool force)
 {
     const int newStartIndex = calculateVisibleStartIndex();
     if (!force && newStartIndex == mRenderedStartIndex)
@@ -299,7 +194,7 @@ void NodeSelectorDestinationBreadcrumb::rebuildSegments(bool force)
 
     clearSegmentWidgets();
 
-    auto* layout = qobject_cast<QHBoxLayout*>(ui->wDestinationSegments->layout());
+    auto* layout = qobject_cast<QHBoxLayout*>(ui->wSegments->layout());
     if (!layout)
     {
         return;
@@ -316,8 +211,8 @@ void NodeSelectorDestinationBreadcrumb::rebuildSegments(bool force)
 
     if (hasOverflow)
     {
-        ui->bDestinationOverflow->setVisible(true);
-        layout->insertWidget(insertIndex++, ui->bDestinationOverflow);
+        ui->bOverflow->setVisible(true);
+        layout->insertWidget(insertIndex++, ui->bOverflow);
 
         auto* separator = makeSeparatorLabel();
         layout->insertWidget(insertIndex++, separator);
@@ -328,9 +223,9 @@ void NodeSelectorDestinationBreadcrumb::rebuildSegments(bool force)
         const int segmentIndex = visibleStartIndex + i;
         const bool isFirst = segmentIndex == 0;
         const bool isLast = segmentIndex == mPathSegments.size() - 1;
-        auto* segmentLabel =
-            makeSegmentWidget(visibleSegments.at(i), isFirst, isLast, segmentIndex);
-        layout->insertWidget(insertIndex++, segmentLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
+        auto* segmentWidget =
+            createSegmentWidget(visibleSegments.at(i), segmentIndex, isFirst, isLast);
+        layout->insertWidget(insertIndex++, segmentWidget, 0, Qt::AlignLeft | Qt::AlignVCenter);
 
         if (!isLast)
         {
@@ -342,7 +237,7 @@ void NodeSelectorDestinationBreadcrumb::rebuildSegments(bool force)
     refreshOverflowPopup();
 }
 
-void NodeSelectorDestinationBreadcrumb::closeOverflowPopup()
+void Breadcrumb::closeOverflowPopup()
 {
     if (mOverflowPopup)
     {
@@ -352,15 +247,15 @@ void NodeSelectorDestinationBreadcrumb::closeOverflowPopup()
     }
 }
 
-void NodeSelectorDestinationBreadcrumb::updateOverflowButtonStyle(bool popupVisible)
+void Breadcrumb::updateOverflowButtonStyle(bool popupVisible)
 {
-    ui->bDestinationOverflow->setProperty("popupVisible", popupVisible);
-    ui->bDestinationOverflow->style()->unpolish(ui->bDestinationOverflow);
-    ui->bDestinationOverflow->style()->polish(ui->bDestinationOverflow);
-    ui->bDestinationOverflow->update();
+    ui->bOverflow->setProperty("popupVisible", popupVisible);
+    ui->bOverflow->style()->unpolish(ui->bOverflow);
+    ui->bOverflow->style()->polish(ui->bOverflow);
+    ui->bOverflow->update();
 }
 
-void NodeSelectorDestinationBreadcrumb::refreshOverflowPopup()
+void Breadcrumb::refreshOverflowPopup()
 {
     if (!mOverflowPopup)
     {
@@ -376,7 +271,7 @@ void NodeSelectorDestinationBreadcrumb::refreshOverflowPopup()
     updateOverflowPopupContent();
 }
 
-void NodeSelectorDestinationBreadcrumb::updateOverflowPopupContent()
+void Breadcrumb::updateOverflowPopupContent()
 {
     if (!mOverflowPopup)
     {
@@ -392,19 +287,16 @@ void NodeSelectorDestinationBreadcrumb::updateOverflowPopupContent()
         hiddenSegments.push_back(resolveSegmentText(mSegments.at(i)));
     }
 
-    mOverflowPopup->setSegments(hiddenSegments, mSegmentsClickable ? 0 : -1);
+    mOverflowPopup->setSegments(hiddenSegments, mOverflowSegmentsNavigable ? 0 : -1);
 
     // Horizontal: anchored to the overflow button (shifted left). Vertical: anchored to the
-    // bottom of the path row, not the small 16px button, so the popup clears the whole row.
-    const int globalX =
-        ui->bDestinationOverflow->mapToGlobal(QPoint(POPUP_HORIZONTAL_OFFSET, 0)).x();
-    const int globalY =
-        ui->wDestinationPath->mapToGlobal(QPoint(0, ui->wDestinationPath->height())).y() +
-        POPUP_VERTICAL_GAP;
+    // bottom of the whole path row so the popup clears it.
+    const int globalX = ui->bOverflow->mapToGlobal(QPoint(POPUP_HORIZONTAL_OFFSET, 0)).x();
+    const int globalY = mapToGlobal(QPoint(0, height())).y() + POPUP_VERTICAL_GAP;
     mOverflowPopup->move(globalX, globalY);
 }
 
-int NodeSelectorDestinationBreadcrumb::calculateVisibleStartIndex()
+int Breadcrumb::calculateVisibleStartIndex()
 {
     const int totalSegments = mPathSegments.size();
     if (totalSegments <= 1)
@@ -413,7 +305,7 @@ int NodeSelectorDestinationBreadcrumb::calculateVisibleStartIndex()
     }
 
     const int minimumVisibleStartIndex = qMax(0, totalSegments - MAX_VISIBLE_DESTINATION_LEVELS);
-    const int availableWidth = ui->wDestinationSegments->contentsRect().width();
+    const int availableWidth = ui->wSegments->contentsRect().width();
 
     if (availableWidth <= 0)
     {
@@ -430,10 +322,9 @@ int NodeSelectorDestinationBreadcrumb::calculateVisibleStartIndex()
     return visibleStartIndex;
 }
 
-int NodeSelectorDestinationBreadcrumb::calculateRequiredWidthForVisibleStartIndex(
-    int visibleStartIndex)
+int Breadcrumb::calculateRequiredWidthForVisibleStartIndex(int visibleStartIndex)
 {
-    auto* layout = qobject_cast<QHBoxLayout*>(ui->wDestinationSegments->layout());
+    auto* layout = qobject_cast<QHBoxLayout*>(ui->wSegments->layout());
     if (!layout)
     {
         return 0;
@@ -469,15 +360,15 @@ int NodeSelectorDestinationBreadcrumb::calculateRequiredWidthForVisibleStartInde
     return requiredWidth;
 }
 
-void NodeSelectorDestinationBreadcrumb::recalculateSegmentMetrics()
+void Breadcrumb::recalculateSegmentMetrics()
 {
     mSegmentWidths.clear();
     mSegmentWidths.reserve(mPathSegments.size());
 
     for (int i = 0; i < mPathSegments.size(); ++i)
     {
-        auto* segmentWidget =
-            makeSegmentWidget(mPathSegments.at(i), i == 0, i == mPathSegments.size() - 1, i, false);
+        const bool isLast = i == mPathSegments.size() - 1;
+        auto* segmentWidget = createSegmentWidget(mPathSegments.at(i), i, i == 0, isLast);
         segmentWidget->ensurePolished();
         mSegmentWidths.push_back(segmentWidget->sizeHint().width());
         delete segmentWidget;
@@ -488,11 +379,11 @@ void NodeSelectorDestinationBreadcrumb::recalculateSegmentMetrics()
     mSeparatorWidth = separator->sizeHint().width();
     delete separator;
 
-    ui->bDestinationOverflow->ensurePolished();
-    mOverflowWidth = ui->bDestinationOverflow->sizeHint().width();
+    ui->bOverflow->ensurePolished();
+    mOverflowWidth = ui->bOverflow->sizeHint().width();
 }
 
-void NodeSelectorDestinationBreadcrumb::showOverflowPopup()
+void Breadcrumb::showOverflowPopup()
 {
     if (mVisibleStartIndex <= 0)
     {
@@ -521,7 +412,7 @@ void NodeSelectorDestinationBreadcrumb::showOverflowPopup()
             this,
             [this](int index)
             {
-                emit segmentActivated(index);
+                emit overflowSegmentActivated(index);
                 closeOverflowPopup();
             });
 

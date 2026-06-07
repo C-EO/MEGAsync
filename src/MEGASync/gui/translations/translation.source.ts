@@ -1180,6 +1180,19 @@
     </message>
 </context>
 <context>
+    <name>DestinationBreadcrumb</name>
+    <message>
+        <source>Destination</source>
+        <translatorcomment>Label/title of the destination breadcrumb in the node selector, showing the folder files will be uploaded to. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always upload to this destination</source>
+        <translatorcomment>Checkbox label in the node selector destination breadcrumb to set the current folder as the default upload destination. SNC-6420</translatorcomment>
+        <translation type="unfinished">Always upload to this destination</translation>
+    </message>
+</context>
+<context>
     <name>DownloadFromMegaDialog</name>
     <message>
         <source>Always download to this destination</source>
@@ -4511,17 +4524,6 @@ Enter a different name.</translation>
         <source>The item you selected has been removed. To reselect, close this window and try again.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>The item you selected has been removed. To reselect, close this window and try again.</translation>
-    </message>
-</context>
-<context>
-    <name>NodeSelectorDestinationBreadcrumb</name>
-    <message>
-        <source>Destination</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always upload to this destination</source>
-        <translation type="unfinished">Always upload to this destination</translation>
     </message>
 </context>
 <context>

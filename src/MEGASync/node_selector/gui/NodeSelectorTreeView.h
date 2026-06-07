@@ -160,6 +160,14 @@ public:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
     bool containsTakenDownItem(const QModelIndexList& selectedIndexes) const;
+    // Builds and shows the node context menu for the given target. clickedEmptySpace means the
+    // click did not land on a row (it targets the current root folder), enabling folder-level
+    // actions (upload, new folder). Called from contextMenuEvent (right-click) and from the
+    // navigation breadcrumb chevron (with the current root index).
+    void showContextMenu(const QModelIndexList& selectedRowsList,
+                         const QModelIndex& clickedIndex,
+                         bool clickedEmptySpace,
+                         const QPoint& globalPos);
 
 protected:
     // Detach the model while the loading scene is shown, so the view never queries the

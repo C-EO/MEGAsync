@@ -14,6 +14,9 @@ public:
 
 protected:
     void refreshDestinationBreadcrumb() override;
+    // The file picker only shows the current top-root name, so it uses a read-only label instead
+    // of the full NavigationBreadcrumb.
+    void refreshNavigationBreadcrumb() override;
 
     virtual QString destinationBreadcrumbEmptyText()
     {

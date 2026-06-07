@@ -1,7 +1,7 @@
 #include "FilePickerNodeSelector.h"
 
+#include "DestinationBreadcrumb.h"
 #include "megaapi.h"
-#include "NodeSelectorDestinationBreadcrumb.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorProxyModel.h"
 #include "NodeSelectorTreeViewWidgetSpecializations.h"
@@ -13,7 +13,7 @@ FilePickerNodeSelector::FilePickerNodeSelector(SelectTypeSPtr selectType, QWidge
     NodeSelector(selectType, parent)
 {
     connect(ui->destinationBreadcrumb,
-            &NodeSelectorDestinationBreadcrumb::clearRequested,
+            &DestinationBreadcrumb::clearRequested,
             this,
             &FilePickerNodeSelector::onBreadcrumbClearRequested);
 }
@@ -161,18 +161,32 @@ void FilePickerNodeSelector::configureHeader()
 
     ui->leSearchTool->setFixedSize(SEARCH_LINE_EDIT_FIXED_WIDTH, SEARCH_LINE_EDIT_FIXED_HEIGHT);
     ui->actionButtonsContainer->setVisible(false);
-    ui->navigationBreadcrumb->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    ui->navigationBreadcrumb->setVisible(false);
+    ui->lNavigationRoot->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 
     if (auto* topRowLayout = ui->headerLayout)
     {
-        ui->headerContainerLayout->removeWidget(ui->navigationBreadcrumb);
-        topRowLayout->insertWidget(0, ui->navigationBreadcrumb, 0, Qt::AlignLeft | Qt::AlignTop);
+        ui->headerContainerLayout->removeWidget(ui->lNavigationRoot);
+        topRowLayout->insertWidget(0, ui->lNavigationRoot, 0, Qt::AlignLeft | Qt::AlignTop);
+    }
+}
+
+void FilePickerNodeSelector::refreshNavigationBreadcrumb()
+{
+    auto* widget = getCurrentTreeViewWidget();
+    const bool show = widget && widget != mSearchWidget;
+
+    ui->navigationBreadcrumb->setVisible(false);
+    ui->lNavigationRoot->setVisible(show);
+    if (show)
+    {
+        ui->lNavigationRoot->setText(widget->getRootText());
     }
 }
 
 QString FilePickerNodeSelector::destinationTitleText() const
 {
-    return QCoreApplication::translate("NodeSelectorDestinationBreadcrumb", "Destination");
+    return QCoreApplication::translate("DestinationBreadcrumb", "Destination");
 }
 
 FilePickerNodeSelector::DestinationBannerInfo FilePickerNodeSelector::destinationBannerInfo() const

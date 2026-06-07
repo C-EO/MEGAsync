@@ -21,12 +21,6 @@ typedef std::shared_ptr<SelectType> SelectTypeSPtr;
 class SelectType
 {
 public:
-    enum class NavigationBreadcrumbMode
-    {
-        FULL,
-        TOP_ROOT_READ_ONLY
-    };
-
     explicit SelectType();
     virtual ~SelectType() = default;
 
@@ -73,11 +67,6 @@ public:
     virtual bool showsDestinationBreadcrumb() const
     {
         return false;
-    }
-
-    virtual NavigationBreadcrumbMode navigationBreadcrumbMode() const
-    {
-        return NavigationBreadcrumbMode::FULL;
     }
 
     enum ButtonId : uint
@@ -193,11 +182,6 @@ public:
 
     EmptyPageInfo getEmptyFolderPageInfo() const override;
     EmptyPageInfo getEmptyCloudDrivePage() const override;
-
-    NavigationBreadcrumbMode navigationBreadcrumbMode() const override
-    {
-        return NavigationBreadcrumbMode::TOP_ROOT_READ_ONLY;
-    }
 
     // In the file picker only NODE has a header label and is sortable.
     QSet<int> nonInteractiveColumns() const override;

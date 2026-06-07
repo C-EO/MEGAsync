@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NavigationBreadcrumb</class>
+ <widget class="QFrame" name="NavigationBreadcrumb">
+  <property name="styleSheet"><string notr="true">#NavigationBreadcrumb { border: none; background: transparent; }</string></property>
+  <layout class="QHBoxLayout" name="navigationLayout">
+   <property name="spacing"><number>0</number></property>
+   <property name="leftMargin"><number>0</number></property>
+   <property name="topMargin"><number>0</number></property>
+   <property name="rightMargin"><number>0</number></property>
+   <property name="bottomMargin"><number>0</number></property>
+   <item>
+    <widget class="Breadcrumb" name="breadcrumb" native="true"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Breadcrumb</class>
+   <extends>QFrame</extends>
+   <header>Breadcrumb.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

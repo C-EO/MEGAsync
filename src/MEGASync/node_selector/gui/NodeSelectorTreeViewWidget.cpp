@@ -576,6 +576,19 @@ NodeSelectorProxyModel* NodeSelectorTreeViewWidget::getProxyModel()
     return mProxyModel.get();
 }
 
+void NodeSelectorTreeViewWidget::showCurrentRootContextMenu(const QPoint& globalPos)
+{
+    if (mUiBlocked)
+    {
+        return;
+    }
+
+    // The chevron acts on the folder we are currently inside: a single index (the current root),
+    // handled like a click on empty space so folder-level actions are offered.
+    ui->tMegaFolders->clearSelection();
+    ui->tMegaFolders->showContextMenu(QModelIndexList(), getCurrentRootIndex(), true, globalPos);
+}
+
 QList<NodeSelectorBreadcrumbSegment>
     NodeSelectorTreeViewWidget::navigationBreadcrumbSegments() const
 {

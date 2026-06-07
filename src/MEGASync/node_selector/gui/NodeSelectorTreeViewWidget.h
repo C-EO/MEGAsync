@@ -95,6 +95,7 @@ public:
     NodeSelectorModelItem* rootItem();
     QModelIndex getCurrentRootIndex() const;
     NodeSelectorProxyModel* getProxyModel();
+    void showCurrentRootContextMenu(const QPoint& globalPos);
     QList<NodeSelectorBreadcrumbSegment> navigationBreadcrumbSegments() const;
     bool navigateToBreadcrumbSegment(int segmentIndex);
     bool isShowingEmptyPage() const;

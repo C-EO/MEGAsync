@@ -19,7 +19,8 @@
 
 class NodeSelectorProxyModel;
 class NodeSelectorModel;
-class NodeSelectorDestinationBreadcrumb;
+class NavigationBreadcrumb;
+class DestinationBreadcrumb;
 struct NodeSelectorMergeInfo;
 class NodeSelectorTreeViewWidgetCloudDrive;
 class NodeSelectorTreeViewWidgetIncomingShares;
@@ -235,8 +236,6 @@ private:
     void refreshHeaderButtons(NodeSelectorTreeViewWidget* wid);
     void updateOkButtonState(NodeSelectorTreeViewWidget* wid);
     void refreshBreadcrumbs();
-    void refreshNavigationBreadcrumb();
-    void onNavigationBreadcrumbSegmentActivated(int segmentIndex);
 
     // Connections to the current tree view widget. Register every per-current-widget
     // connection here so they are all torn down together when the current widget changes.
@@ -244,6 +243,11 @@ private:
     void disconnectCurrentWidgetConnections();
 
     virtual void refreshDestinationBreadcrumb() {}
+
+    // The navigation area changed (tab switch, root navigation). Subclasses that show a navigation
+    // path override this: CloudDrive populates the NavigationBreadcrumb, the file picker updates a
+    // read-only top-root label.
+    virtual void refreshNavigationBreadcrumb() {}
 
     virtual void refreshSearchResultCount() {}
 

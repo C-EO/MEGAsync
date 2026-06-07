@@ -11,7 +11,11 @@ set(DESKTOP_APP_NODE_SELECTOR_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorMergeTargetUtils.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/IncomingShareHeaderWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorBreadcrumbSegment.h
-    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorDestinationBreadcrumb.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/Breadcrumb.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/BreadcrumbSegment.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NavigationBreadcrumb.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NavigationBreadcrumbLastSegment.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/DestinationBreadcrumb.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorDestinationOverflowPopup.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNodeActions.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSearchController.h
@@ -39,7 +43,11 @@ set(DESKTOP_APP_NODE_SELECTOR_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeView.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorModelUpdateCoordinator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/IncomingShareHeaderWidget.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorDestinationBreadcrumb.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/Breadcrumb.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/BreadcrumbSegment.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NavigationBreadcrumb.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NavigationBreadcrumbLastSegment.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/DestinationBreadcrumb.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorDestinationOverflowPopup.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNodeActions.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSearchController.cpp
@@ -60,7 +68,10 @@ set(DESKTOP_APP_NODE_SELECTOR_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelectorLoadingDelegate.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/IncomingShareHeaderWidget.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelector.ui
-    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelectorDestinationBreadcrumb.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/Breadcrumb.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NavigationBreadcrumb.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NavigationBreadcrumbLastSegment.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/DestinationBreadcrumb.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelectorDestinationOverflowPopup.ui
 )
 
