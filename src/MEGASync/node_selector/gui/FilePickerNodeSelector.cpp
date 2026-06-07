@@ -150,6 +150,9 @@ void FilePickerNodeSelector::configureSidebar()
     {
         applyHeaderStyle(btn);
     }
+
+    // The account info widget is only shown in the file manager (Cloud Drive).
+    ui->wAccountInfo->setVisible(false);
 }
 
 void FilePickerNodeSelector::configureHeader()

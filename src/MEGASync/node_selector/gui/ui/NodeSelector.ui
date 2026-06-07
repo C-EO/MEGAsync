@@ -87,19 +87,46 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
-       <number>16</number>
+       <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>12</number>
+       <number>0</number>
       </property>
       <property name="topMargin">
-       <number>28</number>
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>24</number>
+       <number>0</number>
       </property>
       <item>
-       <widget class="QGroupBox" name="wStorage">
+       <widget class="QWidget" name="wLeftPaneContent" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QVBoxLayout" name="wLeftPaneContentLayout">
+         <property name="spacing">
+          <number>16</number>
+         </property>
+         <property name="leftMargin">
+          <number>12</number>
+         </property>
+         <property name="topMargin">
+          <number>28</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>24</number>
+         </property>
+         <item>
+          <widget class="QGroupBox" name="wStorage">
         <property name="title">
          <string notr="true"/>
         </property>
@@ -297,6 +324,31 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
         </layout>
        </widget>
       </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="TransfersAccountInfoWidget" name="wAccountInfo" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>96</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>96</height>
+         </size>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -340,7 +392,7 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
           <number>20</number>
          </property>
          <property name="topMargin">
-          <number>20</number>
+          <number>12</number>
          </property>
          <property name="rightMargin">
           <number>20</number>
@@ -353,6 +405,12 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
            <property name="minimumSize">
             <size>
              <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
              <height>40</height>
             </size>
            </property>
@@ -376,8 +434,8 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
              <widget class="QWidget" name="actionButtonsContainer" native="true">
               <property name="minimumSize">
                <size>
-                <width>50</width>
-                <height>50</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
               <layout class="QHBoxLayout" name="actionButtonsLayout">
@@ -406,8 +464,8 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
-                <height>20</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
              </spacer>
@@ -423,7 +481,13 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>0</height>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>40</height>
                </size>
               </property>
              </widget>
@@ -845,6 +909,12 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>BannerWidget</class>
+   <extends>QWidget</extends>
+   <header>BannerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>NavigationBreadcrumb</class>
    <extends>QWidget</extends>
    <header>NavigationBreadcrumb.h</header>
@@ -855,9 +925,9 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
    <header>DestinationBreadcrumb.h</header>
   </customwidget>
   <customwidget>
-   <class>BannerWidget</class>
+   <class>TransfersAccountInfoWidget</class>
    <extends>QWidget</extends>
-   <header>BannerWidget.h</header>
+   <header location="global">TransfersAccountInfoWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
