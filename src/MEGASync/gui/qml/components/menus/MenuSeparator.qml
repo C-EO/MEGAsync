@@ -10,16 +10,16 @@ import components.images 1.0
 Qml.MenuSeparator {
     id: root
 
-    readonly property int lineSpacing: 4
+    readonly property int horizontalMargin: 4
 
     padding: 0
-    topPadding: lineSpacing
-    bottomPadding: lineSpacing
+    topPadding: 0
+    bottomPadding: 0
 
     contentItem: Rectangle {
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.margins: lineSpacing
+        anchors.margins: horizontalMargin
         implicitHeight: Constants.dividerThickness
         color: ColorTheme.surface2
     }

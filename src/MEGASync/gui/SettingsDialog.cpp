@@ -7,6 +7,7 @@
 #include "DialogOpener.h"
 #include "FullName.h"
 #include "MegaApplication.h"
+#include "MessageDialogOpener.h"
 #include "NodeSelectorSpecializations.h"
 #include "ParallelConnectionsValues.h"
 #include "PermissionsDialog.h"
@@ -15,6 +16,7 @@
 #include "ProxySettings.h"
 #include "qml/AccountStateQuickWidget.h"
 #include "RequestListenerManager.h"
+#include "ServiceUrls.h"
 #include "StatsEventHandler.h"
 #include "ThemeManager.h"
 #include "ui_SettingsDialog.h"
@@ -171,6 +173,10 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
             &SyncInfo::syncDisabledListUpdated,
             this,
             &SettingsDialog::updateSyncTabToolbarIcon);
+    connect(mModel,
+            &SyncInfo::syncDisabledListUpdated,
+            this,
+            &SettingsDialog::updateBackupTabToolbarIcon);
 
     // React to AppState changes
     connect(AppState::instance().get(),
@@ -180,6 +186,7 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
 
     startRequestTaskbarPinningTimer();
     updateSyncTabToolbarIcon();
+    updateBackupTabToolbarIcon();
 }
 
 void SettingsDialog::updateSyncTabToolbarIcon()
@@ -197,6 +204,23 @@ void SettingsDialog::updateSyncTabToolbarIcon()
     }
 
     mUi->bSyncs->setIcon(QIcon(iconName));
+}
+
+void SettingsDialog::updateBackupTabToolbarIcon()
+{
+    QString iconName;
+    if (mModel->syncWithErrorExist(MegaSync::TYPE_BACKUP))
+    {
+        iconName = Utilities::getPixmapName(QLatin1String("settings-backup-warn"),
+                                            Utilities::AttributeType::NONE);
+    }
+    else
+    {
+        iconName = Utilities::getPixmapName(QLatin1String("settings-backup"),
+                                            Utilities::AttributeType::NONE);
+    }
+
+    mUi->bBackup->setIcon(QIcon(iconName));
 }
 
 SettingsDialog::~SettingsDialog()
@@ -454,12 +478,6 @@ void SettingsDialog::loadSettings()
     // Init the network tab before updating network values
     initNetworkTab();
     updateNetworkTab();
-
-    // File management tab
-    mUi->backupSettings->setParentDialog(this);
-
-    // Syncs and backups
-    mUi->backupSettings->setToolBarItem(mUi->bBackup);
 
     mLoadingSettings--;
 }
@@ -1111,32 +1129,6 @@ void SettingsDialog::setEnabledAllControls(const bool enabled)
 void SettingsDialog::setChangePasswordEnabled(bool enabled)
 {
     mUi->bChangePassword->setEnabled(enabled);
-}
-
-void SettingsDialog::setSyncAddButtonEnabled(const bool enabled, SettingsDialog::Tabs tab)
-{
-    SyncSettingsUIBase* syncSettings = nullptr;
-
-    switch (tab)
-    {
-        case SYNCS_TAB:
-            // syncSettings = mUi->syncSettings;
-            break;
-        case BACKUP_TAB:
-            syncSettings = mUi->backupSettings;
-            break;
-        default:
-            MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
-                         QString::fromUtf8("Unexpected tab when setting add button enabled state")
-                             .toUtf8()
-                             .constData());
-            break;
-    }
-
-    if (syncSettings != nullptr)
-    {
-        syncSettings->setAddButtonEnabled(enabled);
-    }
 }
 
 void SettingsDialog::setGeneralTabEnabled(const bool enabled)

@@ -39,15 +39,13 @@ RemoveBackupDialog::RemoveBackupDialog(QWidget* parent):
     mUi->bConfirm->setText(label);
 
     Text::Bold boldDecorator;
-    auto deleteText = tr("Folder will be deleted from MEGA. It won't be deleted from "
-                         "your computer. [B]This action cannot be undone.[/B]");
+    auto deleteText = tr("The folder will be deleted from MEGA, but it won't be deleted from "
+                         "your device. [B]This action can't be undone.[/B]");
     boldDecorator.process(deleteText);
     mUi->lDeleteFolder->setText(deleteText);
 
-    auto description = tr(
-        "To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].");
-    boldDecorator.process(description);
-    mUi->lSecondaryText->setText(description);
+    mUi->lSecondaryText->setText(
+        tr("To stop backing up this folder, you need to either move it or delete it"));
 
     mUi->rMoveFolder->setAutoExclusive(true);
     mUi->rDeleteFolder->setAutoExclusive(true);

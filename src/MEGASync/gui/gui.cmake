@@ -108,6 +108,8 @@ set(DESKTOP_APP_GUI_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncsData.h
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsQuickWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/BackupSettingsQuickWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/BackupSettingsModel.h
     ${CMAKE_CURRENT_LIST_DIR}/surveys/SurveyWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/surveys/SurveyComponent.h
     ${CMAKE_CURRENT_LIST_DIR}/surveys/Surveys.h
@@ -248,6 +250,8 @@ set(DESKTOP_APP_GUI_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncsData.cpp
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsQuickWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsModel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/BackupSettingsQuickWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/BackupSettingsModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/surveys/SurveyWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/surveys/SurveyComponent.cpp
     ${CMAKE_CURRENT_LIST_DIR}/surveys/Surveys.cpp

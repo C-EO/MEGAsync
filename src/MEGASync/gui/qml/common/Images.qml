@@ -53,6 +53,7 @@ QtObject {
     readonly property url eyeOff: imagesQmlPath + "eye-off.svg"
     readonly property url deviceCentreUpdate: imagesQmlPath + "device-centre-update.png"
     readonly property url megaDevices: imagesQmlPath + "mega_3d_devices.png"
+    readonly property url backupDevices: imagesQmlPath + "backup_3d_devices.png"
     readonly property url threeDots: imagesQmlPath + "three_dots.svg"
     readonly property url monitor: imagesTokenizablePath + "monitor_small_thin_outline.svg"
     readonly property url folderOpen: imagesQmlPath + "folder-open.svg"
@@ -140,9 +141,14 @@ QtObject {
     readonly property url pen_2_small_thin_outline: "qrc:/pen-2_small_thin_outline.svg"
     readonly property url trash_off_small_thin_outline: "qrc:/trash-off_small_thin_outline.svg"
     readonly property url power_small_thin_outline: "qrc:/power_small_thin_outline.svg"
+    readonly property url mega_small_thin_outline: "qrc:/MEGA_small_thin_outline.svg"
+    readonly property url pause_small_thin_outline: "qrc:/pause_small_thin_outline.svg"
+    readonly property url slash_circle_small_thin_outline: "qrc:/slash-circle_small_thin_outline.svg"
     readonly property url sync_plus_small_thin_outline: "qrc:/sync-plus_small_thin_outline.svg"
     readonly property url arrow_up_medium_regular_outline: "qrc:/arrow-up_medium_regular_outline.svg"
     readonly property url arrow_down_medium_regular_outline: "qrc:/arrow-down_medium_regular_outline.svg"
+    readonly property url database_small_thin_outline: "qrc:/database_small_thin_outline.svg"
+    readonly property url database_x_medium_thin_outline: "qrc:/database-x_medium_thin_outline.svg"
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //   Standard Icons
