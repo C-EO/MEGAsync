@@ -241,6 +241,9 @@ void NodeSelector::onUiIsBlocked(bool state)
 void NodeSelector::showSearchingIndicator()
 {
     ui->lSearchResultCount->setText(tr("Searching…"));
+    // Render it muted (disabled look) from the start, matching how it appears once the header is
+    // disabled during the search — instead of flashing the enabled style on the first search.
+    ui->lSearchResultCount->setEnabled(false);
     ui->lSearchResultCount->setVisible(true);
 }
 

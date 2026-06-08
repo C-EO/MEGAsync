@@ -133,6 +133,7 @@ void CloudDriveNodeSelector::refreshSearchResultCount()
 
     const int count = mSearchWidget->searchResultCount();
     ui->lSearchResultCount->setText(tr("%n result", "", count));
+    ui->lSearchResultCount->setEnabled(true);
     ui->lSearchResultCount->setVisible(true);
 }
 
