@@ -586,7 +586,11 @@ void NodeSelectorTreeViewWidget::showCurrentRootContextMenu(const QPoint& global
     // The chevron acts on the folder we are currently inside: a single index (the current root),
     // handled like a click on empty space so folder-level actions are offered.
     ui->tMegaFolders->clearSelection();
-    ui->tMegaFolders->showContextMenu(QModelIndexList(), getCurrentRootIndex(), true, globalPos);
+    ui->tMegaFolders->showContextMenu(QModelIndexList(),
+                                      getCurrentRootIndex(),
+                                      true,
+                                      globalPos,
+                                      true);
 }
 
 QList<NodeSelectorBreadcrumbSegment>

@@ -840,7 +840,8 @@ void NodeSelectorTreeView::contextMenuEvent(QContextMenuEvent* event)
 void NodeSelectorTreeView::showContextMenu(const QModelIndexList& selectedRowsList,
                                            const QModelIndex& clickedIndex,
                                            bool clickedEmptySpace,
-                                           const QPoint& globalPos)
+                                           const QPoint& globalPos,
+                                           bool ignoreEmptySpaceBlock)
 {
     if (!selectionModel())
     {
@@ -887,7 +888,9 @@ void NodeSelectorTreeView::showContextMenu(const QModelIndexList& selectedRowsLi
     QMap<int, QAction*> actions;
     const auto takenDownSelection = containsTakenDownItem(selectedIndexes);
 
-    if (!clickedEmptySpace && takenDownSelection)
+    const bool offerNodeActions = !clickedEmptySpace || ignoreEmptySpaceBlock;
+
+    if (offerNodeActions && takenDownSelection)
     {
         addDisputeTakedownMenuAction(actions);
         addRemoveMenuActions(actions, selectedIndexes, selectionHandles);
@@ -895,7 +898,7 @@ void NodeSelectorTreeView::showContextMenu(const QModelIndexList& selectedRowsLi
     }
     else
     {
-        if (!clickedEmptySpace && areAllEligibleForCopy(selectedIndexes))
+        if (offerNodeActions && areAllEligibleForCopy(selectedIndexes))
         {
             auto copyAction(new MegaMenuItemAction(
                 tr("Copy"),
@@ -931,7 +934,7 @@ void NodeSelectorTreeView::showContextMenu(const QModelIndexList& selectedRowsLi
             addNewFolderMenuAction(actions);
         }
 
-        if (!clickedEmptySpace && !selectedIndexes.isEmpty())
+        if (offerNodeActions && !selectedIndexes.isEmpty())
         {
             if (selectedIndexes.size() == 1)
             {
