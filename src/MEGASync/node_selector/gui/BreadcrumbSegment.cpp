@@ -15,8 +15,17 @@ BreadcrumbSegment::BreadcrumbSegment(QWidget* parent):
 
 void BreadcrumbSegment::setHighlighted(bool highlighted)
 {
-    setProperty("bold", highlighted);
-    setProperty("regular", !highlighted);
+    if (highlighted)
+    {
+        setProperty("bold", true);
+        setProperty("regular", QVariant());
+    }
+    else
+    {
+        setProperty("regular", false);
+        setProperty("bold", QVariant());
+    }
+
     setProperty("current", highlighted);
 
     auto segmentFont = font();

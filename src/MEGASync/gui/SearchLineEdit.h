@@ -39,6 +39,12 @@ public:
 
     void setMode(Mode mode);
 
+    // Parametrizes the search container background and optional border via color tokens.
+    // Default values reproduce the current look (surface-2 background, no border).
+    void setContainerStyle(const QString& backgroundToken = QLatin1String("surface-2"),
+                           const QString& borderToken = QString(),
+                           const int borderRadius = 16);
+
     void addCustomWidget(QWidget* widget);
 
 protected:

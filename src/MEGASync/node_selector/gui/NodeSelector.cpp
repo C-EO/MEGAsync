@@ -109,6 +109,10 @@ void NodeSelector::init()
 
     connect(ui->leSearchTool, &SearchLineEdit::cleared, this, &NodeSelector::hideGhostSearch);
 
+    ui->leSearchTool->setContainerStyle(QLatin1String("page-background"),
+                                        QLatin1String("border-strong"),
+                                        8);
+
     mInitialised = true;
 }
 

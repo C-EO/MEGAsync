@@ -160,6 +160,28 @@ void SearchLineEdit::expand()
     ui->customWidget->hide();
 }
 
+void SearchLineEdit::setContainerStyle(const QString& backgroundToken,
+                                       const QString& borderToken,
+                                       const int borderRadius)
+{
+    // Build a tokenized stylesheet so TokenParserWidgetManager re-themes it on theme changes.
+    // One color token per line: the tokenizer's regex does not span newlines.
+    QString sheet = QLatin1String("#searchContainer\n{\n");
+    sheet +=
+        QString::fromLatin1("background-color: #000000; /*colorToken.%1*/\n").arg(backgroundToken);
+    sheet += QLatin1String("border-radius: %1px;\n").arg(QString::number(borderRadius));
+    if (!borderToken.isEmpty())
+    {
+        sheet +=
+            QString::fromLatin1("border: 1px solid #000000; /*colorToken.%1*/\n").arg(borderToken);
+    }
+    sheet += QLatin1String("}\n");
+
+    ui->searchContainer->setStyleSheet(sheet);
+    ui->searchContainer->style()->unpolish(ui->searchContainer);
+    ui->searchContainer->style()->polish(ui->searchContainer);
+}
+
 void SearchLineEdit::addCustomWidget(QWidget* widget)
 {
     ui->customLayout->addWidget(widget);
