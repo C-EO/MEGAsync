@@ -111,7 +111,8 @@ void FilePickerNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWi
 void FilePickerNodeSelector::configureSidebar()
 {
     static constexpr int COLLAPSED_SIDEBAR_WIDTH = 64;
-    static constexpr int COLLAPSED_TAB_HEIGHT = 36;
+    static constexpr int COLLAPSED_TAB_SIZE = 36;
+    static constexpr int COLLAPSED_ICON_SIZE = 20;
 
     ui->wLeftPaneNS->setMinimumWidth(COLLAPSED_SIDEBAR_WIDTH);
     ui->wLeftPaneNS->setMaximumWidth(COLLAPSED_SIDEBAR_WIDTH);
@@ -124,8 +125,8 @@ void FilePickerNodeSelector::configureSidebar()
         }
         tab->setIconOnly(true);
         tab->setProperty("class", QLatin1String("sidebar-icononly"));
-        tab->setMinimumHeight(COLLAPSED_TAB_HEIGHT);
-        tab->setMaximumHeight(COLLAPSED_TAB_HEIGHT);
+        tab->setFixedSize(COLLAPSED_TAB_SIZE, COLLAPSED_TAB_SIZE);
+        tab->setIconSize(QSize(COLLAPSED_ICON_SIZE, COLLAPSED_ICON_SIZE));
         tab->style()->unpolish(tab);
         tab->style()->polish(tab);
     };

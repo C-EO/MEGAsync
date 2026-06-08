@@ -71,7 +71,8 @@ void CloudDriveNodeSelector::refreshNavigationBreadcrumb()
         return;
     }
 
-    ui->navigationBreadcrumb->setSegments(breadcrumbWidget->navigationBreadcrumbSegments());
+    ui->navigationBreadcrumb->setSegments(breadcrumbWidget->navigationBreadcrumbSegments(),
+                                          breadcrumbWidget->isCurrentRootIndexReadOnly());
 }
 
 void CloudDriveNodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)
@@ -137,7 +138,8 @@ void CloudDriveNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWi
 void CloudDriveNodeSelector::configureSidebar()
 {
     static constexpr int EXPANDED_SIDEBAR_WIDTH = 256;
-    static constexpr int EXPANDED_TAB_HEIGHT = 32;
+    static constexpr int EXPANDED_TAB_HEIGHT = 40;
+    static constexpr int EXPANDED_ICON_SIZE = 24;
 
     ui->wLeftPaneNS->setMinimumWidth(EXPANDED_SIDEBAR_WIDTH);
     ui->wLeftPaneNS->setMaximumWidth(EXPANDED_SIDEBAR_WIDTH);
@@ -152,6 +154,7 @@ void CloudDriveNodeSelector::configureSidebar()
         tab->setProperty("class", QLatin1String("sidebar"));
         tab->setMinimumHeight(EXPANDED_TAB_HEIGHT);
         tab->setMaximumHeight(EXPANDED_TAB_HEIGHT);
+        tab->setIconSize(QSize(EXPANDED_ICON_SIZE, EXPANDED_ICON_SIZE));
         tab->style()->unpolish(tab);
         tab->style()->polish(tab);
     };

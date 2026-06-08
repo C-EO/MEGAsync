@@ -18,7 +18,8 @@ public:
     explicit NavigationBreadcrumb(QWidget* parent = nullptr);
     ~NavigationBreadcrumb() override;
 
-    void setSegments(const QList<NodeSelectorBreadcrumbSegment>& segments);
+    void setSegments(const QList<NodeSelectorBreadcrumbSegment>& segments,
+                     bool currentRootReadOnly = false);
 
 signals:
     void segmentActivated(int index);
@@ -26,6 +27,7 @@ signals:
 
 private:
     Ui::NavigationBreadcrumb* ui;
+    bool mCurrentRootReadOnly = false;
 };
 
 #endif // NAVIGATIONBREADCRUMB_H

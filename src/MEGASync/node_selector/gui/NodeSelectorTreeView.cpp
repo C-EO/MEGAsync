@@ -370,22 +370,7 @@ void NodeSelectorTreeView::keyPressEvent(QKeyEvent* event)
         }
         else if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
         {
-            if (!indexes.isEmpty())
-            {
-                if (indexes.first() == rootIndex() || indexes.size() > 1)
-                {
-                    emit enterKeyPressed();
-                }
-                else
-                {
-                    auto node = std::unique_ptr<MegaNode>(
-                        mMegaApi->getNodeByHandle(getSelectedNodeHandle()));
-                    if (node)
-                    {
-                        emit enterKeyPressed();
-                    }
-                }
-            }
+            emit enterKeyPressed();
         }
         else if (mAllowNewFolderContextMenuItem && event->key() == Qt::Key_Delete)
         {

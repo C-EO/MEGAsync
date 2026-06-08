@@ -92,6 +92,12 @@ QIcon TabSelector::getIcon() const
     return ui->lIcon->icon();
 }
 
+void TabSelector::setIconSize(const QSize& size)
+{
+    ui->lIcon->setFixedSize(size);
+    ui->lIcon->setIconSize(size);
+}
+
 QSize TabSelector::getIconSize() const
 {
     return ui->lIcon->iconSize();
@@ -187,6 +193,7 @@ void TabSelector::setIconOnly(bool state)
     if (mIconOnly)
     {
         layout()->setContentsMargins(0, 0, 0, 0);
+        layout()->setAlignment(ui->lIcon, Qt::AlignCenter);
 
         ui->lTitle->hide();
         ui->lCounter->hide();
@@ -195,6 +202,8 @@ void TabSelector::setIconOnly(bool state)
     }
     else
     {
+        layout()->setAlignment(ui->lIcon, Qt::AlignVCenter);
+
         ui->lCounter->setVisible(hasEmptyCount());
         ui->lTitle->show();
         closeCollapsedTooltip();

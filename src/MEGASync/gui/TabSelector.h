@@ -32,7 +32,8 @@ public:
     void setIcon(const QIcon& icon);
     QIcon getIcon() const;
 
-    Q_PROPERTY(QSize iconSize READ getIconSize)
+    Q_PROPERTY(QSize iconSize WRITE setIconSize READ getIconSize)
+    void setIconSize(const QSize& size);
     QSize getIconSize() const;
 
     Q_PROPERTY(bool closeButtonVisible WRITE setCloseButtonVisible READ isCloseButtonVisible)

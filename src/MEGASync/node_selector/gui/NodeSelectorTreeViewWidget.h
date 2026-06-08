@@ -141,6 +141,11 @@ public:
     void setInitialShowLabelText(bool show);
     void resetAutoColumnWidths();
 
+    virtual bool isCurrentRootIndexReadOnly() const
+    {
+        return false;
+    }
+
     TabItem getTabType() const
     {
         return mTabType;
@@ -267,11 +272,6 @@ private:
     QModelIndex getIndexFromHandle(const mega::MegaHandle& handle);
     virtual std::shared_ptr<NodeSelectorProxyModel> createProxyModel();
     virtual std::unique_ptr<NodeSelectorModel> createModel() = 0;
-
-    virtual bool isCurrentRootIndexReadOnly() const
-    {
-        return false;
-    }
 
     virtual bool isSelectionReadOnly(const QModelIndexList&)
     {

@@ -609,8 +609,8 @@ font-weight: 700;
 TabSelector.sidebar
 {
 border-radius:6px;
-min-height: 32px;
-max-height: 32px;
+min-height: 40px;
+max-height: 40px;
 }
 
 TabSelector.sidebar-icononly
@@ -618,6 +618,8 @@ TabSelector.sidebar-icononly
 border-radius:6px;
 min-height: 36px;
 max-height: 36px;
+min-width: 36px;
+max-width: 36px;
 }
 
 TabSelector.chip

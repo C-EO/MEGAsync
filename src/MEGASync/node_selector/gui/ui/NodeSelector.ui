@@ -175,7 +175,7 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
              <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
            </property>
            <property name="normal_off" stdset="0">
-            <string notr="true">icon-secondary</string>
+            <string notr="true">icon-primary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
@@ -211,7 +211,7 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
              <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
            </property>
            <property name="normal_off" stdset="0">
-            <string notr="true">icon-secondary</string>
+            <string notr="true">icon-primary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
@@ -244,7 +244,7 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
              <normalon>:/devices_small_thin_solid</normalon>:/devices_small_thin_outline</iconset>
            </property>
            <property name="normal_off" stdset="0">
-            <string notr="true">icon-secondary</string>
+            <string notr="true">icon-primary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
@@ -280,7 +280,7 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
              <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
            </property>
            <property name="normal_off" stdset="0">
-            <string notr="true">icon-secondary</string>
+            <string notr="true">icon-primary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
