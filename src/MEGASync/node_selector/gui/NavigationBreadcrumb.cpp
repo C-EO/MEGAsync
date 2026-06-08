@@ -67,6 +67,7 @@ NavigationBreadcrumb::NavigationBreadcrumb(QWidget* parent):
             &Breadcrumb::overflowSegmentActivated,
             this,
             &NavigationBreadcrumb::segmentActivated);
+    connect(ui->breadcrumb, &Breadcrumb::refreshNeeded, this, &NavigationBreadcrumb::refreshNeeded);
 }
 
 NavigationBreadcrumb::~NavigationBreadcrumb()
@@ -79,4 +80,9 @@ void NavigationBreadcrumb::setSegments(const QList<NodeSelectorBreadcrumbSegment
 {
     mCurrentRootReadOnly = currentRootReadOnly;
     ui->breadcrumb->setSegments(segments, true);
+}
+
+void NavigationBreadcrumb::onNodesRenamed(const QList<mega::MegaHandle>& handles)
+{
+    ui->breadcrumb->onNodesRenamed(handles);
 }

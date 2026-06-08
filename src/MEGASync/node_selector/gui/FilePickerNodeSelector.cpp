@@ -16,6 +16,15 @@ FilePickerNodeSelector::FilePickerNodeSelector(SelectTypeSPtr selectType, QWidge
             &DestinationBreadcrumb::clearRequested,
             this,
             &FilePickerNodeSelector::onBreadcrumbClearRequested);
+    connect(ui->destinationBreadcrumb,
+            &DestinationBreadcrumb::refreshNeeded,
+            this,
+            &FilePickerNodeSelector::refreshDestinationBreadcrumb);
+}
+
+void FilePickerNodeSelector::onNodesRenamed(const QList<mega::MegaHandle>& handles)
+{
+    ui->destinationBreadcrumb->onNodesRenamed(handles);
 }
 
 void FilePickerNodeSelector::refreshDestinationBreadcrumb()

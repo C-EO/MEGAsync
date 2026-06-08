@@ -391,7 +391,11 @@ NodeSearchRowDelegate::NodeSearchRowDelegate(QObject* parent):
 
 void NodeSearchRowDelegate::setSearchText(const QString& text)
 {
-    mSearchText = text;
+    if (mSearchText != text)
+    {
+        mSearchText = text;
+        mDocumentCache.clear();
+    }
 }
 
 void NodeSearchRowDelegate::paint(QPainter* painter,
@@ -424,18 +428,35 @@ void NodeSearchRowDelegate::paint(QPainter* painter,
         return;
     }
 
-    QFontMetrics fm(option.font);
-    QString shown = display;
-    if (fm.horizontalAdvance(display) > textRect.width())
+    // Building the highlighted HTML and laying out a QTextDocument is expensive, and paint() runs
+    // for every visible matching row on each repaint. Cache the laid-out document per
+    // (display text, search term, available width). The cache is cleared when the search text
+    // changes and bounded to avoid unbounded growth while scrolling a long result list.
+    const QString cacheKey = display + QLatin1Char('\n') + mSearchText + QLatin1Char('\n') +
+                             QString::number(textRect.width());
+    auto doc = mDocumentCache.value(cacheKey);
+    if (!doc)
     {
-        shown = fm.elidedText(display, option.textElideMode, textRect.width());
-    }
+        static constexpr int MAX_CACHED_DOCUMENTS = 256;
+        if (mDocumentCache.size() >= MAX_CACHED_DOCUMENTS)
+        {
+            mDocumentCache.clear();
+        }
 
-    QTextDocument doc;
-    doc.setDefaultFont(option.font);
-    doc.setDocumentMargin(0);
-    doc.setHtml(buildHighlightedHtml(shown, mSearchText));
-    doc.setTextWidth(textRect.width());
+        QFontMetrics fm(option.font);
+        QString shown = display;
+        if (fm.horizontalAdvance(display) > textRect.width())
+        {
+            shown = fm.elidedText(display, option.textElideMode, textRect.width());
+        }
+
+        doc = std::make_shared<QTextDocument>();
+        doc->setDefaultFont(option.font);
+        doc->setDocumentMargin(0);
+        doc->setHtml(buildHighlightedHtml(shown, mSearchText));
+        doc->setTextWidth(textRect.width());
+        mDocumentCache.insert(cacheKey, doc);
+    }
 
     QAbstractTextDocumentLayout::PaintContext ctx;
     ctx.palette = optForRect.palette;
@@ -444,9 +465,9 @@ void NodeSearchRowDelegate::paint(QPainter* painter,
     ctx.clip = QRectF(0, 0, textRect.width(), textRect.height());
 
     painter->save();
-    const qreal yOffset = (textRect.height() - doc.size().height()) / 2.0;
+    const qreal yOffset = (textRect.height() - doc->size().height()) / 2.0;
     painter->translate(textRect.topLeft() + QPointF(0, yOffset));
-    doc.documentLayout()->draw(painter, ctx);
+    doc->documentLayout()->draw(painter, ctx);
     painter->restore();
 }
 

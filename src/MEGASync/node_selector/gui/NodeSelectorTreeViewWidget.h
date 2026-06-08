@@ -171,6 +171,7 @@ signals:
     void viewButtonsStateChanged();
     void modelModified();
     void rootIndexChanged();
+    void nodesRenamed(const QList<mega::MegaHandle>& handles);
 
 protected:
     bool event(QEvent* event) override;

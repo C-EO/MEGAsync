@@ -27,6 +27,10 @@ DestinationBreadcrumb::DestinationBreadcrumb(QWidget* parent):
         });
 
     connect(ui->bClear, &QToolButton::clicked, this, &DestinationBreadcrumb::clearRequested);
+    connect(ui->breadcrumb,
+            &Breadcrumb::refreshNeeded,
+            this,
+            &DestinationBreadcrumb::refreshNeeded);
 
     updateContentVisibility();
 }
@@ -41,6 +45,11 @@ void DestinationBreadcrumb::setSegments(const QList<NodeSelectorBreadcrumbSegmen
     mHasSegments = !segments.isEmpty();
     ui->breadcrumb->setSegments(segments);
     updateContentVisibility();
+}
+
+void DestinationBreadcrumb::onNodesRenamed(const QList<mega::MegaHandle>& handles)
+{
+    ui->breadcrumb->onNodesRenamed(handles);
 }
 
 void DestinationBreadcrumb::setTitleText(const QString& text)

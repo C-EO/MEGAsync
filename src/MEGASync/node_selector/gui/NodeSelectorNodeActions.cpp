@@ -33,10 +33,13 @@ void NodeSelectorNodeActions::setDialogParent(QWidget* dialogParent)
 void NodeSelectorNodeActions::renameNode(mega::MegaHandle selectedHandle) const
 {
     auto node = std::unique_ptr<mega::MegaNode>(mMegaApi->getNodeByHandle(selectedHandle));
-    const int access = mMegaApi->getAccess(node.get());
+    if (!node)
+    {
+        return;
+    }
 
-    if (!node || access < mega::MegaShare::ACCESS_FULL || !node->isNodeKeyDecrypted() ||
-        node->isTakenDown())
+    const int access = mMegaApi->getAccess(node.get());
+    if (access < mega::MegaShare::ACCESS_FULL || !node->isNodeKeyDecrypted() || node->isTakenDown())
     {
         return;
     }

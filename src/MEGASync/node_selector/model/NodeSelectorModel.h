@@ -464,6 +464,9 @@ signals:
     void modelIsBeingModifiedChanged(bool status);
     void modelModified();
     void currentRootIndexChanged();
+    // Emitted when a batch of nodes changes its display name without a path change (e.g. a device
+    // name update in Backups), so the navigation breadcrumb can refresh the affected segments.
+    void nodesRenamed(const QList<mega::MegaHandle>& handles);
     // Emitted right before a root node is removed (e.g. an incoming share un-shared) while it
     // still exists, so the view can navigate out of it first if it is the open folder.
     void rootNodeAboutToBeRemoved(const QModelIndex& sourceIndex);

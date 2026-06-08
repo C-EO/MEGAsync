@@ -2,8 +2,13 @@
 #define NODESELECTORDELEGATES_H
 
 #include <QAbstractItemView>
+#include <QHash>
 #include <QHelpEvent>
 #include <QStyledItemDelegate>
+
+#include <memory>
+
+class QTextDocument;
 
 class NodeSelectorDelegate: public QStyledItemDelegate
 {
@@ -96,6 +101,7 @@ private:
 
     QString mSearchText;
     mutable bool mSuppressText = false;
+    mutable QHash<QString, std::shared_ptr<QTextDocument>> mDocumentCache;
 };
 
 #endif // NODESELECTORDELEGATES_H

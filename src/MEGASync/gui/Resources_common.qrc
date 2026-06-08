@@ -1132,6 +1132,7 @@
         <file alias="MEGA_small_thin_outline">images/themed/tokenizable/MEGA_small_thin_outline.svg</file>
         <file alias="monitor_small_thin_outline">images/themed/tokenizable/monitor_small_thin_outline.svg</file>
         <file alias="rotate-ccw_small_thin_outline">images/themed/tokenizable/rotate-ccw_small_thin_outline.svg</file>
+        <file alias="pen-1_small_thin_outline">images/themed/tokenizable/pen-1_small_thin_outline.svg</file>
         <file alias="pen-2_small_thin_outline">images/themed/tokenizable/pen-2_small_thin_outline.svg</file>
         <file alias="info_small_thin_solid">images/themed/tokenizable/info_small_thin_solid.svg</file>
         <file alias="clock_small_thin_outline">images/themed/tokenizable/clock_small_thin_outline.svg</file>

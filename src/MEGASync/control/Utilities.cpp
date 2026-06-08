@@ -1919,7 +1919,7 @@ QIcon Utilities::getNodeAccessIcon(MegaNode* node)
         }
         case MegaShare::ACCESS_READWRITE:
         {
-            return getIcon(QLatin1String("edit"),
+            return getIcon(QLatin1String("pen-1"),
                            AttributeType::SMALL | AttributeType::THIN | AttributeType::OUTLINE);
         }
         case MegaShare::ACCESS_FULL:

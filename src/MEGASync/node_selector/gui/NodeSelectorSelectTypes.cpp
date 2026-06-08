@@ -280,8 +280,8 @@ bool CloudDriveType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg
 
 bool CloudDriveType::acceptDrops(int tabItem)
 {
-    return tabItem == NodeSelectorTreeViewWidget::TabItem::CLOUD_DRIVE |
-           tabItem == NodeSelectorTreeViewWidget::TabItem::SHARES |
+    return tabItem == NodeSelectorTreeViewWidget::TabItem::CLOUD_DRIVE ||
+           tabItem == NodeSelectorTreeViewWidget::TabItem::SHARES ||
            tabItem == NodeSelectorTreeViewWidget::TabItem::RUBBISH;
 }
 

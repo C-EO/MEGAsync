@@ -161,12 +161,16 @@ void NodeSelector::onbNewFolderClicked()
         return;
     }
 
-    auto parentNode = sourceWidget->getProxyModel()->getNode(sourceWidget->getCurrentRootIndex());
+    auto proxyModel = sourceWidget->getProxyModel();
+    auto parentNode =
+        proxyModel ? proxyModel->getNode(sourceWidget->getCurrentRootIndex()) : nullptr;
     if (!parentNode)
     {
         parentNode = MegaSyncApp->getRootNode();
         if (!parentNode)
+        {
             return;
+        }
     }
 
     QPointer<NewFolderDialog> dialog(new NewFolderDialog(parentNode, this));
@@ -1189,6 +1193,11 @@ void NodeSelector::connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
             &NodeSelectorTreeViewWidget::rootIndexChanged,
             this,
             &NodeSelector::refreshNavigationBreadcrumb,
+            Qt::UniqueConnection);
+    connect(widget,
+            &NodeSelectorTreeViewWidget::nodesRenamed,
+            this,
+            &NodeSelector::onNodesRenamed,
             Qt::UniqueConnection);
     // After a deferred root commit (first entry into a not-yet-cached folder), the header and
     // column visibility must be recomputed against the now-valid committed root.

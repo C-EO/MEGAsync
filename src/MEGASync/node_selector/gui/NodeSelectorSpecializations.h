@@ -26,6 +26,7 @@ protected:
 
     void refreshSearchResultCount() override;
     void refreshNavigationBreadcrumb() override;
+    void onNodesRenamed(const QList<mega::MegaHandle>& handles) override;
 
     void onLanguageChangeEvent() override;
 

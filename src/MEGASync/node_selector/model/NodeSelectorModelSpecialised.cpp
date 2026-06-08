@@ -210,6 +210,21 @@ bool NodeSelectorModelIncomingShares::canDropMimeData(const QMimeData* data,
     }
 
     auto node = item->getNode();
+    if (!node)
+    {
+        return false;
+    }
+
+    // When the hovered item is a file, the real drop target is its parent folder
+    // (the move is resolved to the parent in startProcessingNodes). Resolve to the
+    // parent here too so dropping onto a file is accepted, as it was before.
+    if (!node->isFolder())
+    {
+        dropIndex = dropIndex.parent();
+        item = getItemByIndex(dropIndex);
+        node = item ? item->getNode() : nullptr;
+    }
+
     if (!node || !node->isFolder() ||
         Utilities::getNodeAccess(node->getHandle()) < MegaShare::ACCESS_READWRITE)
     {
@@ -403,6 +418,25 @@ void NodeSelectorModelBackups::onDeviceNamesUpdated()
         emit dataChanged(index(0, NodeSelectorModel::Column::NODE, rootIndex),
                          index(rowcount - 1, NodeSelectorModel::Column::NODE, rootIndex),
                          {Qt::DisplayRole});
+
+        QList<mega::MegaHandle> deviceHandles;
+        deviceHandles.reserve(rowcount);
+        for (int row = 0; row < rowcount; ++row)
+        {
+            const auto deviceIndex = index(row, NodeSelectorModel::Column::NODE, rootIndex);
+            if (auto* item = getItemByIndex(deviceIndex))
+            {
+                if (auto node = item->getNode())
+                {
+                    deviceHandles.append(node->getHandle());
+                }
+            }
+        }
+
+        if (!deviceHandles.isEmpty())
+        {
+            emit nodesRenamed(deviceHandles);
+        }
     }
 }
 

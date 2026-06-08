@@ -58,6 +58,7 @@ public:
 
 signals:
     void indexRemovedAffectingCurrentPath(const QModelIndex& index);
+    void nodesRenamed(const QList<mega::MegaHandle>& handles);
     void viewStateChanged();
 
 private:

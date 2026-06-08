@@ -193,6 +193,10 @@ void NodeSelectorTreeViewWidget::init()
             &NodeSelectorModelUpdateCoordinator::indexRemovedAffectingCurrentPath,
             this,
             &NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot);
+    connect(mModelUpdateCoordinator.get(),
+            &NodeSelectorModelUpdateCoordinator::nodesRenamed,
+            this,
+            &NodeSelectorTreeViewWidget::nodesRenamed);
     // A root node removed while the user is inside it would leave the open root dangling.
     // Reuse the same navigate-away path, mapping the model's source index to the proxy.
     connect(mModel.get(),
@@ -257,6 +261,10 @@ void NodeSelectorTreeViewWidget::init()
             &NodeSelectorModel::modelModified,
             this,
             &NodeSelectorTreeViewWidget::onModelModified);
+    connect(mModel.get(),
+            &NodeSelectorModel::nodesRenamed,
+            this,
+            &NodeSelectorTreeViewWidget::nodesRenamed);
     connect(mModel.get(),
             &NodeSelectorModel::itemsMoved,
             mSelectionCoordinator.get(),

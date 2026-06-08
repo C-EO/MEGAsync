@@ -65,6 +65,29 @@ void Breadcrumb::setSegments(const QList<NodeSelectorBreadcrumbSegment>& segment
     rebuildSegments();
 }
 
+void Breadcrumb::onNodesRenamed(const QList<mega::MegaHandle>& handles)
+{
+    // A rename only changes a segment's display text, not the path. Ask for a refresh when any
+    // renamed node is one of the segments currently shown.
+    if (containsAnyHandle(handles))
+    {
+        emit refreshNeeded();
+    }
+}
+
+bool Breadcrumb::containsAnyHandle(const QList<mega::MegaHandle>& handles) const
+{
+    for (const auto& segment: mSegments)
+    {
+        if (segment.handle != mega::INVALID_HANDLE && handles.contains(segment.handle))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 QString Breadcrumb::resolveSegmentText(const NodeSelectorBreadcrumbSegment& segment) const
 {
     if (segment.handle != mega::INVALID_HANDLE)

@@ -151,11 +151,19 @@ void NodeSelectorModelUpdateCoordinator::processCachedNodesUpdated()
 
         if (!mModel->isBeingModified())
         {
+            QList<mega::MegaHandle> renamedHandles;
+            renamedHandles.reserve(mRenamedNodesByHandle.size());
             for (const auto& info: std::as_const(mRenamedNodesByHandle))
             {
                 updateNode(info, true);
+                renamedHandles.append(info.handle);
             }
             mRenamedNodesByHandle.clear();
+
+            if (!renamedHandles.isEmpty())
+            {
+                emit nodesRenamed(renamedHandles);
+            }
         }
 
         if (!mModel->isBeingModified())

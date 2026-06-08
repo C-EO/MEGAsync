@@ -4,6 +4,7 @@
 #include "NodeSelectorBreadcrumbSegment.h"
 
 #include <QFrame>
+#include <QList>
 
 namespace Ui
 {
@@ -26,6 +27,10 @@ public:
 
 signals:
     void clearRequested();
+    void refreshNeeded();
+
+public slots:
+    void onNodesRenamed(const QList<mega::MegaHandle>& handles);
 
 private:
     void updateContentVisibility();

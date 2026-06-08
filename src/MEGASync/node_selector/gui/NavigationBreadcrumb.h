@@ -4,6 +4,7 @@
 #include "NodeSelectorBreadcrumbSegment.h"
 
 #include <QFrame>
+#include <QList>
 
 namespace Ui
 {
@@ -24,6 +25,10 @@ public:
 signals:
     void segmentActivated(int index);
     void lastSegmentMenuRequested(const QPoint& globalPos);
+    void refreshNeeded();
+
+public slots:
+    void onNodesRenamed(const QList<mega::MegaHandle>& handles);
 
 private:
     Ui::NavigationBreadcrumb* ui;

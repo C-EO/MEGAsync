@@ -207,12 +207,17 @@ void NodeSelectorSelectionCoordinator::onNodesAdded(
 
         for (const auto& item: itemsAdded)
         {
-            if (!NodeSelectorMergeTargetUtils::isNodeInsideMergeTargetSubtree(
-                    mMegaApi,
-                    mMergeTargetFolders,
-                    item->getNode().get()))
+            if (!item)
             {
-                mMovedHandlesToSelect.insert(item->getNode()->getHandle());
+                continue;
+            }
+
+            auto node = item->getNode();
+            if (!NodeSelectorMergeTargetUtils::isNodeInsideMergeTargetSubtree(mMegaApi,
+                                                                              mMergeTargetFolders,
+                                                                              node.get()))
+            {
+                mMovedHandlesToSelect.insert(node->getHandle());
                 moveProcessCounter++;
             }
         }
@@ -231,6 +236,11 @@ void NodeSelectorSelectionCoordinator::onNodesAdded(
 void NodeSelectorSelectionCoordinator::checkNewFolderAdded(QPointer<NodeSelectorModelItem> item)
 {
     if (!mNewFolderInfo.recentlyAdded)
+    {
+        return;
+    }
+
+    if (!item)
     {
         return;
     }

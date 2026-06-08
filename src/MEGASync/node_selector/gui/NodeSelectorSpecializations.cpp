@@ -37,6 +37,10 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
             &NavigationBreadcrumb::lastSegmentMenuRequested,
             this,
             &CloudDriveNodeSelector::onNavigationBreadcrumbMenuRequested);
+    connect(ui->navigationBreadcrumb,
+            &NavigationBreadcrumb::refreshNeeded,
+            this,
+            &CloudDriveNodeSelector::refreshNavigationBreadcrumb);
     refreshNavigationBreadcrumb();
 
     setAcceptDrops(true);
@@ -73,6 +77,11 @@ void CloudDriveNodeSelector::refreshNavigationBreadcrumb()
 
     ui->navigationBreadcrumb->setSegments(breadcrumbWidget->navigationBreadcrumbSegments(),
                                           breadcrumbWidget->isCurrentRootIndexReadOnly());
+}
+
+void CloudDriveNodeSelector::onNodesRenamed(const QList<mega::MegaHandle>& handles)
+{
+    ui->navigationBreadcrumb->onNodesRenamed(handles);
 }
 
 void CloudDriveNodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)

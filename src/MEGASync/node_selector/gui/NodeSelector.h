@@ -249,6 +249,10 @@ private:
     // read-only top-root label.
     virtual void refreshNavigationBreadcrumb() {}
 
+    // A batch of nodes was renamed. Subclasses with a navigation path forward the handles to their
+    // breadcrumb so it can refresh if any belongs to the current path.
+    virtual void onNodesRenamed(const QList<mega::MegaHandle>&) {}
+
     virtual void refreshSearchResultCount() {}
 
     virtual void onOkButtonClicked() = 0;

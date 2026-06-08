@@ -14,6 +14,7 @@ public:
 
 protected:
     void refreshDestinationBreadcrumb() override;
+    void onNodesRenamed(const QList<mega::MegaHandle>& handles) override;
     // The file picker only shows the current top-root name, so it uses a read-only label instead
     // of the full NavigationBreadcrumb.
     void refreshNavigationBreadcrumb() override;

@@ -40,11 +40,17 @@ public:
 signals:
     // A hidden ancestor segment was chosen from the overflow popup.
     void overflowSegmentActivated(int index);
+    // A shown segment's node was renamed, so its label is now stale.
+    void refreshNeeded();
+
+public slots:
+    void onNodesRenamed(const QList<mega::MegaHandle>& handles);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
+    bool containsAnyHandle(const QList<mega::MegaHandle>& handles) const;
     void closeOverflowPopup();
     void showOverflowPopup();
     void updateOverflowButtonStyle(bool popupVisible);
