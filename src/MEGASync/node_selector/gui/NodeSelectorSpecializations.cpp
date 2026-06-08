@@ -122,6 +122,15 @@ void CloudDriveNodeSelector::refreshSearchResultCount()
         return;
     }
 
+    // While a search/load is in progress, show a "searching" indicator instead of the count: the
+    // model is being repopulated and any intermediate value (including "0 result") is misleading.
+    // The final count is shown once it finishes.
+    if (isSearchInProgress() || isUiBlocked())
+    {
+        showSearchingIndicator();
+        return;
+    }
+
     const int count = mSearchWidget->searchResultCount();
     ui->lSearchResultCount->setText(tr("%n result", "", count));
     ui->lSearchResultCount->setVisible(true);

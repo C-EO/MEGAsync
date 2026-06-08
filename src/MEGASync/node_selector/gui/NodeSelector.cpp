@@ -217,6 +217,13 @@ void NodeSelector::onbNewFolderClicked()
 
 void NodeSelector::onUiIsBlocked(bool state)
 {
+    mUiBlocked = state;
+    // A search finishes when the view unblocks.
+    if (!state)
+    {
+        mSearchInProgress = false;
+    }
+
     ui->leSearchTool->setDisabled(state);
     ui->header->setDisabled(state);
     ui->customButtonsContainer->setDisabled(state);
@@ -225,6 +232,16 @@ void NodeSelector::onUiIsBlocked(bool state)
         ui->bOk->setDisabled(true);
     }
     // bCancel and wLeftPaneNS stay enabled so the user can always abort or navigate tabs.
+
+    // Hide the search result count while a search/load is in progress; refresh it (showing the
+    // final count) once it finishes.
+    refreshSearchResultCount();
+}
+
+void NodeSelector::showSearchingIndicator()
+{
+    ui->lSearchResultCount->setText(tr("Searching…"));
+    ui->lSearchResultCount->setVisible(true);
 }
 
 void NodeSelector::onSelectionChanged()
@@ -699,9 +716,17 @@ void NodeSelector::handleSearch(const QString& text)
         return;
     }
 
+    // Mark the search in progress so the result-count label shows "Searching…" (not a stale count)
+    // for the whole search, regardless of when the loading-scene block signal arrives.
+    mSearchInProgress = true;
+
     // Search spans every chip: leaving the scope unset makes the in-view chips appear.
     mSearchWidget->search(text);
     ui->stackedWidget->setCurrentWidget(mSearchWidget);
+
+    // Refresh now that the search widget is current: the refresh triggered by search() above ran
+    // while another tab was still current and hid the label.
+    refreshSearchResultCount();
 }
 
 void NodeSelector::hideGhostSearch()

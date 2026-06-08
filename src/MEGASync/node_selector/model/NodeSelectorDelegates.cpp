@@ -144,6 +144,7 @@ const int NodeRowDelegate::MARGIN = 7;
 const int NodeRowDelegate::ICON_MARGIN = 37;
 const int NodeRowDelegate::DIFF_WITH_STD_ICON = 5;
 const int NodeRowDelegate::ROW_HEIGHT = 40;
+const int NodeRowDelegate::IS_EXPORTED_RIGHT_MARGIN = 8;
 
 NodeRowDelegate::NodeRowDelegate(QObject* parent):
     NodeSelectorDelegate(parent)
@@ -159,6 +160,8 @@ void NodeRowDelegate::paint(QPainter* painter,
     {
         opt.displayAlignment = Qt::AlignCenter;
         opt.decorationAlignment = Qt::AlignCenter;
+        // Leave a small right margin so the vertical scrollbar does not overlap the icon.
+        opt.rect.setRight(opt.rect.right() - IS_EXPORTED_RIGHT_MARGIN);
     }
     else
     {

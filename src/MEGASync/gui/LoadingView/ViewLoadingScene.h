@@ -685,6 +685,9 @@ public:
 
         auto* proxy = qobject_cast<QSortFilterProxyModel*>(this->model());
 
+        // Fresh load cycle: any external scroll override from a previous cycle is stale.
+        mScrollHandledExternally = false;
+
         mSavedHasVScroll = this->verticalScrollBar()->isVisible();
         mSavedVScroll = mSavedHasVScroll ? this->verticalScrollBar()->value() : 0;
         mSavedHasHScroll = this->horizontalScrollBar()->isVisible();
@@ -801,14 +804,23 @@ public:
     void applyLoadingViewScroll()
     {
         this->doItemsLayout(); // force range computation now that the view is visible
-        if (mSavedHasVScroll)
+
+        // The post-load selection pass already scrolled to a navigated/selected node; keep that
+        // position instead of restoring the pre-load scroll (which would push a deep target out of
+        // view).
+        if (!mScrollHandledExternally)
         {
-            this->verticalScrollBar()->setValue(mSavedVScroll);
+            if (mSavedHasVScroll)
+            {
+                this->verticalScrollBar()->setValue(mSavedVScroll);
+            }
+            if (mSavedHasHScroll)
+            {
+                this->horizontalScrollBar()->setValue(mSavedHScroll);
+            }
         }
-        if (mSavedHasHScroll)
-        {
-            this->horizontalScrollBar()->setValue(mSavedHScroll);
-        }
+
+        mScrollHandledExternally = false;
         mSavedHasVScroll = false;
         mSavedHasHScroll = false;
         mSavedVScroll = 0;
@@ -838,6 +850,15 @@ public:
     void setViewPortEventsBlocked(bool newViewPortEventsBlocked)
     {
         mViewPortEventsBlocked = newViewPortEventsBlocked;
+    }
+
+    // When the post-load selection pass scrolls the view to a navigated/selected node (e.g. a
+    // searched node deep in the tree), it calls this so applyLoadingViewScroll() keeps that
+    // position instead of restoring the pre-load scroll captured in saveLoadingViewState(). Reset
+    // at the start of every load so it only affects the current reattach cycle.
+    void markScrollHandledExternally()
+    {
+        mScrollHandledExternally = true;
     }
 
     ViewLoadingScene<DelegateWidget, ViewType>& loadingView()
@@ -899,6 +920,7 @@ private:
     int mSavedVScroll = 0;
     bool mSavedHasHScroll = false;
     int mSavedHScroll = 0;
+    bool mScrollHandledExternally = false;
 };
 
 #endif // VIEWLOADINGSCENE_H

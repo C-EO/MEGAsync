@@ -40,6 +40,7 @@ public:
     static const int ICON_MARGIN;
     static const int DIFF_WITH_STD_ICON;
     static const int ROW_HEIGHT;
+    static const int IS_EXPORTED_RIGHT_MARGIN;
 
     explicit NodeRowDelegate(QObject* parent = nullptr);
     void paint(QPainter* painter,

@@ -65,6 +65,25 @@ public:
     static void showNotFoundNodeMessageBox();
 
 protected:
+    // True while a view is loading/searching (the loading scene is shown). Subclasses use it to
+    // hide the search result count until the search finishes.
+    bool isUiBlocked() const
+    {
+        return mUiBlocked;
+    }
+
+    // True from the moment a search is launched until it finishes (the loading-scene unblock).
+    // Drives the "Searching…" indicator deterministically, without depending on the block-signal
+    // timing (which lags on the first search).
+    bool isSearchInProgress() const
+    {
+        return mSearchInProgress;
+    }
+
+    // Shows the "Searching…" indicator in the result-count label, used while a search is running
+    // (before the final count is known).
+    void showSearchingIndicator();
+
     bool event(QEvent* event) override;
     void changeEvent(QEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
@@ -265,6 +284,8 @@ private:
 
     bool mManuallyResizedColumn;
     bool mInitialised;
+    bool mUiBlocked = false;
+    bool mSearchInProgress = false;
 
     std::shared_ptr<mega::MegaNode> mNodeToBeSelected;
 

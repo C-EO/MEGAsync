@@ -16,6 +16,7 @@
 #include <QGuiApplication>
 #include <QKeyEvent>
 #include <QLayout>
+#include <QScrollBar>
 
 #include <algorithm>
 
@@ -769,7 +770,10 @@ void NodeSelectorTreeViewWidget::updateColumnsWidth(bool updateVisibleColumnCoun
 
             if ((*column) == NodeSelectorModel::Column::IS_EXPORTED)
             {
-                width = 32;
+                // The vertical scrollbar overlays the last column; reserve its width so the
+                // centered export icon is not covered by it.
+                const int scrollBarWidth(ui->tMegaFolders->verticalScrollBar()->sizeHint().width());
+                width = 32 + scrollBarWidth;
             }
             else if ((*column) == NodeSelectorModel::Column::LABEL)
             {
@@ -1331,6 +1335,10 @@ void NodeSelectorTreeViewWidget::selectIndex(const QModelIndex& index,
     }
 
     ui->tMegaFolders->scrollTo(index, QAbstractItemView::ScrollHint::PositionAtCenter);
+
+    // Keep this scroll: when this runs during the loading-scene reattach, applyLoadingViewScroll()
+    // would otherwise restore the pre-load scroll position and push a deep target out of view.
+    ui->tMegaFolders->markScrollHandledExternally();
 }
 
 bool NodeSelectorTreeViewWidget::increaseMovingNodes(int number)
