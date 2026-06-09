@@ -19,8 +19,7 @@ const int RESTORE_OPACITY_DELAY_MS(60);
 
 QmlDialog::QmlDialog(QWindow* parent):
     QQuickWindow(parent),
-    mIconSrc(DEFAULT_RES_MEGA_ICON),
-    mInstancesManager(new QmlInstancesManager())
+    mIconSrc(DEFAULT_RES_MEGA_ICON)
 {
     setFlags(flags() | Qt::Dialog);
     setIcon(QIcon(mIconSrc));
@@ -33,10 +32,9 @@ QmlDialog::QmlDialog(QWindow* parent):
             &QmlDialog::onRequestPageFocus,
             Qt::QueuedConnection);
 
-    connect(mInstancesManager,
-            &QmlInstancesManager::instancesChanged,
-            this,
-            &QmlDialog::instancesManagerChanged);
+    // SNC-6567 (Phase 4): QmlInstancesManager removed. Data is exposed to QML
+    // directly via child QQmlContext properties registered in QmlDialogWrapper
+    // before qmlComponent.create() runs.
 
     mShowWhenCreatedFallbackTimer.setInterval(SHOW_WHEN_CREATED_FALLBACK_DELAY_MS);
     mShowWhenCreatedFallbackTimer.setSingleShot(true);
@@ -87,11 +85,6 @@ void QmlDialog::setIconSrc(const QString& iconSrc)
         mIconSrc = source;
         setIcon(QIcon(mIconSrc));
     }
-}
-
-QmlInstancesManager* QmlDialog::getInstancesManager()
-{
-    return mInstancesManager;
 }
 
 void QmlDialog::readyToBeShow()

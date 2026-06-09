@@ -58,12 +58,19 @@ public:
 };
 Q_DECLARE_METATYPE(MessageDialogCheckboxInfo)
 
-struct MessageDialogTextInfo
+// SNC-6567 (Phase 3): MessageDialogTextInfo is a proper QObject (not a Q_GADGET
+// value type) with NOTIFY signals on its text/format properties. This lets QML
+// bindings on `messageDialogDataAccess.titleTextInfo.text` refresh
+// automatically when the underlying C++ value changes — enabling dynamic
+// content updates (e.g. retranslation of an open dialog) and removing the
+// fragile single-shot refresh cascade that the old Q_GADGET CONSTANT pattern
+// depended on.
+class MessageDialogTextInfo: public QObject
 {
-    Q_GADGET
+    Q_OBJECT
 
-    Q_PROPERTY(QString text READ getText MEMBER text)
-    Q_PROPERTY(TextFormat format READ getFormat MEMBER format)
+    Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+    Q_PROPERTY(TextFormat format READ format WRITE setFormat NOTIFY formatChanged)
 
 public:
     enum class TextFormat
@@ -73,16 +80,25 @@ public:
     };
     Q_ENUM(TextFormat)
 
-    QString text = QString();
-    TextFormat format = TextFormat::PLAIN;
+    explicit MessageDialogTextInfo(QObject* parent = nullptr);
+    MessageDialogTextInfo(const QString& text,
+                          TextFormat format = TextFormat::PLAIN,
+                          QObject* parent = nullptr);
 
-    MessageDialogTextInfo() = default;
-    MessageDialogTextInfo(const QString& text, TextFormat format = TextFormat::PLAIN);
+    QString text() const;
+    void setText(const QString& value);
 
-    QString getText() const;
-    TextFormat getFormat() const;
+    TextFormat format() const;
+    void setFormat(TextFormat value);
+
+signals:
+    void textChanged();
+    void formatChanged();
+
+private:
+    QString mText;
+    TextFormat mFormat = TextFormat::PLAIN;
 };
-Q_DECLARE_METATYPE(MessageDialogTextInfo)
 
 class MessageDialogResult: public QObject
 {
@@ -142,8 +158,13 @@ class MessageDialogData: public QObject
 
     Q_PROPERTY(QString title READ getTitle CONSTANT)
     Q_PROPERTY(Type type READ getType NOTIFY typeChanged)
-    Q_PROPERTY(MessageDialogTextInfo titleTextInfo READ getTitleTextInfo CONSTANT)
-    Q_PROPERTY(MessageDialogTextInfo descriptionTextInfo READ getDescriptionTextInfo CONSTANT)
+    // SNC-6567 (Phase 3): returning pointers to long-lived MessageDialogTextInfo
+    // objects (owned by this MessageDialogData via Qt parent-child ownership).
+    // The pointer itself does not change, so CONSTANT is correct here; the
+    // text/format inside the pointee have their own NOTIFY signals so QML
+    // bindings stay reactive to value changes.
+    Q_PROPERTY(MessageDialogTextInfo* titleTextInfo READ getTitleTextInfo CONSTANT)
+    Q_PROPERTY(MessageDialogTextInfo* descriptionTextInfo READ getDescriptionTextInfo CONSTANT)
     Q_PROPERTY(QVariantList buttons READ getButtons NOTIFY buttonsChanged)
     Q_PROPERTY(MessageDialogCheckboxInfo checkbox READ getCheckbox NOTIFY checkboxChanged)
 
@@ -164,8 +185,8 @@ public:
     Type getType() const;
     QWidget* getParentDialog() const;
     QString getTitle() const;
-    MessageDialogTextInfo getTitleTextInfo() const;
-    MessageDialogTextInfo getDescriptionTextInfo() const;
+    MessageDialogTextInfo* getTitleTextInfo() const;
+    MessageDialogTextInfo* getDescriptionTextInfo() const;
     QVariantList getButtons() const;
     std::function<void(QPointer<MessageDialogResult>)> getFinishFunction() const;
     bool enqueue() const;
@@ -184,6 +205,12 @@ private:
     MessageDialogInfo mInfo;
     QPointer<MessageDialogResult> mResult;
     QMap<QMessageBox::StandardButton, MessageDialogButtonInfo> mButtons;
+    // SNC-6567 (Phase 3): MessageDialogTextInfo are now QObject children of
+    // this MessageDialogData. Pointers stay valid for the dialog's lifetime;
+    // their internal text/format can be mutated via setText()/setFormat() with
+    // QML bindings auto-refreshing via the NOTIFY signals.
+    MessageDialogTextInfo* mTitleTextInfo;
+    MessageDialogTextInfo* mDescriptionTextInfo;
 
     friend class MessageDialogComponent;
 

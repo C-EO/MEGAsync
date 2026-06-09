@@ -1,19 +1,19 @@
 #ifndef QML_DIALOG_H
 #define QML_DIALOG_H
 
-#include "QmlInstancesManager.h"
-
+#include <QPointer>
 #include <QQuickWindow>
 #include <QTimer>
 
+// SNC-6567 (Phase 4): The previous QmlInstancesManager* property is removed.
+// Data is now exposed to QML directly as child QQmlContext properties
+// registered by QmlDialogWrapper before qmlComponent.create() (Phase 1).
 class QmlDialog: public QQuickWindow
 {
     Q_OBJECT
 
     Q_PROPERTY(QString iconSrc MEMBER mIconSrc WRITE setIconSrc)
     Q_PROPERTY(bool closeOnEscapePressed READ getCloseOnEscapePressed WRITE setCloseOnEscapePressed)
-    Q_PROPERTY(QmlInstancesManager* instancesManager READ getInstancesManager NOTIFY
-                   instancesManagerChanged)
     Q_PROPERTY(
         bool initialLayoutComplete READ initialLayoutComplete NOTIFY initialLayoutCompleteChanged)
 
@@ -23,7 +23,6 @@ public:
 
 public slots:
     void setIconSrc(const QString& iconSrc);
-    QmlInstancesManager* getInstancesManager();
     void readyToBeShow();
     bool getCloseOnEscapePressed() const;
     void setCloseOnEscapePressed(bool active);
@@ -36,7 +35,6 @@ public slots:
     void attachToParentWindow(QWindow* parentWindow, bool embedded = true);
 
 signals:
-    void instancesManagerChanged();
     void accept();
     void reject();
     void finished();
@@ -62,7 +60,6 @@ private:
     QTimer mRestoreOpacityTimer;
     QSize mTrackedSize;
     qreal mPreviousOpacity = 1.0;
-    QPointer<QmlInstancesManager> mInstancesManager;
 };
 
 #endif // QML_DIALOG_H
