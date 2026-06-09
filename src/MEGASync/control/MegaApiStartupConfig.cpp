@@ -9,7 +9,7 @@
 
 void MegaApiStartupConfig::initialConfiguration(mega::MegaApi* megaApi)
 {
-    megaApi->setMaxPayloadLogSize(Preferences::instance()->getMaxPayloadLogSize());
+    megaApi->setMaxPayloadLogSize(Preferences::MAX_PAY_LOAD_LOG_SIZE);
 }
 
 void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* megaApi)
@@ -36,12 +36,12 @@ void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* megaApi
         return;
     }
 
-    options->setAgeThreshold(Preferences::instance()->getReclaimAgeThresholdMinutes());
-    options->setBatchSize(Preferences::instance()->getReclaimBatchSize());
-    options->setDelay(Preferences::instance()->getReclaimDelaySeconds());
-    options->setPeriod(Preferences::instance()->getReclaimPeriodSeconds());
-    options->setReclaimTarget(Preferences::instance()->getReclaimTargetBytes());
-    options->setReclaimThreshold(Preferences::instance()->getReclaimThresholdBytes());
+    options->setAgeThreshold(Preferences::RECLAIM_AGE_THRESHOLD_MINUTES);
+    options->setBatchSize(Preferences::RECLAIM_BATCH_SIZE);
+    options->setDelay(Preferences::RECLAIM_DELAY_SECONDS);
+    options->setPeriod(Preferences::RECLAIM_PERIOD_SECONDS);
+    options->setReclaimTarget(Preferences::RECLAIM_TARGET_BYTES);
+    options->setReclaimThreshold(Preferences::RECLAIM_THRESHOLD_BYTES);
 
     megaApi->fileServiceSetReclaimOptions(options.get());
 

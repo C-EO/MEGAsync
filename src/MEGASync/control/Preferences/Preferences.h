@@ -413,21 +413,6 @@ public:
     void setDontShowExportLinkDialog(bool value);
     bool getDontShowExportLinkDialog();
 
-    std::size_t getMaxPayloadLogSize();
-    void setMaxPayloadLogSize(std::size_t value);
-    int getReclaimAgeThresholdMinutes();
-    void setReclaimAgeThresholdMinutes(int value);
-    std::size_t getReclaimBatchSize();
-    void setReclaimBatchSize(std::size_t value);
-    uint64_t getReclaimDelaySeconds();
-    void setReclaimDelaySeconds(uint64_t value);
-    uint64_t getReclaimPeriodSeconds();
-    void setReclaimPeriodSeconds(uint64_t value);
-    uint64_t getReclaimTargetBytes();
-    void setReclaimTargetBytes(uint64_t value);
-    int64_t getReclaimThresholdBytes();
-    void setReclaimThresholdBytes(int64_t value);
-
     enum class ThemeType
     {
         UNINITIALIZED = -1,
@@ -608,7 +593,7 @@ public:
     static const QString FINDER_EXT_BUNDLE_ID;
 
     template<typename T>
-    static void overridePreference(const QSettings &settings, QString &&name, T &value);
+    static void overridePreference(const QSettings& settings, const QString& name, T& value);
     static void overridePreferences(const QSettings &settings);
 
     //Public keys for valueChanged signals
@@ -617,6 +602,14 @@ public:
 
     //In this section, you need to move the keys to make them accessible from outside
     static const int minSyncStateChangeProcessingIntervalMs;
+
+    static inline auto MAX_PAY_LOAD_LOG_SIZE = std::size_t{10240};
+    static inline auto RECLAIM_AGE_THRESHOLD_MINUTES = 3 * 24 * 60;
+    static inline auto RECLAIM_BATCH_SIZE = std::size_t{4};
+    static inline auto RECLAIM_DELAY_SECONDS = std::uint64_t{30 * 60};
+    static inline auto RECLAIM_PERIOD_SECONDS = std::uint64_t{2 * 60 * 60};
+    static inline auto RECLAIM_TARGET_BYTES = std::uint64_t{1024 * 1024 * 1024};
+    static inline auto RECLAIM_THRESHOLD_BYTES = static_cast<int64_t>(10 * RECLAIM_TARGET_BYTES);
 
 protected:
     QRecursiveMutex mutex;

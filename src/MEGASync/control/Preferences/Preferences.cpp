@@ -328,14 +328,6 @@ const int Preferences::defaultCleanerDaysLimitValue = 30;
 const int Preferences::defaultFolderPermissions = 0;
 const int Preferences::defaultFilePermissions   = 0;
 
-constexpr auto MAX_PAY_LOAD_LOG_SIZE = std::size_t{10240};
-constexpr auto RECLAIM_AGE_THRESHOLD_MINUTES = 3 * 24 * 60;
-constexpr auto RECLAIM_BATCH_SIZE = std::size_t{4};
-constexpr auto RECLAIM_DELAY_SECONDS = std::uint64_t{30 * 60};
-constexpr auto RECLAIM_PERIOD_SECONDS = std::uint64_t{2 * 60 * 60};
-constexpr auto RECLAIM_TARGET_BYTES = std::uint64_t{1024 * 1024 * 1024};
-constexpr auto RECLAIM_THRESHOLD_BYTES = std::int64_t{10 * RECLAIM_TARGET_BYTES};
-
 #ifdef WIN32
 const int  Preferences::defaultProxyType            = Preferences::PROXY_TYPE_AUTO;
 #else
@@ -2934,10 +2926,10 @@ void Preferences::writeSyncSetting(std::shared_ptr<SyncSettings> syncSettings)
 }
 
 template<typename T>
-void Preferences::overridePreference(const QSettings &settings, QString &&name, T &value)
+void Preferences::overridePreference(const QSettings& settings, const QString& name, T& value)
 {
     T previous = value;
-    QVariant variant = settings.value(name, previous);
+    QVariant variant = settings.value(name, QVariant::fromValue(previous));
     value = variant.value<T>();
     if (previous != value)
     {
@@ -2946,7 +2938,9 @@ void Preferences::overridePreference(const QSettings &settings, QString &&name, 
 }
 
 template<>
-void Preferences::overridePreference(const QSettings &settings, QString &&name, std::chrono::milliseconds &value)
+void Preferences::overridePreference(const QSettings& settings,
+                                     const QString& name,
+                                     std::chrono::milliseconds& value)
 {
     const std::chrono::milliseconds previous{value};
     const long long previousMillis{static_cast<long long>(value.count())};
@@ -3010,6 +3004,28 @@ void Preferences::overridePreferences(const QSettings &settings)
     overridePreference(settings,
                        QString::fromUtf8("OQ_COOL_DOWN_AFTER_OFFER_INTERVAL_MS"),
                        Preferences::OQ_COOL_DOWN_AFTER_OFFER_INTERVAL_MS);
+
+    overridePreference(settings,
+                       Preferences::reclaimAgeThresholdMinutes,
+                       Preferences::RECLAIM_AGE_THRESHOLD_MINUTES);
+
+    overridePreference(settings, Preferences::reclaimBatchSize, Preferences::RECLAIM_BATCH_SIZE);
+
+    overridePreference(settings,
+                       Preferences::reclaimDelaySeconds,
+                       Preferences::RECLAIM_DELAY_SECONDS);
+
+    overridePreference(settings,
+                       Preferences::reclaimPeriodSeconds,
+                       Preferences::RECLAIM_PERIOD_SECONDS);
+
+    overridePreference(settings,
+                       Preferences::reclaimTargetBytes,
+                       Preferences::RECLAIM_TARGET_BYTES);
+
+    overridePreference(settings,
+                       Preferences::reclaimThresholdBytes,
+                       Preferences::RECLAIM_THRESHOLD_BYTES);
 }
 
 void Preferences::updateFullName()
@@ -3035,85 +3051,4 @@ void Preferences::setFullName(const QString& newFirstName, const QString& newLas
     {
         setLastName(newLastName);
     }
-}
-
-std::size_t Preferences::getMaxPayloadLogSize()
-{
-    return static_cast<std::size_t>(
-        getValueConcurrent<quint64>(maxPayloadLogSize,
-                                    static_cast<quint64>(MAX_PAY_LOAD_LOG_SIZE)));
-}
-
-void Preferences::setMaxPayloadLogSize(std::size_t value)
-{
-    setValueConcurrently(maxPayloadLogSize, static_cast<quint64>(value));
-}
-
-int Preferences::getReclaimAgeThresholdMinutes()
-{
-    return getValueConcurrent<int>(reclaimAgeThresholdMinutes, RECLAIM_AGE_THRESHOLD_MINUTES);
-}
-
-void Preferences::setReclaimAgeThresholdMinutes(int value)
-{
-    setValueConcurrently(reclaimAgeThresholdMinutes, value);
-}
-
-std::size_t Preferences::getReclaimBatchSize()
-{
-    return static_cast<std::size_t>(
-        getValueConcurrent<quint64>(reclaimBatchSize, static_cast<quint64>(RECLAIM_BATCH_SIZE)));
-}
-
-void Preferences::setReclaimBatchSize(std::size_t value)
-{
-    setValueConcurrently(reclaimBatchSize, static_cast<quint64>(value));
-}
-
-uint64_t Preferences::getReclaimDelaySeconds()
-{
-    return static_cast<uint64_t>(
-        getValueConcurrent<quint64>(reclaimDelaySeconds,
-                                    static_cast<quint64>(RECLAIM_DELAY_SECONDS)));
-}
-
-void Preferences::setReclaimDelaySeconds(uint64_t value)
-{
-    setValueConcurrently(reclaimDelaySeconds, static_cast<quint64>(value));
-}
-
-uint64_t Preferences::getReclaimPeriodSeconds()
-{
-    return static_cast<uint64_t>(
-        getValueConcurrent<quint64>(reclaimPeriodSeconds,
-                                    static_cast<quint64>(RECLAIM_PERIOD_SECONDS)));
-}
-
-void Preferences::setReclaimPeriodSeconds(uint64_t value)
-{
-    setValueConcurrently(reclaimPeriodSeconds, static_cast<quint64>(value));
-}
-
-uint64_t Preferences::getReclaimTargetBytes()
-{
-    return static_cast<uint64_t>(
-        getValueConcurrent<quint64>(reclaimTargetBytes,
-                                    static_cast<quint64>(RECLAIM_TARGET_BYTES)));
-}
-
-void Preferences::setReclaimTargetBytes(uint64_t value)
-{
-    setValueConcurrently(reclaimTargetBytes, static_cast<quint64>(value));
-}
-
-int64_t Preferences::getReclaimThresholdBytes()
-{
-    return static_cast<int64_t>(
-        getValueConcurrent<qint64>(reclaimThresholdBytes,
-                                   static_cast<qint64>(RECLAIM_THRESHOLD_BYTES)));
-}
-
-void Preferences::setReclaimThresholdBytes(int64_t value)
-{
-    setValueConcurrently(reclaimThresholdBytes, static_cast<qint64>(value));
 }
