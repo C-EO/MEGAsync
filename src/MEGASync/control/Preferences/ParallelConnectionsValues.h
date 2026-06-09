@@ -14,16 +14,6 @@ public:
     {
         return 100;
     }
-
-    static int getDefaultValue()
-    {
-        return 8;
-    }
-
-    static bool contains(int value)
-    {
-        return value >= getMinValue() && value <= getMaxValue();
-    }
 };
 
 #endif // PARALLELCONNECTIONSVALUES_H
