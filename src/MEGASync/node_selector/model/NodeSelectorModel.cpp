@@ -3108,7 +3108,7 @@ void NodeSelectorModel::loadLevelFinished()
         if (mPendingRootIndex.isValid())
         {
             executeRemoveExtraSpaceLogic(mCurrentRootIndex);
-            mCurrentRootIndex = mPendingRootIndex;
+            commitCurrentRootIndex(mPendingRootIndex);
             mPendingRootIndex = QModelIndex();
             emit currentRootIndexChanged();
         }
@@ -3166,7 +3166,7 @@ void NodeSelectorModel::setCurrentRootIndex(const QModelIndex& index)
     // commit the new root immediately, so breadcrumb/header/columns update even before the new
     // children load.
     executeRemoveExtraSpaceLogic(mCurrentRootIndex);
-    mCurrentRootIndex = newRootIndex;
+    commitCurrentRootIndex(newRootIndex);
     emit currentRootIndexChanged();
 
     // Adding the phantom row needs the new root's children loaded to know where to insert it.
@@ -3185,6 +3185,12 @@ void NodeSelectorModel::setCurrentRootIndex(const QModelIndex& index)
 
 QModelIndex NodeSelectorModel::getCurrentRootIndex() const
 {
+    return mCurrentRootIndex;
+}
+
+QModelIndex NodeSelectorModel::commitCurrentRootIndex(const QModelIndex& index)
+{
+    mCurrentRootIndex = index.isValid() ? index : getTopRootIndex();
     return mCurrentRootIndex;
 }
 

@@ -546,6 +546,12 @@ private:
     void executeAddExtraSpaceLogic(const QModelIndex& currentIndex);
     bool isExtraSpaceIndex(const QModelIndex& index) const;
 
+    // Single guarded mutation point for the current root. An invalid index is coerced to the top
+    // root index, so the current root never becomes QModelIndex(-1,-1) while a valid top root
+    // exists. Returns the value actually stored. Callers remain responsible for emitting
+    // currentRootIndexChanged().
+    QModelIndex commitCurrentRootIndex(const QModelIndex& index);
+
     QPair<QIcon, QString> getFolderIcon(NodeSelectorModelItem* item) const;
     bool fetchMoreRecursively(const QModelIndex& parentIndex);
 

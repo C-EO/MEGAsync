@@ -944,7 +944,8 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
 
         makeViewConnections();
 
-        setRootIndex(mModel->hasTopRootIndex() ? mProxyModel->getTopRootIndex() : QModelIndex());
+        // The guard inside setRootIndex coerces an invalid index to the top root when one exists.
+        setRootIndex(QModelIndex());
 
         setStyleSheet(styleSheet());
 
@@ -962,7 +963,12 @@ void NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot(const QModelIn
         return;
     }
 
-    const auto currentRoot = ui->tMegaFolders->rootIndex();
+    // Use the model's committed root (mapped to the proxy), not ui->tMegaFolders->rootIndex():
+    // while a move/delete is in progress the loading scene detaches the model from the view
+    // (setModel(nullptr)), so the view's rootIndex() is transiently invalid and this handler
+    // would otherwise bail, leaving the current root dangling when the folder you are inside is
+    // moved to rubbish. getCurrentRootIndex() is loading-scene independent.
+    const auto currentRoot = getCurrentRootIndex();
     if (!currentRoot.isValid())
     {
         return;
@@ -984,9 +990,8 @@ void NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot(const QModelIn
     }
 
     const auto parentIndex = indexToRemove.parent();
-    setRootIndex(parentIndex.isValid() ?
-                     parentIndex :
-                     (mModel->hasTopRootIndex() ? mProxyModel->getTopRootIndex() : QModelIndex()));
+    // An invalid parent (top-level folder) is coerced to the top root by setRootIndex's guard.
+    setRootIndex(parentIndex);
 }
 
 MegaHandle NodeSelectorTreeViewWidget::getHandleByIndex(const QModelIndex& idx) const
@@ -1465,13 +1470,21 @@ void NodeSelectorTreeViewWidget::notifyButtonsStateChanged()
 
 void NodeSelectorTreeViewWidget::setRootIndex(const QModelIndex& proxy_idx)
 {
+    // Guard: never root the view at an invalid index while a valid top root exists; coerce to it
+    // so the view and the model stay consistent (mirrors NodeSelectorModel::commitCurrentRootIndex,
+    // which applies the same coercion on the model side).
+    const QModelIndex effectiveProxyIdx = (!proxy_idx.isValid() && mModel->hasTopRootIndex()) ?
+                                              mProxyModel->getTopRootIndex() :
+                                              proxy_idx;
+
     QModelIndex node_column_idx;
 
     // In case the idx is coming from a potentially hidden column, we always take the NODE column
     // As it is the only one that have childrens
-    if (proxy_idx.isValid() && proxy_idx.model() == mProxyModel.get())
+    if (effectiveProxyIdx.isValid() && effectiveProxyIdx.model() == mProxyModel.get())
     {
-        node_column_idx = proxy_idx.sibling(proxy_idx.row(), NodeSelectorModel::Column::NODE);
+        node_column_idx =
+            effectiveProxyIdx.sibling(effectiveProxyIdx.row(), NodeSelectorModel::Column::NODE);
     }
 
     auto modelRootIndex(mProxyModel->mapToSource(node_column_idx));
