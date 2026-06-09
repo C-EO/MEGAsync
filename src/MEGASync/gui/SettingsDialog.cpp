@@ -1,6 +1,5 @@
 #include "SettingsDialog.h"
 
-#include "AccountDetailsDialog.h"
 #include "AccountDetailsManager.h"
 #include "BugReportDialog.h"
 #include "ChangePasswordComponent.h"
@@ -17,7 +16,6 @@
 #include "qml/AccountStateQuickWidget.h"
 #include "StatsEventHandler.h"
 #include "ThemeManager.h"
-#include "TransferQuota.h"
 #include "ui_SettingsDialog.h"
 #include "Utilities.h"
 

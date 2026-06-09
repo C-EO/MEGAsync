@@ -778,7 +778,7 @@ background-color: transparent;
             </size>
            </property>
            <property name="normal_off" stdset="0">
-            <string notr="true">icon-secondary</string>
+            <string notr="true">icon-primary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
@@ -892,7 +892,7 @@ background-color: transparent;
             </size>
            </property>
            <property name="normal_off" stdset="0">
-            <string notr="true">icon-secondary</string>
+            <string notr="true">icon-primary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
@@ -1006,7 +1006,7 @@ background-color: transparent;
             </size>
            </property>
            <property name="normal_off" stdset="0">
-            <string notr="true">icon-secondary</string>
+            <string notr="true">icon-primary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
@@ -1120,7 +1120,7 @@ background-color: transparent;
             </size>
            </property>
            <property name="normal_off" stdset="0">
-            <string notr="true">icon-secondary</string>
+            <string notr="true">icon-primary</string>
            </property>
            <property name="normal_on" stdset="0">
             <string notr="true">icon-primary</string>
@@ -1211,7 +1211,7 @@ background-color: transparent;
            </size>
           </property>
           <property name="normal_off" stdset="0">
-           <string notr="true">icon-secondary</string>
+           <string notr="true">icon-primary</string>
           </property>
           <property name="normal_on" stdset="0">
            <string notr="true">icon-primary</string>

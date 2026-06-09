@@ -11,6 +11,7 @@
 #include <QLineEdit>
 #include <QtConcurrent/QtConcurrent>
 #include <QToolButton>
+#include <QVariant>
 
 #include <utility>
 
@@ -24,27 +25,18 @@ static const QString JSON_THEMED_COLOR_TOKEN_FILE =
 static const QString CSS_STANDARD_WIDGETS_COMPONENTS_FILE =
     QLatin1String(":/style/WidgetsComponentsStyleSheetsTokens.css");
 
+// Dynamic property where each widget keeps its pristine (untouched) stylesheet,
+// i.e. the one defined in the .ui before the standard-components block is prepended.
+// We must always re-tokenize from this base: widget->styleSheet() returns the live
+// sheet, which already contains the prepended standard block, so reading it back as
+// input would prepend another copy on every theme change (unbounded growth).
+static const char* BASE_STYLESHEET_PROPERTY = "tokenizerBaseStyleSheet";
+
 enum COLOR_TOKEN_CAPTURE_INDEX
 {
     COLOR_WHOLE_MATCH,
     COLOR_HEX_COLOR_VALUE,
     COLOR_DESIGN_TOKEN_NAME
-};
-
-enum ICON_TOKEN_CAPTURE_INDEX
-{
-    ICON_TOKEN_WHOLE_MATCH,
-    ICON_TOKEN_TARGET_PROPERTY,
-    ICON_TOKEN_TARGET_ELEMENT_ID,
-    ICON_TOKEN_TARGET_MODE,
-    ICON_TOKEN_TARGET_STATE,
-    ICON_TOKEN_DESIGN_TOKEN_NAME
-};
-
-enum REPLACE_THEME_TOKEN_CAPTURE_INDEX
-{
-    REPLACE_THEME_TOKEN_WHOLE_MATCH,
-    REPLACE_THEME_TOKEN_THEME
 };
 }
 
@@ -273,7 +265,17 @@ void TokenParserWidgetManager::applyTheme(QWidget* widget, bool prependStandardC
 
     auto currentTheme = ThemeManager::instance()->getSelectedColorSchemaString();
 
-    QString widgetStyleSheet = widget->styleSheet();
+    QVariant baseStyleSheet = widget->property(BASE_STYLESHEET_PROPERTY);
+    QString widgetStyleSheet;
+    if (baseStyleSheet.isValid())
+    {
+        widgetStyleSheet = baseStyleSheet.toString();
+    }
+    else
+    {
+        widgetStyleSheet = widget->styleSheet();
+        widget->setProperty(BASE_STYLESHEET_PROPERTY, widgetStyleSheet);
+    }
 
     if (!mColorThemedTokens.contains(currentTheme))
     {
