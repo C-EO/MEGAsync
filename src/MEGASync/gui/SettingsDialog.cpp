@@ -14,6 +14,7 @@
 #include "PowerOptions.h"
 #include "ProxySettings.h"
 #include "qml/AccountStateQuickWidget.h"
+#include "RequestListenerManager.h"
 #include "StatsEventHandler.h"
 #include "ThemeManager.h"
 #include "ui_SettingsDialog.h"
@@ -28,6 +29,7 @@
 #include <QMouseEvent>
 #include <QRect>
 #include <QShortcut>
+#include <QSignalBlocker>
 #include <QtConcurrent/QtConcurrent>
 #include <QTranslator>
 #include <QUrl>
@@ -1633,9 +1635,41 @@ void SettingsDialog::updateNetworkTab()
                                                        QString::fromUtf8("0"));
     mUi->eDownloadLimit->setEnabled(downloadLimitKB > 0);
 
-    // Connections
-    mUi->eMaxDownloadConnections->setValue(mPreferences->parallelDownloadConnections());
-    mUi->eMaxUploadConnections->setValue(mPreferences->parallelUploadConnections());
+    // Connections are owned by the SDK now (persisted per base path). Fetch the
+    // live values asynchronously so the dialog is not blocked. The spin boxes are
+    // disabled until the reply lands, so the user never sees or edits a stale
+    // placeholder value (and cannot write back a misleading default). Signals are
+    // blocked while applying a reply so seeding does not trigger a write to the
+    // SDK, and the box is re-enabled on both success and error.
+    mUi->eMaxUploadConnections->setEnabled(false);
+    mUi->eMaxDownloadConnections->setEnabled(false);
+
+    auto uploadConnListener = RequestListenerManager::instance().registerAndGetCustomFinishListener(
+        this,
+        [this](MegaRequest* request, MegaError* e)
+        {
+            if (e->getErrorCode() == MegaError::API_OK)
+            {
+                const QSignalBlocker blocker(mUi->eMaxUploadConnections);
+                mUi->eMaxUploadConnections->setValue(static_cast<int>(request->getNumber()));
+            }
+            mUi->eMaxUploadConnections->setEnabled(true);
+        });
+    mMegaApi->getMaxUploadConnections(uploadConnListener.get());
+
+    auto downloadConnListener =
+        RequestListenerManager::instance().registerAndGetCustomFinishListener(
+            this,
+            [this](MegaRequest* request, MegaError* e)
+            {
+                if (e->getErrorCode() == MegaError::API_OK)
+                {
+                    const QSignalBlocker blocker(mUi->eMaxDownloadConnections);
+                    mUi->eMaxDownloadConnections->setValue(static_cast<int>(request->getNumber()));
+                }
+                mUi->eMaxDownloadConnections->setEnabled(true);
+            });
+    mMegaApi->getMaxDownloadConnections(downloadConnListener.get());
 
     // Proxy
     switch (mPreferences->proxyType())
@@ -1736,8 +1770,7 @@ void SettingsDialog::onMaxDownloadConnectionsChanged(int value)
     if (mLoadingSettings)
         return;
 
-    mPreferences->setParallelDownloadConnections(value);
-    mApp->setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, value);
+    mMegaApi->setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, value);
 }
 
 void SettingsDialog::onMaxUploadConnectionsChanged(int value)
@@ -1745,8 +1778,7 @@ void SettingsDialog::onMaxUploadConnectionsChanged(int value)
     if (mLoadingSettings)
         return;
 
-    mPreferences->setParallelUploadConnections(value);
-    mApp->setMaxConnections(MegaTransfer::TYPE_UPLOAD, value);
+    mMegaApi->setMaxConnections(MegaTransfer::TYPE_UPLOAD, value);
 }
 
 void SettingsDialog::setShortCutsForToolBarItems()

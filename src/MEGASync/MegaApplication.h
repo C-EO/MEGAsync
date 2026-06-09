@@ -138,7 +138,6 @@ public:
     void showNotificationMessage(QString message, QString title = MegaSyncApp->getMEGAString());
     void setMaxUploadSpeed(int limit);
     void setMaxDownloadSpeed(int limit);
-    void setMaxConnections(int direction, int connections);
     void startUpdateTask();
     void stopUpdateTask();
     void applyProxySettings();

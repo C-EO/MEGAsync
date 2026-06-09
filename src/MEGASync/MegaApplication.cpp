@@ -35,7 +35,6 @@
 #include "offer/OfferComponent.h"
 #include "Onboarding.h"
 #include "OverQuotaDialog.h"
-#include "ParallelConnectionsValues.h"
 #include "Platform.h"
 #include "PlatformStrings.h"
 #include "PowerOptions.h"
@@ -677,9 +676,6 @@ void MegaApplication::initialize()
     megaApi->setLanguage(currentLanguageCode.toUtf8().constData());
     megaApiFolders->setLanguage(currentLanguageCode.toUtf8().constData());
 
-    // In case the user has logout and closed the app, we set the default values
-    setMaxConnections(MegaTransfer::TYPE_UPLOAD, preferences->parallelUploadConnections());
-    setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, preferences->parallelDownloadConnections());
     megaApi->setDefaultFilePermissions(preferences->filePermissionsValue());
     megaApi->setDefaultFolderPermissions(preferences->folderPermissionsValue());
 
@@ -1540,8 +1536,6 @@ if (!infoDialog)
     mThreadPool->push([=](){
     setMaxUploadSpeed(preferences->uploadLimitKB());
     setMaxDownloadSpeed(preferences->downloadLimitKB());
-    setMaxConnections(MegaTransfer::TYPE_UPLOAD,   preferences->parallelUploadConnections());
-    setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, preferences->parallelDownloadConnections());
 
     megaApi->setDefaultFilePermissions(preferences->filePermissionsValue());
     megaApi->setDefaultFolderPermissions(preferences->folderPermissionsValue());
@@ -3663,20 +3657,6 @@ void MegaApplication::setMaxDownloadSpeed(int limit)
     else
     {
         megaApi->setMaxDownloadSpeed(limit * 1024);
-    }
-}
-
-void MegaApplication::setMaxConnections(int direction, int connections)
-{
-    if (appfinished)
-    {
-        return;
-    }
-
-    if (connections >= ParallelConnectionsValues::getMinValue() &&
-        connections <= ParallelConnectionsValues::getMaxValue())
-    {
-        megaApi->setMaxConnections(direction, connections);
     }
 }
 

@@ -243,10 +243,7 @@ public:
     int downloadLimitKB();
     void setUploadLimitKB(int value);
     void setDownloadLimitKB(int value);
-    int parallelUploadConnections();
-    int parallelDownloadConnections();
-    void setParallelUploadConnections(int value);
-    void setParallelDownloadConnections(int value);
+
     bool cleanerDaysLimit();
     void setCleanerDaysLimit(bool value);
     int cleanerDaysLimitValue();
@@ -709,8 +706,7 @@ protected:
     static const QString updateAutomaticallyKey;
     static const QString uploadLimitKBKey;
     static const QString downloadLimitKBKey;
-    static const QString parallelUploadConnectionsKey;
-    static const QString parallelDownloadConnectionsKey;
+
     static const QString cleanerDaysLimitKey;
     static const QString cleanerDaysLimitValueKey;
     static const QString folderPermissionsKey;

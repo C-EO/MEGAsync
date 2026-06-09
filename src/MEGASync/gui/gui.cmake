@@ -45,7 +45,6 @@ set(DESKTOP_APP_GUI_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/LoadingView/ViewLoadingMessage.h
     ${CMAKE_CURRENT_LIST_DIR}/WaitingSpinnerWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/ProxySettings.h
-    ${CMAKE_CURRENT_LIST_DIR}/BandwidthSettings.h
     ${CMAKE_CURRENT_LIST_DIR}/SwitchButton.h
     ${CMAKE_CURRENT_LIST_DIR}/GuiUtilities.h
     ${CMAKE_CURRENT_LIST_DIR}/CancelConfirmWidget.h
@@ -190,7 +189,6 @@ set(DESKTOP_APP_GUI_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/LoadingView/ViewLoadingMessage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/WaitingSpinnerWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ProxySettings.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/BandwidthSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/SwitchButton.cpp
     ${CMAKE_CURRENT_LIST_DIR}/GuiUtilities.cpp
     ${CMAKE_CURRENT_LIST_DIR}/CancelConfirmWidget.cpp
@@ -416,7 +414,6 @@ set (DESKTOP_APP_GUI_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/ui/AccountDetailsDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/BugReportDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/RemoveSyncConfirmationDialog.ui
-    ${CMAKE_CURRENT_LIST_DIR}/ui/BandwidthSettings.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/DownloadFromMegaDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/UploadToMegaDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/PermissionsDialog.ui
