@@ -3,6 +3,7 @@
 
 #include <QColor>
 #include <QFileDialog>
+#include <QHash>
 #include <QMap>
 #include <QObject>
 #include <QPointer>
@@ -36,14 +37,12 @@ private:
     void onThemeChanged();
     void onUpdateRequested();
     void applyTheme(QWidget* widget, bool prependStandardComponents = true);
-    void replaceIconColorTokens(QWidget* widget, QString& styleSheet);
     void replaceColorTokens(QString& styleSheet, const ColorTokens& colorTokens);
     void removeFrameOnDialogCombos(QWidget* widget);
     void tokenizeChildStyleSheets(QWidget* widget);
 
     QMap<QString, ColorTokens> mColorThemedTokens;
     QMap<QString, QString> mThemedStandardComponentsStyleSheet;
-    QMap<QString, QString> mWidgetsStyleSheets;
     QSet<QWidget*> mRegisteredWidgets;
 };
 

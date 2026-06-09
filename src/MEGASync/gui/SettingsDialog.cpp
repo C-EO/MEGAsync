@@ -1,6 +1,5 @@
 #include "SettingsDialog.h"
 
-#include "AccountDetailsDialog.h"
 #include "AccountDetailsManager.h"
 #include "BugReportDialog.h"
 #include "ChangePasswordComponent.h"
@@ -17,7 +16,6 @@
 #include "qml/AccountStateQuickWidget.h"
 #include "StatsEventHandler.h"
 #include "ThemeManager.h"
-#include "TransferQuota.h"
 #include "ui_SettingsDialog.h"
 #include "Utilities.h"
 
@@ -1017,14 +1015,6 @@ void SettingsDialog::on_bMyAccount_clicked()
     MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
         AppStatsEvents::EventType::SETTINGS_MY_ACCOUNT_CLICKED);
     Utilities::openUrl(ServiceUrls::getAccountUrl());
-}
-
-void SettingsDialog::onStorageDetailsClicked()
-{
-    MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
-        AppStatsEvents::EventType::SETTINGS_DETAILS_CLICKED);
-    auto accountDetailsDialog = new AccountDetailsDialog(this);
-    DialogOpener::showNonModalDialog<AccountDetailsDialog>(accountDetailsDialog);
 }
 
 void SettingsDialog::on_bLogout_clicked()
