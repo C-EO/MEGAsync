@@ -173,10 +173,6 @@ private:
     mega::MegaApi* mMegaApi;
     bool mProxyOnly;
     int mLoadingSettings;
-    // Set when the user edits a connections spin box before the async load
-    // reply arrives, so a late reply does not overwrite the user's value.
-    bool mUploadConnectionsUserEdited = false;
-    bool mDownloadConnectionsUserEdited = false;
     ThreadPool* mThreadPool;
     QStringList mLanguageCodes;
     QFutureWatcher<long long> mCacheSizeWatcher;

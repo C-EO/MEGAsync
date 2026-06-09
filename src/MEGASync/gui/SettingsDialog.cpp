@@ -1646,22 +1646,24 @@ void SettingsDialog::updateNetworkTab()
     mUi->eDownloadLimit->setEnabled(downloadLimitKB > 0);
 
     // Connections are owned by the SDK now (persisted per base path). Fetch the
-    // live values asynchronously so the dialog is not blocked. The spin boxes
-    // stay interactive meanwhile; if the user edits one before the reply lands,
-    // the reply is ignored so it cannot overwrite the user's value. Signals are
-    // blocked while applying a reply so seeding does not write back to the SDK.
-    mUploadConnectionsUserEdited = false;
-    mDownloadConnectionsUserEdited = false;
+    // live values asynchronously so the dialog is not blocked. The spin boxes are
+    // disabled until the reply lands, so the user never sees or edits a stale
+    // placeholder value (and cannot write back a misleading default). Signals are
+    // blocked while applying a reply so seeding does not trigger a write to the
+    // SDK, and the box is re-enabled on both success and error.
+    mUi->eMaxUploadConnections->setEnabled(false);
+    mUi->eMaxDownloadConnections->setEnabled(false);
 
     auto uploadConnListener = RequestListenerManager::instance().registerAndGetCustomFinishListener(
         this,
         [this](MegaRequest* request, MegaError* e)
         {
-            if (e->getErrorCode() == MegaError::API_OK && !mUploadConnectionsUserEdited)
+            if (e->getErrorCode() == MegaError::API_OK)
             {
                 const QSignalBlocker blocker(mUi->eMaxUploadConnections);
                 mUi->eMaxUploadConnections->setValue(static_cast<int>(request->getNumber()));
             }
+            mUi->eMaxUploadConnections->setEnabled(true);
         });
     mMegaApi->getMaxUploadConnections(uploadConnListener.get());
 
@@ -1670,11 +1672,12 @@ void SettingsDialog::updateNetworkTab()
             this,
             [this](MegaRequest* request, MegaError* e)
             {
-                if (e->getErrorCode() == MegaError::API_OK && !mDownloadConnectionsUserEdited)
+                if (e->getErrorCode() == MegaError::API_OK)
                 {
                     const QSignalBlocker blocker(mUi->eMaxDownloadConnections);
                     mUi->eMaxDownloadConnections->setValue(static_cast<int>(request->getNumber()));
                 }
+                mUi->eMaxDownloadConnections->setEnabled(true);
             });
     mMegaApi->getMaxDownloadConnections(downloadConnListener.get());
 
@@ -1777,7 +1780,6 @@ void SettingsDialog::onMaxDownloadConnectionsChanged(int value)
     if (mLoadingSettings)
         return;
 
-    mDownloadConnectionsUserEdited = true;
     mMegaApi->setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, value);
 }
 
@@ -1786,7 +1788,6 @@ void SettingsDialog::onMaxUploadConnectionsChanged(int value)
     if (mLoadingSettings)
         return;
 
-    mUploadConnectionsUserEdited = true;
     mMegaApi->setMaxConnections(MegaTransfer::TYPE_UPLOAD, value);
 }
 
