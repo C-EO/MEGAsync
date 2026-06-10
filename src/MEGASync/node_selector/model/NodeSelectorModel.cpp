@@ -6,6 +6,7 @@
 #include "MegaApplication.h"
 #include "MegaNodeNames.h"
 #include "MergeMEGAFolders.h"
+#include "MyBackupsHandle.h"
 #include "MyChatFilesFolder.h"
 #include "NodeSelectorLabelColors.h"
 #include "NodeSelectorModelSpecialised.h"
