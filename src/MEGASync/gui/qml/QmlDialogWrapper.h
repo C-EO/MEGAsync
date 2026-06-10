@@ -392,6 +392,9 @@ public:
                     mWindow->readyToBeShow();
                 });
 
+        // DialogOpener checks this flag on the wrapper widget (the object it
+        // handles), so it must be set here and not only on the inner window.
+        QmlDialogWrapperUtilities::setShowWhenCreated(this, true);
         QmlDialogWrapperUtilities::setShowWhenCreated(mWindow, true);
     }
 
