@@ -18,8 +18,14 @@ FocusScope {
                             + digit4.text + digit5.text + digit6.text
     property bool hasError: false
     property bool hasAllDigitsFilled: (key.length === 6)
+    property bool waitingForRecoveryUrl: false
 
     signal allDigitsFilled
+
+    function openRecoveryUrl() {
+        var urlToOpen = serviceUrlsAccess.getRecoveryUrl();
+        Qt.openUrlExternally(urlToOpen);
+    }
 
     function pastePin() {
         const regex = RegexExpressions.allDigits2FA;
@@ -158,11 +164,9 @@ FocusScope {
             text: qsTranslate("OnboardingStrings", "Problem with two-factor authentication?")
             onClicked: {
                 if (serviceUrlsAccess.isDataReady()) {
-                    serviceUrlsAccess.dataReady.disconnect(helpButtonItem.onClicked);
-                    var urlToOpen = serviceUrlsAccess.getRecoveryUrl();
-                    Qt.openUrlExternally(urlToOpen);
+                    root.openRecoveryUrl();
                 } else {
-                    serviceUrlsAccess.dataReady.connect(helpButtonItem.onClicked);
+                    root.waitingForRecoveryUrl = true;
                     serviceUrlsAccess.isDataReady(true);
                 }
             }
@@ -181,6 +185,17 @@ FocusScope {
             sequence: [ StandardKey.Paste ]
             onActivated: {
                 pastePin();
+            }
+        }
+
+        Connections {
+            target: serviceUrlsAccess
+
+            function onDataReady() {
+                if (root.waitingForRecoveryUrl) {
+                    root.waitingForRecoveryUrl = false;
+                    root.openRecoveryUrl();
+                }
             }
         }
 

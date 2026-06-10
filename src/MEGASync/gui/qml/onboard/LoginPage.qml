@@ -24,11 +24,18 @@ LoginPageForm {
     readonly property string stateFetchNodesFinished: "FETCH_NODES_FINISHED"
     readonly property string stateFetchNodesFinishedOnboarding: "FETCH_NODES_FINISHED_ONBOARDING"
 
+    property bool waitingForRecoveryUrl: false
+
     function resetLoginControllerStatus() {
         loginControllerAccess.emailError = false;
         loginControllerAccess.emailErrorMsg = "";
         loginControllerAccess.passwordError = false;
         loginControllerAccess.passwordErrorMsg = "";
+    }
+
+    function openRecoveryUrl() {
+        var urlToOpen = serviceUrlsAccess.getRecoveryUrl(email.valid() ? email.text : "");
+        Qt.openUrlExternally(urlToOpen);
     }
 
     state: {
@@ -191,11 +198,9 @@ LoginPageForm {
 
     helpButton.onClicked: {
         if (serviceUrlsAccess.isDataReady()) {
-            serviceUrlsAccess.dataReady.disconnect(helpButton.onClicked);
-            var urlToOpen = serviceUrlsAccess.getRecoveryUrl(email.valid() ? email.text : "");
-            Qt.openUrlExternally(urlToOpen);
+            openRecoveryUrl();
         } else {
-            serviceUrlsAccess.dataReady.connect(helpButton.onClicked);
+            waitingForRecoveryUrl = true;
             serviceUrlsAccess.isDataReady(true);
         }
     }
@@ -206,6 +211,17 @@ LoginPageForm {
 
     Component.onCompleted: {
         resetLoginControllerStatus();
+    }
+
+    Connections {
+        target: serviceUrlsAccess
+
+        function onDataReady() {
+            if (root.waitingForRecoveryUrl) {
+                root.waitingForRecoveryUrl = false;
+                root.openRecoveryUrl();
+            }
+        }
     }
 
     Connections {
