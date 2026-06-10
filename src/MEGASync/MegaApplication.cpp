@@ -69,7 +69,6 @@
 #include <QNetworkProxy>
 #include <QScreen>
 #include <QSettings>
-#include <QToolTip>
 #include <QTranslator>
 
 #include <cassert>
@@ -204,13 +203,6 @@ MegaApplication::MegaApplication(int& argc, char** argv):
 #endif
 
     setQuitOnLastWindowClosed(false);
-
-    // For some reason this doesn't work on Windows (done in stylesheet above)
-    // TODO: re-try with Qt > 5.12.15
-    QPalette palette = QToolTip::palette();
-    palette.setColor(QPalette::ToolTipBase, QColor(0x333333));
-    palette.setColor(QPalette::ToolTipText, QColor(0xFAFAFA));
-    QToolTip::setPalette(palette);
 
     appPath = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
     appDirPath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
