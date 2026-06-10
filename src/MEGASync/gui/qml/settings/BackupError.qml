@@ -9,12 +9,14 @@ import components.texts 1.0
 import components.buttons 1.0
 import components.menus 1.0
 
-Item {
+ColumnLayout {
     id: root
 
+    property var settingsAccess
     property int errorId
     property string errorMessage
-    property string backupLocalFolder
+    property string localFolder
+    property int itemIndex
 
     readonly property int issueHandlerSpacing: 4
     readonly property int topErrorLabelMargin: 8
@@ -46,9 +48,18 @@ Item {
     readonly property int k_FAILURE_ACCESSING_PERSISTENT_STORAGE: 43
     readonly property int k_MISMATCH_OF_ROOT_FSID: 44
 
-    anchors.fill: parent
-    implicitHeight: errorInfo.implicitHeight
-    implicitWidth: errorInfo.implicitWidth
+    // Exposed as a plain property (not a binding) so external items can size
+    // themselves from this value without binding to implicitHeight directly.
+    // Binding to ColumnLayout.implicitHeight from outside the component causes
+    // Qt 5.15's layout engine to emit implicitHeightChanged during its own
+    // evaluation, which Qt detects as a binding loop.
+    property real contentHeight: 0
+    Component.onCompleted: contentHeight = implicitHeight
+    onImplicitHeightChanged: contentHeight = implicitHeight
+
+    width: parent ? parent.width : implicitWidth
+    height: implicitHeight
+    spacing: issueHandlerSpacing
 
     function resetActionButtonsVisibility() {
         actionRetry.visible = false;
@@ -95,192 +106,185 @@ Item {
         }
     ]
 
-    ColumnLayout {
-        id: errorInfo
+    Text {
+        id: errorLabel
 
-        width: parent.width
-        spacing: root.issueHandlerSpacing
+        Layout.topMargin: root.topErrorLabelMargin
+        Layout.rightMargin: root.errorLabelMargin
+        Layout.leftMargin: root.errorLabelMargin
+        Layout.bottomMargin: root.issueHandlerSpacing
+        Layout.fillWidth: true
+        text: root.errorMessage
+        font.pixelSize: root.issueLabelPixelSize
+        font.weight: Font.Normal
+        elide: Text.ElideRight
+        color: ColorTheme.textPrimary
+    }
 
-        Text {
-            id: errorLabel
+    RowLayout {
+        id: buttonList
 
-            Layout.topMargin: root.topErrorLabelMargin
-            Layout.rightMargin: root.errorLabelMargin
-            Layout.leftMargin: root.errorLabelMargin
-            Layout.bottomMargin: root.issueHandlerSpacing
-            Layout.fillWidth: true
-            text: SettingsStrings.backupErrorFormat.arg("(" + root.errorId + ") " + root.errorMessage)
-            font.pixelSize: root.issueLabelPixelSize
-            font.weight: Font.Normal
-            elide: Text.ElideRight
-            color: ColorTheme.textPrimary
+        spacing: root.buttonActionSpacing
+        Layout.bottomMargin: root.errorLabelMargin - buttonFocusBorder
+        Layout.rightMargin: root.errorLabelMargin
+        Layout.leftMargin: Layout.bottomMargin
+
+        PrimaryButton {
+            id: actionRetry
+
+            visible: false
+            sizes: SmallSizes {
+                verticalPadding: root.actionButtonVerticalPadding
+            }
+            icons.source: Images.rotate_cw_small_thin_outline
+            icons.position: Icon.Position.LEFT
+            text: SettingsStrings.solveIssueButtonRetry
+            checkable: true
+
+            Timer {
+                id: timerActionRetry
+
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.resume(itemIndex);
+
+                        actionRetry.checked = true;
+                        actionRetry.buttonCursorShape = Qt.ArrowCursor
+                        actionRetry.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                        actionRetry.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                        actionRetry.leftIconRotation.start();
+                    }
+                    else {
+                        actionRetry.checked = false;
+                        actionRetry.buttonCursorShape = Qt.PointingHandCursor
+                    }
+                }
+            }
+
+            onClicked: {
+                if (!timerActionRetry.running) {
+                    timerActionRetry.start();
+                }
+            }
         }
 
-        RowLayout {
-            id: buttonList
+        PrimaryButton {
+            id: actionGetMoreStorage
 
-            spacing: root.buttonActionSpacing
-            Layout.bottomMargin: root.errorLabelMargin - buttonFocusBorder
-            Layout.rightMargin: root.errorLabelMargin
-            Layout.leftMargin: Layout.bottomMargin
+            visible: false
+            sizes: SmallSizes {
+                verticalPadding: root.actionButtonVerticalPadding
+            }
+            text: SettingsStrings.solveIssueGetMoreStorage
+            checkable: true
 
-            PrimaryButton {
-                id: actionRetry
+            Timer {
+                id: timerActionGetMoreStorage
 
-                visible: false
-                sizes: SmallSizes {
-                    verticalPadding: root.actionButtonVerticalPadding
-                }
-                icons.source: Images.rotate_cw_small_thin_outline
-                icons.position: Icon.Position.LEFT
-                text: SettingsStrings.solveIssueButtonRetry
-                checkable: true
+                interval: root.timeToResetActionButtonState
+                repeat: false
 
-                Timer {
-                    id: timerActionRetry
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.openOverQuotaDialog();
 
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onRunningChanged: {
-                        if (running) {
-                            backupSettings.resumeBackup(index);
-
-                            actionRetry.checked = true;
-                            actionRetry.buttonCursorShape = Qt.ArrowCursor
-                            actionRetry.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
-                            actionRetry.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
-                            actionRetry.leftIconRotation.start();
-                        }
-                        else {
-                            actionRetry.checked = false;
-                            actionRetry.buttonCursorShape = Qt.PointingHandCursor
-                        }
+                        actionGetMoreStorage.checked = true;
+                        actionGetMoreStorage.buttonCursorShape = Qt.ArrowCursor
                     }
-                }
-
-                onClicked: {
-                    if (!timerActionRetry.running) {
-                        timerActionRetry.start();
+                    else {
+                        actionGetMoreStorage.checked = false;
+                        actionGetMoreStorage.buttonCursorShape = Qt.PointingHandCursor
                     }
                 }
             }
 
-            PrimaryButton {
-                id: actionGetMoreStorage
-
-                visible: false
-                sizes: SmallSizes {
-                    verticalPadding: root.actionButtonVerticalPadding
+            onClicked: {
+                if (!timerActionGetMoreStorage.running) {
+                    timerActionGetMoreStorage.start();
                 }
-                text: SettingsStrings.solveIssueGetMoreStorage
-                checkable: true
+            }
+        }
 
-                Timer {
-                    id: timerActionGetMoreStorage
+        PrimaryButton {
+            id: actionEnableBackup
 
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
+            visible: false
+            sizes: SmallSizes {
+                verticalPadding: root.actionButtonVerticalPadding
+            }
+            text: SettingsStrings.solveIssueEnableBackup
+            icons.source: Images.power_small_thin_outline
+            icons.position: Icon.Position.LEFT
+            checkable: true
 
-                    onRunningChanged: {
-                        if (running) {
-                            backupSettings.openOverQuotaDialog();
+            Timer {
+                id: timerActionEnableBackup
 
-                            actionGetMoreStorage.checked = true;
-                            actionGetMoreStorage.buttonCursorShape = Qt.ArrowCursor
-                        }
-                        else {
-                            actionGetMoreStorage.checked = false;
-                            actionGetMoreStorage.buttonCursorShape = Qt.PointingHandCursor
-                        }
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.resume(itemIndex);
+
+                        actionEnableBackup.checked = true;
+                        actionEnableBackup.buttonCursorShape = Qt.ArrowCursor
+                        actionEnableBackup.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                        actionEnableBackup.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                        actionEnableBackup.leftIconRotation.start();
                     }
-                }
-
-                onClicked: {
-                    if (!timerActionGetMoreStorage.running) {
-                        timerActionGetMoreStorage.start();
+                    else {
+                        actionEnableBackup.checked = false;
+                        actionEnableBackup.buttonCursorShape = Qt.PointingHandCursor
                     }
                 }
             }
 
-            PrimaryButton {
-                id: actionEnableBackup
-
-                visible: false
-                sizes: SmallSizes {
-                    verticalPadding: root.actionButtonVerticalPadding
+            onClicked: {
+                if (!timerActionEnableBackup.running) {
+                    timerActionEnableBackup.start();
                 }
-                text: SettingsStrings.solveIssueEnableBackup
-                icons.source: Images.power_small_thin_outline
-                icons.position: Icon.Position.LEFT
-                checkable: true
+            }
+        }
 
-                Timer {
-                    id: timerActionEnableBackup
+        PrimaryButton {
+            id: actionRemoveBackup
 
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
+            visible: true
+            sizes: SmallSizes {
+                verticalPadding: root.actionButtonVerticalPadding
+            }
+            text: SettingsStrings.menuActionsStopBackup
+            icons.source: Images.database_x_medium_thin_outline
+            icons.position: Icon.Position.LEFT
+            checkable: true
 
-                    onRunningChanged: {
-                        if (running) {
-                            backupSettings.resumeBackup(index);
+            Timer {
+                id: timerActionRemoveBackup
 
-                            actionEnableBackup.checked = true;
-                            actionEnableBackup.buttonCursorShape = Qt.ArrowCursor
-                            actionEnableBackup.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
-                            actionEnableBackup.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
-                            actionEnableBackup.leftIconRotation.start();
-                        }
-                        else {
-                            actionEnableBackup.checked = false;
-                            actionEnableBackup.buttonCursorShape = Qt.PointingHandCursor
-                        }
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.removeNonConfirmation(itemIndex);
+
+                        actionRemoveBackup.checked = true;
+                        actionRemoveBackup.buttonCursorShape = Qt.ArrowCursor
                     }
-                }
-
-                onClicked: {
-                    if (!timerActionEnableBackup.running) {
-                        timerActionEnableBackup.start();
+                    else {
+                        actionRemoveBackup.checked = false;
+                        actionRemoveBackup.buttonCursorShape = Qt.PointingHandCursor
                     }
                 }
             }
 
-            PrimaryButton {
-                id: actionRemoveBackup
-
-                visible: true
-                sizes: SmallSizes {
-                    verticalPadding: root.actionButtonVerticalPadding
-                }
-                text: SettingsStrings.menuActionsStopBackup
-                icons.source: Images.database_x_medium_thin_outline
-                icons.position: Icon.Position.LEFT
-                checkable: true
-
-                Timer {
-                    id: timerActionRemoveBackup
-
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onRunningChanged: {
-                        if (running) {
-                            backupSettings.removeNonConfirmation(index);
-
-                            actionRemoveBackup.checked = true;
-                            actionRemoveBackup.buttonCursorShape = Qt.ArrowCursor
-                        }
-                        else {
-                            actionRemoveBackup.checked = false;
-                            actionRemoveBackup.buttonCursorShape = Qt.PointingHandCursor
-                        }
-                    }
-                }
-
-                onClicked: {
-                    if (!timerActionRemoveBackup.running) {
-                        timerActionRemoveBackup.start();
-                    }
+            onClicked: {
+                if (!timerActionRemoveBackup.running) {
+                    timerActionRemoveBackup.start();
                 }
             }
         }

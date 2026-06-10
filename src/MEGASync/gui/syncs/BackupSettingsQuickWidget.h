@@ -1,8 +1,8 @@
 #ifndef BACKUP_SETTINGS_QUICK_WIDGET_H
 #define BACKUP_SETTINGS_QUICK_WIDGET_H
 
-#include "BackupSettingsModel.h"
-#include "MegaQuickWidget.h"
+#include "megaapi.h"
+#include "SettingsQuickWidgetBase.h"
 
 #include <memory>
 
@@ -11,7 +11,7 @@ namespace UserAttributes
 class MyBackupsHandle;
 }
 
-class BackupSettingsQuickWidget: public MegaQuickWidget
+class BackupSettingsQuickWidget: public SettingsQuickWidgetBase
 {
     Q_OBJECT
     Q_PROPERTY(
@@ -22,20 +22,10 @@ class BackupSettingsQuickWidget: public MegaQuickWidget
 public:
     explicit BackupSettingsQuickWidget(QWidget* parent = nullptr);
 
-    Q_INVOKABLE void openInMega(int index) const;
-    Q_INVOKABLE void exploreLocalBackup(const QString& localFolder) const;
-    Q_INVOKABLE void addBackup() const;
-    Q_INVOKABLE void pauseBackup(int index) const;
-    Q_INVOKABLE void resumeBackup(int index) const;
-    Q_INVOKABLE void openExclusionsDialog(int index) const;
-    Q_INVOKABLE void rescan(int index) const;
-    Q_INVOKABLE void reboot(int index) const;
-    Q_INVOKABLE void remove(int index) const;
-    Q_INVOKABLE void removeNonConfirmation(int index) const;
-    Q_INVOKABLE void openOverQuotaDialog() const;
+    void addItem() const override;
+    void remove(int index) const override;
+
     Q_INVOKABLE void openBackupFolder() const;
-    Q_INVOKABLE void sortModelByName(bool ascending = true);
-    Q_INVOKABLE void sortModelByStatus(bool ascending = true);
 
     QString getBackupFolderPath() const;
     bool isBackupFolderAvailable() const;
@@ -48,7 +38,6 @@ private slots:
     void onMyBackupsFolderHandleSet(mega::MegaHandle handle);
 
 private:
-    BackupSettingsModel* mBackupModel;
     std::shared_ptr<UserAttributes::MyBackupsHandle> mMyBackupsHandleRequest;
     QString mBackupFolderPath;
     bool mBackupFolderAvailable;

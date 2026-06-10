@@ -1,10 +1,9 @@
 #ifndef SYNC_SETTINGS_QUICK_WIDGET_H
 #define SYNC_SETTINGS_QUICK_WIDGET_H
 
-#include "MegaQuickWidget.h"
-#include "SyncSettingsModel.h"
+#include "SettingsQuickWidgetBase.h"
 
-class SyncSettingsQuickWidget: public MegaQuickWidget
+class SyncSettingsQuickWidget: public SettingsQuickWidgetBase
 {
     Q_OBJECT
 
@@ -15,20 +14,10 @@ class SyncSettingsQuickWidget: public MegaQuickWidget
 public:
     explicit SyncSettingsQuickWidget(QWidget* parent = nullptr);
 
-    Q_INVOKABLE void openInMega(int index) const;
-    Q_INVOKABLE void exploreLocalSync(const QString& localFolder) const;
-    Q_INVOKABLE void addSync() const;
-    Q_INVOKABLE void pauseSync(int index) const;
-    Q_INVOKABLE void resumeSync(int index) const;
-    Q_INVOKABLE void openExclusionsDialog(int index) const;
-    Q_INVOKABLE void rescan(int index) const;
-    Q_INVOKABLE void reboot(int index) const;
-    Q_INVOKABLE void remove(int index) const;
-    Q_INVOKABLE void removeNonConfirmation(int index) const;
-    Q_INVOKABLE void openOverQuotaDialog() const;
+    void addItem() const override;
+    void remove(int index) const override;
+
     Q_INVOKABLE void restoreSyncedFolder(int index);
-    Q_INVOKABLE void sortModelByName(bool ascending = true);
-    Q_INVOKABLE void sortModelByStatus(bool ascending = true);
 
     bool getAutomaticSyncIssueResolverEnabled() const;
     void setAutomaticSyncIssueResolverEnabled(bool enable);
@@ -38,7 +27,6 @@ signals:
 
 private:
     bool mAutomaticSyncIssueResolverEnabled;
-    SyncSettingsModel* mSyncModel;
 };
 
 #endif // SYNC_SETTINGS_QUICK_WIDGET_H

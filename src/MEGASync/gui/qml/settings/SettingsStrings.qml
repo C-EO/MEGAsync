@@ -47,7 +47,7 @@ QtObject {
     readonly property string menuActionsResume: qsTr("Resume")
     readonly property string menuActionsManageExclusions: qsTr("Manage exclusions")
     readonly property string menuActionsRescan: qsTr("Rescan")
-    readonly property string menuActionsReboot: qsTr("Reboot")
+    readonly property string menuActionsRebootSync: qsTr("Reboot sync")
     readonly property string solveIssueButtonRetry: qsTr("Retry")
     readonly property string solveIssueGetMoreStorage: qsTr("Get more storage")
     readonly property string solveIssueRemoveSyncedFolder: qsTr("Remove synced folder")
@@ -72,7 +72,6 @@ QtObject {
     readonly property string solveIssueEnableBackup: qsTr("Enable backup")
     readonly property string menuActionsStopBackup: qsTr("Stop backup")
     readonly property string menuActionsRebootBackup: qsTr("Reboot backup")
-    readonly property string backupErrorFormat: qsTr("Backup error: %1")
     readonly property string backupFolderLabel: qsTr("Backup folder")
     readonly property string viewInMega: qsTr("View in MEGA")
 }

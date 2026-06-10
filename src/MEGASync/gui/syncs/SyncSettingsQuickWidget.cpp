@@ -1,44 +1,38 @@
 #include "SyncSettingsQuickWidget.h"
 
 #include "CreateRemoveSyncsManager.h"
-#include "Platform.h"
+#include "MessageDialogOpener.h"
+#include "Preferences.h"
 #include "QmlManager.h"
 #include "RequestListenerManager.h"
 #include "StalledIssuesModel.h"
 #include "StatsEventHandler.h"
 #include "SyncController.h"
-#include "SyncExclusions.h"
 #include "SyncSettingsModel.h"
 
 SyncSettingsQuickWidget::SyncSettingsQuickWidget(QWidget* parent):
-    MegaQuickWidget(parent),
-    mAutomaticSyncIssueResolverEnabled(Preferences::instance()->isStalledIssueSmartModeActivated()),
-    mSyncModel(new SyncSettingsModel(this))
+    SettingsQuickWidgetBase(new SyncSettingsModel(), SyncController::instance(), parent),
+    mAutomaticSyncIssueResolverEnabled(Preferences::instance()->isStalledIssueSmartModeActivated())
 {
-    setResizeMode(QQuickWidget::SizeRootObjectToView);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     qmlRegisterType<SyncSettingsModel>("SyncSettingsModel", 1, 0, "SyncSettingsModel");
 
-    QmlManager::instance()->setRootContextProperty(QStringLiteral("syncSettingsModel"), mSyncModel);
-    QmlManager::instance()->setRootContextProperty(QStringLiteral("syncSettings"), this);
+    QmlManager::instance()->setRootContextProperty(QStringLiteral("syncSettingsModel"), model());
+    // Distinct context-property name: the Syncs and Backups widgets share one QML
+    // engine root context, so they must not use the same name. The shared QML
+    // components receive the widget as an explicit "settingsAccess" property instead.
+    QmlManager::instance()->setRootContextProperty(QStringLiteral("syncSettingsAccess"), this);
 
     setSource(QString::fromUtf8("qrc:/settings/SyncSettings.qml"));
 }
 
-void SyncSettingsQuickWidget::exploreLocalSync(const QString& localFolder) const
-{
-    Platform::getInstance()->showInFolder(localFolder);
-}
-
-void SyncSettingsQuickWidget::openInMega(int index) const
-{
-    Utilities::openInMega(mSyncModel->getSync(index)->getMegaHandle());
-}
-
-void SyncSettingsQuickWidget::addSync() const
+void SyncSettingsQuickWidget::addItem() const
 {
     CreateRemoveSyncsManager::addSync(SyncInfo::SyncOrigin::SETTINGS_ORIGIN);
+}
+
+void SyncSettingsQuickWidget::remove(int index) const
+{
+    CreateRemoveSyncsManager::removeSync(model()->getSyncSetting(index), this->parentWidget());
 }
 
 bool SyncSettingsQuickWidget::getAutomaticSyncIssueResolverEnabled() const
@@ -46,19 +40,9 @@ bool SyncSettingsQuickWidget::getAutomaticSyncIssueResolverEnabled() const
     return mAutomaticSyncIssueResolverEnabled;
 }
 
-void SyncSettingsQuickWidget::pauseSync(int index) const
-{
-    SyncController::instance().setSyncToSuspend(mSyncModel->getSync(index));
-}
-
-void SyncSettingsQuickWidget::resumeSync(int index) const
-{
-    SyncController::instance().setSyncToRun(mSyncModel->getSync(index));
-}
-
 void SyncSettingsQuickWidget::restoreSyncedFolder(int index)
 {
-    auto sync = mSyncModel->getSync(index);
+    auto sync = model()->getSyncSetting(index);
 
     auto triggerErrorMessage = [sync, this]()
     {
@@ -121,70 +105,6 @@ void SyncSettingsQuickWidget::restoreSyncedFolder(int index)
     }
 
     triggerErrorMessage();
-}
-
-void SyncSettingsQuickWidget::openOverQuotaDialog() const
-{
-    auto overQuotaDialog = MegaSyncApp->createOverquotaDialogIfNeeded();
-
-    if (overQuotaDialog)
-    {
-        DialogOpener::showDialog(overQuotaDialog);
-    }
-}
-
-void SyncSettingsQuickWidget::openExclusionsDialog(int index) const
-{
-    const auto& sync = mSyncModel->getSync(index);
-    QFileInfo syncDir(sync->getLocalFolder());
-    if (syncDir.exists())
-    {
-        QPointer<QmlDialogWrapper<SyncExclusions>> exclusions =
-            new QmlDialogWrapper<SyncExclusions>(this->parentWidget(), sync->getLocalFolder());
-
-        DialogOpener::showDialog(exclusions);
-    }
-    else
-    {
-        MessageDialogInfo msgInfo;
-        msgInfo.parent = this->parentWidget();
-        msgInfo.descriptionText = tr("Error opening megaignore file");
-        MessageDialogOpener::warning(msgInfo);
-    }
-}
-
-void SyncSettingsQuickWidget::remove(int index) const
-{
-    const auto& sync = mSyncModel->getSync(index);
-    CreateRemoveSyncsManager::removeSync(sync, this->parentWidget());
-}
-
-void SyncSettingsQuickWidget::sortModelByName(bool ascending)
-{
-    mSyncModel->sortByName(ascending);
-}
-
-void SyncSettingsQuickWidget::sortModelByStatus(bool ascending)
-{
-    mSyncModel->sortByStatus(ascending);
-}
-
-void SyncSettingsQuickWidget::removeNonConfirmation(int index) const
-{
-    const auto& sync = mSyncModel->getSync(index);
-    SyncController::instance().removeSync(sync);
-}
-
-void SyncSettingsQuickWidget::rescan(int index) const
-{
-    const auto& sync = mSyncModel->getSync(index);
-    MegaSyncApp->getMegaApi()->rescanSync(sync->backupId(), true);
-}
-
-void SyncSettingsQuickWidget::reboot(int index) const
-{
-    const auto& sync = mSyncModel->getSync(index);
-    SyncController::instance().resetSync(sync, mega::MegaSync::SyncRunningState::RUNSTATE_DISABLED);
 }
 
 void SyncSettingsQuickWidget::setAutomaticSyncIssueResolverEnabled(bool enable)

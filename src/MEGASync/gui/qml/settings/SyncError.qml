@@ -9,12 +9,14 @@ import components.texts 1.0
 import components.buttons 1.0
 import components.menus 1.0
 
-Item {
+ColumnLayout {
     id: root
 
+    property var settingsAccess
     property int errorId
     property string errorMessage
-    property string syncLocalFolder
+    property string localFolder
+    property int itemIndex
 
     readonly property int issueHandlerSpacing: 4
     readonly property int topErrorLabelMargin: 8
@@ -45,9 +47,18 @@ Item {
     readonly property int k_FAILURE_ACCESSING_PERSISTENT_STORAGE: 43
     readonly property int k_MISMATCH_OF_ROOT_FSID: 44
 
-    anchors.fill: parent
-    implicitHeight: errorInfo.implicitHeight
-    implicitWidth: errorInfo.implicitWidth
+    // Exposed as a plain property (not a binding) so external items can size
+    // themselves from this value without binding to implicitHeight directly.
+    // Binding to ColumnLayout.implicitHeight from outside the component causes
+    // Qt 5.15's layout engine to emit implicitHeightChanged during its own
+    // evaluation, which Qt detects as a binding loop.
+    property real contentHeight: 0
+    Component.onCompleted: contentHeight = implicitHeight
+    onImplicitHeightChanged: contentHeight = implicitHeight
+
+    width: parent ? parent.width : implicitWidth
+    height: implicitHeight
+    spacing: issueHandlerSpacing
 
     function resetActionButtonsVisibility() {
         actionRetry.visible = false;
@@ -111,270 +122,263 @@ Item {
         }
     ]
 
-    ColumnLayout {
-        id: errorInfo
+    Text {
+        id: errorLabel
 
-        width: parent.width
-        spacing: root.issueHandlerSpacing
+        Layout.topMargin: root.topErrorLabelMargin
+        Layout.rightMargin: root.errorLabelMargin
+        Layout.leftMargin: root.errorLabelMargin
+        Layout.bottomMargin: root.issueHandlerSpacing
+        Layout.fillWidth: true
+        text: "(" + root.errorId + ") " + root.errorMessage
+        font.pixelSize: root.issueLabelPixelSize
+        font.weight: Font.Normal
+        elide: Text.ElideRight
+        color: ColorTheme.textPrimary
+    }
 
-        Text {
-            id: errorLabel
+    RowLayout{
+        id: buttonList
 
-            Layout.topMargin: root.topErrorLabelMargin
-            Layout.rightMargin: root.errorLabelMargin
-            Layout.leftMargin: root.errorLabelMargin
-            Layout.bottomMargin: root.issueHandlerSpacing
-            Layout.fillWidth: true
-            text: "(" + root.errorId + ") " + root.errorMessage
-            font.pixelSize: root.issueLabelPixelSize
-            font.weight: Font.Normal
-            elide: Text.ElideRight
-            color: ColorTheme.textError
+        spacing: root.buttonActionSpacing
+        Layout.bottomMargin: root.errorLabelMargin - buttonFocusBorder
+        Layout.rightMargin: root.errorLabelMargin
+        Layout.leftMargin: Layout.bottomMargin
+
+        PrimaryButton {
+            id: actionRetry
+
+            visible: false
+            sizes: SmallSizes {}
+            icons.source: Images.rotate_cw_small_thin_outline
+            icons.position: Icon.Position.LEFT
+            text: SettingsStrings.solveIssueButtonRetry
+            checkable: true
+
+            Timer {
+                id: timerActionRetry
+
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.resume(itemIndex);
+
+                        actionRetry.checked = true;
+                        actionRetry.buttonCursorShape = Qt.ArrowCursor
+                        actionRetry.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                        actionRetry.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                        actionRetry.leftIconRotation.start();
+                    }
+                    else {
+                        actionRetry.checked = false;
+                        actionRetry.buttonCursorShape = Qt.PointingHandCursor
+                    }
+                }
+            }
+
+            onClicked: {
+                if (!timerActionRetry.running) {
+                    timerActionRetry.start();
+                }
+            }
         }
 
-        RowLayout{
-            id: buttonList
+        PrimaryButton {
+            id: actionGetMoreStorage
 
-            spacing: root.buttonActionSpacing
-            Layout.bottomMargin: root.errorLabelMargin - buttonFocusBorder
-            Layout.rightMargin: root.errorLabelMargin
-            Layout.leftMargin: Layout.bottomMargin
+            visible: false
+            sizes: SmallSizes {}
+            text: SettingsStrings.solveIssueGetMoreStorage
+            checkable: true
 
-            PrimaryButton {
-                id: actionRetry
+            Timer {
+                id: timerActionGetMoreStorage
 
-                visible: false
-                sizes: SmallSizes {}
-                icons.source: Images.rotate_cw_small_thin_outline
-                icons.position: Icon.Position.LEFT
-                text: SettingsStrings.solveIssueButtonRetry
-                checkable: true
+                interval: root.timeToResetActionButtonState
+                repeat: false
 
-                Timer {
-                    id: timerActionRetry
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.openOverQuotaDialog();
 
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onRunningChanged: {
-                        if (running) {
-                            syncSettings.resumeSync(index);
-
-                            actionRetry.checked = true;
-                            actionRetry.buttonCursorShape = Qt.ArrowCursor
-                            actionRetry.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
-                            actionRetry.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
-                            actionRetry.leftIconRotation.start();
-                        }
-                        else {
-                            actionRetry.checked = false;
-                            actionRetry.buttonCursorShape = Qt.PointingHandCursor
-                        }
+                        actionGetMoreStorage.checked = true;
+                        actionGetMoreStorage.buttonCursorShape = Qt.ArrowCursor
                     }
-                }
-
-                onClicked: {
-                    if (!timerActionRetry.running) {
-                        timerActionRetry.start();
+                    else {
+                        actionGetMoreStorage.checked = false;
+                        actionGetMoreStorage.buttonCursorShape = Qt.PointingHandCursor
                     }
                 }
             }
 
-            PrimaryButton {
-                id: actionGetMoreStorage
-
-                visible: false
-                sizes: SmallSizes {}
-                text: SettingsStrings.solveIssueGetMoreStorage
-                checkable: true
-
-                Timer {
-                    id: timerActionGetMoreStorage
-
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onRunningChanged: {
-                        if (running) {
-                            syncSettings.openOverQuotaDialog();
-
-                            actionGetMoreStorage.checked = true;
-                            actionGetMoreStorage.buttonCursorShape = Qt.ArrowCursor
-                        }
-                        else {
-                            actionGetMoreStorage.checked = false;
-                            actionGetMoreStorage.buttonCursorShape = Qt.PointingHandCursor
-                        }
-                    }
+            onClicked: {
+                if (!timerActionGetMoreStorage.running) {
+                    timerActionGetMoreStorage.start();
                 }
+            }
+        }
 
-                onClicked: {
-                    if (!timerActionGetMoreStorage.running) {
-                        timerActionGetMoreStorage.start();
+        PrimaryButton {
+            id: actionEnableSync
+
+            visible: false
+            sizes: SmallSizes {}
+            text: SettingsStrings.solveIssueEnableSync
+            icons.source: Images.power_small_thin_outline
+            icons.position: Icon.Position.LEFT
+            checkable: true
+
+            Timer {
+                id: timerActionEnableSync
+
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.resume(itemIndex);
+
+                        actionEnableSync.checked = true;
+                        actionEnableSync.buttonCursorShape = Qt.ArrowCursor
+                        actionEnableSync.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                        actionEnableSync.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                        actionEnableSync.leftIconRotation.start();
+                    }
+                    else {
+                        actionEnableSync.checked = false;
+                        actionEnableSync.buttonCursorShape = Qt.PointingHandCursor
                     }
                 }
             }
 
-            PrimaryButton {
-                id: actionEnableSync
-
-                visible: false
-                sizes: SmallSizes {}
-                text: SettingsStrings.solveIssueEnableSync
-                icons.source: Images.power_small_thin_outline
-                icons.position: Icon.Position.LEFT
-                checkable: true
-
-                Timer {
-                    id: timerActionEnableSync
-
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onRunningChanged: {
-                        if (running) {
-                            syncSettings.resumeSync(index);
-
-                            actionEnableSync.checked = true;
-                            actionEnableSync.buttonCursorShape = Qt.ArrowCursor
-                            actionEnableSync.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
-                            actionEnableSync.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
-                            actionEnableSync.leftIconRotation.start();
-                        }
-                        else {
-                            actionEnableSync.checked = false;
-                            actionEnableSync.buttonCursorShape = Qt.PointingHandCursor
-                        }
-                    }
+            onClicked: {
+                if (!timerActionEnableSync.running) {
+                    timerActionEnableSync.start();
                 }
+            }
+        }
 
-                onClicked: {
-                    if (!timerActionEnableSync.running) {
-                        timerActionEnableSync.start();
+        PrimaryButton {
+            id: actionRestoreSyncedFolder
+
+            visible: false
+            sizes: SmallSizes {}
+            text: SettingsStrings.solveIssueRestoreFolder
+            icons.source: Images.trash_off_small_thin_outline
+            icons.position: Icon.Position.LEFT
+            checkable: true
+
+            Timer {
+                id: timerActionRestoreSyncedFolder
+
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.restoreSyncedFolder(itemIndex);
+
+                        actionRestoreSyncedFolder.checked = true;
+                        actionRestoreSyncedFolder.buttonCursorShape = Qt.ArrowCursor
+                    }
+                    else {
+                        actionRestoreSyncedFolder.checked = false;
+                        actionRestoreSyncedFolder.buttonCursorShape = Qt.PointingHandCursor
                     }
                 }
             }
 
-            PrimaryButton {
-                id: actionRestoreSyncedFolder
-
-                visible: false
-                sizes: SmallSizes {}
-                text: SettingsStrings.solveIssueRestoreFolder
-                icons.source: Images.trash_off_small_thin_outline
-                icons.position: Icon.Position.LEFT
-                checkable: true
-
-                Timer {
-                    id: timerActionRestoreSyncedFolder
-
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onRunningChanged: {
-                        if (running) {
-                            syncSettings.restoreSyncedFolder(index);
-
-                            actionRestoreSyncedFolder.checked = true;
-                            actionRestoreSyncedFolder.buttonCursorShape = Qt.ArrowCursor
-                        }
-                        else {
-                            actionRestoreSyncedFolder.checked = false;
-                            actionRestoreSyncedFolder.buttonCursorShape = Qt.PointingHandCursor
-                        }
-                    }
+            onClicked: {
+                if (!timerActionRestoreSyncedFolder.running) {
+                    timerActionRestoreSyncedFolder.start();
                 }
+            }
+        }
 
-                onClicked: {
-                    if (!timerActionRestoreSyncedFolder.running) {
-                        timerActionRestoreSyncedFolder.start();
+        PrimaryButton {
+            id: actionStartNewSync
+
+            visible: false
+            sizes: SmallSizes {}
+            text: SettingsStrings.solveIssueStartNewSync
+            icons.source: Images.sync_plus_small_thin_outline
+            icons.position: Icon.Position.LEFT
+            checkable: true
+
+            Timer {
+                id: timerActionStartNewSync
+
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.addItem();
+
+                        actionStartNewSync.checked = true;
+                        actionStartNewSync.buttonCursorShape = Qt.ArrowCursor
+                        actionStartNewSync.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                        actionStartNewSync.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                        actionStartNewSync.leftIconRotation.start();
+                    }
+                    else {
+                        actionStartNewSync.checked = false;
+                        actionStartNewSync.buttonCursorShape = Qt.PointingHandCursor
                     }
                 }
             }
 
-            PrimaryButton {
-                id: actionStartNewSync
-
-                visible: false
-                sizes: SmallSizes {}
-                text: SettingsStrings.solveIssueStartNewSync
-                icons.source: Images.sync_plus_small_thin_outline
-                icons.position: Icon.Position.LEFT
-                checkable: true
-
-                Timer {
-                    id: timerActionStartNewSync
-
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onRunningChanged: {
-                        if (running) {
-                            syncSettings.addSync();
-
-                            actionStartNewSync.checked = true;
-                            actionStartNewSync.buttonCursorShape = Qt.ArrowCursor
-                            actionStartNewSync.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
-                            actionStartNewSync.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
-                            actionStartNewSync.leftIconRotation.start();
-                        }
-                        else {
-                            actionStartNewSync.checked = false;
-                            actionStartNewSync.buttonCursorShape = Qt.PointingHandCursor
-                        }
-                    }
+            onClicked: {
+                if (!timerActionStartNewSync.running) {
+                    timerActionStartNewSync.start();
                 }
+            }
+        }
 
-                onClicked: {
-                    if (!timerActionStartNewSync.running) {
-                        timerActionStartNewSync.start();
+        PrimaryButton {
+            id: actionRemoveSyncedFolder
+
+            visible: true
+            colors.background: ColorTheme.buttonError
+            colors.pressed: ColorTheme.buttonErrorPressed
+            colors.hover: ColorTheme.buttonErrorHover
+            sizes: SmallSizes {}
+            text: SettingsStrings.solveIssueRemoveSyncedFolder
+            colors.text: ColorTheme.textOnColor
+            colors.textHover: ColorTheme.textOnColor
+            colors.textPressed: ColorTheme.textOnColor
+            icons.source: Images.trash_small_thin_outline
+            icons.position: Icon.Position.LEFT
+            icons.colorEnabled: ColorTheme.textOnColor
+            icons.colorHovered: ColorTheme.textOnColor
+            icons.colorPressed: ColorTheme.textOnColor
+            checkable: true
+
+            Timer {
+                id: timerActionRemoveSyncedFolder
+
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.removeNonConfirmation(itemIndex);
+
+                        actionRemoveSyncedFolder.checked = true;
+                        actionRemoveSyncedFolder.buttonCursorShape = Qt.ArrowCursor
+                    }
+                    else {
+                        actionRemoveSyncedFolder.checked = false;
+                        actionRemoveSyncedFolder.buttonCursorShape = Qt.PointingHandCursor
                     }
                 }
             }
 
-            PrimaryButton {
-                id: actionRemoveSyncedFolder
-
-                visible: true
-                colors.background: ColorTheme.buttonError
-                colors.pressed: ColorTheme.buttonErrorPressed
-                colors.hover: ColorTheme.buttonErrorHover
-                sizes: SmallSizes {}
-                text: SettingsStrings.solveIssueRemoveSyncedFolder
-                colors.text: ColorTheme.textOnColor
-                colors.textHover: ColorTheme.textOnColor
-                colors.textPressed: ColorTheme.textOnColor
-                icons.source: Images.trash_small_thin_outline
-                icons.position: Icon.Position.LEFT
-                icons.colorEnabled: ColorTheme.textOnColor
-                icons.colorHovered: ColorTheme.textOnColor
-                icons.colorPressed: ColorTheme.textOnColor
-                checkable: true
-
-                Timer {
-                    id: timerActionRemoveSyncedFolder
-
-                    interval: root.timeToResetActionButtonState
-                    repeat: false
-
-                    onRunningChanged: {
-                        if (running) {
-                            syncSettings.removeNonConfirmation(index);
-
-                            actionRemoveSyncedFolder.checked = true;
-                            actionRemoveSyncedFolder.buttonCursorShape = Qt.ArrowCursor
-                        }
-                        else {
-                            actionRemoveSyncedFolder.checked = false;
-                            actionRemoveSyncedFolder.buttonCursorShape = Qt.PointingHandCursor
-                        }
-                    }
-                }
-
-                onClicked: {
-                    if (!timerActionRemoveSyncedFolder.running) {
-                        timerActionRemoveSyncedFolder.start();
-                    }
+            onClicked: {
+                if (!timerActionRemoveSyncedFolder.running) {
+                    timerActionRemoveSyncedFolder.start();
                 }
             }
         }

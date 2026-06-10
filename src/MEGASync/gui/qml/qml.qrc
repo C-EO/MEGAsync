@@ -19,6 +19,9 @@
         <file>settings/SyncError.qml</file>
         <file>settings/BackupSettings.qml</file>
         <file>settings/BackupError.qml</file>
+        <file>settings/SettingsEmptyState.qml</file>
+        <file>settings/SettingsSortableHeader.qml</file>
+        <file>settings/SettingsListDelegate.qml</file>
         <file>settings/SettingsStrings.qml</file>
         <file>settings/SettingsLinearProgress.qml</file>
         <file>settings/QuotaProgressSegments.qml</file>

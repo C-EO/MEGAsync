@@ -1,25 +1,26 @@
-#include "BackupSettingsModel.h"
+#include "SyncSettingsModelBase.h"
 
 #include "SyncInfo.h"
 
 #include <QCoreApplication>
 
-BackupSettingsModel::BackupSettingsModel(QObject* parent):
+SyncSettingsModelBase::SyncSettingsModelBase(mega::MegaSync::SyncType type, QObject* parent):
     QAbstractListModel(parent),
-    mSyncInfo(SyncInfo::instance())
+    mSyncInfo(SyncInfo::instance()),
+    mType(type)
 {
     mQCollator.setNumericMode(true);
     mQCollator.setCaseSensitivity(Qt::CaseInsensitive);
 
-    connect(mSyncInfo, &SyncInfo::syncStateChanged, this, &BackupSettingsModel::insertBackup);
-    connect(mSyncInfo, &SyncInfo::syncStatsUpdated, this, &BackupSettingsModel::updateBackupStats);
-    connect(mSyncInfo, &SyncInfo::syncRemoved, this, &BackupSettingsModel::removeBackup);
+    connect(mSyncInfo, &SyncInfo::syncStateChanged, this, &SyncSettingsModelBase::insertItem);
+    connect(mSyncInfo, &SyncInfo::syncStatsUpdated, this, &SyncSettingsModelBase::updateStats);
+    connect(mSyncInfo, &SyncInfo::syncRemoved, this, &SyncSettingsModelBase::removeItem);
 
-    mList = mSyncInfo->getSyncSettingsByType(mega::MegaSync::SyncType::TYPE_BACKUP);
+    mList = mSyncInfo->getSyncSettingsByType(mType);
     sortByName(true);
 }
 
-void BackupSettingsModel::sortByName(bool ascending)
+void SyncSettingsModelBase::sortByName(bool ascending)
 {
     mSortAscending = ascending;
 
@@ -35,7 +36,7 @@ void BackupSettingsModel::sortByName(bool ascending)
     endResetModel();
 }
 
-void BackupSettingsModel::sortByStatus(bool ascending)
+void SyncSettingsModelBase::sortByStatus(bool ascending)
 {
     mSortAscending = ascending;
 
@@ -50,9 +51,9 @@ void BackupSettingsModel::sortByStatus(bool ascending)
     endResetModel();
 }
 
-void BackupSettingsModel::insertBackup(std::shared_ptr<SyncSettings> sync)
+void SyncSettingsModelBase::insertItem(std::shared_ptr<SyncSettings> sync)
 {
-    if (sync->getType() != mega::MegaSync::SyncType::TYPE_BACKUP)
+    if (sync->getType() != mType)
     {
         return;
     }
@@ -79,7 +80,7 @@ void BackupSettingsModel::insertBackup(std::shared_ptr<SyncSettings> sync)
     }
 }
 
-void BackupSettingsModel::sendDataChanged(int row)
+void SyncSettingsModelBase::sendDataChanged(int row)
 {
     const auto modelIndex = index(row, 0, QModelIndex());
 
@@ -89,7 +90,7 @@ void BackupSettingsModel::sendDataChanged(int row)
                                     << Role::ErrorMessage << Role::NameRole << Role::ErrorId);
 }
 
-void BackupSettingsModel::updateBackupStats(std::shared_ptr<::mega::MegaSyncStats> stats)
+void SyncSettingsModelBase::updateStats(std::shared_ptr<::mega::MegaSyncStats> stats)
 {
     auto foundIt = std::find_if(mList.cbegin(),
                                 mList.cend(),
@@ -105,7 +106,7 @@ void BackupSettingsModel::updateBackupStats(std::shared_ptr<::mega::MegaSyncStat
     }
 }
 
-void BackupSettingsModel::removeBackup(std::shared_ptr<SyncSettings> sync)
+void SyncSettingsModelBase::removeItem(std::shared_ptr<SyncSettings> sync)
 {
     auto foundIt = std::find_if(mList.cbegin(),
                                 mList.cend(),
@@ -125,7 +126,7 @@ void BackupSettingsModel::removeBackup(std::shared_ptr<SyncSettings> sync)
     }
 }
 
-QHash<int, QByteArray> BackupSettingsModel::roleNames() const
+QHash<int, QByteArray> SyncSettingsModelBase::roleNames() const
 {
     return {
         {NameRole, "name"},
@@ -136,7 +137,7 @@ QHash<int, QByteArray> BackupSettingsModel::roleNames() const
     };
 }
 
-int BackupSettingsModel::rowCount(const QModelIndex& parent) const
+int SyncSettingsModelBase::rowCount(const QModelIndex& parent) const
 {
     if (parent.isValid())
     {
@@ -146,7 +147,7 @@ int BackupSettingsModel::rowCount(const QModelIndex& parent) const
     return static_cast<int>(mList.size());
 }
 
-QVariant BackupSettingsModel::data(const QModelIndex& index, int role) const
+QVariant SyncSettingsModelBase::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
     {
@@ -184,7 +185,7 @@ QVariant BackupSettingsModel::data(const QModelIndex& index, int role) const
     }
 }
 
-QString BackupSettingsModel::getErrorMessage(std::shared_ptr<SyncSettings> sync) const
+QString SyncSettingsModelBase::getErrorMessage(std::shared_ptr<SyncSettings> sync) const
 {
     std::unique_ptr<const char[]> syncErrorText(
         mega::MegaSync::getMegaSyncErrorCode(sync->getError()));
@@ -192,38 +193,38 @@ QString BackupSettingsModel::getErrorMessage(std::shared_ptr<SyncSettings> sync)
     return QCoreApplication::translate("MegaSyncError", syncErrorText.get());
 }
 
-std::shared_ptr<SyncSettings> BackupSettingsModel::getBackup(int index) const
+std::shared_ptr<SyncSettings> SyncSettingsModelBase::getSyncSetting(int index) const
 {
     return mList.at(index);
 }
 
-BackupSettingsModel::BackupStates
-    BackupSettingsModel::getState(std::shared_ptr<SyncSettings> sync) const
+SyncSettingsModelBase::State
+    SyncSettingsModelBase::getState(std::shared_ptr<SyncSettings> sync) const
 {
     switch (sync->getRunState())
     {
         case ::mega::MegaSync::RUNSTATE_PENDING:
         {
-            return BackupStates::PENDING;
+            return State::PENDING;
         }
         case ::mega::MegaSync::RUNSTATE_LOADING:
         {
-            return BackupStates::LOADING;
+            return State::LOADING;
         }
         case ::mega::MegaSync::RUNSTATE_SUSPENDED:
         {
             if (sync->getError())
             {
-                return BackupStates::FAIL;
+                return State::FAIL;
             }
             else
             {
-                return BackupStates::SUSPENDED;
+                return State::SUSPENDED;
             }
         }
         case ::mega::MegaSync::RUNSTATE_DISABLED:
         {
-            return BackupStates::FAIL;
+            return State::FAIL;
         }
         case ::mega::MegaSync::RUNSTATE_RUNNING:
         {
@@ -233,16 +234,16 @@ BackupSettingsModel::BackupStates
                 auto stats = it->second;
                 if (stats->isScanning())
                 {
-                    return BackupStates::SCANNING;
+                    return State::SCANNING;
                 }
                 else if (stats->isSyncing())
                 {
-                    return BackupStates::BACKING_UP;
+                    return State::ACTIVE;
                 }
             }
             break;
         }
     }
 
-    return BackupStates::BACKED_UP;
+    return State::IDLE;
 }
