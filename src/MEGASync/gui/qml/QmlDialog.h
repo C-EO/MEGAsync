@@ -19,7 +19,7 @@ class QmlDialog: public QQuickWindow
 
 public:
     explicit QmlDialog(QWindow* parent = nullptr);
-    ~QmlDialog() = default;
+    ~QmlDialog();
 
 public slots:
     void setIconSrc(const QString& iconSrc);
@@ -51,6 +51,7 @@ protected:
 
 private:
     void placeAndRaise();
+    void refreshOtherQmlWindows();
 
     QString mIconSrc;
     bool mCloseOnEscapePressed = false;
