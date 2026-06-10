@@ -3,6 +3,7 @@
 #include "Avatar.h"
 #include "FullName.h"
 #include "MegaApplication.h"
+#include "MyBackupsHandle.h"
 #include "Utilities.h"
 
 const int NodeSelectorModelItem::ICON_SIZE = 17;
@@ -565,18 +566,28 @@ int NodeSelectorModelItemSearch::getNumChildren()
 
 bool NodeSelectorModelItemSearch::isMyBackupsFolder() const
 {
-    return mType.testFlag(TabType::BACKUP) && parent() == nullptr;
-}
-
-bool NodeSelectorModelItemSearch::isDeviceFolder() const
-{
-    if (!mType.testFlag(TabType::BACKUP))
+    if (!mType.testFlag(TabType::BACKUP) || !mNode)
     {
         return false;
     }
 
-    auto parentItem = getParent();
-    return parentItem && parentItem->isMyBackupsFolder();
+    // Identify by the actual node, not by tree position: the "My Backups" root is excluded
+    // from search paths, so the topmost backup item is a device folder, which used to be
+    // wrongly classified as the My Backups folder when relying on parent() == nullptr.
+    auto backupsHandle =
+        UserAttributes::MyBackupsHandle::requestMyBackupsHandle()->getMyBackupsHandle();
+    return mNode->getHandle() == backupsHandle;
+}
+
+bool NodeSelectorModelItemSearch::isDeviceFolder() const
+{
+    if (!mType.testFlag(TabType::BACKUP) || !mNode)
+    {
+        return false;
+    }
+
+    // A device folder is the only backup node carrying a device id.
+    return !QString::fromUtf8(mNode->getDeviceId()).isEmpty();
 }
 
 bool NodeSelectorModelItemSearch::isBackupFolder() const
@@ -641,14 +652,27 @@ bool NodeSelectorModelItemBackup::isSyncable()
 
 bool NodeSelectorModelItemBackup::isMyBackupsFolder() const
 {
-    // If it is a backup item and it doesn't have parent it is the MyBackups folder
-    return parent() == nullptr;
+    if (!mNode)
+    {
+        return false;
+    }
+
+    // Identify by the actual node, not by tree position, so the classification stays correct
+    // regardless of where the item sits in the tree.
+    auto backupsHandle =
+        UserAttributes::MyBackupsHandle::requestMyBackupsHandle()->getMyBackupsHandle();
+    return mNode->getHandle() == backupsHandle;
 }
 
 bool NodeSelectorModelItemBackup::isDeviceFolder() const
 {
-    auto parentItem = getParent();
-    return parentItem && parentItem->isMyBackupsFolder();
+    if (!mNode)
+    {
+        return false;
+    }
+
+    // A device folder is the only backup node carrying a device id.
+    return !QString::fromUtf8(mNode->getDeviceId()).isEmpty();
 }
 
 bool NodeSelectorModelItemBackup::isBackupFolder() const
