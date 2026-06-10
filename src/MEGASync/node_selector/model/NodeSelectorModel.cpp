@@ -437,7 +437,11 @@ bool NodeRequester::isSearchRootNode(mega::MegaNode* node, TabTypes type) const
     }
     if (type.testFlag(TabType::BACKUP))
     {
-        return isNode(MegaSyncApp->getVaultNode());
+        // The root item displayed in the Backups tab is the "My Backups" folder, not the real
+        // vault node (which is its parent). Stop the path here so "My Backups" is not added.
+        auto backupsHandle =
+            UserAttributes::MyBackupsHandle::requestMyBackupsHandle()->getMyBackupsHandle();
+        return node && node->getHandle() == backupsHandle;
     }
     if (type.testFlag(TabType::RUBBISH))
     {
