@@ -131,6 +131,10 @@ public:
 
     virtual void setRenderingBackend() const {}
 
+    // Severs connections with assistive-technology clients before UI teardown.
+    // Only needed on Windows; see PlatformImplementation::disconnectAccessibilityClients().
+    virtual void disconnectAccessibilityClients() {}
+
 signals:
     void themeChanged(Preferences::SystemColorScheme theme);
 

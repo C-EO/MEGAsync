@@ -999,6 +999,28 @@ void PlatformImplementation::stopShellDispatcher()
     }
 }
 
+void PlatformImplementation::disconnectAccessibilityClients()
+{
+    // Qt's UI Automation bridge never calls UiaDisconnectAllProviders, so a UIA
+    // client (screen reader, ShareX, ...) still holding element references while
+    // the UI is torn down crashes inside UIAutomationCore (heap free on its
+    // channel thread). Sever the connection before any window is destroyed, as
+    // documented for UIA server shutdown. UiaDisconnectAllProviders may make COM
+    // calls and pump messages, so this must not be called during window
+    // destruction (see Chromium CL 7232383).
+    // UIAutomationCore.dll is only loaded once a UIA client attaches, so resolve
+    // dynamically: module absent means there is nothing to disconnect.
+    using DisconnectAllProvidersFn = HRESULT(WINAPI*)();
+    if (HMODULE uiaCore = GetModuleHandleW(L"UIAutomationCore.dll"))
+    {
+        if (auto disconnectAllProviders = reinterpret_cast<DisconnectAllProvidersFn>(
+                GetProcAddress(uiaCore, "UiaDisconnectAllProviders")))
+        {
+            disconnectAllProviders();
+        }
+    }
+}
+
 void PlatformImplementation::syncFolderAdded(QString syncPath, QString syncName, QString syncID)
 {
     if (syncPath.startsWith(QString::fromLatin1("\\\\?\\")))

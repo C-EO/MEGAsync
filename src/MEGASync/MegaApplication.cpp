@@ -2435,6 +2435,9 @@ void MegaApplication::cleanAll()
     }
     appfinished = true;
 
+    // Must run before any window or dialog is destroyed, while the GUI is still intact
+    Platform::getInstance()->disconnectAccessibilityClients();
+
     emit requestAppState(AppState::FINISHED);
 
     qInstallMessageHandler(0);

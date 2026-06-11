@@ -92,6 +92,8 @@ public:
 
     void setRenderingBackend() const override;
 
+    void disconnectAccessibilityClients() override;
+
 private:
     void removeSyncFromLeftPane(QString syncPath, QString syncName, QString uuid);
 
