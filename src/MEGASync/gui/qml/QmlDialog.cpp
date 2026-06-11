@@ -5,7 +5,6 @@
 #include "QmlDialogWrapperUtilities.h"
 
 #include <QEvent>
-#include <QGuiApplication>
 #include <QResizeEvent>
 #include <QScreen>
 
@@ -83,41 +82,6 @@ QmlDialog::QmlDialog(QWindow* parent):
                     emit initialLayoutCompleteChanged();
                 }
             });
-}
-
-QmlDialog::~QmlDialog()
-{
-    refreshOtherQmlWindows();
-}
-
-// When a QQuickWindow is closed or destroyed while other QML windows are
-// visible, the remaining windows can stay blank until the next input event
-// forces a frame (reproduced on macOS with both Qt5 and Qt6). Schedule an
-// update on them so they repaint immediately.
-void QmlDialog::refreshOtherQmlWindows()
-{
-    const auto windows = QGuiApplication::topLevelWindows();
-    for (QWindow* window: windows)
-    {
-        if (window == this || !window->isVisible())
-        {
-            continue;
-        }
-
-        if (auto* quickWindow = qobject_cast<QQuickWindow*>(window))
-        {
-            // Repaint now (covers this window being hidden) and once more on
-            // the next event loop iteration (covers the destruction of this
-            // window's native surface, which happens after this call).
-            quickWindow->update();
-            QTimer::singleShot(0,
-                               quickWindow,
-                               [quickWindow]()
-                               {
-                                   quickWindow->update();
-                               });
-        }
-    }
 }
 
 void QmlDialog::setIconSrc(const QString& iconSrc)
@@ -236,13 +200,6 @@ bool QmlDialog::event(QEvent* event)
     if (event->type() == QEvent::Close)
     {
         emit finished();
-    }
-    else if (event->type() == QEvent::Hide)
-    {
-        // Repaint the remaining QML windows right when this one leaves the
-        // screen: that is the moment their content can get invalidated and
-        // stay blank until the next input event (see refreshOtherQmlWindows).
-        refreshOtherQmlWindows();
     }
     else if (event->type() == QEvent::Resize)
     {
