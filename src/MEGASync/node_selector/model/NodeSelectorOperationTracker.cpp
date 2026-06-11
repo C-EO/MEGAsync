@@ -119,11 +119,17 @@ NodeSelectorOperationTracker::FinishedRequestGroup
     result.matched = true;
     result.type = groupIt->type;
 
+    auto trackedHandle(handle);
+
     if (!groupIt->pendingHandles.isEmpty())
     {
-        if (handle == mega::INVALID_HANDLE)
+        if (handle == mega::INVALID_HANDLE || !groupIt->pendingHandles.contains(handle))
         {
-            groupIt->pendingHandles.removeFirst();
+            // The SDK can finish a request with a handle different from the original
+            // one (e.g. the move fallback to copy+delete overwrites the request handle
+            // with the handle of the new copy). Consume the first pending handle so
+            // the group can finish, and track the error against the original node.
+            trackedHandle = groupIt->pendingHandles.takeFirst();
         }
         else
         {
@@ -133,7 +139,7 @@ NodeSelectorOperationTracker::FinishedRequestGroup
 
     if (failed)
     {
-        groupIt->failedHandles.append(handle);
+        groupIt->failedHandles.append(trackedHandle);
     }
 
     groupIt->movedItemCategories |= movedItemCategory;

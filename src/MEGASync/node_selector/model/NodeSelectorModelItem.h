@@ -71,6 +71,7 @@ public:
     virtual bool isBackupFolder() const;
     bool isInShare() const;
     bool isInVault() const;
+    bool isS4Container() const;
     bool isCloudDrive() const;
     bool isRubbishBin() const;
     bool isInRubbishBin() const;

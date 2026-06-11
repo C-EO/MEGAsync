@@ -366,7 +366,17 @@ void NodeSelectorTreeView::keyPressEvent(QKeyEvent* event)
     {
         if (mAllowNewFolderContextMenuItem && event->key() == Qt::Key_F2)
         {
-            renameNode();
+            // Mimic the context menu: rename is only offered for a single
+            // selected item which can be renamed
+            if (indexes.size() == 1)
+            {
+                auto item = proxyModel()->getMegaModel()->getItemByIndex(
+                    proxyModel()->mapToSource(indexes.first()));
+                if (item && item->canBeRenamed())
+                {
+                    renameNode();
+                }
+            }
         }
         else if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
         {

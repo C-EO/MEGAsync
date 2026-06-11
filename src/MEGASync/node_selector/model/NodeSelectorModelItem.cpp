@@ -57,7 +57,7 @@ std::shared_ptr<mega::MegaNode> NodeSelectorModelItem::getNode() const
 
 bool NodeSelectorModelItem::isSpecialNode() const
 {
-    return (isCloudDrive() || isMyBackupsFolder() || isRubbishBin());
+    return (isCloudDrive() || isMyBackupsFolder() || isRubbishBin() || isS4Container());
 }
 
 bool NodeSelectorModelItem::isTakenDown() const
@@ -68,7 +68,7 @@ bool NodeSelectorModelItem::isTakenDown() const
 bool NodeSelectorModelItem::canBeRenamed() const
 {
     if (isTakenDown() || isCloudDrive() || isMyBackupsFolder() || isRubbishBin() ||
-        isInRubbishBin() || (mMegaApi->isInVault(mNode.get())) ||
+        isInRubbishBin() || isS4Container() || (mMegaApi->isInVault(mNode.get())) ||
         (getNodeAccess() < mega::MegaShare::ACCESS_FULL))
     {
         return false;
@@ -530,6 +530,13 @@ bool NodeSelectorModelItem::isInShare() const
 bool NodeSelectorModelItem::isInVault() const
 {
     return MegaSyncApp->getMegaApi()->isInVault(mNode.get());
+}
+
+bool NodeSelectorModelItem::isS4Container() const
+{
+    // Do not cache the container handle: the SDK docs state it can change at any
+    // time (e.g. S4 being enabled/disabled from another client)
+    return mNode && mMegaApi->isS4Enabled() && mNode->getHandle() == mMegaApi->getS4Container();
 }
 
 NodeSelectorModelItemSearch::NodeSelectorModelItemSearch(std::unique_ptr<mega::MegaNode> node,
