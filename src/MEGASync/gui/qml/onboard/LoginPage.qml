@@ -197,12 +197,10 @@ LoginPageForm {
     }
 
     helpButton.onClicked: {
-        if (serviceUrlsAccess.isDataReady()) {
-            openRecoveryUrl();
-        } else {
-            waitingForRecoveryUrl = true;
-            serviceUrlsAccess.isDataReady(true);
-        }
+        // isDataReady(true) emits dataReady now if ready, or later once fetched;
+        // either way the opening happens in onDataReady, guarded by this flag.
+        waitingForRecoveryUrl = true;
+        serviceUrlsAccess.isDataReady(true);
     }
 
     Component.onDestruction: {

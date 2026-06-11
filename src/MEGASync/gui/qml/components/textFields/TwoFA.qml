@@ -163,12 +163,10 @@ FocusScope {
             Layout.leftMargin: -sizes.horizontalPadding
             text: qsTranslate("OnboardingStrings", "Problem with two-factor authentication?")
             onClicked: {
-                if (serviceUrlsAccess.isDataReady()) {
-                    root.openRecoveryUrl();
-                } else {
-                    root.waitingForRecoveryUrl = true;
-                    serviceUrlsAccess.isDataReady(true);
-                }
+                // isDataReady(true) emits dataReady now if ready, or later once fetched;
+                // either way the opening happens in onDataReady, guarded by this flag.
+                root.waitingForRecoveryUrl = true;
+                serviceUrlsAccess.isDataReady(true);
             }
 
             icons {
