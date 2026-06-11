@@ -1342,23 +1342,26 @@ void Preferences::enableNotifications(NotificationsTypes type, bool value)
 
 void Preferences::recoverDeprecatedNotificationsSettings()
 {
-    QVariant deprecatedGlobalNotifications = getValueConcurrent<QVariant>(showDeprecatedNotificationsKey);
-    if(!deprecatedGlobalNotifications.isNull())
+    QMutexLocker locker(&mutex);
+
+    if (mSettings->contains(showDeprecatedNotificationsKey))
     {
-        assert(logged());
+        const auto deprecatedGlobalNotifications =
+            mSettings->value(showDeprecatedNotificationsKey, defaultDeprecatedNotifications);
+
         for(int index = notificationsTypeUT(NotificationsTypes::GENERAL_SWITCH_NOTIFICATIONS) + 1;
             index < notificationsTypeUT(NotificationsTypes::LAST); ++index)
         {
             auto key = notificationsTypeToString((NotificationsTypes)index);
 
-            if(!key.isEmpty())
+            if (!key.isEmpty() && !mSettings->contains(key))
             {
-               setValueConcurrently(key,deprecatedGlobalNotifications);
+                mSettings->setValue(key, deprecatedGlobalNotifications);
             }
         }
 
-        QMutexLocker locker(&mutex);
         mSettings->remove(showDeprecatedNotificationsKey);
+        syncSettingsLocked("recoverDeprecatedNotificationsSettings");
     }
 }
 

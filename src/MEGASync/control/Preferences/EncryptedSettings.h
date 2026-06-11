@@ -19,6 +19,7 @@ public:
     void beginGroup(int numGroup);
     void endGroup();
     qsizetype numChildGroups();
+    bool contains(const QString& key) const;
     bool containsGroup(QString groupName);
     bool isGroupEmpty();
     void remove(const QString & key);

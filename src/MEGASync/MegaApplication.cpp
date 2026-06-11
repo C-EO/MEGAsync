@@ -2002,7 +2002,13 @@ void MegaApplication::rebootApplication(bool update)
     }
 
     mTrayIconManager->hide();
-    QApplication::exit();
+    // Qt6: see exitApplication() — exit() emits aboutToQuit synchronously.
+    QTimer::singleShot(0,
+                       this,
+                       []()
+                       {
+                           QApplication::exit();
+                       });
 }
 
 int* testCrashPtr = nullptr;
@@ -2489,6 +2495,7 @@ void MegaApplication::cleanAll()
     removeSyncsAndBackupsMenus();
 
     preferences->setLastExit(QDateTime::currentMSecsSinceEpoch());
+    preferences->sync();
 
     // Remove models using deleteLater to be sure that they are removed after removing Transfer and
     // Stalled issues dialogs. Otherwise we need to set to null the view models as the views will
@@ -3220,7 +3227,16 @@ void MegaApplication::exitApplication()
 {
     reboot = false;
     mTrayIconManager->hide();
-    QApplication::exit();
+    // Qt6: QCoreApplication::exit() emits aboutToQuit synchronously, and
+    // cleanAll() deletes the QML engine. Defer the call so the engine is
+    // never destroyed while a QML signal handler is still on the stack
+    // (e.g. the exit-confirmation dialog button that triggers this path).
+    QTimer::singleShot(0,
+                       this,
+                       []()
+                       {
+                           QApplication::exit();
+                       });
 }
 
 QString MegaApplication::getDefaultUploadPath()
