@@ -70,6 +70,7 @@ QtObject {
     readonly property string backupStateBackedUp: qsTr("Backed up")
     readonly property string solveIssueRemoveBackup: qsTr("Remove backup")
     readonly property string solveIssueEnableBackup: qsTr("Enable backup")
+    readonly property string solveIssueStartNewBackup: qsTr("Start new backup")
     readonly property string menuActionsStopBackup: qsTr("Stop backup")
     readonly property string menuActionsRebootBackup: qsTr("Reboot backup")
     readonly property string backupFolderLabel: qsTr("Backup folder")

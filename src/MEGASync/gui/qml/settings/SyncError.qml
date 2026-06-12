@@ -9,6 +9,8 @@ import components.texts 1.0
 import components.buttons 1.0
 import components.menus 1.0
 
+import SyncErrors 1.0
+
 ColumnLayout {
     id: root
 
@@ -26,26 +28,6 @@ ColumnLayout {
     readonly property int buttonFocusBorder: 4
     readonly property int timeToResetActionButtonState: 5000
     readonly property int buttonIconbusyAnimationDurationTime: 1000
-
-    // error codes
-    readonly property int k_LOCAL_PATH_TEMPORARY_UNAVAILABLE: 6
-    readonly property int k_LOCAL_PATH_UNAVAILABLE: 7
-    readonly property int k_REMOTE_NODE_NOT_FOUND: 8
-    readonly property int k_STORAGE_OVERQUOTA: 9
-    readonly property int k_LOCAL_FILESYSTEM_MISMATCH: 15
-    readonly property int k_REMOTE_NODE_MOVED_TO_RUBBISH: 19
-    readonly property int k_REMOTE_NODE_INSIDE_RUBBISH: 20
-    readonly property int k_LOGGED_OUT: 26
-    readonly property int k_SYNC_CONFIG_WRITE_FAILURE: 31
-    readonly property int k_COULD_NOT_CREATE_IGNORE_FILE: 34
-    readonly property int k_SYNC_CONFIG_READ_FAILURE: 35
-    readonly property int k_UNKNOWN_DRIVE_PATH: 36
-    readonly property int k_NOTIFICATION_SYSTEM_UNAVAILABLE: 38
-    readonly property int k_UNABLE_TO_ADD_WATCH: 39
-    readonly property int k_UNABLE_TO_OPEN_DATABASE: 41
-    readonly property int k_INSUFFICIENT_DISK_SPACE: 42
-    readonly property int k_FAILURE_ACCESSING_PERSISTENT_STORAGE: 43
-    readonly property int k_MISMATCH_OF_ROOT_FSID: 44
 
     // Exposed as a plain property (not a binding) so external items can size
     // themselves from this value without binding to implicitHeight directly.
@@ -76,12 +58,12 @@ ColumnLayout {
     */
     states: [
         State {
-            when: (errorId == k_LOCAL_PATH_TEMPORARY_UNAVAILABLE || errorId == k_COULD_NOT_CREATE_IGNORE_FILE ||
-                   errorId == k_NOTIFICATION_SYSTEM_UNAVAILABLE || errorId == k_UNABLE_TO_ADD_WATCH ||
-                   errorId == k_INSUFFICIENT_DISK_SPACE || errorId == k_FAILURE_ACCESSING_PERSISTENT_STORAGE ||
-                   errorId == k_MISMATCH_OF_ROOT_FSID || errorId == k_SYNC_CONFIG_WRITE_FAILURE ||
-                   errorId == k_SYNC_CONFIG_READ_FAILURE || errorId == k_UNABLE_TO_OPEN_DATABASE ||
-                   errorId == k_UNKNOWN_DRIVE_PATH || errorId == k_LOCAL_PATH_UNAVAILABLE)
+            when: (errorId == SyncErrors.LOCAL_PATH_TEMPORARY_UNAVAILABLE || errorId == SyncErrors.COULD_NOT_CREATE_IGNORE_FILE ||
+                   errorId == SyncErrors.NOTIFICATION_SYSTEM_UNAVAILABLE || errorId == SyncErrors.UNABLE_TO_ADD_WATCH ||
+                   errorId == SyncErrors.INSUFFICIENT_DISK_SPACE || errorId == SyncErrors.FAILURE_ACCESSING_PERSISTENT_STORAGE ||
+                   errorId == SyncErrors.MISMATCH_OF_ROOT_FSID || errorId == SyncErrors.SYNC_CONFIG_WRITE_FAILURE ||
+                   errorId == SyncErrors.SYNC_CONFIG_READ_FAILURE || errorId == SyncErrors.UNABLE_TO_OPEN_DATABASE ||
+                   errorId == SyncErrors.UNKNOWN_DRIVE_PATH || errorId == SyncErrors.LOCAL_PATH_UNAVAILABLE)
 
             PropertyChanges {
                 target: actionRetry
@@ -89,7 +71,7 @@ ColumnLayout {
             }
         },
         State {
-            when: errorId == k_STORAGE_OVERQUOTA
+            when: errorId == SyncErrors.STORAGE_OVERQUOTA
 
             PropertyChanges {
                 target: actionGetMoreStorage
@@ -97,7 +79,7 @@ ColumnLayout {
             }
         },
         State {
-            when: errorId == k_LOCAL_FILESYSTEM_MISMATCH
+            when: errorId == SyncErrors.LOCAL_FILESYSTEM_MISMATCH
 
             PropertyChanges {
                 target: actionStartNewSync
@@ -105,7 +87,7 @@ ColumnLayout {
             }
         },
         State {
-            when: errorId == k_REMOTE_NODE_INSIDE_RUBBISH || errorId == k_REMOTE_NODE_MOVED_TO_RUBBISH
+            when: errorId == SyncErrors.REMOTE_NODE_INSIDE_RUBBISH || errorId == SyncErrors.REMOTE_NODE_MOVED_TO_RUBBISH
 
             PropertyChanges {
                 target: actionRestoreSyncedFolder
@@ -113,7 +95,7 @@ ColumnLayout {
             }
         },
         State {
-            when: errorId == k_LOGGED_OUT
+            when: errorId == SyncErrors.LOGGED_OUT
 
             PropertyChanges {
                 target: actionEnableSync

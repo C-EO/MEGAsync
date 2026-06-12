@@ -13,6 +13,7 @@
 #include "QmlDialogManager.h"
 #include "QmlTheme.h"
 #include "QmlUtils.h"
+#include "SyncErrors.h"
 #include "SyncInfo.h"
 
 #include <QDataStream>
@@ -54,6 +55,13 @@ void QmlManager::registerCommonQmlElements()
 
     qmlRegisterUncreatableMetaObject(ApiEnums::staticMetaObject, "ApiEnums", 1, 0, "ApiEnums",
                                      QString::fromUtf8("Cannot create ApiEnums in QML"));
+
+    qmlRegisterUncreatableMetaObject(SyncErrors::staticMetaObject,
+                                     "SyncErrors",
+                                     1,
+                                     0,
+                                     "SyncErrors",
+                                     QString::fromUtf8("Cannot create SyncErrors in QML"));
 
     qmlRegisterUncreatableType<LoginController>("LoginController", 1, 0, "LoginController",
                                                 QString::fromUtf8("Cannot create WarningLevel in QML"));

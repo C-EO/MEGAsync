@@ -145,6 +145,7 @@ QtObject {
     readonly property url pause_small_thin_outline: "qrc:/pause_small_thin_outline.svg"
     readonly property url slash_circle_small_thin_outline: "qrc:/slash-circle_small_thin_outline.svg"
     readonly property url sync_plus_small_thin_outline: "qrc:/sync-plus_small_thin_outline.svg"
+    readonly property url database_plus_small_thin_outline: "qrc:/database-plus_small_thin_outline.svg"
     readonly property url arrow_up_medium_regular_outline: "qrc:/arrow-up_medium_regular_outline.svg"
     readonly property url arrow_down_medium_regular_outline: "qrc:/arrow-down_medium_regular_outline.svg"
     readonly property url database_small_thin_outline: "qrc:/database_small_thin_outline.svg"

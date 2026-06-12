@@ -9,6 +9,8 @@ import components.texts 1.0
 import components.buttons 1.0
 import components.menus 1.0
 
+import SyncErrors 1.0
+
 ColumnLayout {
     id: root
 
@@ -28,26 +30,6 @@ ColumnLayout {
     readonly property int timeToResetActionButtonState: 5000
     readonly property int buttonIconbusyAnimationDurationTime: 1000
 
-    // error codes
-    readonly property int k_LOCAL_PATH_TEMPORARY_UNAVAILABLE: 6
-    readonly property int k_LOCAL_PATH_UNAVAILABLE: 7
-    readonly property int k_REMOTE_NODE_NOT_FOUND: 8
-    readonly property int k_STORAGE_OVERQUOTA: 9
-    readonly property int k_LOCAL_FILESYSTEM_MISMATCH: 15
-    readonly property int k_REMOTE_NODE_MOVED_TO_RUBBISH: 19
-    readonly property int k_REMOTE_NODE_INSIDE_RUBBISH: 20
-    readonly property int k_LOGGED_OUT: 26
-    readonly property int k_SYNC_CONFIG_WRITE_FAILURE: 31
-    readonly property int k_COULD_NOT_CREATE_IGNORE_FILE: 34
-    readonly property int k_SYNC_CONFIG_READ_FAILURE: 35
-    readonly property int k_UNKNOWN_DRIVE_PATH: 36
-    readonly property int k_NOTIFICATION_SYSTEM_UNAVAILABLE: 38
-    readonly property int k_UNABLE_TO_ADD_WATCH: 39
-    readonly property int k_UNABLE_TO_OPEN_DATABASE: 41
-    readonly property int k_INSUFFICIENT_DISK_SPACE: 42
-    readonly property int k_FAILURE_ACCESSING_PERSISTENT_STORAGE: 43
-    readonly property int k_MISMATCH_OF_ROOT_FSID: 44
-
     // Exposed as a plain property (not a binding) so external items can size
     // themselves from this value without binding to implicitHeight directly.
     // Binding to ColumnLayout.implicitHeight from outside the component causes
@@ -65,6 +47,7 @@ ColumnLayout {
         actionRetry.visible = false;
         actionGetMoreStorage.visible = false;
         actionEnableBackup.visible = false;
+        actionStartNewBackup.visible = false;
     }
 
     onErrorIdChanged: {
@@ -76,12 +59,12 @@ ColumnLayout {
     */
     states: [
         State {
-            when: (errorId == k_LOCAL_PATH_TEMPORARY_UNAVAILABLE || errorId == k_COULD_NOT_CREATE_IGNORE_FILE ||
-                   errorId == k_NOTIFICATION_SYSTEM_UNAVAILABLE || errorId == k_UNABLE_TO_ADD_WATCH ||
-                   errorId == k_INSUFFICIENT_DISK_SPACE || errorId == k_FAILURE_ACCESSING_PERSISTENT_STORAGE ||
-                   errorId == k_MISMATCH_OF_ROOT_FSID || errorId == k_SYNC_CONFIG_WRITE_FAILURE ||
-                   errorId == k_SYNC_CONFIG_READ_FAILURE || errorId == k_UNABLE_TO_OPEN_DATABASE ||
-                   errorId == k_UNKNOWN_DRIVE_PATH || errorId == k_LOCAL_PATH_UNAVAILABLE)
+            when: (errorId == SyncErrors.LOCAL_PATH_TEMPORARY_UNAVAILABLE ||
+                   errorId == SyncErrors.NOTIFICATION_SYSTEM_UNAVAILABLE || errorId == SyncErrors.UNABLE_TO_ADD_WATCH ||
+                   errorId == SyncErrors.INSUFFICIENT_DISK_SPACE || errorId == SyncErrors.FAILURE_ACCESSING_PERSISTENT_STORAGE ||
+                   errorId == SyncErrors.MISMATCH_OF_ROOT_FSID || errorId == SyncErrors.SYNC_CONFIG_WRITE_FAILURE ||
+                   errorId == SyncErrors.SYNC_CONFIG_READ_FAILURE || errorId == SyncErrors.UNABLE_TO_OPEN_DATABASE ||
+                   errorId == SyncErrors.UNKNOWN_DRIVE_PATH || errorId == SyncErrors.LOCAL_PATH_UNAVAILABLE)
 
             PropertyChanges {
                 target: actionRetry
@@ -89,7 +72,7 @@ ColumnLayout {
             }
         },
         State {
-            when: errorId == k_STORAGE_OVERQUOTA
+            when: errorId == SyncErrors.STORAGE_OVERQUOTA
 
             PropertyChanges {
                 target: actionGetMoreStorage
@@ -97,7 +80,15 @@ ColumnLayout {
             }
         },
         State {
-            when: errorId == k_LOGGED_OUT
+            when: errorId == SyncErrors.LOCAL_FILESYSTEM_MISMATCH
+
+            PropertyChanges {
+                target: actionStartNewBackup
+                visible: true
+            }
+        },
+        State {
+            when: errorId == SyncErrors.LOGGED_OUT
 
             PropertyChanges {
                 target: actionEnableBackup
@@ -251,15 +242,64 @@ ColumnLayout {
         }
 
         PrimaryButton {
-            id: actionRemoveBackup
+            id: actionStartNewBackup
 
-            visible: true
+            visible: false
             sizes: SmallSizes {
                 verticalPadding: root.actionButtonVerticalPadding
             }
+            text: SettingsStrings.solveIssueStartNewBackup
+            icons.source: Images.database_plus_small_thin_outline
+            icons.position: Icon.Position.LEFT
+            checkable: true
+
+            Timer {
+                id: timerActionStartNewBackup
+
+                interval: root.timeToResetActionButtonState
+                repeat: false
+
+                onRunningChanged: {
+                    if (running) {
+                        settingsAccess.addItem();
+
+                        actionStartNewBackup.checked = true;
+                        actionStartNewBackup.buttonCursorShape = Qt.ArrowCursor
+                        actionStartNewBackup.leftIconRotation.duration = root.buttonIconbusyAnimationDurationTime
+                        actionStartNewBackup.leftIconRotation.loops = root.timeToResetActionButtonState / actionRetry.leftIconRotation.duration
+                        actionStartNewBackup.leftIconRotation.start();
+                    }
+                    else {
+                        actionStartNewBackup.checked = false;
+                        actionStartNewBackup.buttonCursorShape = Qt.PointingHandCursor
+                    }
+                }
+            }
+
+            onClicked: {
+                if (!timerActionStartNewBackup.running) {
+                    timerActionStartNewBackup.start();
+                }
+            }
+        }
+
+        PrimaryButton {
+            id: actionRemoveBackup
+
+            visible: true
+            colors.background: ColorTheme.buttonError
+            colors.pressed: ColorTheme.buttonErrorPressed
+            colors.hover: ColorTheme.buttonErrorHover
+            sizes: SmallSizes {}
             text: SettingsStrings.menuActionsStopBackup
+            colors.text: ColorTheme.textOnColor
+            colors.textHover: ColorTheme.textOnColor
+            colors.textPressed: ColorTheme.textOnColor
             icons.source: Images.database_x_medium_thin_outline
             icons.position: Icon.Position.LEFT
+            icons.colorEnabled: ColorTheme.textOnColor
+            icons.colorHovered: ColorTheme.textOnColor
+            icons.colorPressed: ColorTheme.textOnColor
             checkable: true
 
             Timer {
@@ -270,7 +310,7 @@ ColumnLayout {
 
                 onRunningChanged: {
                     if (running) {
-                        settingsAccess.removeNonConfirmation(itemIndex);
+                        settingsAccess.remove(itemIndex);
 
                         actionRemoveBackup.checked = true;
                         actionRemoveBackup.buttonCursorShape = Qt.ArrowCursor
