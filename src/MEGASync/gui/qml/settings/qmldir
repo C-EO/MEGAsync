@@ -5,6 +5,8 @@ QuotaProgressSegmentItem 1.0 QuotaProgressSegmentItem.qml
 QuotaProgressToolTip QuotaProgressToolTip.qml
 SyncSettings SyncSettings.qml
 BackupSettings BackupSettings.qml
+SettingsError 1.0 SettingsError.qml
+ErrorActionButton 1.0 ErrorActionButton.qml
 SyncError 1.0 SyncError.qml
 BackupError BackupError.qml
 SettingsEmptyState SettingsEmptyState.qml
