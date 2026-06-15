@@ -23,6 +23,14 @@ import SettingsModel 1.0
 Rectangle {
     id: root
 
+    // --- model roles ---------------------------------------------------------------
+    required property int status
+    required property string name
+    required property string folder
+    required property string error
+    required property int error_id
+    required property int index
+
     // --- injected per-tab configuration -------------------------------------------
     // The owning tab widget (SyncSettingsQuickWidget / BackupSettingsQuickWidget).
     // Passed in explicitly because both widgets share one QML engine root context and
@@ -32,8 +40,6 @@ Rectangle {
     property int statusContentWidth: 160
     property int itemRadius: 6
     property int errorRadius: 6
-    property Component errorComponent: null
-
     // status cell text (per-tab strings)
     property var statusDescription: function(status) { return ""; }
 
@@ -65,7 +71,9 @@ Rectangle {
 
     // context-menu per-tab differences
     property url openInMegaIcon: Images.mega_medium_thin_outline
-    property string showInFolderText: SettingsStrings.menuActionsShowInFolder
+    property string showInFolderText: OS.isMac() ? SettingsStrings.menuActionsShowInFinder
+                                                 : OS.isWindows() ? SettingsStrings.menuActionsShowInFileExplorer
+                                                                  : SettingsStrings.menuActionsShowInFolder
     property url exclusionsIcon: Images.file_ignore_small_thin_outline
     property url rebootIcon: Images.rotate_cw_small_thin_outline
     property string rebootText: SettingsStrings.menuActionsRebootSync
@@ -75,6 +83,15 @@ Rectangle {
     // "Stop backup" using the menu's default colours.
     property bool removeIsDestructive: true
     property url idleIcon: Images.sync_01_small_thin_outline
+
+    // error panel per-tab configuration (defaults match the sync variant)
+    property bool errorShowRestore: true
+    property bool errorRetryOnIgnoreFileError: true
+    property string errorEnableText: SettingsStrings.solveIssueEnableSync
+    property string errorStartNewText: SettingsStrings.solveIssueStartNewSync
+    property url errorStartNewIcon: Images.sync_plus_small_thin_outline
+    property bool errorRemoveNonConfirmation: true
+    property int errorButtonVerticalPadding: 4
 
     // --- shared dimensions --------------------------------------------------------
     readonly property int itemBackgroundHeight: 32
@@ -446,23 +463,31 @@ Rectangle {
             Layout.leftMargin: Layout.bottomMargin
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.preferredHeight: errorLoader.item ? errorLoader.item.contentHeight : 0
+            Layout.preferredHeight: errorPanel.contentHeight
             color: ColorTheme.notificationError
             radius: root.errorRadius
 
-            Loader {
-                id: errorLoader
+            SettingsError {
+                id: errorPanel
 
                 width: parent.width
-                active: errorItem.visible
-                sourceComponent: root.errorComponent
+                settingsAccess: root.settingsAccess
+                errorId: error_id
+                errorMessage: error
+                localFolder: folder
+                itemIndex: index
+                showRestore: root.errorShowRestore
+                retryOnIgnoreFileError: root.errorRetryOnIgnoreFileError
+                enableText: root.errorEnableText
+                startNewText: root.errorStartNewText
+                startNewIcon: root.errorStartNewIcon
+                removeText: root.removeText
+                removeIcon: root.removeIcon
+                removeAction: root.errorRemoveNonConfirmation
+                              ? function() { settingsAccess.removeNonConfirmation(itemIndex); }
+                              : function() { settingsAccess.remove(itemIndex); }
+                buttonVerticalPadding: root.errorButtonVerticalPadding
             }
-
-            Binding { target: errorLoader.item; property: "settingsAccess"; value: root.settingsAccess }
-            Binding { target: errorLoader.item; property: "errorId";        value: error_id }
-            Binding { target: errorLoader.item; property: "errorMessage";   value: error }
-            Binding { target: errorLoader.item; property: "localFolder";    value: folder }
-            Binding { target: errorLoader.item; property: "itemIndex";      value: index }
         }
     }
 }

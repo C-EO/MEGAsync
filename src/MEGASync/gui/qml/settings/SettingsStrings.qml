@@ -58,7 +58,6 @@ QtObject {
 
     // Backup settings strings
     readonly property string tableBackupsNameColumn: qsTr("Backups")
-    readonly property string tableBackupsStatusColumn: qsTr("Status")
     readonly property string addBackup: qsTr("Add backup")
     readonly property string titleNoBackup: qsTr("No backups")
     readonly property string descriptionNoBackup: qsTr("Add a backup to protect your folders automatically")

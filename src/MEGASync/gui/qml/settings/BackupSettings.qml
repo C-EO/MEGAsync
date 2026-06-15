@@ -52,17 +52,6 @@ Item {
         }
     }
 
-    function getShowInFolderText() {
-        if (OS.isMac()) {
-            return SettingsStrings.menuActionsShowInFinder;
-        }
-        else if (OS.isWindows()) {
-            return SettingsStrings.menuActionsShowInFileExplorer;
-        }
-        else {
-            return SettingsStrings.menuActionsShowInFolder;
-        }
-    }
 
     function backupStatusTextColor(status, hovered) {
         if (hovered && status === BackupSettingsModel.SUSPENDED) {
@@ -106,7 +95,7 @@ Item {
         SettingsSortableHeader {
             Layout.preferredWidth: parent.width
             nameText: SettingsStrings.tableBackupsNameColumn
-            statusText: SettingsStrings.tableBackupsStatusColumn
+            statusText: SettingsStrings.tableSyncsStatusColumn
             labelColor: ColorTheme.textAccent
             showInitialNameIndicator: false
             statusLabelWidth: root.backupStatusLabelWidth
@@ -137,9 +126,14 @@ Item {
                 settingsAccess: backupSettingsAccess
                 statusContentWidth: root.backupItemContentStatusWidth
                 errorRadius: root.errorBackupItemRadius
-                errorComponent: BackupError {}
                 idleIcon: Images.database_small_thin_outline
-                showInFolderText: root.getShowInFolderText()
+                errorShowRestore: false
+                errorRetryOnIgnoreFileError: false
+                errorEnableText: SettingsStrings.solveIssueEnableBackup
+                errorStartNewText: SettingsStrings.solveIssueStartNewBackup
+                errorStartNewIcon: Images.database_plus_small_thin_outline
+                errorRemoveNonConfirmation: false
+                errorButtonVerticalPadding: 3
                 rebootText: SettingsStrings.menuActionsRebootBackup
                 removeIcon: Images.database_x_medium_thin_outline
                 removeText: SettingsStrings.menuActionsStopBackup

@@ -142,6 +142,7 @@
         <file alias="arrow-up_medium_regular_outline.svg">images/qml/arrow-up_medium_regular_outline.svg</file>
         <file alias="arrow-down_medium_regular_outline.svg">images/qml/arrow-down_medium_regular_outline.svg</file>
         <file alias="MEGA_small_thin_outline.svg">images/qml/MEGA_small_thin_outline.svg</file>
+        <file alias="database-plus_small_thin_outline.svg">images/qml/database-plus_small_thin_outline.svg</file>
         <file alias="database_small_thin_outline.svg">images/qml/database_small_thin_outline.svg</file>
         <file alias="database-x_medium_thin_outline.svg">images/qml/database-x_medium_thin_outline.svg</file>
         <file alias="pause_small_thin_outline.svg">images/qml/pause_small_thin_outline.svg</file>

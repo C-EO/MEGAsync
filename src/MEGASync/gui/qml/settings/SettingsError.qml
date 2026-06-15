@@ -14,17 +14,17 @@ import SyncErrors 1.0
 /*
   Shared error panel shown when a sync/backup item is in a FAIL state. It maps
   each error code to a single action button, plus an always-present destructive
-  remove button. SyncError.qml and BackupError.qml configure the type-specific
+  remove button. SettingsListDelegate configures the type-specific
   texts/icons/actions via the properties below.
 */
 ColumnLayout {
     id: root
 
     property var settingsAccess
-    property int errorId
-    property string errorMessage
-    property string localFolder
-    property int itemIndex
+    required property int errorId
+    required property string errorMessage
+    required property string localFolder
+    required property int itemIndex
 
     // Type-specific configuration (defaults match the sync variant).
     property string enableText: SettingsStrings.solveIssueEnableSync
@@ -108,6 +108,8 @@ ColumnLayout {
         Layout.leftMargin: Layout.bottomMargin
 
         ErrorActionButton {
+            id: retryButton
+
             errorId: root.errorId
             triggerErrors: root.retryErrorCodes
             spins: true
@@ -120,6 +122,8 @@ ColumnLayout {
         }
 
         ErrorActionButton {
+            id: getMoreStorageButton
+
             errorId: root.errorId
             triggerErrors: [SyncErrors.STORAGE_OVERQUOTA]
             resetInterval: root.timeToResetActionButtonState
@@ -129,6 +133,8 @@ ColumnLayout {
         }
 
         ErrorActionButton {
+            id: enableButton
+
             errorId: root.errorId
             triggerErrors: [SyncErrors.LOGGED_OUT]
             spins: true
@@ -141,6 +147,8 @@ ColumnLayout {
         }
 
         ErrorActionButton {
+            id: restoreButton
+
             errorId: root.errorId
             enabledForType: root.showRestore
             triggerErrors: [SyncErrors.REMOTE_NODE_INSIDE_RUBBISH, SyncErrors.REMOTE_NODE_MOVED_TO_RUBBISH]
@@ -152,6 +160,8 @@ ColumnLayout {
         }
 
         ErrorActionButton {
+            id: startNewButton
+
             errorId: root.errorId
             triggerErrors: [SyncErrors.LOCAL_FILESYSTEM_MISMATCH]
             spins: true
@@ -164,6 +174,8 @@ ColumnLayout {
         }
 
         ErrorActionButton {
+            id: removeButton
+
             alwaysVisible: true
             resetInterval: root.timeToResetActionButtonState
             colors.background: ColorTheme.buttonError

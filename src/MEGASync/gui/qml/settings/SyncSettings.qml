@@ -97,7 +97,6 @@ Item {
                 settingsAccess: syncSettingsAccess
                 statusContentWidth: root.syncItemContentStatusWidth
                 statusDescription: root.getStatusDescription
-                errorComponent: SyncError {}
             }
 
             ScrollBar.vertical: ScrollBar {

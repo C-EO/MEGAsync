@@ -18,9 +18,7 @@
         <file>settings/SyncSettings.qml</file>
         <file>settings/SettingsError.qml</file>
         <file>settings/ErrorActionButton.qml</file>
-        <file>settings/SyncError.qml</file>
         <file>settings/BackupSettings.qml</file>
-        <file>settings/BackupError.qml</file>
         <file>settings/SettingsEmptyState.qml</file>
         <file>settings/SettingsSortableHeader.qml</file>
         <file>settings/SettingsListDelegate.qml</file>
