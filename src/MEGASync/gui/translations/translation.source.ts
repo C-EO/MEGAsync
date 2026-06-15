@@ -316,77 +316,6 @@
     </message>
 </context>
 <context>
-    <name>BackupItemModel</name>
-    <message>
-        <source>Backup is disabled</source>
-        <translatorcomment>Checkbox tooltip that is displayed when it is unchecked.(Backup disabled).SNC-4208</translatorcomment>
-        <translation>Backup is disabled</translation>
-    </message>
-    <message>
-        <source>Backup is enabled</source>
-        <translatorcomment>Checkbox tooltip that is displayed when it is checked.(Backup enabled).SNC-4208</translatorcomment>
-        <translation>Backup is enabled</translation>
-    </message>
-    <message>
-        <source>Local Folder</source>
-        <translatorcomment>Local folder column header name for backlups table in settings dialog</translatorcomment>
-        <translation>Local folder</translation>
-    </message>
-    <message>
-        <source>Sort by backup state</source>
-        <translatorcomment>Backup table header label tooltip that indicates that if you click here the column will be sorted by backup state.SNC-2565</translatorcomment>
-        <translation>Sort by backup status</translation>
-    </message>
-    <message>
-        <source>Sort by name</source>
-        <translatorcomment>Backup table header label tooltip that indicates that if you click here the column will be sorted by name</translatorcomment>
-        <translation>Sort by name</translation>
-    </message>
-    <message>
-        <source>State</source>
-        <translatorcomment>backup state column header name for backlups table in settings dialog.SNC-2565</translatorcomment>
-        <translation>Status</translation>
-    </message>
-</context>
-<context>
-    <name>BackupSettingsUI</name>
-    <message>
-        <source>Backup operation failed</source>
-        <translatorcomment>Title for error dialog shown when a  backup fails.SNC-3258</translatorcomment>
-        <translation>Backup operation failed</translation>
-    </message>
-    <message>
-        <source>Backups</source>
-        <translatorcomment>Title for backups tab in the settings.SNC-2565</translatorcomment>
-        <translation>Backups</translation>
-    </message>
-    <message>
-        <source>Error adding backup</source>
-        <translatorcomment>Title of the error message displayed when there was en error while trying to add a backup. SNC-3258</translatorcomment>
-        <translation>Error adding backup</translation>
-    </message>
-    <message>
-        <source>Error removing backup</source>
-        <translatorcomment>Error message dialog title.SNC-4208</translatorcomment>
-        <translation>Error stopping backup</translation>
-    </message>
-    <message>
-        <source>Operation on backup &apos;%1&apos; failed. Reason: %2</source>
-        <translatorcomment>text for error dialog shown when a  backup fails, folder path and reason are given during runtime in the placeholders.SNC-3258</translatorcomment>
-        <translation>Operation on backup ‘%1’ failed. Reason: %2</translation>
-    </message>
-    <message>
-        <source>Some folders haven&apos;t been backed up. For more information, hover over the red icon.</source>
-        <translatorcomment>Warning message displayed inside settings dialog indicating that there is a problem with a backup.SNC-2565</translatorcomment>
-        <translation>Some folders haven’t been backed up. For more information, hover over the warning icon.</translation>
-    </message>
-    <message>
-        <source>Your backup can’t be removed. Reason: %1</source>
-        <translatorcomment>Warning message title indicating that an error happened removing a backup. the reason is given at runtime in place of the placeholder.SNC-3258</translatorcomment>
-        <translation>Your backup can’t be removed. Reason: %1</translation>
-    </message>
-</context>
-<context>
     <name>BackupSyncsMenu</name>
     <message>
         <source>Add Backup</source>
@@ -397,14 +326,6 @@
         <source>Backups</source>
         <translatorcomment>Menu option that shows backups menu;SNC-3654</translatorcomment>
         <translation>Backups</translation>
-    </message>
-</context>
-<context>
-    <name>BackupTableView</name>
-    <message>
-        <source>Stop backup</source>
-        <translatorcomment>Menu action that stops the backup.SNC-2565</translatorcomment>
-        <translation>Stop backup</translation>
     </message>
 </context>
 <context>
@@ -5836,19 +5757,6 @@ Enter a different name.</translation>
     </message>
 </context>
 <context>
-    <name>OpenBackupsFolder</name>
-    <message>
-        <source>Backup Folder</source>
-        <translatorcomment>Label for the path showing the backups folder in the cloud.SNC-2565</translatorcomment>
-        <translation>Backup folder</translation>
-    </message>
-    <message>
-        <source>View in MEGA</source>
-        <translatorcomment>Button in settings to open the backups folder in the cloud.SNC-2565</translatorcomment>
-        <translation>View in MEGA</translation>
-    </message>
-</context>
-<context>
     <name>OsNotifications</name>
     <message numerus="yes">
         <source>[A] removed %n item</source>
@@ -6658,14 +6566,6 @@ Do you want to delete it anyway?</translation>
     </message>
 </context>
 <context>
-    <name>RemoteItemUi</name>
-    <message>
-        <source>Add</source>
-        <translatorcomment>Button to add new syncs or backups from settings window.SNC-2565</translatorcomment>
-        <translation>Add</translation>
-    </message>
-</context>
-<context>
     <name>RemoteMoveOrRenameCannotOccurChooseWidget</name>
     <message>
         <source>Remote</source>
@@ -6709,26 +6609,6 @@ Do you want to delete it anyway?</translation>
         <translation>Change</translation>
     </message>
     <message>
-        <source>Delete folder permanently</source>
-        <translatorcomment>Radio button option text</translatorcomment>
-        <translation>Delete folder from MEGA</translation>
-    </message>
-    <message>
-        <source>Folder will be deleted from MEGA. It won&apos;t be deleted from your computer. [B]This action cannot be undone.[/B]</source>
-        <translatorcomment>Informative label displayed when user delete a backup. This options comes from &quot;delete folder permanently&quot; option. SNC-6067</translatorcomment>
-        <translation>The folder will be deleted from MEGA, but it won’t be deleted from your device. This action can’t be undone.</translation>
-    </message>
-    <message>
-        <source>Move folder</source>
-        <translatorcomment>Radio button option label</translatorcomment>
-        <translation>Move folder to Cloud drive</translation>
-    </message>
-    <message>
-        <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
-        <translatorcomment>Radio button description</translatorcomment>
-        <translation>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up to.</translation>
-    </message>
-    <message>
         <source>Move to:</source>
         <translatorcomment>Label in the left of a line edit where the target location will be displayed</translatorcomment>
         <translation>Move to:</translation>
@@ -6744,8 +6624,28 @@ Do you want to delete it anyway?</translation>
         <translation>Stop backup</translation>
     </message>
     <message>
-        <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
-        <translatorcomment>Backup removal title description. SNC-6067</translatorcomment>
+        <source>Move folder to Cloud drive</source>
+        <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
+        <translation>Move folder to Cloud drive</translation>
+    </message>
+    <message>
+        <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
+        <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
+        <translation>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</translation>
+    </message>
+    <message>
+        <source>Delete folder from MEGA</source>
+        <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
+        <translation>Delete folder from MEGA</translation>
+    </message>
+    <message>
+        <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
+        <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
+        <translation>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</translation>
+    </message>
+    <message>
+        <source>To stop backing up this folder, you need to either move it or delete it</source>
+        <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
         <translation>To stop backing up this folder, you need to either move it or delete it</translation>
     </message>
 </context>
@@ -7333,6 +7233,14 @@ Do you want to delete it anyway?</translation>
     </message>
 </context>
 <context>
+    <name>SettingsQuickWidgetBase</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
+        <translation>Error opening .megaignore file</translation>
+    </message>
+</context>
+<context>
     <name>SettingsStrings</name>
     <message>
         <source>Add a sync to keep folders up to date</source>
@@ -7420,11 +7328,6 @@ Do you want to delete it anyway?</translation>
         <translation>No syncs set up</translation>
     </message>
     <message>
-        <source>Open in mega</source>
-        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
-        <translation>Open in mega</translation>
-    </message>
-    <message>
         <source>Pause</source>
         <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
         <translation>Pause</translation>
@@ -7433,11 +7336,6 @@ Do you want to delete it anyway?</translation>
         <source>Paused</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
         <translation>Paused</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
-        <translation>Reboot</translation>
     </message>
     <message>
         <source>Remove synced folder</source>
@@ -7530,16 +7428,6 @@ Do you want to delete it anyway?</translation>
         <translation>Uploads are disabled and folder syncing is paused.</translation>
     </message>
     <message>
-        <source>Versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>Versions</translation>
-    </message>
-    <message>
-        <source>Versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>Versions[BR]%1</translation>
-    </message>
-    <message>
         <source>Your MEGA account is full</source>
         <translatorcomment>Warning title shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>Your MEGA account is full</translation>
@@ -7548,6 +7436,81 @@ Do you want to delete it anyway?</translation>
         <source>Your MEGA account is nearly full</source>
         <translatorcomment>Warning title shown in the Account pane when the account storage is close to full. DSN-2975</translatorcomment>
         <translation>Your MEGA account is nearly full</translation>
+    </message>
+    <message>
+        <source>Show in Finder</source>
+        <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
+        <translation>Show in Finder</translation>
+    </message>
+    <message>
+        <source>Show in File Explorer</source>
+        <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
+        <translation>Show in File Explorer</translation>
+    </message>
+    <message>
+        <source>Open in MEGA</source>
+        <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
+        <translation>Open in MEGA</translation>
+    </message>
+    <message>
+        <source>Reboot sync</source>
+        <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
+        <translation>Reboot sync</translation>
+    </message>
+    <message>
+        <source>Add backup</source>
+        <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
+        <translation>Add backup</translation>
+    </message>
+    <message>
+        <source>No backups</source>
+        <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>No backups</translation>
+    </message>
+    <message>
+        <source>Add a backup to protect your folders automatically</source>
+        <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>Add a backup to protect your folders automatically</translation>
+    </message>
+    <message>
+        <source>Backing up</source>
+        <translatorcomment>Identifier of a backup state while the backup is in progress. SNC-6588</translatorcomment>
+        <translation>Backing up</translation>
+    </message>
+    <message>
+        <source>Backed up</source>
+        <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
+        <translation>Backed up</translation>
+    </message>
+    <message>
+        <source>Enable backup</source>
+        <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
+        <translation>Enable backup</translation>
+    </message>
+    <message>
+        <source>Start new backup</source>
+        <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
+        <translation>Start new backup</translation>
+    </message>
+    <message>
+        <source>Stop backup</source>
+        <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
+        <translation>Stop backup</translation>
+    </message>
+    <message>
+        <source>Reboot backup</source>
+        <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
+        <translation>Reboot backup</translation>
+    </message>
+    <message>
+        <source>Backup folder</source>
+        <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
+        <translation>Backup folder</translation>
+    </message>
+    <message>
+        <source>View in MEGA</source>
+        <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
+        <translation>View in MEGA</translation>
     </message>
 </context>
 <context>
@@ -8632,114 +8595,6 @@ If this doesn’t resolve the issue, contact support@mega.io.</translation>
     </message>
 </context>
 <context>
-    <name>SyncItemModel</name>
-    <message>
-        <source>Click menu for more Sync actions</source>
-        <translatorcomment>Menu column tooltip (three dots in the table).SNC-4208</translatorcomment>
-        <translation>Click the menu for more sync actions</translation>
-    </message>
-    <message>
-        <source>Disabled</source>
-        <translatorcomment>Text in syncs table indicating sync state.SNC-2565</translatorcomment>
-        <translation>Disabled</translation>
-    </message>
-    <message>
-        <source>Downloads</source>
-        <translatorcomment>Syncs table column name, it shows number of downloads.SNC-2565</translatorcomment>
-        <translation>Downloads</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translatorcomment>Syncs table  column name, it shows number of files in a sync.SNC-2565</translatorcomment>
-        <translation>Files</translation>
-    </message>
-    <message>
-        <source>Folders</source>
-        <translatorcomment>Syncs table column name, it shows number of folders in a sync.SNC-2565</translatorcomment>
-        <translation>Folders</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translatorcomment>Text in syncs table indicating sync state.SNC-2565</translatorcomment>
-        <translation>Loading</translation>
-    </message>
-    <message>
-        <source>Monitoring</source>
-        <translatorcomment>Text in syncs table indicating sync state.SNC-2565</translatorcomment>
-        <translation>Monitoring</translation>
-    </message>
-    <message>
-        <source>Paused</source>
-        <translatorcomment>Text in syncs table indicating sync state.SNC-2565</translatorcomment>
-        <translation>Paused</translation>
-    </message>
-    <message>
-        <source>Scanning</source>
-        <translatorcomment>Text in syncs table indicating sync state.SNC-2565</translatorcomment>
-        <translation>Scanning</translation>
-    </message>
-    <message>
-        <source>Sort by Downloads</source>
-        <translatorcomment>Sync table header tooltip indicating that it is going to sort the table by downloads in case the user clicks.SNC-2565</translatorcomment>
-        <translation>Sort by downloads</translation>
-    </message>
-    <message>
-        <source>Sort by Uploads</source>
-        <translatorcomment>Sync table header tooltip indicating that it is going to sort the table by uploads in case the user clicks.SNC-2565</translatorcomment>
-        <translation>Sort by uploads</translation>
-    </message>
-    <message>
-        <source>Sort by file count</source>
-        <translatorcomment>Sync table header tooltip indicating that it is going to sort the table by file count in case the user clicks.SNC-2565</translatorcomment>
-        <translation>Sort by file count</translation>
-    </message>
-    <message>
-        <source>Sort by folder count</source>
-        <translatorcomment>Sync table header tooltip indicating that it is going to sort the table by folder count in case the user clicks.SNC-2565</translatorcomment>
-        <translation>Sort by folder count</translation>
-    </message>
-    <message>
-        <source>Sort by state</source>
-        <translatorcomment>Sync table header tooltip indicating that it is going to sort the table by state in case the user clicks.</translatorcomment>
-        <translation>Sort by status</translation>
-    </message>
-    <message>
-        <source>Sort by sync name</source>
-        <translatorcomment>Sync table header tooltip indicating that it is going to sort the table by folder name in case the user clicks.SNC-2565</translatorcomment>
-        <translation>Sort by sync name</translation>
-    </message>
-    <message>
-        <source>Sort by sync state</source>
-        <translatorcomment>Sync table header tooltip indicating that it is going to sort the table by sync state in case the user clicks.SNC-2565</translatorcomment>
-        <translation>Sort by sync status</translation>
-    </message>
-    <message>
-        <source>State</source>
-        <translatorcomment>Syncs table column header, it shows sync state.SNC-2565</translatorcomment>
-        <translation>Status</translation>
-    </message>
-    <message>
-        <source>Stopped</source>
-        <translatorcomment>Text in syncs table indicating sync state.SNC-2565</translatorcomment>
-        <translation>Stopped</translation>
-    </message>
-    <message>
-        <source>Sync Name</source>
-        <translatorcomment>Syncs table column header, it shows sync name.SNC-2565</translatorcomment>
-        <translation>Sync name</translation>
-    </message>
-    <message>
-        <source>Syncing</source>
-        <translatorcomment>Text in syncs table indicating sync state.SNC-2565</translatorcomment>
-        <translation>Syncing</translation>
-    </message>
-    <message>
-        <source>Uploads</source>
-        <translatorcomment>Syncs table column header, it shows number of uploads.SNC-2565</translatorcomment>
-        <translation>Uploads</translation>
-    </message>
-</context>
-<context>
     <name>SyncNodeSelector</name>
     <message>
         <source>Invalid folder for synchronization.
@@ -8756,11 +8611,6 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
 <context>
     <name>SyncSettingsQuickWidget</name>
     <message>
-        <source>Error opening megaignore file</source>
-        <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
-        <translation>Error opening .megaignore file</translation>
-    </message>
-    <message>
         <source>Can&apos;t restore %1 mega folder</source>
         <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
         <translation>Can&apos;t restore %1 mega folder</translation>
@@ -8774,62 +8624,6 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>Remove sync</source>
         <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
         <translation>Remove sync</translation>
-    </message>
-</context>
-<context>
-    <name>SyncSettingsUIBase</name>
-    <message>
-        <source>%1 can&apos;t be added as your Pro Flexi account has been deactivated due to payment failure or you&apos;ve cancelled your subscription. To continue, make a payment and reactivate your subscription.</source>
-        <translatorcomment>Error message displayed when there was en error while trying to add a sync and the account is an expired Pro Flexi account. SNC-4208</translatorcomment>
-        <translation>[B]%1[/B] can’t be added as your Pro&#xa0;Flexi account has been deactivated due to payment failure or you’ve cancelled your subscription. To continue, make a payment and reactivate your subscription.</translation>
-    </message>
-    <message>
-        <source>Error opening megaignore file</source>
-        <translatorcomment>Text in message box shown when the ignore rules file cannot be opened.SNC-2565</translatorcomment>
-        <translation>Error opening .megaignore file</translation>
-    </message>
-    <message>
-        <source>Saving synchronised folders…</source>
-        <translatorcomment>Temporary text label shown while saving changes to Synchronized folders on Windows\Linux. Keep the 3 suspense periods, indicating to the user that the action is in in progress.SNC-4208</translatorcomment>
-        <translation>Saving synchronised folders…</translation>
-    </message>
-</context>
-<context>
-    <name>SyncTableView</name>
-    <message>
-        <source>Open in MEGA</source>
-        <translatorcomment>Context menu option that opens the folder in MEGA webclient.SNC-2565</translatorcomment>
-        <translation>Open in MEGA</translation>
-    </message>
-    <message>
-        <source>Pause</source>
-        <translatorcomment>Menu action to pause syncing for syncs or backups.SNC-2565</translatorcomment>
-        <translation>Pause</translation>
-    </message>
-    <message>
-        <source>Reboot backup</source>
-        <translatorcomment>Context menu action for rebooting backup.CON-1036</translatorcomment>
-        <translation>Reboot backup</translation>
-    </message>
-    <message>
-        <source>Reboot sync</source>
-        <translatorcomment>Context menu action for rebooting sync.CON-1036</translatorcomment>
-        <translation>Reboot sync</translation>
-    </message>
-    <message>
-        <source>Remove synced folder</source>
-        <translatorcomment>Context menu option that removes the sync.SNC-2565</translatorcomment>
-        <translation>Remove synced folder</translation>
-    </message>
-    <message>
-        <source>Rescan</source>
-        <translatorcomment>Menu action to do a scan for a sync or backup folder form settings.CON-1140</translatorcomment>
-        <translation>Rescan</translation>
-    </message>
-    <message>
-        <source>Run</source>
-        <translatorcomment>Menu action to resume syncing for syncs or backups.SNC-2565</translatorcomment>
-        <translation>Resume</translation>
     </message>
 </context>
 <context>

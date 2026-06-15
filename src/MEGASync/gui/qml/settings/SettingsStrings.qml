@@ -67,7 +67,6 @@ QtObject {
     readonly property string backupStateScanning: qsTr("Scanning")
     readonly property string backupStateBackingUp: qsTr("Backing up")
     readonly property string backupStateBackedUp: qsTr("Backed up")
-    readonly property string solveIssueRemoveBackup: qsTr("Remove backup")
     readonly property string solveIssueEnableBackup: qsTr("Enable backup")
     readonly property string solveIssueStartNewBackup: qsTr("Start new backup")
     readonly property string menuActionsStopBackup: qsTr("Stop backup")
