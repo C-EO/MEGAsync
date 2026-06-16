@@ -39,15 +39,15 @@ Item {
         switch(status) {
             case BackupSettingsModel.PENDING:
             case BackupSettingsModel.LOADING:
-                return SettingsStrings.backupStateLoading;
+                return SettingsStrings.syncStateLoading;
             case BackupSettingsModel.SUSPENDED:
-                return SettingsStrings.backupStatePaused;
+                return SettingsStrings.syncStatePaused;
             case BackupSettingsModel.FAIL:
-                return SettingsStrings.backupStateDisabled;
+                return SettingsStrings.syncStateDisabled;
             case BackupSettingsModel.SCANNING:
-                return SettingsStrings.backupStateScanning;
+                return SettingsStrings.syncStateScanning;
             case BackupSettingsModel.ACTIVE:
-                return SettingsStrings.backupStateBackingUp;
+                return SettingsStrings.syncStateSyncing;
             case BackupSettingsModel.IDLE:
                 return SettingsStrings.backupStateBackedUp;
         }
@@ -58,7 +58,7 @@ Item {
         if (hovered && status === BackupSettingsModel.SUSPENDED) {
             return ColorTheme.textPrimary;
         }
-        if (status === BackupSettingsModel.FAIL) {
+        else if (status === BackupSettingsModel.FAIL) {
             return ColorTheme.textError;
         }
         return ColorTheme.textPrimary;
@@ -68,7 +68,7 @@ Item {
         if (hovered && status === BackupSettingsModel.SUSPENDED) {
             return ColorTheme.iconPrimary;
         }
-        if (status === BackupSettingsModel.FAIL) {
+        else if (status === BackupSettingsModel.FAIL) {
             return ColorTheme.textError;
         }
         return ColorTheme.iconSecondary;

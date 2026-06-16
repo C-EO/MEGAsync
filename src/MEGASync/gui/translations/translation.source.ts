@@ -7408,11 +7408,6 @@ Do you want to delete it anyway?</translation>
         <translation>Synced folders</translation>
     </message>
     <message>
-        <source>Syncing</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Syncing</translation>
-    </message>
-    <message>
         <source>Transfers</source>
         <translatorcomment>Section title for transfer usage details in the Account pane. DSN-2975</translatorcomment>
         <translation>Transfers</translation>
@@ -7473,11 +7468,6 @@ Do you want to delete it anyway?</translation>
         <translation>Add a backup to protect your folders automatically</translation>
     </message>
     <message>
-        <source>Backing up</source>
-        <translatorcomment>Identifier of a backup state while the backup is in progress. SNC-6588</translatorcomment>
-        <translation>Backing up</translation>
-    </message>
-    <message>
         <source>Backed up</source>
         <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
         <translation>Backed up</translation>
@@ -7511,6 +7501,11 @@ Do you want to delete it anyway?</translation>
         <source>View in MEGA</source>
         <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
         <translation>View in MEGA</translation>
+    </message>
+    <message>
+        <source>Transferring</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Transferring</translation>
     </message>
 </context>
 <context>

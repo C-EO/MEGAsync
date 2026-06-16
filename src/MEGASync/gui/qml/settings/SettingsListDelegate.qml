@@ -102,6 +102,7 @@ Rectangle {
     readonly property int errorBorders: 2
     readonly property int backgroundColorAnimationTime: 200
     readonly property int toolTipShowDelay: 500
+    property real scanFrame: 0
 
     width: ListView.view ? ListView.view.width : implicitWidth
     height: content.implicitHeight
@@ -134,8 +135,6 @@ Rectangle {
                 return Images.alert_circle_small_thin_outline;
             case SettingsModel.SUSPENDED:
                 return Images.pause_thin_small_thin_outline;
-            case SettingsModel.SCANNING:
-                return Images.loader;
             default:
                 return root.idleIcon;
         }
@@ -298,20 +297,28 @@ Rectangle {
                                 color: root.resolveStatusIconColor(status, statusMouseArea.containsMouse)
                                 source: root.getStatusIcon(status)
                                 sourceSize: Qt.size(root.iconSize, root.iconSize)
+                                visible: status !== SettingsModel.SCANNING
                             }
 
-                            RotationAnimator {
-                                target: statusIcon
+                            SvgImage {
+                                id: scanningIcon
+
+                                Layout.alignment: Qt.AlignVCenter
+                                color: root.resolveStatusIconColor(status, statusMouseArea.containsMouse)
+                                source: "qrc:/activity_indicator_" + (Math.floor(root.scanFrame) % 30 + 1) + ".svg"
+                                sourceSize: Qt.size(root.iconSize, root.iconSize)
+                                visible: status === SettingsModel.SCANNING
+                            }
+
+                            NumberAnimation {
+                                target: root
+                                property: "scanFrame"
                                 from: 0
-                                to: 360
+                                to: 30
                                 duration: 1800
                                 loops: Animation.Infinite
                                 running: status === SettingsModel.SCANNING
-                                onRunningChanged: {
-                                    if (!running) {
-                                        statusIcon.rotation = 0;
-                                    }
-                                }
+                                onStopped: root.scanFrame = 0
                             }
 
                             Text {
@@ -363,6 +370,13 @@ Rectangle {
                     if (menu.activeFocus === false) {
                         menu.close();
                     }
+                }
+
+                onVisibleChanged: settingsAccess.setContextMenuOpen(visible)
+
+                Connections {
+                    target: settingsAccess
+                    function onCloseContextMenu() { menu.close() }
                 }
 
                 ContextMenuItem {
