@@ -2458,7 +2458,6 @@ void MegaApplication::cleanAll()
 
     DialogOpener::closeAllDialogs();
     QmlDialogManager::instance()->forceCloseOnboardingDialog();
-    QmlManager::instance()->finish();
 
     if(mBlockingBatch.isValid())
     {
@@ -2507,6 +2506,15 @@ void MegaApplication::cleanAll()
     // their deletion
     // Besides that, do not set any preference setting after this line, it won´t be persistent.
     QApplication::processEvents();
+
+    // Delete the shared QML engine only after every QQuickWidget created from it has been
+    // destroyed by the deleteLater()/processEvents() above (e.g. InfoDialog's
+    // TransfersSummaryQuickWidget and SettingsDialog's AccountStateQuickWidget, which are
+    // closed via DialogOpener::closeAllDialogs()). Deleting the engine while one of those
+    // widgets is still alive tears down a live QML scene mid-binding - reproducible during an
+    // active transfer - and crashes with an access violation inside the QML engine (seen on
+    // both Qt5 and Qt6).
+    QmlManager::instance()->finish();
 
     QTMegaApiManager::removeMegaApis();
 
