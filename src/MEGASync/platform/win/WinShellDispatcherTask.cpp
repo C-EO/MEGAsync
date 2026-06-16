@@ -40,13 +40,23 @@ WinShellDispatcherTask::~WinShellDispatcherTask()
 void WinShellDispatcherTask::run()
 {
     MegaApi::log(MegaApi::LOG_LEVEL_INFO, "Shell dispatcher starting...");
-    connect(this, SIGNAL(newUploadQueue(QQueue<QString>)), receiver, SLOT(shellUpload(QQueue<QString>)), Qt::QueuedConnection);
-    connect(this, SIGNAL(newExportQueue(QQueue<QString>)), receiver, SLOT(shellExport(QQueue<QString>)), Qt::QueuedConnection);
+
+    connect(this,
+            &WinShellDispatcherTask::newUploadQueue,
+            receiver,
+            &MegaApplication::shellUpload,
+            Qt::QueuedConnection);
+    connect(this,
+            &WinShellDispatcherTask::newExportQueue,
+            receiver,
+            &MegaApplication::shellExport,
+            Qt::QueuedConnection);
     connect(this,
             &WinShellDispatcherTask::viewOnMega,
             receiver,
             &MegaApplication::shellViewOnMega,
             Qt::QueuedConnection);
+
     dispatchPipe();
 }
 
