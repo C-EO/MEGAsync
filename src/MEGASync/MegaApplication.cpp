@@ -674,6 +674,12 @@ void MegaApplication::initialize()
                      .toUtf8()
                      .constData());
 
+    MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                 QString::fromUtf8("Platform: %1")
+                     .arg(QGuiApplication::platformName())
+                     .toUtf8()
+                     .constData());
+
     megaApi->setLanguage(currentLanguageCode.toUtf8().constData());
     megaApiFolders->setLanguage(currentLanguageCode.toUtf8().constData());
 

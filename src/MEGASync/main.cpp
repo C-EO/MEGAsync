@@ -400,18 +400,6 @@ int main(int argc, char *argv[])
     }
 #endif
 
-#if defined(Q_OS_LINUX)
-    if (!qEnvironmentVariableIsSet("DO_NOT_UNSET_XDG_SESSION_TYPE"))
-    {
-        QString sessionType = qEnvironmentVariable("XDG_SESSION_TYPE");
-        if (!sessionType.isEmpty() && sessionType == QString::fromUtf8("wayland"))
-        {
-            std::cerr << "Avoiding wayland" << std::endl;
-            qunsetenv("XDG_SESSION_TYPE");
-        }
-    }
-#endif
-
 #ifndef Q_OS_MACOS
 #if defined(WIN32)
     ScaleFactorManager scaleFactorManager(OsType::WIN);
