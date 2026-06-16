@@ -66,8 +66,19 @@ void OnboardingQmlDialog::raise()
     QmlDialog::setPosition(xPos, yPos);
     show();
 
-    // The following two lines are required by Windows (activate) and macOS (raise)
-    QmlDialog::requestActivate();
+    // requestActivate() is required by Windows; raise() by macOS.
+    // Qt5-ONLY Wayland branch: on Qt5 a client cannot activate itself (the call
+    // can crash), so we request attention via alert() instead.
+    // TODO Qt6: remove the Wayland branch and call requestActivate()
+    // unconditionally; Qt6 activates via xdg-activation without crashing.
+    if (Platform::getInstance()->isWayland())
+    {
+        QmlDialog::alert(0);
+    }
+    else
+    {
+        QmlDialog::requestActivate();
+    }
     QmlDialog::raise();
 }
 
