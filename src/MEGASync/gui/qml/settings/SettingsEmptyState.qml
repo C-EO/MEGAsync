@@ -21,7 +21,7 @@ ColumnLayout {
     signal addClicked()
 
     readonly property int topMargin: 128
-    readonly property int imageSize: 120
+    readonly property int imageSize: 160
     readonly property int titlePixelSize: 20
     readonly property int descriptionPixelSize: 16
     readonly property int underImageSpace: 24
@@ -52,6 +52,7 @@ ColumnLayout {
         text: root.title
         font.pixelSize: root.titlePixelSize
         font.weight: Font.DemiBold
+        color: ColorTheme.textPrimary
         elide: Text.ElideRight
         Layout.alignment: Qt.AlignHCenter
     }
@@ -65,6 +66,7 @@ ColumnLayout {
         text: root.description
         font.pixelSize: root.descriptionPixelSize
         font.weight: Font.Normal
+        color: ColorTheme.textPrimary
         elide: Text.ElideRight
         Layout.alignment: Qt.AlignHCenter
     }

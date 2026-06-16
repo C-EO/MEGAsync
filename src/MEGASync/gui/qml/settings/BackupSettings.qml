@@ -15,7 +15,7 @@ Item {
 
     readonly property int defaultTopMargin: 19
     readonly property int backupTableSpacing: 4
-    readonly property int backupStatusLabelWidth: 156
+    readonly property int backupStatusLabelWidth: 172
     readonly property int listViewOfBackupItems: 270
     readonly property int errorBackupItemRadius: 4
     readonly property int backupItemContentStatusWidth: 172
@@ -33,6 +33,7 @@ Item {
     readonly property int backupFooterFieldSpacing: 6
     readonly property int backupFooterFieldTextPixelSize: 14
     readonly property int issueLabelPixelSize: 12
+    readonly property int errorButtonVerticalPad: 3
 
     function getStatusDescription(status) {
         switch(status) {
@@ -60,7 +61,7 @@ Item {
         if (status === BackupSettingsModel.FAIL) {
             return ColorTheme.textError;
         }
-        return ColorTheme.textSecondary;
+        return ColorTheme.textPrimary;
     }
 
     function backupStatusIconColor(status, hovered) {
@@ -133,7 +134,7 @@ Item {
                 errorStartNewText: SettingsStrings.solveIssueStartNewBackup
                 errorStartNewIcon: Images.database_plus_small_thin_outline
                 errorRemoveNonConfirmation: false
-                errorButtonVerticalPadding: 3
+                errorButtonVerticalPadding: root.errorButtonVerticalPad
                 rebootText: SettingsStrings.menuActionsRebootBackup
                 removeIcon: Images.database_x_medium_thin_outline
                 removeText: SettingsStrings.menuActionsStopBackup

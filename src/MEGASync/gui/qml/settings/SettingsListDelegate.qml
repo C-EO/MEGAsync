@@ -298,14 +298,19 @@ Rectangle {
                                 color: root.resolveStatusIconColor(status, statusMouseArea.containsMouse)
                                 source: root.getStatusIcon(status)
                                 sourceSize: Qt.size(root.iconSize, root.iconSize)
+                            }
 
-                                RotationAnimator on rotation {
-                                    from: 0
-                                    to: 360
-                                    duration: 1000
-                                    loops: Animation.Infinite
-                                    running: status === SettingsModel.SCANNING
-                                    onStopped: statusIcon.rotation = 0
+                            RotationAnimator {
+                                target: statusIcon
+                                from: 0
+                                to: 360
+                                duration: 1800
+                                loops: Animation.Infinite
+                                running: status === SettingsModel.SCANNING
+                                onRunningChanged: {
+                                    if (!running) {
+                                        statusIcon.rotation = 0;
+                                    }
                                 }
                             }
 
