@@ -10,7 +10,9 @@
 #include "SyncSettingsModelBase.h"
 #include "Utilities.h"
 
+#include <QApplication>
 #include <QFileInfo>
+#include <QMouseEvent>
 
 SettingsQuickWidgetBase::SettingsQuickWidgetBase(SyncSettingsModelBase* model,
                                                  SyncController& controller,
@@ -42,6 +44,27 @@ SettingsQuickWidgetBase::SettingsQuickWidgetBase(SyncSettingsModelBase* model,
 SyncSettingsModelBase* SettingsQuickWidgetBase::model() const
 {
     return mModel;
+}
+
+void SettingsQuickWidgetBase::setContextMenuOpen(bool open)
+{
+    if (open)
+        qApp->installEventFilter(this);
+    else
+        qApp->removeEventFilter(this);
+}
+
+bool SettingsQuickWidgetBase::eventFilter(QObject* watched, QEvent* event)
+{
+    if (event->type() == QEvent::MouseButtonPress)
+    {
+        auto* mouseEvent = static_cast<QMouseEvent*>(event);
+        if (!rect().contains(mapFromGlobal(mouseEvent->globalPos())))
+        {
+            emit closeContextMenu();
+        }
+    }
+    return MegaQuickWidget::eventFilter(watched, event);
 }
 
 void SettingsQuickWidgetBase::exploreLocal(const QString& localFolder) const

@@ -16,9 +16,9 @@ Item {
 
     readonly property int defaultTopMargin: 19
     readonly property int syncTableSpacing: 4
-    readonly property int syncStatusLabelWidth: 156
+    readonly property int syncStatusLabelWidth: 172
     readonly property int listViewOfSyncItems: 270
-    readonly property int syncItemContentStatusWidth: 160
+    readonly property int syncItemContentStatusWidth: 172
     readonly property int syncItemHoritzontalPadding: 12
     readonly property int verticalAddSyncButtonSeparator: 16
     readonly property int leftPaddingAddSyncButton: 12

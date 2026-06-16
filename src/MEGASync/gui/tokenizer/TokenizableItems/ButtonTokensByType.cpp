@@ -9,7 +9,8 @@ void ButtonTokensByType::setDefaultTokens(QAbstractButton* button)
     auto buttonType = button->property("type").toString();
     auto isCheckable(button->isCheckable());
 
-    if (buttonType == QLatin1String("primary") || buttonType == QLatin1String("secondary"))
+    if (buttonType == QLatin1String("primary") || buttonType == QLatin1String("secondary") ||
+        buttonType == QLatin1String("brand"))
     {
         if (buttonType == QLatin1String("primary"))
         {
@@ -23,6 +24,18 @@ void ButtonTokensByType::setDefaultTokens(QAbstractButton* button)
             {
                 button->setProperty(TOKEN_PROPERTIES::normalOn,
                                     QLatin1String("text-inverse-accent"));
+            }
+        }
+        else if (buttonType == QLatin1String("brand"))
+        {
+            if (propertyEmpty(button, TOKEN_PROPERTIES::normalOff))
+            {
+                button->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-on-color"));
+            }
+
+            if (isCheckable && propertyEmpty(button, TOKEN_PROPERTIES::normalOn))
+            {
+                button->setProperty(TOKEN_PROPERTIES::normalOn, QLatin1String("text-on-color"));
             }
         }
         else if (buttonType == QLatin1String("secondary"))

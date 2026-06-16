@@ -502,7 +502,7 @@ background-color: #ffa11045; /*colorToken.button-error-pressed*/
         <bool>false</bool>
        </property>
        <property name="type" stdset="0">
-        <string notr="true">primary</string>
+        <string notr="true">brand</string>
        </property>
        <property name="dimension" stdset="0">
         <string notr="true">medium</string>

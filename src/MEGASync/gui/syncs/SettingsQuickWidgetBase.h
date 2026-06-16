@@ -36,12 +36,18 @@ public:
     Q_INVOKABLE virtual void addItem() const = 0;
     Q_INVOKABLE virtual void remove(int index) const = 0;
 
+    Q_INVOKABLE void setContextMenuOpen(bool open);
+
+signals:
+    void closeContextMenu();
+
 protected:
     SettingsQuickWidgetBase(SyncSettingsModelBase* model,
                             SyncController& controller,
                             QWidget* parent = nullptr);
 
     SyncSettingsModelBase* model() const;
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
 private:
     SyncSettingsModelBase* mModel;
