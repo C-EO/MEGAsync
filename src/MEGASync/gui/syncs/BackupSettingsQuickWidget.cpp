@@ -7,8 +7,6 @@
 #include "MyBackupsHandle.h"
 #include "QmlManager.h"
 #include "StatsEventHandler.h"
-#include "SyncController.h"
-#include "SyncExclusions.h"
 #include "Utilities.h"
 
 #include <QFileInfo>

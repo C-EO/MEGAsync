@@ -48,10 +48,10 @@ Rectangle {
         if (hovered && status === SettingsModel.SUSPENDED) {
             return ColorTheme.textPrimary;
         }
-        if (status === SettingsModel.FAIL) {
+        else if (status === SettingsModel.FAIL) {
             return ColorTheme.textError;
         }
-        if (status === SettingsModel.SUSPENDED) {
+        else if (status === SettingsModel.SUSPENDED) {
             return ColorTheme.textSecondary;
         }
         return ColorTheme.textPrimary;
@@ -60,10 +60,10 @@ Rectangle {
         if (hovered && status === SettingsModel.SUSPENDED) {
             return ColorTheme.iconPrimary;
         }
-        if (status === SettingsModel.FAIL) {
+        else if (status === SettingsModel.FAIL) {
             return ColorTheme.textError;
         }
-        if (status === SettingsModel.SUSPENDED) {
+        else if (status === SettingsModel.SUSPENDED) {
             return ColorTheme.iconSecondary;
         }
         return ColorTheme.iconPrimary;
@@ -102,6 +102,7 @@ Rectangle {
     readonly property int errorBorders: 2
     readonly property int backgroundColorAnimationTime: 200
     readonly property int toolTipShowDelay: 500
+    readonly property int loadingAnimationNumberOfFrames: 30
     property real scanFrame: 0
 
     width: ListView.view ? ListView.view.width : implicitWidth
@@ -305,7 +306,7 @@ Rectangle {
 
                                 Layout.alignment: Qt.AlignVCenter
                                 color: root.resolveStatusIconColor(status, statusMouseArea.containsMouse)
-                                source: "qrc:/activity_indicator_" + (Math.floor(root.scanFrame) % 30 + 1) + ".svg"
+                                source: "qrc:/activity_indicator_" + (Math.floor(root.scanFrame) % root.loadingAnimationNumberOfFrames + 1) + ".svg"
                                 sourceSize: Qt.size(root.iconSize, root.iconSize)
                                 visible: status === SettingsModel.SCANNING
                             }
@@ -314,7 +315,7 @@ Rectangle {
                                 target: root
                                 property: "scanFrame"
                                 from: 0
-                                to: 30
+                                to: root.loadingAnimationNumberOfFrames
                                 duration: 1800
                                 loops: Animation.Infinite
                                 running: status === SettingsModel.SCANNING
