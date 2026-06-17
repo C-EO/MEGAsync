@@ -39,13 +39,18 @@ void MessageDialogComponent::registerQmlModules()
             "MessageDialogButtonInfo",
             QString::fromLatin1("MessageDialogButtonInfo can only be used for the enum values"));
 
-        qmlRegisterUncreatableMetaObject(
-            MessageDialogTextInfo::staticMetaObject,
+        // SNC-6567 (Phase 3): MessageDialogTextInfo is now a QObject (not a
+        // Q_GADGET), so registration uses qmlRegisterUncreatableType. QML can
+        // still reference the TextFormat enum (`MessageDialogTextInfo.TextFormat.RICH`)
+        // and read property values from instances handed in via context
+        // properties, but cannot instantiate one from QML.
+        qmlRegisterUncreatableType<MessageDialogTextInfo>(
             "MessageDialogTextInfo",
             1,
             0,
             "MessageDialogTextInfo",
-            QString::fromLatin1("MessageDialogTextInfo can only be used for the enum values"));
+            QString::fromLatin1(
+                "MessageDialogTextInfo cannot be instantiated from QML; use the enum values only"));
 
         qmlRegisterUncreatableType<MessageDialogData>(
             "MessageDialogData",

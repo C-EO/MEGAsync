@@ -65,8 +65,6 @@ set(DESKTOP_APP_GUI_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogWrapper.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogWrapperUtilities.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlWidgetWrapper.h
-    ${CMAKE_CURRENT_LIST_DIR}/qml/QmlInstancesManager.h
-    ${CMAKE_CURRENT_LIST_DIR}/qml/QmlItem.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogManager.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlManager.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlTheme.h
@@ -208,8 +206,6 @@ set(DESKTOP_APP_GUI_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogWrapper.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlWidgetWrapper.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/qml/QmlInstancesManager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/qml/QmlItem.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlTheme.cpp

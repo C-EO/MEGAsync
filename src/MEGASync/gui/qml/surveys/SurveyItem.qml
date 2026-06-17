@@ -8,14 +8,31 @@ import components.textAreas 1.0
 import components.buttons 1.0
 import components.views 1.0
 
-import QmlItem 1.0
-
-QmlItem {
+// SNC-6567: previously the root was `QmlItem` (an empty QQuickItem subclass
+// kept around solely to host the old QmlInstancesManager property). After
+// removing that legacy, the QtQuick `Item` is the natural root.
+Item {
     id: root
 
-    property QtObject widgetAccess: instancesManager.instances["qmlWidgetWrapperBaseAccess"] || null
-    property QtObject surveyComponentAccess: instancesManager.instances["surveyComponentAccess"] || null
-    property QtObject surveysAccess: instancesManager.instances["surveysAccess"] || null
+    // SNC-6567 (Phase 2b): `qmlWidgetWrapperBaseAccess`, `surveyComponentAccess`
+    // and `surveysAccess` are now provided as root context properties
+    // registered by QmlWidgetWrapper before setSource() loads this QML (see
+    // Phase 2b in QmlWidgetWrapper.h). The previous local declarations:
+    //
+    //   property QtObject widgetAccess:          instancesManager.instances["qmlWidgetWrapperBaseAccess"] || null
+    //   property QtObject surveyComponentAccess: instancesManager.instances["surveyComponentAccess"]      || null
+    //   property QtObject surveysAccess:         instancesManager.instances["surveysAccess"]              || null
+    //
+    // read from an `instancesManager.instances` map that was empty during
+    // the first binding evaluation (race window between setSource() and
+    // initInstances()).
+    //
+    // `widgetAccess` is retained as a short alias for the long
+    // `qmlWidgetWrapperBaseAccess` identifier — it just rebinds to the
+    // context property instead of doing a map lookup. The other two names
+    // already match the C++-derived names, so they resolve directly via
+    // context property fallthrough; no local declaration is needed.
+    property QtObject widgetAccess: qmlWidgetWrapperBaseAccess
 
     Rectangle {
 

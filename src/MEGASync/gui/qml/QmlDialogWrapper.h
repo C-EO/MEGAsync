@@ -229,29 +229,18 @@ public:
             QQmlContext* context = new QQmlContext(engine->rootContext(), this);
             QmlManager::instance()->setRootContextProperty(mWrapper);
 
-            // SNC-6567 (Phase 1): Bind this dialog's wrapper and the data
+            // SNC-6567 (Phases 1+4): Bind this dialog's wrapper and the data
             // instances it declares to the CHILD QQmlContext BEFORE the QML
-            // tree is built. The first binding evaluation that happens inside
-            // qmlComponent.create() then sees real (non-null) values for the
-            // identifiers QML uses to reach the C++ side. This removes the
-            // race window between qmlComponent.create() and the later
-            // initInstances() call, where QML used to evaluate against an
-            // empty `instancesManager.instances` map.
-            //
-            // This block is purely ADDITIVE:
-            //   - It does NOT remove setRootContextProperty() above.
-            //   - It does NOT remove the initInstances() call further down.
-            //   - It does NOT change QML files.
-            // Existing QML that reads `instancesManager.instances["..."]`
-            // continues to work unchanged. QML that resolves the same
-            // identifiers via context property lookup (after Phase 2 cleanup)
-            // also works, because child-context properties shadow the local
-            // declarations once those declarations are removed.
+            // tree is built. This is the only delivery channel for per-dialog
+            // data into QML now that QmlInstancesManager has been removed
+            // (Phase 4). The first binding evaluation inside
+            // qmlComponent.create() sees real (non-null) values for the
+            // identifiers QML uses to reach the C++ side.
             //
             // Child-context properties also give correct per-dialog isolation
             // when multiple QML dialogs are open simultaneously — unlike
-            // setRootContextProperty() which writes globally and would
-            // overwrite a previous dialog's reference.
+            // setRootContextProperty() (kept above for some legacy globals)
+            // which writes to the engine's shared root context.
             {
                 auto qmlManager = QmlManager::instance();
                 const QString wrapperName = qmlManager->getObjectRootContextName(mWrapper.data());
@@ -313,7 +302,14 @@ public:
                 }
 
                 mWrapper->setParent(mWindow);
-                mWindow->getInstancesManager()->initInstances(mWrapper);
+
+                // SNC-6567 (Phase 4): The previous call to
+                //     mWindow->getInstancesManager()->initInstances(mWrapper);
+                // has been removed. The QmlInstancesManager class no longer
+                // exists — data delivery to QML happens via the child
+                // QQmlContext properties registered above (Phase 1) BEFORE
+                // qmlComponent.create() runs. Bindings see real values on the
+                // first evaluation.
 
                 if (parent)
                 {

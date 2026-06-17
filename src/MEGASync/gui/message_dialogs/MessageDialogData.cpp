@@ -47,22 +47,41 @@ bool MessageDialogCheckboxInfo::getChecked() const
 }
 
 // =================================================================================================
-// MessageDialogTextInfo
+// MessageDialogTextInfo (SNC-6567 Phase 3: QObject with NOTIFY signals)
 // =================================================================================================
 
-MessageDialogTextInfo::MessageDialogTextInfo(const QString& newText, TextFormat textFormat):
-    text(newText),
-    format(textFormat)
+MessageDialogTextInfo::MessageDialogTextInfo(QObject* parent):
+    QObject(parent)
 {}
 
-QString MessageDialogTextInfo::getText() const
+QString MessageDialogTextInfo::text() const
 {
-    return text;
+    return mText;
 }
 
-MessageDialogTextInfo::TextFormat MessageDialogTextInfo::getFormat() const
+void MessageDialogTextInfo::setText(const QString& value)
 {
-    return format;
+    if (mText == value)
+    {
+        return;
+    }
+    mText = value;
+    emit textChanged();
+}
+
+MessageDialogTextInfo::TextFormat MessageDialogTextInfo::format() const
+{
+    return mFormat;
+}
+
+void MessageDialogTextInfo::setFormat(TextFormat value)
+{
+    if (mFormat == value)
+    {
+        return;
+    }
+    mFormat = value;
+    emit formatChanged();
 }
 
 // =================================================================================================
@@ -135,10 +154,34 @@ MessageDialogData::MessageDialogData(Type type, MessageDialogInfo info, QObject*
     QObject(parent),
     mType(type),
     mInfo(info),
-    mResult(new MessageDialogResult(this))
+    mResult(new MessageDialogResult(this)),
+    // SNC-6567 (Phase 3): Owned QObject children, lifetime tied to `this`.
+    // Initial text values are set below after updateWidgetsByType()/
+    // buildButtons() (some types swap title <-> description).
+    mTitleTextInfo(new MessageDialogTextInfo(this)),
+    mDescriptionTextInfo(new MessageDialogTextInfo(this))
 {
     updateWidgetsByType();
     buildButtons();
+
+    // Populate the text-info objects from mInfo, preserving the existing
+    // behavior that promotes descriptionText to the title slot when titleText
+    // is empty.
+    const auto textFormat = getTextFormat();
+    if (mInfo.titleText.isEmpty() && !mInfo.descriptionText.isEmpty())
+    {
+        mTitleTextInfo->setText(mInfo.descriptionText);
+        mTitleTextInfo->setFormat(textFormat);
+        mDescriptionTextInfo->setText(QString());
+        mDescriptionTextInfo->setFormat(textFormat);
+    }
+    else
+    {
+        mTitleTextInfo->setText(mInfo.titleText);
+        mTitleTextInfo->setFormat(textFormat);
+        mDescriptionTextInfo->setText(mInfo.descriptionText);
+        mDescriptionTextInfo->setFormat(textFormat);
+    }
 }
 
 MessageDialogData::Type MessageDialogData::getType() const
@@ -177,24 +220,18 @@ QString MessageDialogData::getTitle() const
     return mInfo.getDialogTitle();
 }
 
-MessageDialogTextInfo MessageDialogData::getTitleTextInfo() const
+// SNC-6567 (Phase 3): Return the long-lived QObject children. The pointer is
+// stable for the dialog's lifetime; their internal text/format can be mutated
+// (e.g. on retranslation) and QML bindings refresh automatically via the
+// NOTIFY signals.
+MessageDialogTextInfo* MessageDialogData::getTitleTextInfo() const
 {
-    if (mInfo.titleText.isEmpty() && !mInfo.descriptionText.isEmpty())
-    {
-        return MessageDialogTextInfo(mInfo.descriptionText, getTextFormat());
-    }
-
-    return MessageDialogTextInfo(mInfo.titleText, getTextFormat());
+    return mTitleTextInfo;
 }
 
-MessageDialogTextInfo MessageDialogData::getDescriptionTextInfo() const
+MessageDialogTextInfo* MessageDialogData::getDescriptionTextInfo() const
 {
-    if (mInfo.titleText.isEmpty() && !mInfo.descriptionText.isEmpty())
-    {
-        return MessageDialogTextInfo(QString(), getTextFormat());
-    }
-
-    return MessageDialogTextInfo(mInfo.descriptionText, getTextFormat());
+    return mDescriptionTextInfo;
 }
 
 bool MessageDialogData::enqueue() const
