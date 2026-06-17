@@ -1150,13 +1150,31 @@ void InfoDialog::openFolder(QString path)
 
 void InfoDialog::addSync(SyncInfo::SyncOrigin origin, mega::MegaHandle handle)
 {
-    CreateRemoveSyncsManager::addSync(origin, handle);
+    // Qt5-ONLY workaround, Wayland only. On Wayland, pass the InfoDialog as
+    // parent so the dialog (and any modal child it spawns, e.g. exclusions) is
+    // anchored to a real window — otherwise it is rootless and the compositor
+    // never presents it (it only appears in the taskbar). On X11 the rootless
+    // dialog maps fine, so keep the original null parent there.
+    // TODO Qt6: drop the explicit parent — Qt6's Wayland backend presents the
+    // dialog without it (the Qt6 tree calls addSync(origin, handle)).
+    QWidget* const parent = Platform::getInstance()->isWayland() ? this : nullptr;
+    CreateRemoveSyncsManager::addSync(origin, handle, QString(), parent);
 }
 
 void InfoDialog::addBackup(SyncInfo::SyncOrigin origin)
 {
-    CreateRemoveBackupsManager::addBackup(origin);
-    if (CreateRemoveBackupsManager::isBackupsDialogOpen())
+    // Qt5-ONLY workaround, Wayland only. See addSync(): on Wayland anchor the
+    // dialog to a real window so it is presented instead of only appearing in
+    // the taskbar; on X11 keep the original null parent.
+    // TODO Qt6: drop the explicit parent (the Qt6 tree calls addBackup(origin)).
+    QWidget* const parent = Platform::getInstance()->isWayland() ? this : nullptr;
+    CreateRemoveBackupsManager::addBackup(origin, QStringList(), parent);
+    // Qt5-ONLY workaround. On Wayland, keep the InfoDialog mapped: it anchors the
+    // backups dialog (see eventFilter). Hiding it would unmap the anchor and the
+    // compositor would never present the backups dialog.
+    // TODO Qt6: drop the !Platform::getInstance()->isWayland() guard — restore the
+    // unconditional hide() the Qt6 tree uses.
+    if (CreateRemoveBackupsManager::isBackupsDialogOpen() && !Platform::getInstance()->isWayland())
     {
         hide();
     }
@@ -1311,12 +1329,19 @@ bool InfoDialog::eventFilter(QObject *obj, QEvent *e)
     }
     else if (obj == this)
     {
-        if (e->type() == QEvent::WindowDeactivate)
-        {
-            hide();
-            return true;
-        }
-        else if(e->type() == QEvent::FocusOut)
+        // Qt5-ONLY: on Wayland, keep the InfoDialog mapped ONLY while it is
+        // anchoring a dialog parented to it (the ones launched from its menu —
+        // add sync, add backup, ... — which we pass `this` as parent on
+        // Wayland); unmapping the anchor would stop the compositor presenting
+        // them. Unrelated top-level dialogs (e.g. the paste-link dialog, which
+        // has no parent) must NOT keep it open. In every other case — X11, or
+        // Wayland with no child dialog open — close it on deactivate/focus-out.
+        // TODO Qt6: remove keepOpenAsAnchor and restore the plain hide — Qt6
+        // presents the dialogs without keeping the InfoDialog mapped.
+        const bool keepOpenAsAnchor =
+            Platform::getInstance()->isWayland() && DialogOpener::isAnyDialogChildOf(this);
+        if (!keepOpenAsAnchor &&
+            (e->type() == QEvent::WindowDeactivate || e->type() == QEvent::FocusOut))
         {
             hide();
             return true;
