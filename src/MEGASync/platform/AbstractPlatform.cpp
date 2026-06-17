@@ -27,6 +27,14 @@ bool AbstractPlatform::isTilingWindowManager()
     return false;
 }
 
+bool AbstractPlatform::isWayland()
+{
+    // When a GUI application exists, the platform plugin name is authoritative.
+    // (Empty before the app is created — only the Linux override needs the
+    // pre-QApplication environment fallback, since Wayland is Linux-only.)
+    return QGuiApplication::platformName().startsWith(QLatin1String("wayland"));
+}
+
 QPoint AbstractPlatform::initialDialogPosition(const QSize& dialogSize) const
 {
     auto primaryScreen = QGuiApplication::primaryScreen();

@@ -26,6 +26,7 @@ public:
     bool startOnStartup(bool value) override;
     bool isStartOnStartupActive() override;
     bool isTilingWindowManager() override;
+    bool isWayland() override;
     QPoint initialDialogPosition(const QSize& dialogSize) const override;
     QPoint initialDialogPosition(const QSize& dialogSize,
                                  const QRect& parentGeometry) const override;

@@ -460,6 +460,21 @@ public:
                            });
     }
 
+    // True if any currently-open dialog is parented to the given object.
+    // Qt5-ONLY: added solely for the InfoDialog Wayland anchoring workaround —
+    // keep the InfoDialog mapped only while it parents a child dialog (add
+    // sync, add backup, ...), not for unrelated top-level dialogs.
+    // TODO Qt6: remove — Qt6's Wayland backend makes the workaround unnecessary.
+    static bool isAnyDialogChildOf(QObject* parent)
+    {
+        return std::any_of(mOpenedDialogs.cbegin(),
+                           mOpenedDialogs.cend(),
+                           [parent](const std::shared_ptr<DialogInfoBase>& info)
+                           {
+                               return info->isParent(parent);
+                           });
+    }
+
     static QList<QPointer<QWidget>> getAllOpenedDialogs();
 
 private:

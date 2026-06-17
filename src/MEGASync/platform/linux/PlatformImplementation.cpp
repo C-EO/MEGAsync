@@ -4,6 +4,7 @@
 #include "MessageDialogOpener.h"
 #include "NautilusFileManager.h"
 
+#include <QFile>
 #include <QGuiApplication>
 #include <QHostInfo>
 #include <QObject>
@@ -129,6 +130,73 @@ bool PlatformImplementation::isTilingWindowManager()
 
     return getValue("MEGASYNC_ASSUME_TILING_WM", false)
            || tiling_wms.contains(getWindowManagerName());
+}
+
+namespace
+{
+// Value of a -platform / --platform command-line switch if present (handles
+// both "-platform xcb" and "-platform=xcb"), else empty. Read from
+// /proc/self/cmdline because this can run before QApplication exists, so
+// QCoreApplication::arguments() is unavailable — and the switch overrides
+// QT_QPA_PLATFORM, so it must be honoured.
+QString platformFromCommandLine()
+{
+    QFile cmdline(QString::fromUtf8("/proc/self/cmdline"));
+    if (!cmdline.open(QIODevice::ReadOnly))
+    {
+        return {};
+    }
+
+    const QList<QByteArray> args = cmdline.readAll().split('\0');
+    for (int i = 0; i < args.size(); ++i)
+    {
+        const QString arg = QString::fromUtf8(args.at(i));
+        if (arg == QString::fromUtf8("-platform") || arg == QString::fromUtf8("--platform"))
+        {
+            return (i + 1 < args.size()) ? QString::fromUtf8(args.at(i + 1)) : QString();
+        }
+        if (arg.startsWith(QString::fromUtf8("-platform=")) ||
+            arg.startsWith(QString::fromUtf8("--platform=")))
+        {
+            return arg.section(QLatin1Char('='), 1);
+        }
+    }
+    return {};
+}
+
+// Pre-QApplication Wayland detection from the environment, mirroring Qt's
+// platform-selection precedence: -platform switch, then QT_QPA_PLATFORM, then
+// the session type.
+bool isWaylandFromEnvironment()
+{
+    QString platform = platformFromCommandLine();
+    if (platform.isEmpty())
+    {
+        platform = qEnvironmentVariable("QT_QPA_PLATFORM");
+    }
+
+    if (!platform.isEmpty())
+    {
+        // May be a fallback list ("wayland;xcb") or carry plugin options
+        // ("wayland:..."); the first entry is the one Qt tries first.
+        return platform.section(QLatin1Char(';'), 0, 0).startsWith(QString::fromUtf8("wayland"));
+    }
+    return qEnvironmentVariable("XDG_SESSION_TYPE") == QString::fromUtf8("wayland");
+}
+} // namespace
+
+bool PlatformImplementation::isWayland()
+{
+    // Once the GUI application exists, the platform plugin name is
+    // authoritative (base behaviour).
+    if (!QGuiApplication::platformName().isEmpty())
+    {
+        return AbstractPlatform::isWayland();
+    }
+
+    // Called before the QApplication exists (e.g. the scale-factor setup):
+    // detect from the environment instead.
+    return isWaylandFromEnvironment();
 }
 
 QPoint PlatformImplementation::initialDialogPosition(const QSize& dialogSize) const

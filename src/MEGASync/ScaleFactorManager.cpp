@@ -1,5 +1,7 @@
 #include "ScaleFactorManager.h"
 
+#include "Platform.h"
+
 #include <QDebug>
 #include <QGuiApplication>
 #include <QProcess>
@@ -61,7 +63,10 @@ ScreensInfo createScreensInfo(OsType osType, const QString& desktopName)
     }
 
     auto linuxDpi = 0.;
-    if (osType == OsType::LINUX)
+    // The DPI probe relies on X11-only tools (xrdb/xfconf) and is meaningless
+    // on Wayland — where scale handling is disabled anyway, so the result is
+    // unused. Skip it there to avoid the (potentially stalling) subprocesses.
+    if (osType == OsType::LINUX && !Platform::getInstance()->isWayland())
     {
         linuxDpi = getDpiOnLinux();
 
@@ -173,6 +178,21 @@ QString createScreenScaleFactorsVariable(std::vector<double> calculatedScales)
 
 void ScaleFactorManager::setScaleFactorEnvironmentVariable()
 {
+    if (mOsType == OsType::LINUX && Platform::getInstance()->isWayland())
+    {
+        // Scale handling is disabled on Wayland: let Qt use the compositor's
+        // native per-output scale. Injecting QT_SCALE_FACTOR /
+        // QT_SCREEN_SCALE_FACTORS multiplied on top of the compositor scale
+        // (double-scaling) and distorted the windows; the DPI was also derived
+        // from X11-only tools (xrdb/xfconf) meaningless on Wayland. X11 keeps
+        // its existing scaling.
+        // TODO Qt6: REVIEW - cross-version fix, not a pure Qt5 workaround — do NOT
+        // blindly revert.
+        mLogMessages.push_back(
+            QString::fromUtf8("Scale handling disabled on Wayland; using Qt native scaling."));
+        return;
+    }
+
     if (mScreensInfo.empty() && mOsName != LINUX_OS_DEEPIN_20)
     {
         throw std::runtime_error("No screens found");

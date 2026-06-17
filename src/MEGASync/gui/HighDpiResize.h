@@ -41,6 +41,7 @@ public:
         dialog = d;
         d->installEventFilter(this);
     #endif
+        Q_UNUSED(d); // unused on non-Windows, where the redraw poke is disabled
     }
 
     void queueRedraw()

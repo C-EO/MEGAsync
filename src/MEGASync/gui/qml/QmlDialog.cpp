@@ -1,6 +1,7 @@
 #include "QmlDialog.h"
 
 #include "DialogOpener.h"
+#include "Platform.h"
 #include "QmlDialogWrapperUtilities.h"
 
 #include <QEvent>
@@ -60,8 +61,19 @@ QmlDialog::QmlDialog(QWindow* parent):
                 setOpacity(mPreviousOpacity > HIDDEN_OPACITY ? mPreviousOpacity :
                                                                DEFAULT_VISIBLE_OPACITY);
 
-                // The following two lines are required by Windows (activate) and macOS (raise)
-                requestActivate();
+                // requestActivate() is required by Windows; raise() by macOS.
+                // Qt5-ONLY Wayland branch: on Qt5 a client cannot activate itself — the call
+                // logs a warning and can crash — so we request attention via alert() instead.
+                // TODO Qt6: remove the Wayland branch and call requestActivate()
+                // unconditionally; Qt6 activates via xdg-activation without crashing.
+                if (Platform::getInstance()->isWayland())
+                {
+                    alert(0);
+                }
+                else
+                {
+                    requestActivate();
+                }
                 raise();
 
                 if (!mInitialLayoutComplete)
@@ -138,21 +150,31 @@ void QmlDialog::attachToParentWindow(QWindow* parentWindow, bool embedded)
         // Embedded dialogs should not show maximize/minimize affordances.
         // Keep Qt::Dialog (set by the constructor) and the close button.
         //
-        // NOTE: this is intentionally skipped on Windows. Calling setFlags()
-        // on a QQuickWindow whose native HWND already exists triggers a
-        // window recreation that loses the QML width/height bindings — the
-        // dialog flashes frameless and then collapses to a tiny pixel-sized
-        // window. transientParent + WindowModal above are enough to give us
-        // the embedded modal behavior on Windows; the fixed size is already
-        // guaranteed by the QML's minimumWidth/maximumWidth declarations,
-        // and the native dialog frame from Qt::Dialog (set in the
-        // constructor) is preserved untouched.
-        Qt::WindowFlags wflags = flags();
-        wflags |= Qt::Dialog;
-        wflags &= ~(Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
-        if (wflags != flags())
+        // NOTE: this is intentionally skipped on Windows and on the native
+        // Wayland QPA. Calling setFlags() on a QQuickWindow whose native
+        // window already exists triggers a window recreation that loses the
+        // QML width/height bindings — the dialog flashes frameless and then
+        // collapses to a tiny / very narrow window. On Windows the native
+        // HWND is recreated; on Wayland the wl_surface/xdg_toplevel is
+        // recreated and comes back unconfigured (the compositor proposes a
+        // 0-width size), so the dialog reappears collapsed. transientParent +
+        // WindowModal above are enough to give us the embedded modal behavior;
+        // the fixed size is already guaranteed by the QML's
+        // minimumWidth/maximumWidth declarations, and the native dialog frame
+        // from Qt::Dialog (set in the constructor) is preserved untouched.
+        // REVIEW(Qt6): cross-version fix, not a pure Qt5 workaround — do NOT
+        // blindly revert. The setFlags() surface-recreation collapse is not
+        // Qt5-specific; the Qt6 tree carries the same guard. Verify it is still
+        // needed on Qt6 before changing.
+        if (!Platform::getInstance()->isWayland())
         {
-            setFlags(wflags);
+            Qt::WindowFlags wflags = flags();
+            wflags |= Qt::Dialog;
+            wflags &= ~(Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
+            if (wflags != flags())
+            {
+                setFlags(wflags);
+            }
         }
 #endif
     }
