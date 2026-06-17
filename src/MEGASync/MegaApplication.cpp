@@ -6144,9 +6144,10 @@ void MegaApplication::createInfoDialogMenus()
         windowsMenu->addAction(windowsUpdateAction);
 
         connect(windowsUpdateAction, &QAction::triggered, this, &MegaApplication::onInstallUpdateClicked);
+
+        windowsMenu->addSeparator();
     }
 
-    windowsMenu->addSeparator();
     windowsMenu->addAction(windowsFilesAction);
     windowsMenu->addAction(windowsImportLinksAction);
     windowsMenu->addAction(windowsUploadAction);
