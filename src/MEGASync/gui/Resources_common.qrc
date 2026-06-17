@@ -1635,6 +1635,10 @@
         <file alias="images/mega_rec_icon.svg">images/mega_rec_icon.svg</file>
         <file alias="images/mega_icon.svg">images/mega_icon.svg</file>
         <file alias="message-alert_small_thin_outline">images/themed/tokenizable/message-alert_small_thin_outline.svg</file>
+        <file alias="arrows-merge_small_thin_outline">images/themed/tokenizable/arrows-merge_small_thin_outline.svg</file>
+        <file alias="clock-check_small_thin_outline">images/themed/tokenizable/clock-check_small_thin_outline.svg</file>
+        <file alias="duplicate-X_small_thin_outline">images/themed/tokenizable/duplicate-X_small_thin_outline.svg</file>
+        <file alias="duplicate-edit_small_thin_outline">images/themed/tokenizable/duplicate-edit_small_thin_outline.svg</file>
         <file alias="light/tray_icon_offline.svg">images/system_tray/light/tray_icon_offline.svg</file>
         <file alias="dark/tray_icon_offline.svg">images/system_tray/dark/tray_icon_offline.svg</file>
         <file alias="reddish/tray_icon_offline.svg">images/system_tray/reddish/tray_icon_offline.svg</file>
