@@ -373,8 +373,7 @@ protected:
 #ifdef _WIN32
     QPointer<QMenu> windowsMenu;
     QAction *windowsExitAction;
-    QAction *windowsUpdateAction;
-    QAction *windowsAboutAction;
+    QAction* windowsUpdateAction;
     QAction *windowsImportLinksAction;
     QAction *windowsFilesAction;
     QAction *windowsUploadAction;
@@ -398,7 +397,6 @@ protected:
     MegaMenuItemAction* MEGAWebAction;
     MenuItemAction* deviceCentreAction;
     MegaMenuItemAction* updateAction = nullptr;
-    MegaMenuItemAction* aboutAction = nullptr;
     QAction *showStatusAction;
     QPointer<SyncsMenu> mSyncs2waysMenu;
     QPointer<SyncsMenu> mBackupsMenu;

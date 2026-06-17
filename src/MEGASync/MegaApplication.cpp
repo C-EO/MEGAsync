@@ -266,7 +266,6 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     windowsMenu = nullptr;
     windowsExitAction = nullptr;
     windowsUpdateAction = nullptr;
-    windowsAboutAction = nullptr;
     windowsImportLinksAction = nullptr;
     windowsFilesAction = nullptr;
     windowsUploadAction = nullptr;
@@ -2579,7 +2578,9 @@ void MegaApplication::onAboutClicked()
     }
 
     mStatsEventHandler->sendTrackedEvent(AppStatsEvents::EventType::MENU_ABOUT_CLICKED,
-                                         sender(), aboutAction, true);
+                                         sender(),
+                                         updateActionGuest,
+                                         true);
 
     showChangeLog();
 }
@@ -6141,12 +6142,6 @@ void MegaApplication::createInfoDialogMenus()
         windowsUpdateAction = nullptr;
     }
 
-    if(windowsAboutAction)
-    {
-        windowsAboutAction->deleteLater();
-        windowsAboutAction = nullptr;
-    }
-
     if (updateAvailable)
     {
         windowsUpdateAction = new QAction(tr("Install update"), this);
@@ -6155,18 +6150,10 @@ void MegaApplication::createInfoDialogMenus()
         windowsMenu->addAction(windowsUpdateAction);
 
         connect(windowsUpdateAction, &QAction::triggered, this, &MegaApplication::onInstallUpdateClicked);
-    }
-    else
-    {
-        windowsAboutAction = new QAction(tr("About"), this);
-        windowsAboutAction->setIcon(
-            QIcon(QString::fromUtf8(":/images/icons/tray/windows/about.svg")));
 
-        windowsMenu->addAction(windowsAboutAction);
-        connect(windowsAboutAction, &QAction::triggered, this, &MegaApplication::onAboutClicked);
+        windowsMenu->addSeparator();
     }
 
-    windowsMenu->addSeparator();
     windowsMenu->addAction(windowsFilesAction);
     windowsMenu->addAction(windowsImportLinksAction);
     windowsMenu->addAction(windowsUploadAction);
@@ -6176,7 +6163,6 @@ void MegaApplication::createInfoDialogMenus()
     windowsMenu->addAction(windowsSettingsAction);
     windowsMenu->addSeparator();
     windowsMenu->addAction(windowsExitAction);
-
 #endif
 
     // Info Dialog overflow menu
@@ -6247,12 +6233,6 @@ void MegaApplication::createInfoDialogMenus()
                                .toStdString()
                                .c_str(),
                            &MegaApplication::goToFiles);
-
-    // recreateMenuAction(&deviceCentreAction,
-    //                    infoDialogMenu,
-    //                    tr("Device Centre"),
-    //                    "://images/ico-device-centre.svg",
-    //                    &MegaApplication::openDeviceCentre);
 
     if (!mSyncs2waysMenu)
     {
@@ -6332,12 +6312,6 @@ void MegaApplication::createInfoDialogMenus()
         updateAction = nullptr;
     }
 
-    if(aboutAction)
-    {
-        aboutAction->deleteLater();
-        aboutAction = nullptr;
-    }
-
     if (updateAvailable)
     {
         updateAction =
@@ -6354,24 +6328,6 @@ void MegaApplication::createInfoDialogMenus()
                 &MegaApplication::onInstallUpdateClicked,
                 Qt::QueuedConnection);
         infoDialogMenu->addAction(updateAction);
-    }
-    else
-    {
-        aboutAction =
-            new MegaMenuItemAction(tr("About"),
-                                   Utilities::getPixmapName(QLatin1String("MEGA"),
-                                                            Utilities::AttributeType::SMALL |
-                                                                Utilities::AttributeType::THIN |
-                                                                Utilities::AttributeType::OUTLINE,
-                                                            false),
-                                   0);
-        connect(aboutAction,
-                &QAction::triggered,
-                this,
-                &MegaApplication::onAboutClicked,
-                Qt::QueuedConnection);
-
-        infoDialogMenu->addAction(aboutAction);
     }
 
     infoDialogMenu->addAction(MEGAWebAction);
