@@ -68,7 +68,6 @@
         <file alias="images/icons/tray/windows/transfer_manager.svg">images/icons/tray/windows/transfer_manager.svg</file>
         <file alias="images/icons/tray/windows/upload.svg">images/icons/tray/windows/upload.svg</file>
         <file alias="images/icons/tray/windows/download.svg">images/icons/tray/windows/download.svg</file>
-        <file alias="images/icons/tray/windows/about.svg">images/icons/tray/windows/about.svg</file>
         <file alias="images/icons/tray/windows/drive.svg">images/icons/tray/windows/drive.svg</file>
         <file alias="images/icons/tray/windows/open_links.svg">images/icons/tray/windows/open_links.svg</file>
         <file alias="images/icons/tray/macos/exit.svg">images/icons/tray/macos/exit.svg</file>
