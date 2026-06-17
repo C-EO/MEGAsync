@@ -89,6 +89,7 @@ public:
 
     Preferences::SystemColorScheme getCurrentThemeAppearance() const override;
     void applyCurrentThemeOnCurrentDialogFrame(QWindow* window) override;
+    void raiseToForeground(QWidget* widget) override;
 
     void setRenderingBackend() const override;
 

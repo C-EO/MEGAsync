@@ -169,6 +169,11 @@ MegaApplication::MegaApplication(int& argc, char** argv):
 
     appfinished = false;
 
+    // Required for the Qt::QueuedConnection signals/slots that pass a QQueue<QString>
+    // (e.g. shell upload/export queues). Q_DECLARE_METATYPE alone is not enough for
+    // queued connections; the type must also be registered at runtime.
+    qRegisterMetaType<QQueue<QString>>("QQueue<QString>");
+
     bool logToStdout = false;
 
 #if defined(LOG_TO_STDOUT)
@@ -4883,8 +4888,18 @@ void MegaApplication::processDownloads()
         return;
     }
 
+    // A request coming from the webclient is triggered while the browser owns the foreground.
+    // Unlike Qt5, Qt6 no longer forces the window activation, so the dialog can stay behind;
+    // we force it to the foreground only in that case.
+    const bool fromHTTPServer = qobject_cast<HTTPServer*>(sender()) != nullptr;
+
     auto downloadFolderSelector = new DownloadFromMegaDialog(preferences->downloadFolder());
     DialogOpener::showDialog<DownloadFromMegaDialog, TransferManager>(downloadFolderSelector, false, this, &MegaApplication::onDownloadFromMegaFinished);
+
+    if (fromHTTPServer)
+    {
+        Platform::getInstance()->raiseToForeground(downloadFolderSelector);
+    }
     emit meaningfulInteraction();
 }
 
