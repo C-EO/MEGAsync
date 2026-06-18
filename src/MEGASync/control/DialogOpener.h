@@ -627,6 +627,18 @@ private:
 
             info->raise(true);
 
+            // A QML dialog shown through the "ignoreGeometry" path (registered via
+            // addDialog() before showDialog(), e.g. the guest dialog) never has a
+            // geometry committed, so its freshly created QQuickWindow can stay at
+            // its initial 1x1 size (the QML-declared width/height are not flushed
+            // to the native window until a geometry is set). Make sure the window
+            // is never shown smaller than its own minimum size.
+            if (isQML && (dialog->geometry().width() < dialog->minimumWidth() ||
+                          dialog->geometry().height() < dialog->minimumHeight()))
+            {
+                dialog->resize(dialog->minimumWidth(), dialog->minimumHeight());
+            }
+
             Platform::getInstance()->applyCurrentThemeOnCurrentDialogFrame(dialog->windowHandle());
 
             return info;

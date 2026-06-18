@@ -18,7 +18,7 @@ GuestQmlDialog::GuestQmlDialog(QWindow *parent)
 
 bool GuestQmlDialog::isHiddenForLongTime() const
 {
-    return !isVisible() && QDateTime::currentMSecsSinceEpoch() - mLastHideTime > 500;
+    return (QDateTime::currentMSecsSinceEpoch() - mLastHideTime) > 500;
 }
 
 void GuestQmlDialog::realocate()
