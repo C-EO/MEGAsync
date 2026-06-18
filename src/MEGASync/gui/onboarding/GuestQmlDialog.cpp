@@ -5,7 +5,11 @@
 GuestQmlDialog::GuestQmlDialog(QWindow *parent)
     : QmlDialog(parent)
 {
-    setFlags(flags() | Qt::FramelessWindowHint);
+    // Qt::Tool keeps the frameless guest popup out of the taskbar (it is a tray
+    // popup, not a top-level window) while remaining interactive, unlike Qt::Popup.
+    // Set here in the constructor, before the native window exists, to avoid the
+    // window recreation that setFlags() triggers once the HWND is created.
+    setFlags(flags() | Qt::FramelessWindowHint | Qt::Tool);
 
     QObject::connect(this, &GuestQmlDialog::activeChanged, [=]() {
         emit guestActiveChanged(this->isActive());
@@ -14,7 +18,7 @@ GuestQmlDialog::GuestQmlDialog(QWindow *parent)
 
 bool GuestQmlDialog::isHiddenForLongTime() const
 {
-    return !isVisible() && QDateTime::currentMSecsSinceEpoch() - mLastHideTime > 500;
+    return (QDateTime::currentMSecsSinceEpoch() - mLastHideTime) > 500;
 }
 
 void GuestQmlDialog::realocate()
