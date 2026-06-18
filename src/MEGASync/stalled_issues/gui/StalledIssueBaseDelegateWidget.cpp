@@ -6,6 +6,8 @@
 #include "StalledIssuesDialog.h"
 #include "WordWrapLabel.h"
 
+#include <QLayout>
+
 StalledIssueBaseDelegateWidget::StalledIssueBaseDelegateWidget(QWidget *parent)
     : QWidget(parent),
       mDelegate(nullptr)
@@ -93,6 +95,16 @@ QSize StalledIssueBaseDelegateWidget::sizeHint() const
     if(!size.isValid())
     {
         size = QWidget::sizeHint();
+
+        // The inner WordWrapLabels report their height through heightForWidth(), which
+        // QLayout::sizeHint() ignores (it sums the children's width-independent sizeHints).
+        // Derive the height from the layout's height-for-width at our actual width so wrapped
+        // (multi-line) labels make the row grow/shrink with the column width.
+        if (layout() && layout()->hasHeightForWidth())
+        {
+            size.setHeight(layout()->totalHeightForWidth(width()));
+        }
+
         mData.setDelegateSize(size, sizeType);
     }
 

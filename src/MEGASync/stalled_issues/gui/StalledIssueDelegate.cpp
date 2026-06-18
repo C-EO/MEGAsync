@@ -479,8 +479,14 @@ bool StalledIssueDelegate::eventFilter(QObject *object, QEvent *event)
 {
     if(object == mView && event->type() == QEvent::Resize)
     {
-        mUpdateSizeHintTimerFromResize.start(UPDATE_SIZE_TIMER);
-
+        // Throttle instead of debounce: a single-shot timer restarted on every resize event
+        // only fires once the drag stops, so rows keep their stale height during the whole
+        // resize and snap at the end. Not restarting while it is already pending makes it fire
+        // periodically during the drag, so row heights track the width smoothly.
+        if (!mUpdateSizeHintTimerFromResize.isActive())
+        {
+            mUpdateSizeHintTimerFromResize.start(UPDATE_SIZE_TIMER);
+        }
     }
     else if(event->type() == QEvent::MouseButtonRelease)
     {

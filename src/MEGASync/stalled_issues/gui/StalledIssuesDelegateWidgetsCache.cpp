@@ -92,6 +92,14 @@ StalledIssueHeader *StalledIssuesDelegateWidgetsCache::getStalledIssueHeaderWidg
         header->refreshCaseTitles();
     }
 
+    // Keep the cached widget at the current column width so its height-for-width is measured
+    // at the same width it will be painted at (otherwise a reused row keeps the old width and
+    // its row height does not track wrapping when the dialog is resized).
+    if (size.isValid() && header->width() != size.width())
+    {
+        header->resize(size.width(), header->size().height());
+    }
+
     return header;
 }
 
@@ -128,6 +136,14 @@ StalledIssueBaseDelegateWidget *StalledIssuesDelegateWidgetsCache::getStalledIss
     else if(issue.consultData()->needsUIUpdate(StalledIssue::Type::Body))
     {
         item->updateUi(sourceIndex, issue);
+    }
+
+    // Keep the cached widget at the current column width so its height-for-width is measured
+    // at the same width it will be painted at (otherwise a reused row keeps the old width and
+    // its row height does not track wrapping when the dialog is resized).
+    if (item && size.isValid() && item->width() != size.width())
+    {
+        item->resize(size.width(), item->size().height());
     }
 
     return item;
