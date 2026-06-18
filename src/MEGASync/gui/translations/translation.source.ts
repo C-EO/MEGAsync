@@ -419,7 +419,7 @@
     <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
-        <translation>Your issue couldn’t be uploaded due to an error. Try again later or contact our support team via [A]support@mega.io[/A] if the problem persists.</translation>
+        <translation>Your issue couldn’t be uploaded due to an error. Try again later or contact our support team via [A]https://mega.nz/support[/A] if the problem persists.</translation>
     </message>
     <message>
         <source>Bug report is uploading, it may take a few minutes</source>
@@ -464,7 +464,7 @@
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
         <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
-        <translation>Please try again later or contact our support team via [A]support@mega.io[/A] if the problem persists.</translation>
+        <translation>Please try again later or contact our support team via [A]https://mega.nz/support[/A] if the problem persists.</translation>
     </message>
     <message>
         <source>Please wait until the current upload is completed.</source>
@@ -1236,7 +1236,7 @@
     <name>DownloadNodeSelector</name>
     <message numerus="yes">
         <source>%1 item selected</source>
-        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed. 
+        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed.
         First part of string for multi plural support. Full string looks like: 5 items selected. 2 have been removed. To reselect, close this window and try again. </translatorcomment>
         <translation>
             <numerusform>%1 item selected.</numerusform>
@@ -1245,7 +1245,7 @@
     </message>
     <message numerus="yes">
         <source>%1. %2 has been removed. To reselect, close this window and try again.</source>
-        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed. 
+        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed.
         First part of string for multi plural support. Full string looks like: 5 items selected. 2 have been removed. To reselect, close this window and try again. </translatorcomment>
         <translation>
             <numerusform>%1. %2 has been removed. To reselect, close this window and try again.</numerusform>
@@ -2921,7 +2921,7 @@ Wait for the upload to complete.</translation>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
         <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. CON-541</translatorcomment>
-        <translation>You have been logged out. Contact [A]support@mega.io[/A] if this issue persists.</translation>
+        <translation>You have been logged out. Contact support at [A]https://mega.nz/support[/A] if this issue persists.</translation>
     </message>
 </context>
 <context>
@@ -4788,6 +4788,11 @@ Enter a different name.</translation>
         <translation>The items couldn’t be restored. Try again later.</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>This file has been the subject of a takedown notice</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>This folder has been the subject of a takedown notice</translation>
@@ -6044,7 +6049,7 @@ Enter a different name.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Rename upload conflicts and duplicate same-folder items more easily.
+        <translation>- Duplicated folder name conflicts are now resolved automatically.
 - Cloud drive, sync, backup, and settings dialogs are clearer and more consistent.
 - Bug fixes and performance improvements.</translation>
     </message>
@@ -7245,17 +7250,17 @@ Do you want to delete it anyway?</translation>
     <message>
         <source>Add a sync to keep folders up to date</source>
         <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
-        <translation>Add a sync to keep folders up to date</translation>
+        <translation>Keep folders up to date across devices</translation>
     </message>
     <message>
         <source>Add sync</source>
         <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
-        <translation>Add sync</translation>
+        <translation>Set up sync</translation>
     </message>
     <message>
         <source>Automatic sync issue resolution</source>
         <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>Automatic sync issue resolution</translation>
+        <translation>Automatically resolve sync issues</translation>
     </message>
     <message>
         <source>Available[BR]%1</source>
@@ -7301,6 +7306,16 @@ Do you want to delete it anyway?</translation>
         <source>Enable sync</source>
         <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
         <translation>Enable sync</translation>
+    </message>
+    <message>
+        <source>File versions</source>
+        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
+        <translation>File versions</translation>
+    </message>
+    <message>
+        <source>File versions[BR]%1</source>
+        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
+        <translation>File versions[BR]%1</translation>
     </message>
     <message>
         <source>Get more storage</source>
@@ -8581,7 +8596,7 @@ Refresh the list.</translation>
 Please move it to a location that is less than 64 folders deep.</source>
         <translatorcomment>Title for the header widget of sync stall that occurs when the file is more than 64 folders deep.SNC-2565</translatorcomment>
         <translation>The target is too deep in your folder structure. Stop the sync, move the folder to a location that is less than 64 folders deep, and recreate your sync.
-If this doesn’t resolve the issue, contact support@mega.io.</translation>
+If this doesn’t resolve the issue, contact support at https://mega.nz/support</translation>
     </message>
     <message>
         <source>Unable to sync [B]%1[/B]</source>
@@ -8998,7 +9013,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <name>TransferNotificationBuilder</name>
     <message numerus="yes">
         <source>%1, but %n item couldn’t be downloaded.</source>
-        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed. 
+        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed.
         Second part of string for multi plural support. Full string looks like: X item downloaded, but Y item couldn’t be downloaded (X and Y will be replaced with specific numbers).</translatorcomment>
         <translation>
             <numerusform>%1, but %n item couldn’t be downloaded.</numerusform>
@@ -9007,7 +9022,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     </message>
     <message numerus="yes">
         <source>%1, but %n item couldn’t be uploaded.</source>
-        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed. 
+        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed.
         Second part of string for multi plural support. Full string looks like: X item uploaded, but Y item couldn’t be uploaded (X and Y will be replaced with specific numbers).</translatorcomment>
         <translation>
             <numerusform>%1, but %n item couldn’t be uploaded.</numerusform>
@@ -9032,7 +9047,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     </message>
     <message numerus="yes">
         <source>%n item downloaded</source>
-        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed. 
+        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed.
         First part of string for multi plural support. Full string looks like: X item downloaded, but Y item couldn’t be downloaded (X and Y will be replaced with specific numbers).</translatorcomment>
         <translation>
             <numerusform>%n item downloaded</numerusform>
@@ -9065,7 +9080,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     </message>
     <message numerus="yes">
         <source>%n item uploaded</source>
-        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed. 
+        <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed.
         First part of string for multi plural support. Full string looks like: X item uploaded, but Y item couldn’t be uploaded (X and Y will be replaced with specific numbers).</translatorcomment>
         <translation>
             <numerusform>%n item uploaded</numerusform>
