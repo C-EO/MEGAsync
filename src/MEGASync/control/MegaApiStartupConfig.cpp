@@ -15,7 +15,7 @@ void MegaApiStartupConfig::initialConfiguration(mega::MegaApi* megaApi)
 void MegaApiStartupConfig::applyFileServiceReclaimOptions(mega::MegaApi* megaApi)
 {
     Q_ASSERT_X(!megaApi->isLoggedIn(),
-               __PRETTY_FUNCTION__,
+               __func__,
                "configure shouldn't be called if we are already logged.");
 
     std::unique_ptr<mega::MegaFileServiceReclaimOptions> options{
