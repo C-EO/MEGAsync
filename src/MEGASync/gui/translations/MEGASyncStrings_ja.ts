@@ -594,7 +594,7 @@
     <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
-        <translation>エラーのため、問題をアップロードできませんでした。後でもう一度お試しいただくか、問題が解決しない場合は[A]support@mega.io[/A]経由で当社サポートチームにご連絡ください。</translation>
+        <translation>エラーのため、問題をアップロードできませんでした。後でもう一度お試しいただくか、問題が解決しない場合は[A]https://mega.nz/support[/A]経由で当社サポートチームにご連絡ください。</translation>
     </message>
     <message>
         <source>Bug report is uploading, it may take a few minutes</source>
@@ -649,7 +649,7 @@
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
         <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
-        <translation>後でもう一度お試しになるか、問題が解決しない場合は[A]support@mega.io[/A]から当社サポートチームにご連絡ください。</translation>
+        <translation>後でもう一度お試しになるか、問題が解決しない場合は[A]https://mega.nz/support[/A]から当社サポートチームにご連絡ください。</translation>
     </message>
     <message>
         <source>Please wait until the current upload is completed.</source>
@@ -3085,7 +3085,7 @@ Please wait for the upload to complete.</source>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
         <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. CON-541</translatorcomment>
-        <translation>ログアウトされました。この問題が解決しない場合は、[A]support@mega.io[/A]までご連絡ください。</translation>
+        <translation>ログアウトされました。この問題が解決しない場合は、[A]https://mega.nz/support[/A]までご連絡ください。</translation>
     </message>
 </context>
 <context>
@@ -4943,6 +4943,11 @@ Enter a different name</source>
         <translation>項目を復元できませんでした。後でもう一度お試しください。</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>このファイルは削除通知の対象となっています</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>このフォルダはテイクダウン通知（削除要請）の対象となっています</translation>
@@ -6225,7 +6230,7 @@ Enter a different name</source>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- アップロード時の競合や、同じフォルダ内の重複項目の名前変更がより簡単になりました。
+        <translation>- 重複したフォルダ名の競合が自動的に解決されるようになりました。
 - クラウドドライブ、同期、バックアップ、設定の各ダイアログがより分かりやすく、一貫性のあるデザインになりました。
 - バグを修正し、パフォーマンスが向上しました。</translation>
     </message>
@@ -6813,6 +6818,11 @@ Do you want to delete it anyway?</source>
         <translation>変更</translation>
     </message>
     <message>
+        <source>Delete folder from MEGA</source>
+        <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
+        <translation>Delete folder from MEGA</translation>
+    </message>
+    <message>
         <source>Delete folder permanently</source>
         <translatorcomment>Radio button option text</translatorcomment>
         <translation>MEGAからフォルダを削除</translation>
@@ -6828,9 +6838,19 @@ Do you want to delete it anyway?</source>
         <translation>フォルダをクラウドドライブに移動</translation>
     </message>
     <message>
+        <source>Move folder to Cloud drive</source>
+        <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
+        <translation>Move folder to Cloud drive</translation>
+    </message>
+    <message>
         <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
         <translatorcomment>Radio button description</translatorcomment>
         <translation>データへのフルアクセスを取得するには、このフォルダをクラウドドライブに移動してください。今後はバックアップされなくなります。</translation>
+    </message>
+    <message>
+        <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
+        <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
+        <translation>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</translation>
     </message>
     <message>
         <source>Move to:</source>
@@ -6848,9 +6868,19 @@ Do you want to delete it anyway?</source>
         <translation>バックアップの停止</translation>
     </message>
     <message>
+        <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
+        <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
+        <translation>The folder will be deleted from MEGA, but it won’t be deleted from your device. [B]This action can’t be undone.[/B]</translation>
+    </message>
+    <message>
         <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
         <translatorcomment>Backup removal title description. SNC-6067</translatorcomment>
         <translation>このフォルダのバックアップを停止するには、移動するか削除する必要があります</translation>
+    </message>
+    <message>
+        <source>To stop backing up this folder, you need to either move it or delete it</source>
+        <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
+        <translation>To stop backing up this folder, you need to either move it or delete it</translation>
     </message>
 </context>
 <context>
@@ -7504,26 +7534,54 @@ Do you want to delete it anyway?</source>
     </message>
 </context>
 <context>
+    <name>SettingsQuickWidgetBase</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
+        <translation>Error opening .megaignore file</translation>
+    </message>
+</context>
+<context>
     <name>SettingsStrings</name>
+    <message>
+        <source>Add a backup to protect your folders automatically</source>
+        <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>Add a backup to protect your folders automatically</translation>
+    </message>
     <message>
         <source>Add a sync to keep folders up to date</source>
         <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
-        <translation>Add a sync to keep folders up to date</translation>
+        <translation>Keep folders up to date across devices</translation>
+    </message>
+    <message>
+        <source>Add backup</source>
+        <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
+        <translation>Add backup</translation>
     </message>
     <message>
         <source>Add sync</source>
         <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
-        <translation>Add sync</translation>
+        <translation>Set up sync</translation>
     </message>
     <message>
         <source>Automatic sync issue resolution</source>
         <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>Automatic sync issue resolution</translation>
+        <translation>Automatically resolve sync issues</translation>
     </message>
     <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
         <translation>空き容量[BR]%1</translation>
+    </message>
+    <message>
+        <source>Backed up</source>
+        <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
+        <translation>Backed up</translation>
+    </message>
+    <message>
+        <source>Backup folder</source>
+        <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
+        <translation>Backup folder</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -7561,9 +7619,24 @@ Do you want to delete it anyway?</source>
         <translation>Disabled</translation>
     </message>
     <message>
+        <source>Enable backup</source>
+        <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
+        <translation>Enable backup</translation>
+    </message>
+    <message>
         <source>Enable sync</source>
         <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
         <translation>Enable sync</translation>
+    </message>
+    <message>
+        <source>File versions</source>
+        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
+        <translation>ファイルバージョン</translation>
+    </message>
+    <message>
+        <source>File versions[BR]%1</source>
+        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
+        <translation>ファイルバージョン[BR]%1</translation>
     </message>
     <message>
         <source>Get more storage</source>
@@ -7586,14 +7659,24 @@ Do you want to delete it anyway?</source>
         <translation>Manage exclusions</translation>
     </message>
     <message>
+        <source>No backups</source>
+        <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>No backups</translation>
+    </message>
+    <message>
         <source>No syncs set up</source>
         <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
         <translation>No syncs set up</translation>
     </message>
     <message>
+        <source>Open in MEGA</source>
+        <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
+        <translation>Open in MEGA</translation>
+    </message>
+    <message>
         <source>Open in mega</source>
         <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
-        <translation>Open in mega</translation>
+        <translation>Open in MEGA</translation>
     </message>
     <message>
         <source>Pause</source>
@@ -7608,7 +7691,17 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Reboot</source>
         <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
-        <translation>Reboot</translation>
+        <translation>Restart</translation>
+    </message>
+    <message>
+        <source>Reboot backup</source>
+        <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
+        <translation>Reboot backup</translation>
+    </message>
+    <message>
+        <source>Reboot sync</source>
+        <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
+        <translation>Reboot sync</translation>
     </message>
     <message>
         <source>Remove synced folder</source>
@@ -7651,9 +7744,24 @@ Do you want to delete it anyway?</source>
         <translation>Scanning</translation>
     </message>
     <message>
+        <source>Show in File Explorer</source>
+        <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
+        <translation>Show in File Explorer</translation>
+    </message>
+    <message>
+        <source>Show in Finder</source>
+        <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
+        <translation>Show in Finder</translation>
+    </message>
+    <message>
         <source>Show in folder</source>
         <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
         <translation>Show in folder</translation>
+    </message>
+    <message>
+        <source>Start new backup</source>
+        <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
+        <translation>Start new backup</translation>
     </message>
     <message>
         <source>Start new sync</source>
@@ -7664,6 +7772,11 @@ Do you want to delete it anyway?</source>
         <source>Status</source>
         <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
         <translation>Status</translation>
+    </message>
+    <message>
+        <source>Stop backup</source>
+        <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
+        <translation>Stop backup</translation>
     </message>
     <message>
         <source>Storage Space</source>
@@ -7686,6 +7799,11 @@ Do you want to delete it anyway?</source>
         <translation>Syncing</translation>
     </message>
     <message>
+        <source>Transferring</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Transferring</translation>
+    </message>
+    <message>
         <source>Transfers</source>
         <translatorcomment>Section title for transfer usage details in the Account pane. DSN-2975</translatorcomment>
         <translation>転送</translation>
@@ -7701,14 +7819,9 @@ Do you want to delete it anyway?</source>
         <translation>アップロードは無効になっており、フォルダの同期は一時停止されています。</translation>
     </message>
     <message>
-        <source>Versions</source>
-        <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
-        <translation>バージョン</translation>
-    </message>
-    <message>
-        <source>Versions[BR]%1</source>
-        <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
-        <translation>バージョン[BR]%1</translation>
+        <source>View in MEGA</source>
+        <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
+        <translation>View in MEGA</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -8795,7 +8908,7 @@ Please, refresh the list.</source>
 Please move it to a location that is less than 64 folders deep.</source>
         <translatorcomment>Title for the header widget of sync stall that occurs when the file is more than 64 folders deep.SNC-2565</translatorcomment>
         <translation>ターゲットがフォルダ構造の深すぎる場所にあります。同期を停止し、フォルダの深さが64個未満の場所にフォルダを移動し、同期を再作成してください。
-それでも問題が解決しない場合は、support@mega.ioにご連絡ください。</translation>
+それでも問題が解決しない場合は、https://mega.nz/supportにご連絡ください。</translation>
     </message>
     <message>
         <source>Unable to sync [B]%1[/B]</source>
@@ -8931,9 +9044,24 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
 <context>
     <name>SyncSettingsQuickWidget</name>
     <message>
+        <source>Can&apos;t restore %1 mega folder</source>
+        <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
+        <translation>Can’t restore %1 mega folder</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
+        <translation>Close</translation>
+    </message>
+    <message>
         <source>Error opening megaignore file</source>
         <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
         <translation>Error opening .megaignore file</translation>
+    </message>
+    <message>
+        <source>Remove sync</source>
+        <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
+        <translation>Remove sync</translation>
     </message>
 </context>
 <context>
