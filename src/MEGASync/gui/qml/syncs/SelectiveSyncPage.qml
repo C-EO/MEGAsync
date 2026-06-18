@@ -42,7 +42,15 @@ SelectiveSyncPageForm {
         syncsComponentAccess.chooseLocalFolderButtonClicked(localFolderChooser.chosenPath);
     }
 
+    localFolderChooser.onPressed: {
+        syncsComponentAccess.chooseLocalFolderButtonClicked(localFolderChooser.chosenPath);
+    }
+
     remoteFolderChooser.onButtonClicked: {
+        syncsComponentAccess.chooseRemoteFolderButtonClicked();
+    }
+
+    remoteFolderChooser.onPressed: {
         syncsComponentAccess.chooseRemoteFolderButtonClicked();
     }
 

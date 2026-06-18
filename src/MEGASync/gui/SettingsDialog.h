@@ -62,8 +62,6 @@ public:
     void updateUploadFolder();
     void updateDownloadFolder();
 
-    void setSyncAddButtonEnabled(bool enabled,
-                                 SettingsDialog::Tabs tab = SettingsDialog::Tabs::SYNCS_TAB);
     void setChangePasswordEnabled(bool enabled);
 
 signals:
@@ -164,6 +162,8 @@ private:
     void startRequestTaskbarPinningTimer();
     void initColorTheme();
     void onEmailClicked();
+    void updateSyncTabToolbarIcon();
+    void updateBackupTabToolbarIcon();
 
     Ui::SettingsDialog* mUi;
     MegaApplication* mApp;

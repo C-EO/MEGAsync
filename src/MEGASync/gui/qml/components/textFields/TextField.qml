@@ -39,6 +39,7 @@ FocusScope {
     signal returnPressed
     signal accepted
     signal editingFinished
+    signal pressed
 
     height: textField.height
                 + ((titleItem.text !== "" && titleItem.visible)
@@ -113,6 +114,10 @@ FocusScope {
             pixelSize: Texts.Text.Size.MEDIUM
             family: FontStyles.fontFamily
             styleName: FontStyles.fontStyleName
+        }
+
+        onPressed: {
+            root.pressed();
         }
 
         onAccepted: {

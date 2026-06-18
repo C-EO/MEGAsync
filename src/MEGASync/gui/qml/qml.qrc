@@ -15,6 +15,13 @@
         <file>components/accountData/InfoAccount.qml</file>
         <file>settings/qmldir</file>
         <file>settings/AccountStateSurface.qml</file>
+        <file>settings/SyncSettings.qml</file>
+        <file>settings/SettingsError.qml</file>
+        <file>settings/ErrorActionButton.qml</file>
+        <file>settings/BackupSettings.qml</file>
+        <file>settings/SettingsEmptyState.qml</file>
+        <file>settings/SettingsSortableHeader.qml</file>
+        <file>settings/SettingsListDelegate.qml</file>
         <file>settings/SettingsStrings.qml</file>
         <file>settings/SettingsLinearProgress.qml</file>
         <file>settings/QuotaProgressSegments.qml</file>
@@ -42,6 +49,8 @@
         <file>components/buttons/RadioButton.qml</file>
         <file>components/buttons/RadioButtonSizes.qml</file>
         <file>components/buttons/RadioButtonColors.qml</file>
+        <file>components/switch/qmldir</file>
+        <file>components/switch/Switch.qml</file>
         <file>components/checkBoxes/qmldir</file>
         <file>components/checkBoxes/CheckBox.qml</file>
         <file>components/checkBoxes/Colors.qml</file>
@@ -109,6 +118,7 @@
         <file>components/menus/ContextMenu.qml</file>
         <file>components/menus/Colors.qml</file>
         <file>components/menus/Sizes.qml</file>
+        <file>components/menus/MenuSeparator.qml</file>
         <file>onboard/qmldir</file>
         <file>onboard/LoginPage.qml</file>
         <file>onboard/LoginPageForm.ui.qml</file>

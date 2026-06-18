@@ -26,5 +26,6 @@ QtObject {
     readonly property int defaultComponentSpacing: 24
     readonly property int focusBorderWidth: 4
     readonly property int focusAdjustment: -focusBorderWidth
+    readonly property int dividerThickness: 1
 
 }

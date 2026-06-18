@@ -616,12 +616,6 @@ void SyncInfo::onSyncStateChanged(mega::MegaApi*, mega::MegaSync *sync)
         return;
     }
 
-    if(!syncSettings->isActive() && (sync->getRunState() == MegaSync::RUNSTATE_DISABLED ||
-                                     sync->getRunState() == MegaSync::RUNSTATE_SUSPENDED))
-    {
-        return;
-    }
-
     updateSyncSettings(sync);
 
     if(sync->getError() != mega::MegaError::API_OK)

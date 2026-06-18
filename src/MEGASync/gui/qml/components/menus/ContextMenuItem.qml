@@ -11,6 +11,8 @@ Qml.MenuItem {
 
     readonly property int itemContentHorizontalPadding: 16
 
+    property alias textColor: itemText.color
+    property alias imageColor: itemImage.color
     property bool showFocusBorder: false
     property Colors colors: Colors {}
     property Sizes sizes: Sizes {
@@ -29,6 +31,8 @@ Qml.MenuItem {
 
     width: parent.width
     height: sizes.itemHeight
+    implicitHeight: sizes.itemHeight
+
     leftPadding: sizes.horizontalPadding
     rightPadding: sizes.horizontalPadding
     topPadding: sizes.verticalPadding

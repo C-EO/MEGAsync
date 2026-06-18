@@ -165,7 +165,6 @@ Text {
                 linkClicked();
             }
             visited = true;
-            updateLinkColor();
         }
     }
 
