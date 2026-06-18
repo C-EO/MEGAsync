@@ -76,8 +76,6 @@
 #include <QTranslator>
 
 #include <cassert>
-#include <cstddef>
-#include <cstdint>
 
 #ifdef Q_OS_LINUX
 #include <QSvgRenderer>
