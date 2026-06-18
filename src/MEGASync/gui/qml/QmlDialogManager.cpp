@@ -31,6 +31,17 @@ void QmlDialogManager::openGuestDialog()
         return;
     }
 
+    // If the onboarding dialog is already open, the guest dialog (which is just its
+    // launcher) is redundant. Showing it would leave a hidden, transparent ghost
+    // window behind the onboarding (and a stray entry in the taskbar), so raise the
+    // onboarding instead.
+    if (auto onboarding = DialogOpener::findDialog<QmlDialogWrapper<Onboarding>>())
+    {
+        DialogOpener::showDialog(onboarding->getDialog());
+        onboarding->getDialog()->raise();
+        return;
+    }
+
     auto dialogWrapper = DialogOpener::findDialog<QmlDialogWrapper<GuestContent>>();
     if(dialogWrapper == nullptr)
     {
