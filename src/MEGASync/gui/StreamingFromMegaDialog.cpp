@@ -440,7 +440,7 @@ void StreamingFromMegaDialog::onTransferTemporaryError(mega::MegaApi*, mega::Meg
 
         show();
         raise();
-        activateWindow();
+        activateWidgetWaylandSafe(this);
     }
 }
 

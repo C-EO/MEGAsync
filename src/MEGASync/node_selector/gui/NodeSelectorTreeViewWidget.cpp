@@ -652,16 +652,33 @@ void NodeSelectorTreeViewWidget::onbNewFolderClicked()
                                  {
                                      mNewFolderHandle = newNode->getHandle();
                                      mNewFolderAdded = true;
+
+                                     // Focusing a widget whose top-level window is not the active
+                                     // window makes Qt call QWindow::requestActivate()
+                                     // (QWidgetPrivate::setFocus_sys). Wayland does not support it
+                                     // and older Qt 5.15 builds crash there, so only force the
+                                     // activation/focus when our window is already active. When it
+                                     // is not (e.g. just after the NewFolderDialog closes on
+                                     // Wayland), the compositor restores focus on its own.
+                                     const QWindow* selectorWindow =
+                                         window() ? window()->windowHandle() : nullptr;
+                                     const bool windowAlreadyActive =
+                                         selectorWindow &&
+                                         selectorWindow == QGuiApplication::focusWindow();
+                                     if (!Platform::getInstance()->isWayland() ||
+                                         windowAlreadyActive)
+                                     {
 #ifdef Q_OS_LINUX
-                                     // It seems that the NodeSelector is not activated when the
-                                     // NewFolderDialog is closed, so the ui->tMegaFolders is not
-                                     // correctly focused
-                                     qApp->setActiveWindow(parentWidget()->parentWidget());
+                                         // It seems that the NodeSelector is not activated when the
+                                         // NewFolderDialog is closed, so the ui->tMegaFolders is
+                                         // not correctly focused
+                                         qApp->setActiveWindow(parentWidget()->parentWidget());
 #endif
 
-                                     // Set the focus to the view to allow the user to press enter
-                                     // (or go back, in a future feature)
-                                     ui->tMegaFolders->setFocus();
+                                         // Set the focus to the view to allow the user to press
+                                         // enter (or go back, in a future feature)
+                                         ui->tMegaFolders->setFocus();
+                                     }
                                  }
                              });
 }
