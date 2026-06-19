@@ -77,7 +77,7 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
 
     connect(ui->leSearchTool, &SearchLineEdit::search, this, &NodeSelector::onSearch);
 
-    ui->incomingShareHeaderWidget->hide();
+    ui->incomingShareContainer->hide();
 
     resize(1024, 720);
     setMinimumSize(660, 560);
@@ -288,7 +288,7 @@ void NodeSelector::applyHeaderFolderInfoState(NodeSelectorTreeViewWidget* wid)
     const auto incomingInfo = wid->incomingShareHeaderData();
     const auto showIncomingInfo = incomingInfo.has_value();
 
-    ui->incomingShareHeaderWidget->setVisible(showIncomingInfo);
+    ui->incomingShareContainer->setVisible(showIncomingInfo);
 
     if (incomingInfo)
     {
@@ -338,7 +338,7 @@ void NodeSelector::updateHeaderTopRowVisibility()
 
     // Collapse the empty action buttons container so the row can hide when nothing is left.
     ui->actionButtonsContainer->setVisible(hasVisibleChild(ui->actionButtonsContainer));
-    ui->headerTopRow->setVisible(hasVisibleChild(ui->headerTopRow));
+    ui->searchRow->setVisible(hasVisibleChild(ui->searchRow));
 }
 
 void NodeSelector::refreshHeaderButtons(NodeSelectorTreeViewWidget* wid)

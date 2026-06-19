@@ -179,7 +179,7 @@ void FilePickerNodeSelector::configureHeader()
 
     if (auto* topRowLayout = ui->headerLayout)
     {
-        ui->headerContainerLayout->removeWidget(ui->lNavigationRoot);
+        ui->navigationRowLayout->removeWidget(ui->lNavigationRoot);
         topRowLayout->insertWidget(0, ui->lNavigationRoot, 0, Qt::AlignLeft | Qt::AlignTop);
     }
 }

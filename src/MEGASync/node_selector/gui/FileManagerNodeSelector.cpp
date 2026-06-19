@@ -240,7 +240,6 @@ void FileManagerNodeSelector::configureActionButtonsPlacement()
 void FileManagerNodeSelector::configureFooter()
 {
     ui->footer->setVisible(false);
-    ui->wRightPaneNS->layout()->setContentsMargins(0, 0, 0, 14);
     // The footer divider is only shown in the file picker;
     ui->footerDivider->setVisible(false);
 }

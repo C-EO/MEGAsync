@@ -206,13 +206,13 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
            <number>12</number>
           </property>
           <property name="topMargin">
-           <number>0</number>
+           <number>8</number>
           </property>
           <property name="rightMargin">
            <number>16</number>
           </property>
           <property name="bottomMargin">
-           <number>0</number>
+           <number>8</number>
           </property>
           <item>
            <widget class="NodeSelectorTreeView" name="tMegaFolders">
@@ -293,16 +293,16 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="leftMargin">
-           <number>0</number>
+           <number>40</number>
           </property>
           <property name="topMargin">
-           <number>0</number>
+           <number>40</number>
           </property>
           <property name="rightMargin">
-           <number>0</number>
+           <number>40</number>
           </property>
           <property name="bottomMargin">
-           <number>0</number>
+           <number>40</number>
           </property>
           <item>
            <widget class="QFrame" name="frame">
@@ -317,13 +317,13 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
             </property>
             <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0,0,4">
              <property name="leftMargin">
-              <number>0</number>
+              <number>120</number>
              </property>
              <property name="topMargin">
               <number>0</number>
              </property>
              <property name="rightMargin">
-              <number>0</number>
+              <number>120</number>
              </property>
              <property name="bottomMargin">
               <number>0</number>
@@ -609,11 +609,11 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
                   <property name="wordWrap">
                    <bool>true</bool>
                   </property>
-                  <property name="bold" stdset="0">
-                   <bool>true</bool>
-                  </property>
                   <property name="font-size" stdset="0">
                    <string notr="true">label-1</string>
+                  </property>
+                  <property name="semibold" stdset="0">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>

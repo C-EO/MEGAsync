@@ -384,16 +384,8 @@ void NodeSelectorTreeViewWidget::applyEmptyState(const SelectType::EmptyPageInfo
 
     static const char* HAS_BORDER_PROPERTY("hasBorder");
     ui->frame->setProperty(HAS_BORDER_PROPERTY, info.hasBorder);
+    ui->gridLayout->setRowStretch(0, 1);
     const bool ADD_MARGINS{isEmptyFolderState || info.hasBorder};
-    ui->verticalLayout_3->setContentsMargins(ADD_MARGINS ? 20 : 0,
-                                             ADD_MARGINS ? 16 : 0,
-                                             ADD_MARGINS ? 20 : 0,
-                                             ADD_MARGINS ? 20 : 0);
-    ui->gridLayout->setContentsMargins(ADD_MARGINS ? 32 : 0,
-                                       ADD_MARGINS ? 32 : 0,
-                                       ADD_MARGINS ? 32 : 0,
-                                       ADD_MARGINS ? 32 : 0);
-    ui->gridLayout->setRowStretch(0, ADD_MARGINS ? 1 : 1);
     ui->gridLayout->setRowStretch(4, ADD_MARGINS ? 1 : 4);
     setStyleSheet(styleSheet());
     setEmptyStateButtonsVisibility(info);
