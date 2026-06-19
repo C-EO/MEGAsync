@@ -318,8 +318,6 @@ public:
                     QmlDialogWrapperUtilities::setParentGeometry(mWindow, parentGeometry);
                     QmlDialogWrapperUtilities::setParentGeometry(this, parentGeometry);
                 }
-
-                QmlDialogWrapperUtilities::setIsQML(this);
             }
 
             connect(mWindow, &QmlDialog::finished, this, [this]()
@@ -392,7 +390,10 @@ public:
                     mWindow->readyToBeShow();
                 });
 
-        QmlDialogWrapperUtilities::setShowWhenCreated(mWindow, true);
+        // DialogOpener checks this flag on the wrapper widget (the object it
+        // handles), so it is set on the wrapper only; nothing reads it on the
+        // inner window.
+        QmlDialogWrapperUtilities::setShowWhenCreated(this, true);
     }
 
 private:

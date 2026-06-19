@@ -6,6 +6,8 @@
 
 #include <QApplication>
 #include <QOperatingSystemVersion>
+#include <QQuickWindow>
+#include <QTimer>
 
 QList<std::shared_ptr<DialogOpener::DialogInfoBase>> DialogOpener::mOpenedDialogs = QList<std::shared_ptr<DialogOpener::DialogInfoBase>>();
 QQueue<std::shared_ptr<DialogOpener::DialogInfoBase>> DialogOpener::mDialogsQueue = QQueue<std::shared_ptr<DialogOpener::DialogInfoBase>>();
@@ -143,4 +145,35 @@ QList<QPointer<QWidget>> DialogOpener::getAllOpenedDialogs()
     }
 
     return dialogs;
+}
+
+void DialogOpener::refreshOtherQmlWindows(QWindow* excludedWindow)
+{
+    const auto dialogs = getAllOpenedDialogs();
+    for (const auto& dialog: dialogs)
+    {
+        // Only QML dialogs: their visible window is the inner QQuickWindow.
+        auto* wrapper = qobject_cast<QmlDialogWrapperBase*>(dialog.data());
+        if (!wrapper)
+        {
+            continue;
+        }
+
+        QQuickWindow* quickWindow = wrapper->getQmlWindow();
+        if (!quickWindow || quickWindow == excludedWindow || !quickWindow->isVisible())
+        {
+            continue;
+        }
+
+        // Repaint now (covers the excluded window being hidden) and once
+        // more on the next event loop iteration (covers the destruction
+        // of its native surface, which happens after this call).
+        quickWindow->update();
+        QTimer::singleShot(0,
+                           quickWindow,
+                           [quickWindow]()
+                           {
+                               quickWindow->update();
+                           });
+    }
 }

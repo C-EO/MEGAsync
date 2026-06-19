@@ -19,7 +19,6 @@ class QmlDialog: public QQuickWindow
 
 public:
     explicit QmlDialog(QWindow* parent = nullptr);
-    ~QmlDialog() = default;
 
 public slots:
     void setIconSrc(const QString& iconSrc);

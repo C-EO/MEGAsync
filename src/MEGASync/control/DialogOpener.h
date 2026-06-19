@@ -477,6 +477,13 @@ public:
 
     static QList<QPointer<QWidget>> getAllOpenedDialogs();
 
+    // When a QQuickWindow is closed or destroyed while other QML windows are
+    // visible, the remaining windows can stay blank until the next input
+    // event forces a frame (reproduced on macOS with both Qt5 and Qt6).
+    // Schedule an update on the opened QML dialogs so they repaint
+    // immediately.
+    static void refreshOtherQmlWindows(QWindow* excludedWindow = nullptr);
+
 private:
     static QList<std::shared_ptr<DialogInfoBase>> mOpenedDialogs;
     static QQueue<std::shared_ptr<DialogInfoBase>> mDialogsQueue;
@@ -499,7 +506,7 @@ private:
             QString classType = className<DialogType>();
             auto info = findSiblingDialogInfo<DialogType>(classType);
 
-            bool isQML(QmlDialogWrapperUtilities::isQML(dialog));
+            bool isQML(QmlDialogWrapperUtilities::isQML(dialog->windowHandle()));
 
             bool ignoreGeometry(isQML && QmlDialogWrapperUtilities::isShowWhenCreated(dialog));
             QRect geometry;
@@ -665,13 +672,47 @@ private:
     template <class DialogType>
     static void initDialog(QPointer<DialogType> dialog)
     {
-        dialog->connect(dialog.data(), &QObject::destroyed, [dialog](){
-            auto info = findDialogInfo<DialogType>(dialog);
-            if(info)
-            {
-                mOpenedDialogs.removeOne(info);
-            }
-        });
+        // Evaluated now: inside the destroyed lambda the QPointer is already
+        // null, so the dialog type cannot be queried there.
+        const bool isQML(QmlDialogWrapperUtilities::isQML(dialog->windowHandle()));
+
+        if (isQML)
+        {
+            // Repaint the remaining QML windows when this one leaves the
+            // screen: that is the moment their content can get invalidated
+            // and stay blank until the next input event.
+            QWindow* window = dialog->windowHandle();
+            QObject::connect(window,
+                             &QWindow::visibleChanged,
+                             window,
+                             [window](bool visible)
+                             {
+                                 if (!visible)
+                                 {
+                                     refreshOtherQmlWindows(window);
+                                 }
+                             });
+        }
+
+        dialog->connect(dialog.data(),
+                        &QObject::destroyed,
+                        [dialog, isQML]()
+                        {
+                            auto info = findDialogInfo<DialogType>(dialog);
+                            if (info)
+                            {
+                                mOpenedDialogs.removeOne(info);
+                            }
+
+                            if (isQML)
+                            {
+                                // The wrapper's inner QQuickWindow is deleted right after
+                                // this (deleteLater from the wrapper's destructor): refresh
+                                // the remaining QML dialogs so they repaint. No window to
+                                // exclude; this dialog's entry was just removed.
+                                refreshOtherQmlWindows();
+                            }
+                        });
         auto dpiResize = new HighDpiResize<DialogType>(dialog);
         Q_UNUSED(dpiResize);
     }
