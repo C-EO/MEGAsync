@@ -19,6 +19,14 @@ DuplicatedNodeItem::DuplicatedNodeItem(QWidget* parent):
 {
     ui->setupUi(this);
     ui->lLearnMore->hide();
+
+    // Centre the name (and size/date) block vertically within the card cell. The labels are
+    // sized to their text and QTextBrowser can't vertically centre its own text, so equal
+    // stretches above and below the content do the centring. This keeps a single-line item
+    // such as the rename option aligned with the icon instead of stuck at the top.
+    ui->verticalLayout_4->insertStretch(0);
+    ui->verticalLayout_4->addStretch();
+
     TokenParserWidgetManager::instance()->applyCurrentTheme(this);
 }
 

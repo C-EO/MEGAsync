@@ -7,13 +7,18 @@
 #include <QDebug>
 #include <QEvent>
 #include <QResizeEvent>
+#include <QSizePolicy>
 #include <QTextBlock>
 #include <QTextLayout>
 
-const int MINIMUM_DOC_HEIGHT = 3;
+#include <algorithm>
 
 /**
- * THIS COMPONENT IS ONLY VALID WHEN THE LABEL HAS EXPANDING SIZE POLICY
+ * This label sizes itself to its text: it reports its height through heightForWidth() and is
+ * exactly that tall (vertical size policy Fixed), so the layout sizes it correctly on the
+ * first pass. It does not vertically centre its own text (QTextBrowser can't); a parent that
+ * wants the text centred in a taller row must do so via the layout. Line/height-limited
+ * labels also elide their text. See enableHeightForWidth()/heightForWidth()/onAdaptHeight().
  */
 
 //This event is propagated from child to parent, this is why it is used
@@ -42,6 +47,10 @@ WordWrapLabel::WordWrapLabel(QWidget* parent):
 
     document()->setDocumentMargin(0);
 
+    // The label sizes itself to its text via heightForWidth() (see below). The .ui may
+    // override the size policy afterwards; setText()/resetSizeLimits() re-assert it.
+    enableHeightForWidth();
+
     connect(this, &WordWrapLabel::anchorClicked, this, &WordWrapLabel::onLinkActivated);
 
     //Timer to avoid multiple height adaptations if you change the limit type
@@ -56,6 +65,7 @@ void WordWrapLabel::setMaximumLines(int8_t lines)
     //Don´t use two limits at the same time
     Q_ASSERT_X(mMaxHeight == -1, "WordWrapLabel", "Use resetSizeLimits before using this method");
     mMaxLines = lines;
+    enableHeightForWidth();
     mAdaptHeightTimer.start();
 }
 
@@ -64,6 +74,7 @@ void WordWrapLabel::setMaximumHeight(int maxHeight)
     //Don´t use two limits at the same time
     Q_ASSERT_X(mMaxLines == -1, "WordWrapLabel", "Use resetSizeLimits before using this method");
     mMaxHeight = maxHeight;
+    enableHeightForWidth();
     mAdaptHeightTimer.start();
 }
 
@@ -72,6 +83,7 @@ void WordWrapLabel::resetSizeLimits()
     mMaxHeight = -1;
     mMaxLines = -1;
     QTextEdit::setText(mText);
+    enableHeightForWidth();
     mAdaptHeightTimer.start();
 }
 
@@ -89,6 +101,11 @@ void WordWrapLabel::setText(const QString& text)
         {
             QTextBrowser::setText(mText);
         }
+
+        // The label's height comes from heightForWidth(); make sure the policy is in place
+        // even if the .ui overrode it. Line/height-limited labels still elide their text in
+        // onAdaptHeight(), but their height is taken from heightForWidth() too.
+        enableHeightForWidth();
 
         onAdaptHeight();
     }
@@ -115,18 +132,11 @@ void WordWrapLabel::onAdaptHeight(bool parentConstrained)
     //This saves time as we don´t need the number of lines
     if(mMaxLines < 0 && mMaxHeight < 0)
     {
-        setLineWrapColumnOrWidth(lineWrapColumnOrWidth());
-        QSize docSize = document()->size().toSize();
-        if(docSize.isValid() && docSize.height() > MINIMUM_DOC_HEIGHT)
-        {
-            if ((docSize.height()) != (height()))
-            {
-                auto textHeight(docSize.height());
-                sanitizeHeight(textHeight);
-                setFixedHeight(textHeight);
-                qApp->postEvent(this, new QEvent(HeightAdapted));
-            }
-        }
+        // The height is now provided by heightForWidth(), so the layout sizes this label
+        // correctly on its first pass (even while hidden) without needing to receive a resize
+        // event first. We only need to tell the layout to re-query it when the reported height
+        // actually changed (e.g. new text or new width).
+        requestHeightUpdateIfChanged();
     }
     //TODO check for names with \n
     else
@@ -209,17 +219,90 @@ void WordWrapLabel::onAdaptHeight(bool parentConstrained)
 
         setLineWrapColumnOrWidth(lineWrapColumnOrWidth());
 
-        QSize docSize = document()->size().toSize();
-        int textHeight = lineCounter * fontHeight;
-
-        sanitizeHeight(textHeight);
-
-        if (textHeight  != 0 && docSize.height() != height())
-        {
-            setFixedHeight(textHeight);
-            qApp->postEvent(this, new QEvent(HeightAdapted));
-        }
+        // The (possibly elided) text is now set; its height is provided by heightForWidth(),
+        // so the layout sizes us correctly on its first pass instead of one resize later.
+        requestHeightUpdateIfChanged();
     }
+}
+
+void WordWrapLabel::requestHeightUpdateIfChanged()
+{
+    // Re-query the layout only when the height we'd report actually changed. Compare with a
+    // 1px tolerance: sanitizeHeight() rounds the reported height to an even number, so a
+    // strict != against the realised height() could ping-pong on borderline-wrapping text
+    // (height adapt -> dialog adjustSize -> resize -> height adapt ...).
+    if (qAbs(heightForWidth(width()) - height()) > 1)
+    {
+        updateGeometry();
+        qApp->postEvent(this, new QEvent(HeightAdapted));
+    }
+}
+
+void WordWrapLabel::enableHeightForWidth()
+{
+    QSizePolicy policy = sizePolicy();
+    if (!policy.hasHeightForWidth() || policy.verticalPolicy() != QSizePolicy::Fixed)
+    {
+        // The height comes from heightForWidth(), so the label is exactly as tall as its
+        // text (vertical policy Fixed). It does NOT try to fill a taller row and centre its
+        // text itself: QTextBrowser always top-aligns text vertically, so any centring has
+        // to be done by the parent layout (e.g. with surrounding stretches).
+        policy.setVerticalPolicy(QSizePolicy::Fixed);
+        policy.setHeightForWidth(true);
+        setSizePolicy(policy);
+    }
+}
+
+int WordWrapLabel::heightForWidth(int width) const
+{
+    if (mText.isEmpty() || width <= 0)
+    {
+        return 0;
+    }
+
+    // Measure on a scratch document so we never disturb the visible one. This is a pure
+    // function of (text, font, width), which is exactly what the layout needs to size us.
+    mMeasureDoc.setDefaultFont(font());
+    mMeasureDoc.setDocumentMargin(document()->documentMargin());
+    if (mFormat == Qt::PlainText)
+    {
+        mMeasureDoc.setPlainText(mText);
+    }
+    else
+    {
+        mMeasureDoc.setHtml(mText);
+    }
+    mMeasureDoc.setTextWidth(width);
+
+    int textHeight = mMeasureDoc.size().toSize().height();
+
+    // Honour the same limits the reactive (line/height-limited) path applies.
+    if (mMaxLines > 0)
+    {
+        textHeight =
+            (std::min)(textHeight, static_cast<int>(mMaxLines) * fontMetrics().lineSpacing());
+    }
+    if (mMaxHeight > 0)
+    {
+        textHeight = (std::min)(textHeight, mMaxHeight);
+    }
+
+    sanitizeHeight(textHeight);
+    return textHeight;
+}
+
+QSize WordWrapLabel::sizeHint() const
+{
+    QSize hint = QTextBrowser::sizeHint();
+    hint.setHeight(heightForWidth(width() > 0 ? width() : hint.width()));
+    return hint;
+}
+
+QSize WordWrapLabel::minimumSizeHint() const
+{
+    QSize hint = QTextBrowser::minimumSizeHint();
+    hint.setHeight(heightForWidth(width() > 0 ? width() : hint.width()));
+    return hint;
 }
 
 void WordWrapLabel::resizeEvent(QResizeEvent* event)
@@ -289,7 +372,7 @@ void WordWrapLabel::setCursor(const QCursor& cursor)
     viewport()->setCursor(cursor);
 }
 
-void WordWrapLabel::sanitizeHeight(int& height)
+void WordWrapLabel::sanitizeHeight(int& height) const
 {
     // We don´t want odd numbers
     if (height % 2 != 0)
