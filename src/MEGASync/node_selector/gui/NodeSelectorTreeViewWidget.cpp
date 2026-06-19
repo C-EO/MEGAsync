@@ -362,7 +362,7 @@ void NodeSelectorTreeViewWidget::applyEmptyState(const SelectType::EmptyPageInfo
                                                  ViewType type)
 {
     mCurrentViewType = type;
-    const bool isFolderState = type == ViewType::FOLDER_EMPTY;
+    const bool isEmptyFolderState = type == ViewType::FOLDER_EMPTY;
 
     ui->descriptionEmptyLabel->hide();
     ui->titleEmptyLabel->hide();
@@ -384,16 +384,17 @@ void NodeSelectorTreeViewWidget::applyEmptyState(const SelectType::EmptyPageInfo
 
     static const char* HAS_BORDER_PROPERTY("hasBorder");
     ui->frame->setProperty(HAS_BORDER_PROPERTY, info.hasBorder);
-    ui->verticalLayout_3->setContentsMargins(isFolderState ? 20 : 0,
-                                             isFolderState ? 16 : 0,
-                                             isFolderState ? 20 : 0,
-                                             isFolderState ? 20 : 0);
-    ui->gridLayout->setContentsMargins(isFolderState ? 32 : 0,
-                                       isFolderState ? 32 : 0,
-                                       isFolderState ? 32 : 0,
-                                       isFolderState ? 32 : 0);
-    ui->gridLayout->setRowStretch(0, isFolderState ? 1 : 1);
-    ui->gridLayout->setRowStretch(4, isFolderState ? 1 : 4);
+    const bool ADD_MARGINS{isEmptyFolderState || info.hasBorder};
+    ui->verticalLayout_3->setContentsMargins(ADD_MARGINS ? 20 : 0,
+                                             ADD_MARGINS ? 16 : 0,
+                                             ADD_MARGINS ? 20 : 0,
+                                             ADD_MARGINS ? 20 : 0);
+    ui->gridLayout->setContentsMargins(ADD_MARGINS ? 32 : 0,
+                                       ADD_MARGINS ? 32 : 0,
+                                       ADD_MARGINS ? 32 : 0,
+                                       ADD_MARGINS ? 32 : 0);
+    ui->gridLayout->setRowStretch(0, ADD_MARGINS ? 1 : 1);
+    ui->gridLayout->setRowStretch(4, ADD_MARGINS ? 1 : 4);
     setStyleSheet(styleSheet());
     setEmptyStateButtonsVisibility(info);
 }
@@ -672,11 +673,16 @@ bool NodeSelectorTreeViewWidget::isInRootView() const
     return !ui->tMegaFolders->rootIndex().isValid();
 }
 
-bool NodeSelectorTreeViewWidget::isEmpty() const
+bool NodeSelectorTreeViewWidget::isTopRootEmpty() const
 {
     return ui->tMegaFolders->model() ?
                ui->tMegaFolders->model()->rowCount(mProxyModel->getTopRootIndex()) == 0 :
                true;
+}
+
+bool NodeSelectorTreeViewWidget::isAtTopRoot() const
+{
+    return mProxyModel && getCurrentRootIndex() == mProxyModel->getTopRootIndex();
 }
 
 void NodeSelectorTreeViewWidget::enableDragAndDrop(bool enable)

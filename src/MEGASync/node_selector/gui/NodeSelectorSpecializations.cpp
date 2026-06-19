@@ -75,8 +75,15 @@ void CloudDriveNodeSelector::refreshNavigationBreadcrumb()
         return;
     }
 
+    // Inside a folder the last segment always keeps its chevron + menu. At the top root it is
+    // only interactive when the root has items and is not read-only; otherwise it is rendered
+    // plain (the empty page / read-only root offers no folder actions there).
+    const bool lastSegmentInteractive =
+        !breadcrumbWidget->isCurrentRootIndexReadOnly() &&
+        (!breadcrumbWidget->isAtTopRoot() || !breadcrumbWidget->isTopRootEmpty());
+
     ui->navigationBreadcrumb->setSegments(breadcrumbWidget->navigationBreadcrumbSegments(),
-                                          breadcrumbWidget->isCurrentRootIndexReadOnly());
+                                          lastSegmentInteractive);
 }
 
 void CloudDriveNodeSelector::onNodesRenamed(const QList<mega::MegaHandle>& handles)
@@ -182,6 +189,10 @@ void CloudDriveNodeSelector::configureSidebar()
     expandTab(ui->fIncomingShares);
     expandTab(ui->fBackups);
     expandTab(ui->fRubbish);
+
+    // FileManager left pane: 12px right margin on the tab list (left already comes as 12 from
+    // the content layout). Set on TabsLayout only, so wAccountInfo is not affected.
+    ui->TabsLayout->setContentsMargins(0, 0, 12, 4);
 
     resize(1024, 720);
     setMinimumSize(1024, 691);

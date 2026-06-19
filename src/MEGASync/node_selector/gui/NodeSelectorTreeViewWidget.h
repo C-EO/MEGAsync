@@ -101,7 +101,8 @@ public:
     bool isShowingEmptyPage() const;
     ViewType currentViewPage() const;
     bool isInRootView() const;
-    bool isEmpty() const;
+    bool isTopRootEmpty() const;
+    bool isAtTopRoot() const;
 
     bool onNodesUpdate(mega::MegaApi*, mega::MegaNodeList* nodes);
 

@@ -167,7 +167,7 @@ class NodeSelectorTreeViewWidgetRubbish: public NodeSelectorTreeViewWidget
 public:
     explicit NodeSelectorTreeViewWidgetRubbish(SelectTypeSPtr mode, QWidget* parent = nullptr);
     void setShowEmptyView(bool newShowEmptyView);
-    bool isEmpty() const;
+    bool isTopRootEmpty() const;
 
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;

@@ -1094,6 +1094,7 @@ void NodeSelector::onCurrentTreeViewWidgetChanged(int index)
                                            [this, wid]()
                                            {
                                                refreshHeader(wid);
+                                               refreshNavigationBreadcrumb();
                                            }));
         addCurrentWidgetConnection(connect(wid,
                                            &NodeSelectorTreeViewWidget::currentViewPageChanged,

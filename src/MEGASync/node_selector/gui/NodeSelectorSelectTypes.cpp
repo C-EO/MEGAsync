@@ -197,6 +197,7 @@ SelectType::EmptyPageInfo CloudDriveType::getEmptyCloudDrivePage() const
                                                Utilities::AttributeType::NONE));
 
     info.buttons = ButtonId::NEW_FOLDER | ButtonId::UPLOAD;
+    info.hasBorder = true;
 
     return info;
 }
@@ -260,13 +261,13 @@ bool CloudDriveType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg
         }
         case SelectType::ButtonId::CLEAR_RUBBISH:
         {
-            result = isRubbish ? !wdg->isEmpty() : false;
+            result = isRubbish ? !wdg->isTopRootEmpty() : false;
             break;
         }
         case SelectType::ButtonId::ADD_BACKUP:
         {
             result = wdg->getTabType() == NodeSelectorTreeViewWidget::TabItem::BACKUPS &&
-                     !wdg->isEmpty();
+                     !wdg->isTopRootEmpty();
             break;
         }
         default:

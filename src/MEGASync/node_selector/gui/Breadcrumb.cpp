@@ -65,6 +65,12 @@ void Breadcrumb::setSegments(const QList<NodeSelectorBreadcrumbSegment>& segment
     rebuildSegments();
 }
 
+void Breadcrumb::clear()
+{
+    mSegments.clear();
+    rebuildSegments(true);
+}
+
 void Breadcrumb::onNodesRenamed(const QList<mega::MegaHandle>& handles)
 {
     // A rename only changes a segment's display text, not the path. Ask for a refresh when any

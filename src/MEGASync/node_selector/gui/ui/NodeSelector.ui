@@ -127,203 +127,203 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
          </property>
          <item>
           <widget class="QGroupBox" name="wStorage">
-        <property name="title">
-         <string notr="true"/>
-        </property>
-        <layout class="QVBoxLayout" name="wSearchLayout_2">
-         <property name="spacing">
-          <number>12</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>4</number>
-         </property>
-         <item>
-          <widget class="TabSelector" name="fCloudDrive" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+           <property name="title">
+            <string notr="true"/>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="acceptDrops">
-            <bool>true</bool>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/cloud_small_thin_outline</normaloff>
-             <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
-           </property>
-           <property name="normal_off" stdset="0">
-            <string notr="true">icon-primary</string>
-           </property>
-           <property name="normal_on" stdset="0">
-            <string notr="true">icon-primary</string>
-           </property>
+           <layout class="QVBoxLayout" name="TabsLayout">
+            <property name="spacing">
+             <number>12</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item>
+             <widget class="TabSelector" name="fCloudDrive" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="acceptDrops">
+               <bool>true</bool>
+              </property>
+              <property name="icon" stdset="0">
+               <iconset resource="../../../gui/Resources_common.qrc">
+                <normaloff>:/cloud_small_thin_outline</normaloff>
+                <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
+              </property>
+              <property name="normal_off" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+              <property name="normal_on" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="TabSelector" name="fIncomingShares" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="acceptDrops">
+               <bool>true</bool>
+              </property>
+              <property name="icon" stdset="0">
+               <iconset resource="../../../gui/Resources_common.qrc">
+                <normaloff>:/folder-users_small_thin_outline</normaloff>
+                <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
+              </property>
+              <property name="normal_off" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+              <property name="normal_on" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="TabSelector" name="fBackups" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="icon" stdset="0">
+               <iconset resource="../../../gui/Resources_common.qrc">
+                <normaloff>:/devices_small_thin_outline</normaloff>
+                <normalon>:/devices_small_thin_solid</normalon>:/devices_small_thin_outline</iconset>
+              </property>
+              <property name="normal_off" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+              <property name="normal_on" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="TabSelector" name="fRubbish" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="acceptDrops">
+               <bool>true</bool>
+              </property>
+              <property name="icon" stdset="0">
+               <iconset resource="../../../gui/Resources_common.qrc">
+                <normaloff>:/trash_small_thin_outline</normaloff>
+                <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
+              </property>
+              <property name="normal_off" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+              <property name="normal_on" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>
-          <widget class="TabSelector" name="fIncomingShares" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
-           <property name="minimumSize">
+           <property name="sizeHint" stdset="0">
             <size>
-             <width>0</width>
-             <height>36</height>
+             <width>20</width>
+             <height>40</height>
             </size>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="acceptDrops">
-            <bool>true</bool>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/folder-users_small_thin_outline</normaloff>
-             <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
-           </property>
-           <property name="normal_off" stdset="0">
-            <string notr="true">icon-primary</string>
-           </property>
-           <property name="normal_on" stdset="0">
-            <string notr="true">icon-primary</string>
-           </property>
-          </widget>
+          </spacer>
          </item>
          <item>
-          <widget class="TabSelector" name="fBackups" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/devices_small_thin_outline</normaloff>
-             <normalon>:/devices_small_thin_solid</normalon>:/devices_small_thin_outline</iconset>
-           </property>
-           <property name="normal_off" stdset="0">
-            <string notr="true">icon-primary</string>
-           </property>
-           <property name="normal_on" stdset="0">
-            <string notr="true">icon-primary</string>
-           </property>
+          <widget class="QWidget" name="cbContainer" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+           </layout>
           </widget>
          </item>
-         <item>
-          <widget class="TabSelector" name="fRubbish" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="acceptDrops">
-            <bool>true</bool>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/trash_small_thin_outline</normaloff>
-             <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
-           </property>
-           <property name="normal_off" stdset="0">
-            <string notr="true">icon-primary</string>
-           </property>
-           <property name="normal_on" stdset="0">
-            <string notr="true">icon-primary</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QWidget" name="cbContainer" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-        </layout>
-       </widget>
-      </item>
         </layout>
        </widget>
       </item>

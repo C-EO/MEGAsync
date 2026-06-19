@@ -19,9 +19,10 @@ NavigationBreadcrumb::NavigationBreadcrumb(QWidget* parent):
             // The last segment carries the chevron + context menu.
             if (isLast)
             {
-                // A read-only root has no context-menu actions, so render the last segment as a
+                // A read-only root has no context-menu actions, and an empty root already
+                // offers them on the empty page. In both cases render the last segment as a
                 // plain highlighted segment without the chevron + menu affordance.
-                if (mCurrentRootReadOnly)
+                if (!mLastSegmentInteractive)
                 {
                     auto* segment = new BreadcrumbSegment;
                     segment->setText(text);
@@ -76,9 +77,15 @@ NavigationBreadcrumb::~NavigationBreadcrumb()
 }
 
 void NavigationBreadcrumb::setSegments(const QList<NodeSelectorBreadcrumbSegment>& segments,
-                                       bool currentRootReadOnly)
+                                       bool lastSegmentInteractive)
 {
-    mCurrentRootReadOnly = currentRootReadOnly;
+    if (mLastSegmentInteractive != lastSegmentInteractive)
+    {
+        ui->breadcrumb->clear();
+    }
+
+    mLastSegmentInteractive = lastSegmentInteractive;
+
     ui->breadcrumb->setSegments(segments, true);
 }
 

@@ -33,8 +33,8 @@ background-color: transparent;
 
 #frame[hasBorder=&quot;true&quot;]
 {
-border: 2px dotted #B0B1B366;/*colorToken.border-strong*/
-border-radius: 16px;
+border: 2px dashed #B0B1B366;/*colorToken.border-strong*/
+border-radius: 8px;
 background: transparent;
 }
 
@@ -336,6 +336,9 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Preferred</enum>
+               </property>
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>0</width>
@@ -348,6 +351,9 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
               <spacer name="horizontalSpacer_6">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Preferred</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -566,7 +572,7 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>416</width>
+                 <width>16777215</width>
                  <height>16777215</height>
                 </size>
                </property>

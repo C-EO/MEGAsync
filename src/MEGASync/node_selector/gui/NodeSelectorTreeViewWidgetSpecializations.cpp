@@ -616,7 +616,7 @@ void NodeSelectorTreeViewWidgetRubbish::setShowEmptyView(bool newShowEmptyView)
     mShowEmptyView = newShowEmptyView;
 }
 
-bool NodeSelectorTreeViewWidgetRubbish::isEmpty() const
+bool NodeSelectorTreeViewWidgetRubbish::isTopRootEmpty() const
 {
     auto rootIndex = mModel->index(0, 0);
     return mModel->rowCount(rootIndex) == 0;

@@ -119,7 +119,7 @@ void FilePickerNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWi
 
 void FilePickerNodeSelector::configureSidebar()
 {
-    static constexpr int COLLAPSED_SIDEBAR_WIDTH = 64;
+    static constexpr int COLLAPSED_SIDEBAR_WIDTH = 60;
     static constexpr int COLLAPSED_TAB_SIZE = 36;
     static constexpr int COLLAPSED_ICON_SIZE = 20;
 

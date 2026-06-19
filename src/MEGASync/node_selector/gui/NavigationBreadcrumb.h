@@ -20,7 +20,7 @@ public:
     ~NavigationBreadcrumb() override;
 
     void setSegments(const QList<NodeSelectorBreadcrumbSegment>& segments,
-                     bool currentRootReadOnly = false);
+                     bool lastSegmentInteractive = true);
 
 signals:
     void segmentActivated(int index);
@@ -32,7 +32,7 @@ public slots:
 
 private:
     Ui::NavigationBreadcrumb* ui;
-    bool mCurrentRootReadOnly = false;
+    bool mLastSegmentInteractive = true;
 };
 
 #endif // NAVIGATIONBREADCRUMB_H

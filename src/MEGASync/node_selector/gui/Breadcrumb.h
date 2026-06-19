@@ -36,6 +36,7 @@ public:
     void setSegmentFactory(SegmentFactory factory);
     void setSegments(const QList<NodeSelectorBreadcrumbSegment>& segments,
                      bool overflowSegmentsNavigable = false);
+    void clear();
 
 signals:
     // A hidden ancestor segment was chosen from the overflow popup.
