@@ -5105,6 +5105,11 @@ Enter a different name.</translation>
         <translatorcomment>Action button in the node selector to create a new folder. SNC-6420</translatorcomment>
         <translation type="unfinished">New folder</translation>
     </message>
+    <message>
+        <source>Empty folder</source>
+        <translatorcomment>Empty state label shown in the node selector view when the selected folder has no items. SNC-6420</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NodeSelectorTreeViewWidgetBackups</name>

@@ -219,6 +219,7 @@ protected:
     virtual NodeState getNodeOnModelState(const QModelIndex& index, mega::MegaNode* node);
 
     virtual SelectType::EmptyPageInfo getEmptyRootPageInfo();
+    SelectType::EmptyPageInfo getEmptyFolderPageInfo() const;
     void showRootEmptyState();
     void setCurrentPage(ViewType type);
     bool showLabelText() const;

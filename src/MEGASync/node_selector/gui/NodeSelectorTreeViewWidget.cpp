@@ -305,7 +305,7 @@ void NodeSelectorTreeViewWidget::showFolderEmptyState()
 {
     if (mSelectType)
     {
-        applyEmptyState(mSelectType->getEmptyFolderPageInfo(), ViewType::FOLDER_EMPTY);
+        applyEmptyState(getEmptyFolderPageInfo(), ViewType::FOLDER_EMPTY);
     }
 }
 
@@ -1101,7 +1101,7 @@ void NodeSelectorTreeViewWidget::updateEmptyStateButtonsVisibility()
 
     if (mCurrentViewType == ViewType::FOLDER_EMPTY)
     {
-        setEmptyStateButtonsVisibility(mSelectType->getEmptyFolderPageInfo());
+        setEmptyStateButtonsVisibility(getEmptyFolderPageInfo());
     }
     else if (mCurrentViewType == ViewType::ROOT_EMPTY)
     {
@@ -1549,6 +1549,28 @@ void NodeSelectorTreeViewWidget::setCurrentViewWidget()
 SelectType::EmptyPageInfo NodeSelectorTreeViewWidget::getEmptyRootPageInfo()
 {
     return SelectType::EmptyPageInfo();
+}
+
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidget::getEmptyFolderPageInfo() const
+{
+    switch (getTabType())
+    {
+        case TabItem::SHARES:
+        case TabItem::BACKUPS:
+        case TabItem::RUBBISH:
+        {
+            SelectType::EmptyPageInfo info;
+            info.title = tr("Empty folder");
+            info.icon.addFile(Utilities::getPixmapName(QLatin1String("glass-folder"),
+                                                       Utilities::AttributeType::NONE));
+            return info;
+        }
+        default:
+        {
+            return mSelectType ? mSelectType->getEmptyFolderPageInfo() :
+                                 SelectType::EmptyPageInfo();
+        }
+    }
 }
 
 NodeSelectorDelegate* NodeSelectorTreeViewWidget::createItemDelegate(QObject* parent)
