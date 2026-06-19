@@ -20,7 +20,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Select a MEGA folder</string>
+   <string>Files</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -171,8 +171,8 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
               </property>
               <property name="icon" stdset="0">
                <iconset resource="../../../gui/Resources_common.qrc">
-                <normaloff>:/cloud_small_thin_outline</normaloff>
-                <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
+                <normaloff>:/cloud_medium_thin_outline</normaloff>
+                <normalon>:/cloud_medium_thin_solid</normalon>:/cloud_medium_thin_outline</iconset>
               </property>
               <property name="normal_off" stdset="0">
                <string notr="true">icon-primary</string>
@@ -207,8 +207,8 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
               </property>
               <property name="icon" stdset="0">
                <iconset resource="../../../gui/Resources_common.qrc">
-                <normaloff>:/folder-users_small_thin_outline</normaloff>
-                <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
+                <normaloff>:/folder-users_medium_thin_outline</normaloff>
+                <normalon>:/folder-users_medium_thin_solid</normalon>:/folder-users_medium_thin_outline</iconset>
               </property>
               <property name="normal_off" stdset="0">
                <string notr="true">icon-primary</string>
@@ -240,8 +240,8 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
               </property>
               <property name="icon" stdset="0">
                <iconset resource="../../../gui/Resources_common.qrc">
-                <normaloff>:/devices_small_thin_outline</normaloff>
-                <normalon>:/devices_small_thin_solid</normalon>:/devices_small_thin_outline</iconset>
+                <normaloff>:/backups_medium_thin_outline</normaloff>
+                <normalon>:/backups_medium_thin_solid</normalon>:/backups_medium_thin_outline</iconset>
               </property>
               <property name="normal_off" stdset="0">
                <string notr="true">icon-primary</string>
@@ -276,8 +276,8 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
               </property>
               <property name="icon" stdset="0">
                <iconset resource="../../../gui/Resources_common.qrc">
-                <normaloff>:/trash_small_thin_outline</normaloff>
-                <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
+                <normaloff>:/rubbish-bin_medium_thin_outline</normaloff>
+                <normalon>:/rubbish-bin_medium_thin_solid</normalon>:/rubbish-bin_medium_thin_outline</iconset>
               </property>
               <property name="normal_off" stdset="0">
                <string notr="true">icon-primary</string>
