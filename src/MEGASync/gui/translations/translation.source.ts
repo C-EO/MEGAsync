@@ -657,37 +657,6 @@
     </message>
 </context>
 <context>
-    <name>CloudDriveNodeSelector</name>
-    <message>
-        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
-        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>All items will be permanently deleted. This action can [B]not[/B] be undone.</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>Cancel</translation>
-    </message>
-    <message>
-        <source>Empty</source>
-        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>Empty</translation>
-    </message>
-    <message>
-        <source>Empty Rubbish bin?</source>
-        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>Empty Rubbish bin?</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n result</source>
-        <translatorcomment>Label showing the number of search results in the Cloud Drive node selector. %n is the number of results. SNC-6420</translatorcomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-</context>
-<context>
     <name>CloudFingerprintMissingHeader</name>
     <message>
         <source>Apply</source>
@@ -1854,6 +1823,37 @@
         <source>Can´t sync [B]%1[/B]</source>
         <translatorcomment>Title for the header widget of sync stall shown when there&apos;s an issue with a file or folder which requires user&apos;s intervention, [B] is for bold.SNC-2565</translatorcomment>
         <translation>Can’t sync [B]%1[/B]</translation>
+    </message>
+</context>
+<context>
+    <name>FileManagerNodeSelector</name>
+    <message numerus="yes">
+        <source>%n result</source>
+        <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation type="unfinished">Empty</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation type="unfinished">Cancel</translation>
+    </message>
+    <message>
+        <source>Empty Rubbish bin?</source>
+        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation type="unfinished">Empty Rubbish bin?</translation>
+    </message>
+    <message>
+        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
+        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation type="unfinished">All items will be permanently deleted. This action can [B]not[/B] be undone.</translation>
     </message>
 </context>
 <context>

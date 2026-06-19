@@ -1,4 +1,4 @@
-#include "NodeSelectorSpecializations.h"
+#include "FileManagerNodeSelector.h"
 
 #include "CreateRemoveBackupsManager.h"
 #include "DialogOpener.h"
@@ -18,7 +18,7 @@
 #include <QMessageBox>
 #include <QStyle>
 
-CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
+FileManagerNodeSelector::FileManagerNodeSelector(QWidget* parent):
     NodeSelector(SelectTypeSPtr(new CloudDriveType), parent)
 {
     ui->bOk->hide();
@@ -32,15 +32,15 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
     connect(ui->navigationBreadcrumb,
             &NavigationBreadcrumb::segmentActivated,
             this,
-            &CloudDriveNodeSelector::onNavigationBreadcrumbSegmentActivated);
+            &FileManagerNodeSelector::onNavigationBreadcrumbSegmentActivated);
     connect(ui->navigationBreadcrumb,
             &NavigationBreadcrumb::lastSegmentMenuRequested,
             this,
-            &CloudDriveNodeSelector::onNavigationBreadcrumbMenuRequested);
+            &FileManagerNodeSelector::onNavigationBreadcrumbMenuRequested);
     connect(ui->navigationBreadcrumb,
             &NavigationBreadcrumb::refreshNeeded,
             this,
-            &CloudDriveNodeSelector::refreshNavigationBreadcrumb);
+            &FileManagerNodeSelector::refreshNavigationBreadcrumb);
     refreshNavigationBreadcrumb();
 
     setAcceptDrops(true);
@@ -60,7 +60,7 @@ CloudDriveNodeSelector::CloudDriveNodeSelector(QWidget* parent):
     sendStats();
 }
 
-void CloudDriveNodeSelector::refreshNavigationBreadcrumb()
+void FileManagerNodeSelector::refreshNavigationBreadcrumb()
 {
     auto* breadcrumbWidget = getCurrentTreeViewWidget();
 
@@ -86,12 +86,12 @@ void CloudDriveNodeSelector::refreshNavigationBreadcrumb()
                                           lastSegmentInteractive);
 }
 
-void CloudDriveNodeSelector::onNodesRenamed(const QList<mega::MegaHandle>& handles)
+void FileManagerNodeSelector::onNodesRenamed(const QList<mega::MegaHandle>& handles)
 {
     ui->navigationBreadcrumb->onNodesRenamed(handles);
 }
 
-void CloudDriveNodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)
+void FileManagerNodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentIndex)
 {
     if (auto* widget = getCurrentTreeViewWidget(); widget && widget != mSearchWidget)
     {
@@ -99,7 +99,7 @@ void CloudDriveNodeSelector::onNavigationBreadcrumbSegmentActivated(int segmentI
     }
 }
 
-void CloudDriveNodeSelector::onNavigationBreadcrumbMenuRequested(const QPoint& globalPos)
+void FileManagerNodeSelector::onNavigationBreadcrumbMenuRequested(const QPoint& globalPos)
 {
     if (auto* widget = getCurrentTreeViewWidget(); widget && widget != mSearchWidget)
     {
@@ -107,7 +107,7 @@ void CloudDriveNodeSelector::onNavigationBreadcrumbMenuRequested(const QPoint& g
     }
 }
 
-void CloudDriveNodeSelector::specialisedTreeViewWidgetsCreated()
+void FileManagerNodeSelector::specialisedTreeViewWidgetsCreated()
 {
     NodeSelector::specialisedTreeViewWidgetsCreated();
 
@@ -116,11 +116,11 @@ void CloudDriveNodeSelector::specialisedTreeViewWidgetsCreated()
         connect(mSearchWidget,
                 &NodeSelectorTreeViewWidgetSearch::searchCounterChanged,
                 this,
-                &CloudDriveNodeSelector::refreshSearchResultCount);
+                &FileManagerNodeSelector::refreshSearchResultCount);
     }
 }
 
-void CloudDriveNodeSelector::refreshSearchResultCount()
+void FileManagerNodeSelector::refreshSearchResultCount()
 {
     if (!mSearchWidget || ui->stackedWidget->currentWidget() != mSearchWidget)
     {
@@ -144,7 +144,7 @@ void CloudDriveNodeSelector::refreshSearchResultCount()
     ui->lSearchResultCount->setVisible(true);
 }
 
-void CloudDriveNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget)
+void FileManagerNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWidget* widget)
 {
     if (!widget)
     {
@@ -161,7 +161,7 @@ void CloudDriveNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewWi
     widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, incomingSharesTopRoot);
 }
 
-void CloudDriveNodeSelector::configureSidebar()
+void FileManagerNodeSelector::configureSidebar()
 {
     static constexpr int EXPANDED_SIDEBAR_WIDTH = 256;
     static constexpr int EXPANDED_TAB_HEIGHT = 40;
@@ -198,7 +198,7 @@ void CloudDriveNodeSelector::configureSidebar()
     setMinimumSize(1024, 691);
 }
 
-void CloudDriveNodeSelector::configureHeader()
+void FileManagerNodeSelector::configureHeader()
 {
     // Search Line Edit
     ui->leSearchTool->setMode(SearchLineEdit::Mode::ALWAYS_EXPANDED);
@@ -209,7 +209,7 @@ void CloudDriveNodeSelector::configureHeader()
     ui->leSearchTool->setFixedSize(SEARCH_LINE_EDIT_FIXED_WIDTH, SEARCH_LINE_EDIT_FIXED_HEIGHT);
 }
 
-void CloudDriveNodeSelector::configureActionButtonsPlacement()
+void FileManagerNodeSelector::configureActionButtonsPlacement()
 {
     const auto applyHeaderStyle = [](TokenizableButton* btn, const QString& type)
     {
@@ -236,7 +236,7 @@ void CloudDriveNodeSelector::configureActionButtonsPlacement()
     ui->actionButtonsLayout->addStretch();
 }
 
-void CloudDriveNodeSelector::configureFooter()
+void FileManagerNodeSelector::configureFooter()
 {
     ui->footer->setVisible(false);
     ui->wRightPaneNS->layout()->setContentsMargins(0, 0, 0, 14);
@@ -244,9 +244,9 @@ void CloudDriveNodeSelector::configureFooter()
     ui->footerDivider->setVisible(false);
 }
 
-void CloudDriveNodeSelector::onLanguageChangeEvent() {}
+void FileManagerNodeSelector::onLanguageChangeEvent() {}
 
-void CloudDriveNodeSelector::sendStats()
+void FileManagerNodeSelector::sendStats()
 {
     auto lastDateTimeStatSent(Preferences::instance()->cloudDriveDialogLastDateTimeStatSent());
     auto lastDateTimeOpened(Preferences::instance()->cloudDriveDialogLastDateTimeOpened());
@@ -270,7 +270,7 @@ void CloudDriveNodeSelector::sendStats()
     // If the CloudDrive is not currently open but it was opened during the current hour, send
     // the event
     auto cloudDriveDialog(DialogOpener::findDialog<NodeSelector>());
-    auto isCurrentlyOpen(cloudDriveDialog && dynamic_cast<CloudDriveNodeSelector*>(
+    auto isCurrentlyOpen(cloudDriveDialog && dynamic_cast<FileManagerNodeSelector*>(
                                                  cloudDriveDialog->getDialog().data()));
 
     if (isCurrentlyOpen)
@@ -291,7 +291,7 @@ void CloudDriveNodeSelector::sendStats()
     }
 }
 
-void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
+void FileManagerNodeSelector::onCustomButtonClicked(uint id)
 {
     if (id == SelectType::UPLOAD)
     {
@@ -358,18 +358,19 @@ void CloudDriveNodeSelector::onCustomButtonClicked(uint id)
     NodeSelector::onCustomButtonClicked(id);
 }
 
-void CloudDriveNodeSelector::onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int type)
+void FileManagerNodeSelector::onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles,
+                                                    int type)
 {
     checkMovingItems(handles, type, NodeSelector::IncreaseOrDecrease::INCREASE);
 }
 
-void CloudDriveNodeSelector::onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& handles,
-                                                         int type)
+void FileManagerNodeSelector::onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& handles,
+                                                          int type)
 {
     checkMovingItems(handles, type, NodeSelector::IncreaseOrDecrease::DECREASE);
 }
 
-void CloudDriveNodeSelector::onItemRequestsFinished(int actionType)
+void FileManagerNodeSelector::onItemRequestsFinished(int actionType)
 {
     if (actionType == MoveActionType::DELETE_RUBBISH && mRubbishWidget->isUiBlocked())
     {
@@ -377,7 +378,7 @@ void CloudDriveNodeSelector::onItemRequestsFinished(int actionType)
     }
 }
 
-void CloudDriveNodeSelector::onItemsAboutToBeRestored(const QSet<mega::MegaHandle>& handles)
+void FileManagerNodeSelector::onItemsAboutToBeRestored(const QSet<mega::MegaHandle>& handles)
 {
     auto tabsInfo(getTabs(handles.values()));
 
@@ -392,7 +393,7 @@ void CloudDriveNodeSelector::onItemsAboutToBeRestored(const QSet<mega::MegaHandl
     }
 }
 
-void CloudDriveNodeSelector::onItemAboutToBeReplaced(mega::MegaHandle handle)
+void FileManagerNodeSelector::onItemAboutToBeReplaced(mega::MegaHandle handle)
 {
     auto tabsInfo(getTabs(QList<mega::MegaHandle>() << handle));
 
@@ -407,16 +408,16 @@ void CloudDriveNodeSelector::onItemAboutToBeReplaced(mega::MegaHandle handle)
     }
 }
 
-void CloudDriveNodeSelector::onItemsAboutToBeMerged(
+void FileManagerNodeSelector::onItemsAboutToBeMerged(
     const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,
     int actionType)
 {
     performMergeAction(mergesInfo, actionType, NodeSelector::IncreaseOrDecrease::INCREASE);
 }
 
-void CloudDriveNodeSelector::onItemMergeFinished(mega::MegaHandle sourceHandle,
-                                                 mega::MegaHandle targetHandle,
-                                                 int)
+void FileManagerNodeSelector::onItemMergeFinished(mega::MegaHandle sourceHandle,
+                                                  mega::MegaHandle targetHandle,
+                                                  int)
 {
     const auto targetTabsInfo(getTabs(QList<mega::MegaHandle>() << targetHandle));
 
@@ -442,14 +443,14 @@ void CloudDriveNodeSelector::onItemMergeFinished(mega::MegaHandle sourceHandle,
     finishMergeInWidget(targetTabsInfo.incomingSharedNodes, mIncomingSharesWidget);
 }
 
-void CloudDriveNodeSelector::onItemsAboutToBeMergedFailed(
+void FileManagerNodeSelector::onItemsAboutToBeMergedFailed(
     const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,
     int actionType)
 {
     performMergeAction(mergesInfo, actionType, NodeSelector::IncreaseOrDecrease::DECREASE);
 }
 
-void CloudDriveNodeSelector::performMergeAction(
+void FileManagerNodeSelector::performMergeAction(
     const QList<std::shared_ptr<NodeSelectorMergeInfo>>& mergesInfo,
     int actionType,
     IncreaseOrDecrease type)
@@ -547,9 +548,9 @@ void CloudDriveNodeSelector::performMergeAction(
     }
 }
 
-void CloudDriveNodeSelector::checkMovingItems(const QList<mega::MegaHandle>& handles,
-                                              int moveType,
-                                              NodeSelector::IncreaseOrDecrease type)
+void FileManagerNodeSelector::checkMovingItems(const QList<mega::MegaHandle>& handles,
+                                               int moveType,
+                                               NodeSelector::IncreaseOrDecrease type)
 {
     if (moveType == MoveActionType::RESTORE)
     {
@@ -604,8 +605,8 @@ void CloudDriveNodeSelector::checkMovingItems(const QList<mega::MegaHandle>& han
     }
 }
 
-CloudDriveNodeSelector::HandlesByTab
-    CloudDriveNodeSelector::getTabs(const QList<mega::MegaHandle>& handles)
+FileManagerNodeSelector::HandlesByTab
+    FileManagerNodeSelector::getTabs(const QList<mega::MegaHandle>& handles)
 {
     HandlesByTab info;
 
@@ -645,7 +646,7 @@ CloudDriveNodeSelector::HandlesByTab
     return info;
 }
 
-void CloudDriveNodeSelector::selectTabs(const HandlesByTab& tabsInfo)
+void FileManagerNodeSelector::selectTabs(const HandlesByTab& tabsInfo)
 {
     if (!tabsInfo.cloudDriveNodes.isEmpty())
     {

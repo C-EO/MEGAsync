@@ -1,16 +1,15 @@
-#ifndef NODESELECTORSPECIALIZED_H
-#define NODESELECTORSPECIALIZED_H
+#ifndef FILEMANAGERNODESELECTOR_H
+#define FILEMANAGERNODESELECTOR_H
 
-#include "FilePickerNodeSelectorSpecializations.h"
 #include "NodeSelector.h"
 
 ////////////////////
-class CloudDriveNodeSelector: public NodeSelector
+class FileManagerNodeSelector: public NodeSelector
 {
     Q_OBJECT
 
 public:
-    explicit CloudDriveNodeSelector(QWidget* parent = 0);
+    explicit FileManagerNodeSelector(QWidget* parent = 0);
 
     static void sendStats();
 
@@ -76,4 +75,4 @@ private:
 
     QWidget* mDragBackDrop;
 };
-#endif // NODESELECTORSPECIALIZED_H
+#endif // FILEMANAGERNODESELECTOR_H
