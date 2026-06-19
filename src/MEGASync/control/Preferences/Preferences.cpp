@@ -296,6 +296,16 @@ const QString Preferences::lastSyncReminderStateKey = QString::fromLatin1("lastS
 const QString Preferences::gfxWorkerEndpointKey = QString::fromLatin1("gfxWorkerEndpoint");
 #endif
 
+// reclamation file system settings.
+const QString Preferences::maxPayloadLogSize = QString::fromLatin1("maxPayloadLogSize");
+const QString Preferences::reclaimAgeThresholdMinutes =
+    QString::fromLatin1("reclaimAgeThresholdMinutes");
+const QString Preferences::reclaimBatchSize = QString::fromLatin1("reclaimBatchSize");
+const QString Preferences::reclaimDelaySeconds = QString::fromLatin1("reclaimDelaySeconds");
+const QString Preferences::reclaimPeriodSeconds = QString::fromLatin1("reclaimPeriodSeconds");
+const QString Preferences::reclaimTargetBytes = QString::fromLatin1("reclaimTargetBytes");
+const QString Preferences::reclaimThresholdBytes = QString::fromLatin1("reclaimThresholdBytes");
+
 //Sleep settings
 const QString Preferences::awakeIfActiveKey = QString::fromLatin1("sleepIfInactiveEnabledKey");
 const bool Preferences::defaultAwakeIfActive = false;
@@ -314,6 +324,7 @@ const unsigned long long Preferences::defaultTransferIdentifier = 1;
 const int Preferences::defaultCleanerDaysLimitValue = 30;
 const int Preferences::defaultFolderPermissions = 0;
 const int Preferences::defaultFilePermissions   = 0;
+
 #ifdef WIN32
 const int  Preferences::defaultProxyType            = Preferences::PROXY_TYPE_AUTO;
 #else
@@ -2879,10 +2890,10 @@ void Preferences::writeSyncSetting(std::shared_ptr<SyncSettings> syncSettings)
 }
 
 template<typename T>
-void Preferences::overridePreference(const QSettings &settings, QString &&name, T &value)
+void Preferences::overridePreference(const QSettings& settings, const QString& name, T& value)
 {
     T previous = value;
-    QVariant variant = settings.value(name, previous);
+    QVariant variant = settings.value(name, QVariant::fromValue(previous));
     value = variant.value<T>();
     if (previous != value)
     {
@@ -2891,7 +2902,9 @@ void Preferences::overridePreference(const QSettings &settings, QString &&name, 
 }
 
 template<>
-void Preferences::overridePreference(const QSettings &settings, QString &&name, std::chrono::milliseconds &value)
+void Preferences::overridePreference(const QSettings& settings,
+                                     const QString& name,
+                                     std::chrono::milliseconds& value)
 {
     const std::chrono::milliseconds previous{value};
     const long long previousMillis{static_cast<long long>(value.count())};
@@ -2955,6 +2968,28 @@ void Preferences::overridePreferences(const QSettings &settings)
     overridePreference(settings,
                        QString::fromUtf8("OQ_COOL_DOWN_AFTER_OFFER_INTERVAL_MS"),
                        Preferences::OQ_COOL_DOWN_AFTER_OFFER_INTERVAL_MS);
+
+    overridePreference(settings,
+                       Preferences::reclaimAgeThresholdMinutes,
+                       Preferences::RECLAIM_AGE_THRESHOLD_MINUTES);
+
+    overridePreference(settings, Preferences::reclaimBatchSize, Preferences::RECLAIM_BATCH_SIZE);
+
+    overridePreference(settings,
+                       Preferences::reclaimDelaySeconds,
+                       Preferences::RECLAIM_DELAY_SECONDS);
+
+    overridePreference(settings,
+                       Preferences::reclaimPeriodSeconds,
+                       Preferences::RECLAIM_PERIOD_SECONDS);
+
+    overridePreference(settings,
+                       Preferences::reclaimTargetBytes,
+                       Preferences::RECLAIM_TARGET_BYTES);
+
+    overridePreference(settings,
+                       Preferences::reclaimThresholdBytes,
+                       Preferences::RECLAIM_THRESHOLD_BYTES);
 }
 
 void Preferences::updateFullName()

@@ -590,7 +590,7 @@ public:
     static const QString FINDER_EXT_BUNDLE_ID;
 
     template<typename T>
-    static void overridePreference(const QSettings &settings, QString &&name, T &value);
+    static void overridePreference(const QSettings& settings, const QString& name, T& value);
     static void overridePreferences(const QSettings &settings);
 
     //Public keys for valueChanged signals
@@ -599,6 +599,14 @@ public:
 
     //In this section, you need to move the keys to make them accessible from outside
     static const int minSyncStateChangeProcessingIntervalMs;
+
+    static inline auto MAX_PAY_LOAD_LOG_SIZE = std::size_t{10240};
+    static inline auto RECLAIM_AGE_THRESHOLD_MINUTES = 3 * 24 * 60;
+    static inline auto RECLAIM_BATCH_SIZE = std::size_t{4};
+    static inline auto RECLAIM_DELAY_SECONDS = std::uint64_t{30 * 60};
+    static inline auto RECLAIM_PERIOD_SECONDS = std::uint64_t{2 * 60 * 60};
+    static inline auto RECLAIM_TARGET_BYTES = std::uint64_t{1024 * 1024 * 1024};
+    static inline auto RECLAIM_THRESHOLD_BYTES = static_cast<int64_t>(10 * RECLAIM_TARGET_BYTES);
 
 protected:
     QRecursiveMutex mutex;
@@ -841,6 +849,14 @@ protected:
     static const ThemeType defaultTheme;
 
     static const QString dontShowExportLinkDialogKey;
+
+    static const QString maxPayloadLogSize;
+    static const QString reclaimAgeThresholdMinutes;
+    static const QString reclaimBatchSize;
+    static const QString reclaimDelaySeconds;
+    static const QString reclaimPeriodSeconds;
+    static const QString reclaimTargetBytes;
+    static const QString reclaimThresholdBytes;
 
 private:
     void updateFullName();
