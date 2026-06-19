@@ -2604,7 +2604,7 @@ void MegaApplication::raiseInfoDialog(bool raiseOpenedDialogs)
 
         infoDialog->show();
         infoDialog->raise();
-        infoDialog->activateWindow();
+        activateWidgetWaylandSafe(infoDialog);
         infoDialog->highDpiResize.queueRedraw();
     }
 }

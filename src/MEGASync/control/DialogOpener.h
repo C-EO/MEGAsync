@@ -45,6 +45,31 @@ public:
     ~DialogBlocker();
 };
 
+// Wayland-safe activation for plain QWidget dialogs. QWidget::activateWindow()
+// forwards to QWindow::requestActivate(), which Wayland does not support: it
+// only logs "Wayland does not support QWindow::requestActivate()". Request user
+// attention via alert() there instead. QmlDialogWrapper already does this
+// internally (see QmlDialogWrapperBase::activateWindow()), so callers must skip
+// this helper for QML dialogs and let the wrapper's own override run.
+// TODO Qt6: call activateWindow() unconditionally — Qt6 activates via
+// xdg-activation without warning.
+inline void activateWidgetWaylandSafe(QWidget* widget)
+{
+    if (!widget)
+    {
+        return;
+    }
+
+    if (Platform::getInstance()->isWayland())
+    {
+        QApplication::alert(widget);
+    }
+    else
+    {
+        widget->activateWindow();
+    }
+}
+
 class DialogOpener
 {
 private:
@@ -104,13 +129,31 @@ private:
             if(!mDialog->isMinimized())
             {
                 mDialog->raise();
-                mDialog->activateWindow();
+                if (QmlDialogWrapperUtilities::isQML(mDialog))
+                {
+                    // QmlDialogWrapper::activateWindow() is already Wayland-safe.
+                    mDialog->activateWindow();
+                }
+                else
+                {
+                    activateWidgetWaylandSafe(mDialog.data());
+                }
             }
         }
 
         void show() override
         {
-            mDialog->setWindowState(Qt::WindowActive);
+            if (!QmlDialogWrapperUtilities::isQML(mDialog) && Platform::getInstance()->isWayland())
+            {
+                // Plain QWidget dialog on Wayland: setWindowState(WindowActive)
+                // triggers the unsupported QWindow::requestActivate(). QML
+                // dialogs use the wrapper's own Wayland-safe setWindowState().
+                QApplication::alert(mDialog.data());
+            }
+            else
+            {
+                mDialog->setWindowState(Qt::WindowActive);
+            }
         }
 
         bool isVisible() override
@@ -396,7 +439,7 @@ public:
 
             if(dialog->parent())
             {
-                dialog->parentWidget()->activateWindow();
+                activateWidgetWaylandSafe(dialog->parentWidget());
             }
 
             dialog->deleteLater();
