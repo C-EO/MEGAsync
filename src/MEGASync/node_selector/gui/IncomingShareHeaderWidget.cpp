@@ -30,7 +30,6 @@ IncomingShareHeaderWidget::~IncomingShareHeaderWidget()
 
 void IncomingShareHeaderWidget::setData(const IncomingShareHeaderData& data)
 {
-    ui->folderIcon->setIcon(data.folderIcon);
     ui->folderName->setText(data.folderName);
     ui->userIcon->setIcon(data.userIcon);
     ui->userName->setText(data.userName);

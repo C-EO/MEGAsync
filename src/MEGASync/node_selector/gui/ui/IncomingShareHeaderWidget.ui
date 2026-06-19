@@ -142,6 +142,10 @@ color: #616366; /*colorToken.text-secondary*/
           <height>32</height>
          </size>
         </property>
+        <property name="icon">
+         <iconset resource="../../../gui/Resources_common.qrc">
+          <normaloff>:/folder-users_bigger_small</normaloff>:/folder-users_bigger_small</iconset>
+        </property>
         <property name="iconSize">
          <size>
           <width>32</width>

@@ -14,8 +14,6 @@ NavigationBreadcrumb::NavigationBreadcrumb(QWidget* parent):
     ui->breadcrumb->setSegmentFactory(
         [this](const QString& text, int index, bool isFirst, bool isLast) -> QWidget*
         {
-            Q_UNUSED(isFirst)
-
             // The last segment carries the chevron + context menu.
             if (isLast)
             {
@@ -28,12 +26,14 @@ NavigationBreadcrumb::NavigationBreadcrumb(QWidget* parent):
                     segment->setText(text);
                     segment->setHighlighted(true);
                     segment->setInteractive(false);
+                    segment->setFirst(isFirst);
                     return segment;
                 }
 
                 auto* lastSegment = new NavigationBreadcrumbLastSegment;
                 lastSegment->setText(text);
                 lastSegment->setHighlighted(true);
+                lastSegment->setFirst(isFirst);
 
                 connect(lastSegment,
                         &NavigationBreadcrumbLastSegment::clicked,
@@ -54,6 +54,7 @@ NavigationBreadcrumb::NavigationBreadcrumb(QWidget* parent):
             segment->setText(text);
             segment->setHighlighted(false);
             segment->setInteractive(true);
+            segment->setFirst(isFirst);
             connect(segment,
                     &ClickableLabel::clicked,
                     this,

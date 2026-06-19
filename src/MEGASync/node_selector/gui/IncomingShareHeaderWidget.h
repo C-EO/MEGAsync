@@ -12,7 +12,6 @@ class IncomingShareHeaderWidget;
 
 struct IncomingShareHeaderData
 {
-    QPixmap folderIcon;
     QString folderName;
     QPixmap userIcon;
     QString userName;

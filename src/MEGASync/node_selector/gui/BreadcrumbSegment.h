@@ -16,6 +16,8 @@ public:
     void setHighlighted(bool highlighted);
     // Only toggles the cursor; wiring clicked() is the owner's responsibility.
     void setInteractive(bool interactive);
+    // The first segment sits flush to the breadcrumb's left edge (drops its left margin).
+    void setFirst(bool first);
 };
 
 #endif // BREADCRUMBSEGMENT_H

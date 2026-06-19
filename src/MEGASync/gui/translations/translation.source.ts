@@ -4516,11 +4516,6 @@ Enter a different name.</translation>
 <context>
     <name>NodeSelector</name>
     <message>
-        <source>Select a MEGA folder</source>
-        <translatorcomment>Node selector dialog title</translatorcomment>
-        <translation>Select a MEGA folder</translation>
-    </message>
-    <message>
         <source>The item you selected has been removed. To reselect, close this window and try again.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>The item you selected has been removed. To reselect, close this window and try again.</translation>
@@ -4529,6 +4524,11 @@ Enter a different name.</translation>
         <source>Searching…</source>
         <translatorcomment>Loading text shown in the node selector while a search for nodes is in progress. SNC-6420</translatorcomment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translatorcomment>Node selector dialog title. SNC-6420</translatorcomment>
+        <translation type="unfinished">Files</translation>
     </message>
 </context>
 <context>
@@ -5076,11 +5076,6 @@ Enter a different name.</translation>
         <translation type="unfinished">Add backup</translation>
     </message>
     <message>
-        <source>Create folder</source>
-        <translatorcomment>Action button in the node selector to create a new folder. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Sync</source>
         <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
         <translation type="unfinished">Sync</translation>
@@ -5104,6 +5099,11 @@ Enter a different name.</translation>
         <source>This folder is read-only. Ask for full access to sync</source>
         <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New folder</source>
+        <translatorcomment>Action button in the node selector to create a new folder. SNC-6420</translatorcomment>
+        <translation type="unfinished">New folder</translation>
     </message>
 </context>
 <context>

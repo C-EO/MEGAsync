@@ -3386,7 +3386,7 @@ QPair<QIcon, QString> NodeSelectorModel::getFolderIcon(NodeSelectorModelItem* it
                 }
                 else if (node->isInShare())
                 {
-                    icon = Utilities::getFolderPixmap(Utilities::FolderType::TYPE_INCOMING_SHARE,
+                    icon = Utilities::getFolderPixmap(Utilities::FolderType::TYPE_USERS,
                                                       Utilities::AttributeType::MEDIUM);
                 }
                 else if (node->isOutShare())

@@ -23,6 +23,7 @@ DestinationBreadcrumb::DestinationBreadcrumb(QWidget* parent):
             segment->setText(text);
             segment->setHighlighted(!isFirst && isLast);
             segment->setInteractive(false);
+            segment->setFirst(isFirst);
             return segment;
         });
 

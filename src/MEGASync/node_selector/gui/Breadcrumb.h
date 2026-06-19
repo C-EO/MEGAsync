@@ -63,7 +63,7 @@ private:
     void recalculateSegmentMetrics();
     void clearSegmentWidgets();
     QWidget* createSegmentWidget(const QString& text, int index, bool isFirst, bool isLast);
-    QLabel* makeSeparatorLabel();
+    QWidget* makeSeparatorLabel();
     int calculateVisibleStartIndex();
     int calculateRequiredWidthForVisibleStartIndex(int visibleStartIndex);
 

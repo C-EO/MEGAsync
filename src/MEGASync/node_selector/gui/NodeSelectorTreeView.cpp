@@ -11,6 +11,7 @@
 #include "NodeSelectorModel.h"
 #include "NodeSelectorModelItem.h"
 #include "NodeSelectorProxyModel.h"
+#include "NodeSelectorViewStyle.h"
 #include "Platform.h"
 #include "ServiceUrls.h"
 #include "ThemeManager.h"
@@ -57,6 +58,11 @@ NodeSelectorTreeView::NodeSelectorTreeView(QWidget* parent):
 
     mHoverManager = std::make_unique<MegaDelegateHoverManager>();
     mHoverManager->setView(this);
+
+    // Pin the icon-to-text gap to a fixed value, independent of the platform style.
+    auto* viewStyle = new NodeSelectorViewStyle();
+    viewStyle->setParent(this);
+    setStyle(viewStyle);
 }
 
 NodeSelectorTreeView::~NodeSelectorTreeView()

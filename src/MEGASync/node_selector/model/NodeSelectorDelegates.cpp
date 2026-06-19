@@ -309,27 +309,61 @@ void NodeLabelDelegate::paint(QPainter* painter,
                               const QStyleOptionViewItem& option,
                               const QModelIndex& index) const
 {
-    static constexpr int LABEL_DOT_LEFT_MARGIN = 12;
     static constexpr qreal LABEL_DOT_RADIUS = 4.0;
+    static constexpr int LABEL_TEXT_SPACING = 4;
+    // Left offset that lines the content up with the header label text: the header applies a 3px
+    // margin plus the style's header-label margin.
+    static constexpr int LABEL_CONTENT_LEFT_MARGIN = 4;
 
     QStyleOptionViewItem opt(option);
     opt.displayAlignment = Qt::AlignVCenter | Qt::AlignLeft;
     opt.decorationAlignment = Qt::AlignVCenter | Qt::AlignLeft;
 
+    // Paint the row (background/separator) without its text; the text is positioned manually
+    // below so the gap after the colour dot matches the icon-to-text gap used elsewhere.
+    mSuppressText = true;
     NodeSelectorDelegate::paint(painter, opt, index);
+    mSuppressText = false;
+
+    const QString text = mShowLabelText ? index.data(Qt::DisplayRole).toString() : QString();
+    const bool hasText = !text.isEmpty();
+
+    // With text the dot aligns with the header label text and the text follows it; without text
+    // the dot is centred horizontally in the cell.
+    const qreal dotCenterX = hasText ?
+                                 (option.rect.x() + LABEL_CONTENT_LEFT_MARGIN + LABEL_DOT_RADIUS) :
+                                 option.rect.center().x();
 
     const auto labelColor =
         index.data(toInt(NodeSelectorModelRoles::LABEL_COLOR_ROLE)).value<QColor>();
+
     if (labelColor.isValid())
     {
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
         painter->setPen(Qt::NoPen);
         painter->setBrush(labelColor);
-        painter->drawEllipse(QPointF(option.rect.x() + LABEL_DOT_LEFT_MARGIN + LABEL_DOT_RADIUS,
-                                     option.rect.center().y()),
+        painter->drawEllipse(QPointF(dotCenterX, QRectF(option.rect).center().y()),
                              LABEL_DOT_RADIUS,
                              LABEL_DOT_RADIUS);
+        painter->restore();
+    }
+
+    if (hasText)
+    {
+        const int dotRight = static_cast<int>(dotCenterX + LABEL_DOT_RADIUS);
+        QRect textRect = option.rect;
+        textRect.setLeft(dotRight + LABEL_TEXT_SPACING);
+
+        const auto isTakenDown =
+            index.data(toInt(NodeSelectorModelRoles::IS_TAKEN_DOWN_ROLE)).toBool();
+        const QFontMetrics metrics(option.font);
+        const QString elided = metrics.elidedText(text, option.textElideMode, textRect.width());
+
+        painter->save();
+        painter->setFont(option.font);
+        painter->setPen(textColorForIndex(index, isTakenDown));
+        painter->drawText(textRect, Qt::AlignVCenter | Qt::AlignLeft, elided);
         painter->restore();
     }
 }
@@ -368,7 +402,7 @@ void NodeLabelDelegate::initStyleOption(QStyleOptionViewItem* option,
 
     option->icon = QIcon();
 
-    if (!mShowLabelText)
+    if (!mShowLabelText || mSuppressText)
     {
         option->text.clear();
     }
@@ -376,15 +410,6 @@ void NodeLabelDelegate::initStyleOption(QStyleOptionViewItem* option,
     if (!index.flags().testFlag(Qt::ItemIsEnabled))
     {
         option->state &= ~QStyle::State_Enabled;
-    }
-}
-
-void NodeLabelDelegate::adjustContentRect(QStyleOptionViewItem* option, const QModelIndex&) const
-{
-    if (mShowLabelText)
-    {
-        static constexpr int LABEL_TEXT_LEFT_MARGIN = 24;
-        option->rect.adjust(LABEL_TEXT_LEFT_MARGIN, 0, 0, 0);
     }
 }
 

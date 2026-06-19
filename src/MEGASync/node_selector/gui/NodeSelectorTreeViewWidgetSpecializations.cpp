@@ -109,9 +109,16 @@ std::optional<IncomingShareHeaderData>
         return std::nullopt;
     }
 
+    // The header must only be shown when the current root folder is the incoming
+    // share itself, not when navigating into one of its nested folders.
+    auto rootItem = NodeSelectorModel::getItemByIndex(rootIndex);
+    if (!rootItem || !rootItem->getNode() || !rootItem->getNode()->isInShare())
+    {
+        return std::nullopt;
+    }
+
     IncomingShareHeaderData incomingInfo;
     incomingInfo.folderName = rootIndex.data(Qt::DisplayRole).toString();
-    incomingInfo.folderIcon = qvariant_cast<QPixmap>(rootIndex.data(Qt::DecorationRole));
 
     auto inShareIndex = getParentIncomingShareByIndex(rootIndex);
     auto item = NodeSelectorModel::getItemByIndex(inShareIndex);

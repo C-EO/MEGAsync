@@ -77,10 +77,10 @@ public:
 
 protected:
     void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override;
-    void adjustContentRect(QStyleOptionViewItem* option, const QModelIndex& index) const override;
 
 private:
     bool mShowLabelText = true;
+    mutable bool mSuppressText = false;
 };
 
 class NodeSearchRowDelegate: public NodeRowDelegate

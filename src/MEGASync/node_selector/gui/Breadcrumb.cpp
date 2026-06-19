@@ -4,6 +4,7 @@
 #include "MegaApplication.h"
 #include "MegaNodeNames.h"
 #include "NodeSelectorDestinationOverflowPopup.h"
+#include "TokenizableItems/IconLabel.h"
 #include "ui_Breadcrumb.h"
 #include "UserAttributesRequests/MyBackupsHandle.h"
 
@@ -16,7 +17,6 @@
 namespace
 {
 constexpr int MAX_VISIBLE_DESTINATION_LEVELS = 4;
-constexpr auto SEPARATOR_TEXT = ">";
 constexpr int POPUP_HORIZONTAL_OFFSET = -20;
 constexpr int POPUP_VERTICAL_GAP = 4;
 }
@@ -131,7 +131,7 @@ void Breadcrumb::resolveSegmentNames()
     mPathSegments.clear();
     mPathSegments.reserve(mSegments.size());
 
-    for (const auto& segment: mSegments)
+    for (const auto& segment: std::as_const(mSegments))
     {
         mPathSegments.push_back(resolveSegmentText(segment));
     }
@@ -182,6 +182,7 @@ QWidget* Breadcrumb::createSegmentWidget(const QString& text,
         auto* segment = new BreadcrumbSegment;
         segment->setText(text);
         segment->setHighlighted(isLast);
+        segment->setFirst(isFirst);
         widget = segment;
     }
 
@@ -189,17 +190,19 @@ QWidget* Breadcrumb::createSegmentWidget(const QString& text,
     return widget;
 }
 
-QLabel* Breadcrumb::makeSeparatorLabel()
+QWidget* Breadcrumb::makeSeparatorLabel()
 {
-    auto* label = new QLabel(ui->wSegments);
-    label->setText(QLatin1String(SEPARATOR_TEXT));
+    auto* label = new IconLabel(ui->wSegments);
+    label->setIcon(Utilities::getIcon(QLatin1String("chevron-right"),
+                                      Utilities::AttributeType::SMALL |
+                                          Utilities::AttributeType::THIN |
+                                          Utilities::AttributeType::OUTLINE));
+    label->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("icon-secondary"));
     label->setProperty("font-size", QLatin1String("body-2"));
     label->setProperty("regular", true);
     label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     label->setContentsMargins(0, 0, 0, 0);
-    label->setMargin(0);
-    label->setIndent(0);
-    label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label->setIconSize(QSize(16, 16));
     return label;
 }
 

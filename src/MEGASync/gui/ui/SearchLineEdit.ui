@@ -217,7 +217,7 @@ border-radius: 16px;
         </property>
         <property name="icon">
          <iconset resource="../Resources_common.qrc">
-          <normaloff>:/x-circle_small_thin_outline</normaloff>:/x-circle_small_thin_outline</iconset>
+          <normaloff>:/cross_small_thin_outline</normaloff>:/cross_small_thin_outline</iconset>
         </property>
         <property name="type" stdset="0">
          <string notr="true">ghost</string>

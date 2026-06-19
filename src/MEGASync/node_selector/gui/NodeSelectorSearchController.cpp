@@ -158,7 +158,12 @@ void NodeSelectorSearchController::applySearchButtonsVisibility(TabTypes searche
     mUi->incomingSharesSearch->setVisible(searchedTypes.testFlag(TabType::INCOMING_SHARE));
     mUi->cloudDriveSearch->setVisible(searchedTypes.testFlag(TabType::CLOUD_DRIVE));
     mUi->rubbishSearch->setVisible(searchedTypes.testFlag(TabType::RUBBISH));
-    mUi->searchButtonsWidget->setVisible(searchedTypes != TabTypes{});
+
+    // Hide the chip bar when a single scope matches: a lone chip offers no real choice.
+    const int visibleChips =
+        searchedTypes.testFlag(TabType::BACKUP) + searchedTypes.testFlag(TabType::INCOMING_SHARE) +
+        searchedTypes.testFlag(TabType::CLOUD_DRIVE) + searchedTypes.testFlag(TabType::RUBBISH);
+    mUi->searchButtonsWidget->setVisible(visibleChips > 1);
 }
 
 void NodeSelectorSearchController::applyInitialMode(TabType type,

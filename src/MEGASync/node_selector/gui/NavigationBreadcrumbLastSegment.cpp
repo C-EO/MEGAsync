@@ -20,6 +20,9 @@ NavigationBreadcrumbLastSegment::NavigationBreadcrumbLastSegment(QWidget* parent
                                                             Utilities::AttributeType::OUTLINE)));
 
     // The last segment is always interactive (carries the chevron + context menu).
+    // The frame's layout already provides the 8,3,8,3 padding (and its background fills the
+    // whole pill from edge to edge), so the inner segment must not add its own margins.
+    ui->segment->setContentsMargins(0, 0, 0, 0);
     ui->segment->setInteractive(true);
 
     connect(ui->segment, &ClickableLabel::clicked, this, &NavigationBreadcrumbLastSegment::clicked);
@@ -49,6 +52,13 @@ void NavigationBreadcrumbLastSegment::setText(const QString& text)
 void NavigationBreadcrumbLastSegment::setHighlighted(bool highlighted)
 {
     ui->segment->setHighlighted(highlighted);
+}
+
+void NavigationBreadcrumbLastSegment::setFirst(bool first)
+{
+    // When the last segment is also the first (single-element path), drop the pill's left
+    // padding so it aligns flush with the breadcrumb's left edge.
+    ui->lastSegmentLayout->setContentsMargins(first ? 0 : 8, 3, 8, 3);
 }
 
 void NavigationBreadcrumbLastSegment::setMenuActive(bool active)

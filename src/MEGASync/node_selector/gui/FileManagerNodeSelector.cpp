@@ -41,7 +41,8 @@ FileManagerNodeSelector::FileManagerNodeSelector(QWidget* parent):
             &NavigationBreadcrumb::refreshNeeded,
             this,
             &FileManagerNodeSelector::refreshNavigationBreadcrumb);
-    refreshNavigationBreadcrumb();
+    // Qualified call: intentionally non-virtual during construction.
+    FileManagerNodeSelector::refreshNavigationBreadcrumb();
 
     setAcceptDrops(true);
 
@@ -252,8 +253,7 @@ void FileManagerNodeSelector::sendStats()
     auto lastDateTimeOpened(Preferences::instance()->cloudDriveDialogLastDateTimeOpened());
 
     // If event sent during the current hour, return
-    if (!Utilities::hourHasChanged(lastDateTimeStatSent,
-                                   QDateTime::currentDateTime().toSecsSinceEpoch()))
+    if (!Utilities::hourHasChanged(lastDateTimeStatSent, QDateTime::currentSecsSinceEpoch()))
     {
         return;
     }
@@ -282,8 +282,7 @@ void FileManagerNodeSelector::sendStats()
         // If the hour between now and the last date time opened has changed, it is not the
         // current hour
         auto openedDuringCurrentHour(
-            !(Utilities::hourHasChanged(QDateTime::currentDateTime().toSecsSinceEpoch(),
-                                        lastDateTimeOpened)));
+            !(Utilities::hourHasChanged(QDateTime::currentSecsSinceEpoch(), lastDateTimeOpened)));
         if (openedDuringCurrentHour)
         {
             sendEvent();

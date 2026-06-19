@@ -7,7 +7,7 @@ BreadcrumbSegment::BreadcrumbSegment(QWidget* parent):
 {
     setProperty("font-size", QLatin1String("body-2"));
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    setContentsMargins(0, 0, 0, 0);
+    setContentsMargins(8, 3, 8, 3);
     setMargin(0);
     setIndent(0);
     setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -39,4 +39,11 @@ void BreadcrumbSegment::setHighlighted(bool highlighted)
 void BreadcrumbSegment::setInteractive(bool interactive)
 {
     setCursor(interactive ? Qt::PointingHandCursor : Qt::ArrowCursor);
+}
+
+void BreadcrumbSegment::setFirst(bool first)
+{
+    // Every segment is padded 8,3,8,3; the first one drops its left padding so the path
+    // starts flush against the breadcrumb's left edge.
+    setContentsMargins(first ? 0 : 8, 3, 8, 3);
 }
