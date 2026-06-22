@@ -204,7 +204,7 @@ Rectangle {
 
             visible: parent.containsMouse
             text: root.tooltipText
-            anchorItem: root
+            anchorItem: parentMouseArea
         }
     }
 }
