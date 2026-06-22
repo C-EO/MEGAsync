@@ -129,7 +129,7 @@ private:
             if(!mDialog->isMinimized())
             {
                 mDialog->raise();
-                if (QmlDialogWrapperUtilities::isQML(mDialog))
+                if (QmlDialogWrapperUtilities::isQML(mDialog->windowHandle()))
                 {
                     // QmlDialogWrapper::activateWindow() is already Wayland-safe.
                     mDialog->activateWindow();
@@ -143,7 +143,8 @@ private:
 
         void show() override
         {
-            if (!QmlDialogWrapperUtilities::isQML(mDialog) && Platform::getInstance()->isWayland())
+            if (!QmlDialogWrapperUtilities::isQML(mDialog->windowHandle()) &&
+                Platform::getInstance()->isWayland())
             {
                 // Plain QWidget dialog on Wayland: setWindowState(WindowActive)
                 // triggers the unsupported QWindow::requestActivate(). QML
