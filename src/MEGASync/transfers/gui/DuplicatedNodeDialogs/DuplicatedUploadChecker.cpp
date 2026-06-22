@@ -183,6 +183,16 @@ void DuplicatedMoveFolder::fillUi(DuplicatedNodeDialog* dialog,  std::shared_ptr
             dialog->addNodeItem(uploadAndMergeItem);
         }
 
+        // Move and rename item
+        DuplicatedRenameItem* renameItem = new DuplicatedRenameItem(dialog);
+        renameItem->setRenameInfo(conflict);
+        renameItem->setDescription(DuplicatedNodeDialog::tr("The folder will be renamed as:"));
+        connect(renameItem,
+                &DuplicatedNodeItem::actionClicked,
+                this,
+                &DuplicatedMoveFolder::onNodeItemSelected);
+        dialog->addNodeItem(renameItem);
+
         DuplicatedRemoteItem* dontUploadItem = new DuplicatedRemoteItem(dialog);
         dontUploadItem->setInfo(conflict, NodeItemType::DONT_UPLOAD);
         dontUploadItem->setDescription(getSkipText(conflict->conflictNodeIsFile()));

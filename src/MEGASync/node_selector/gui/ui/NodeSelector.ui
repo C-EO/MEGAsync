@@ -44,6 +44,12 @@ background-color: #FFFFFF; /*colorToken.page-background*/
 #footerDivider
 {
 background-color: #F6F6F7; /*colorToken.border-subtle*/
+}
+
+TabSelector.sidebar[selected = false] QLabel,
+TabSelector.sidebar[selected = true] QLabel
+{
+color: #303233; /*colorToken.text-primary*/
 }</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,0">
@@ -507,6 +513,9 @@ background-color: #F6F6F7; /*colorToken.border-subtle*/
                    <width>16777215</width>
                    <height>40</height>
                   </size>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>

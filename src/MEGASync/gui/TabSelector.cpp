@@ -154,6 +154,10 @@ void TabSelector::setSelected(bool state)
         setProperty(SELECTED, state);
         setStyleSheet(styleSheet());
 
+        // Title is bold when selected; an empty "bold" property resets it to regular weight
+        ui->lTitle->setProperty("bold", state ? QVariant(true) : QVariant());
+        TokenParserWidgetManager::instance()->polish(ui->lTitle);
+
         if (state)
         {
             if (isHidden())

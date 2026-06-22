@@ -1071,6 +1071,11 @@ void NodeSelectorTreeViewWidget::setLoadingSceneVisible(bool blockUi)
     ui->tMegaFolders->loadingView().toggleLoadingScene(blockUi);
 }
 
+bool NodeSelectorTreeViewWidget::isLoading() const
+{
+    return ui->tMegaFolders->loadingView().isLoadingViewSet();
+}
+
 void NodeSelectorTreeViewWidget::selectPendingIndexes()
 {
     mSelectionCoordinator->selectPendingIndexes();

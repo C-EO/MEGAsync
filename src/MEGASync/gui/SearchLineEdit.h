@@ -67,6 +67,7 @@ private slots:
 
 private:
     void refreshClearButtonEffect();
+    void applyPlaceholderColor();
     void toggleClearButton(bool fadeIn);
     QPropertyAnimation* runWidthAnimation(QWidget* target, bool expand);
     QPropertyAnimation* runOpacityAnimation(QWidget* target, bool fadeIn);

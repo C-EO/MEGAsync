@@ -152,6 +152,8 @@ public:
         return mTabType;
     }
 
+    bool isLoading() const;
+
 public slots:
     virtual void checkViewOnModelChange();
     // Only forwards to checkViewOnModelChange when the current root toggles empty<->non-empty.

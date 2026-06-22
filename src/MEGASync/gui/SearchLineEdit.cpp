@@ -1,6 +1,7 @@
 #include "SearchLineEdit.h"
 
 #include "EventHelper.h"
+#include "ThemeManager.h"
 #include "TokenParserWidgetManager.h"
 #include "ui_SearchLineEdit.h"
 #include "Utilities.h"
@@ -47,6 +48,8 @@ SearchLineEdit::SearchLineEdit(QWidget* parent):
     ui->searchContainer->resize(COLLAPSE_SIZE, COLLAPSE_SIZE);
 
     setFocusProxy(ui->leSearchField);
+
+    applyPlaceholderColor();
 
     mTopParent = Utilities::getTopParent<QDialog>(this);
     if (mTopParent)
@@ -193,6 +196,10 @@ bool SearchLineEdit::event(QEvent* event)
     {
         ui->retranslateUi(this);
     }
+    else if (event->type() == ThemeManager::ThemeChanged)
+    {
+        applyPlaceholderColor();
+    }
 
     return QFrame::event(event);
 }
@@ -222,6 +229,17 @@ void SearchLineEdit::refreshClearButtonEffect()
         effect->setEnabled(false);
         effect->setEnabled(wasEnabled);
     }
+}
+
+void SearchLineEdit::applyPlaceholderColor()
+{
+    // QSS cannot style the placeholder text color, so the token is resolved to a QColor and
+    // applied through QPalette::PlaceholderText. Re-applied on theme changes (see event()).
+    QPalette palette = ui->leSearchField->palette();
+    palette.setColor(
+        QPalette::PlaceholderText,
+        TokenParserWidgetManager::instance()->getColor(QLatin1String("text-placeholder")));
+    ui->leSearchField->setPalette(palette);
 }
 
 bool SearchLineEdit::eventFilter(QObject* obj, QEvent* evnt)

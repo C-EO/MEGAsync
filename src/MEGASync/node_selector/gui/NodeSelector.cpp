@@ -314,7 +314,8 @@ void NodeSelector::applySearchToolVisibilityState(NodeSelectorTreeViewWidget* wi
                                                   NodeSelectorTreeViewWidget::ViewType type)
 {
     const bool shouldShowSearchTool =
-        wid && (wid == mSearchWidget || type == NodeSelectorTreeViewWidget::ViewType::VIEW);
+        wid && !wid->isLoading() &&
+        (wid == mSearchWidget || type == NodeSelectorTreeViewWidget::ViewType::VIEW);
     ui->leSearchTool->setVisible(shouldShowSearchTool);
 }
 
