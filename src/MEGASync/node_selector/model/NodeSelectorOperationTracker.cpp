@@ -1,7 +1,5 @@
 #include "NodeSelectorOperationTracker.h"
 
-#include <QMutexLocker>
-
 #include <algorithm>
 
 bool NodeSelectorOperationTracker::beginMoveOperation(int number)
@@ -11,7 +9,6 @@ bool NodeSelectorOperationTracker::beginMoveOperation(int number)
         return false;
     }
 
-    QMutexLocker lock(&mMutex);
     const auto wasIdle = mPendingMoveOperations.isEmpty();
     mPendingMoveOperations.enqueue(number);
     return wasIdle;
@@ -24,7 +21,6 @@ bool NodeSelectorOperationTracker::consumeMoveOperations(int number)
         return false;
     }
 
-    QMutexLocker lock(&mMutex);
     if (mPendingMoveOperations.isEmpty())
     {
         return false;
@@ -51,19 +47,16 @@ bool NodeSelectorOperationTracker::consumeMoveOperations(int number)
 
 void NodeSelectorOperationTracker::clearMoveOperations()
 {
-    QMutexLocker lock(&mMutex);
     mPendingMoveOperations.clear();
 }
 
 bool NodeSelectorOperationTracker::hasMoveOperations() const
 {
-    QMutexLocker lock(&mMutex);
     return !mPendingMoveOperations.isEmpty();
 }
 
 int NodeSelectorOperationTracker::pendingMoveItems() const
 {
-    QMutexLocker lock(&mMutex);
     auto totalPendingItems = 0;
 
     for (const auto& pendingOperation: mPendingMoveOperations)
@@ -82,8 +75,6 @@ void NodeSelectorOperationTracker::beginRequestGroup(int type,
         return;
     }
 
-    QMutexLocker lock(&mMutex);
-
     RequestGroup requestGroup;
     requestGroup.type = type;
     requestGroup.pendingHandles = handles;
@@ -95,7 +86,6 @@ NodeSelectorOperationTracker::FinishedRequestGroup
                                                 bool failed,
                                                 int movedItemCategory)
 {
-    QMutexLocker lock(&mMutex);
     FinishedRequestGroup result;
 
     if (mRequestGroups.isEmpty())
@@ -157,6 +147,5 @@ NodeSelectorOperationTracker::FinishedRequestGroup
 
 bool NodeSelectorOperationTracker::hasRequestGroups() const
 {
-    QMutexLocker lock(&mMutex);
     return !mRequestGroups.isEmpty();
 }

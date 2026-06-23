@@ -1207,12 +1207,11 @@ void NodeSelector::connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
         return;
     }
 
+    // Always run for ALL widgets: non-current widgets need their columns configured so
+    // mPendingColumnHidden is populated before a loading-scene restore runs for them.
     const auto refreshColumns = [this, widget, configure]()
     {
-        if (widget == getCurrentTreeViewWidget())
-        {
-            (this->*configure)(widget);
-        }
+        (this->*configure)(widget);
     };
 
     connect(widget, &NodeSelectorTreeViewWidget::viewReady, this, refreshColumns);

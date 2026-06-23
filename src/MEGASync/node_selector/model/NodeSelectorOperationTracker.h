@@ -4,7 +4,6 @@
 #include "megaapi.h"
 
 #include <QList>
-#include <QMutex>
 #include <QQueue>
 
 class NodeSelectorOperationTracker
@@ -45,7 +44,6 @@ private:
         int movedItemCategories = NONE;
     };
 
-    mutable QMutex mMutex;
     QQueue<int> mPendingMoveOperations;
     QList<RequestGroup> mRequestGroups;
 };
