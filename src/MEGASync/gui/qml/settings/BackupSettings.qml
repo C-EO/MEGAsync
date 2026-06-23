@@ -56,7 +56,7 @@ Item {
     }
 
     function backupStatusTextColor(status, hovered) {
-        if (hovered && status === BackupSettingsModel.SUSPENDED) {
+        if (hovered && (status === BackupSettingsModel.SUSPENDED || status === BackupSettingsModel.REMOVING)) {
             return ColorTheme.textPrimary;
         }
         else if (status === BackupSettingsModel.FAIL) {
@@ -66,7 +66,7 @@ Item {
     }
 
     function backupStatusIconColor(status, hovered) {
-        if (hovered && status === BackupSettingsModel.SUSPENDED) {
+        if (hovered && (status === BackupSettingsModel.SUSPENDED || status === BackupSettingsModel.REMOVING)) {
             return ColorTheme.iconPrimary;
         }
         else if (status === BackupSettingsModel.FAIL) {

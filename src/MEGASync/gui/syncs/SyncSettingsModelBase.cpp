@@ -21,6 +21,11 @@ SyncSettingsModelBase::SyncSettingsModelBase(mega::MegaSync::SyncType type, QObj
             this,
             &SyncSettingsModelBase::onSyncRemoveBegins);
 
+    connect(&SyncController::instance(),
+            &SyncController::syncRemoveEnds,
+            this,
+            &SyncSettingsModelBase::onSyncRemoveEnds);
+
     mList = mSyncInfo->getSyncSettingsByType(mType);
     sortByName(true);
 }
@@ -37,7 +42,26 @@ void SyncSettingsModelBase::onSyncRemoveBegins(QString syncId)
     if (foundIt != mList.cend())
     {
         auto row = std::distance(mList.cbegin(), foundIt);
+        QMutexLocker locker(&mRemoveSyncsMutex);
         mRemovingSyncs.append(syncId);
+        sendDataChanged(static_cast<int>(row));
+    }
+}
+
+void SyncSettingsModelBase::onSyncRemoveEnds(QString syncId)
+{
+    auto foundIt = std::find_if(mList.cbegin(),
+                                mList.cend(),
+                                [&syncId](auto& sync)
+                                {
+                                    return (sync->getSyncID() == syncId);
+                                });
+
+    if (foundIt != mList.cend())
+    {
+        auto row = std::distance(mList.cbegin(), foundIt);
+        QMutexLocker locker(&mRemoveSyncsMutex);
+        mRemovingSyncs.removeAll(syncId);
         sendDataChanged(static_cast<int>(row));
     }
 }
@@ -223,9 +247,11 @@ std::shared_ptr<SyncSettings> SyncSettingsModelBase::getSyncSetting(int index) c
 SyncSettingsModelBase::State
     SyncSettingsModelBase::getState(std::shared_ptr<SyncSettings> sync) const
 {
-    if (mRemovingSyncs.contains(sync->getSyncID()))
     {
-        return State::REMOVING;
+        if (mRemovingSyncs.contains(sync->getSyncID()))
+        {
+            return State::REMOVING;
+        }
     }
 
     switch (sync->getRunState())

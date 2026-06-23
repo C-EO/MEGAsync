@@ -7,6 +7,7 @@
 #include <QCollator>
 
 #include <memory>
+#include <qmutex.h>
 
 class SyncInfo;
 class SyncSettings;
@@ -73,6 +74,7 @@ private:
     void sendDataChanged(int row);
     QString getErrorMessage(std::shared_ptr<SyncSettings> sync) const;
     void onSyncRemoveBegins(QString);
+    void onSyncRemoveEnds(QString);
 
     SyncInfo* mSyncInfo;
     mega::MegaSync::SyncType mType;
@@ -80,6 +82,7 @@ private:
     bool mSortAscending = true;
     QCollator mQCollator;
     QList<QString> mRemovingSyncs;
+    mutable QMutex mRemoveSyncsMutex;
 };
 
 #endif // SYNC_SETTINGS_MODEL_BASE_H
