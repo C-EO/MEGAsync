@@ -355,7 +355,7 @@ Rectangle {
                             spacing: 0
                             textLineHeight: root.iconSize
                         }
-                        visible: item.itemContainsMouse
+                        visible: item.itemContainsMouse && status !== SettingsModel.REMOVING
                         Layout.alignment: Qt.AlignVCenter
                         onClicked: {
                             menu.popup(item.width - menu.width, item.height)
