@@ -246,6 +246,13 @@ void FileManagerNodeSelector::configureFooter()
 
 void FileManagerNodeSelector::onLanguageChangeEvent() {}
 
+void FileManagerNodeSelector::applyNewFolderSelection(NodeSelectorTreeViewWidget* sourceWidget,
+                                                      mega::MegaNode* newNode)
+{
+    // Mark the new folder so the view navigates into it once it is added to the model.
+    sourceWidget->setNewFolderInfo({newNode->getHandle(), true});
+}
+
 void FileManagerNodeSelector::sendStats()
 {
     auto lastDateTimeStatSent(Preferences::instance()->cloudDriveDialogLastDateTimeStatSent());

@@ -27,6 +27,33 @@ void FilePickerNodeSelector::onNodesRenamed(const QList<mega::MegaHandle>& handl
     ui->destinationBreadcrumb->onNodesRenamed(handles);
 }
 
+std::shared_ptr<mega::MegaNode>
+    FilePickerNodeSelector::getNewFolderParentNode(NodeSelectorTreeViewWidget* sourceWidget) const
+{
+    // File pickers have no folder navigation: create the folder inside the selected folder, or
+    // fall back to the top root when nothing (or a file) is selected.
+    auto selectedHandle = sourceWidget->getSelectedNodeHandle();
+    if (selectedHandle != mega::INVALID_HANDLE)
+    {
+        std::shared_ptr<mega::MegaNode> selectedNode(mMegaApi->getNodeByHandle(selectedHandle));
+        if (selectedNode && selectedNode->isFolder())
+        {
+            return selectedNode;
+        }
+    }
+
+    return NodeSelector::getNewFolderParentNode(sourceWidget);
+}
+
+void FilePickerNodeSelector::applyNewFolderSelection(NodeSelectorTreeViewWidget* sourceWidget,
+                                                     mega::MegaNode* newNode)
+{
+    // The parent is initialised before the node arrives (expandNodeByHandle on creatingFolder),
+    // so the new folder comes through the visible add path; mark it for checkNewFolderAdded to
+    // select once nodesAdded arrives.
+    sourceWidget->setNewFolderInfo({newNode->getHandle(), true});
+}
+
 void FilePickerNodeSelector::refreshDestinationBreadcrumb()
 {
     const bool shouldShowPath = mSelectType && mSelectType->showsDestinationBreadcrumb() &&

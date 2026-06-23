@@ -40,6 +40,7 @@ public:
         std::function<void(const QModelIndex&, bool, bool)> selectIndex;
         std::function<void()> clearSelection;
         std::function<void(const QModelIndex&)> onItemDoubleClick;
+        std::function<void(const QModelIndex&)> onNewFolderAdded;
         std::function<void()> setRootIndexToTop;
         std::function<void(std::function<bool()>)> withSelectionSilenced;
     };
@@ -77,6 +78,7 @@ private:
     std::function<void(const QModelIndex&, bool, bool)> mSelectIndex;
     std::function<void()> mClearSelection;
     std::function<void(const QModelIndex&)> mOnItemDoubleClick;
+    std::function<void(const QModelIndex&)> mOnNewFolderAdded;
     std::function<void()> mSetRootIndexToTop;
     std::function<void(std::function<bool()>)> mWithSelectionSilenced;
 
@@ -89,6 +91,14 @@ private:
     // move/merge stays in the current folder. Set in onItemsMoved (before mParentOfRestoredNodes
     // is cleared) and consumed in selectPendingIndexes.
     bool mSkipTopRootOnSelect = false;
+
+    // selectPendingIndexes can re-enter itself synchronously (an unresolved handle triggers a
+    // loadTreeFromNode that emits blockUi(false) synchronously, which re-invokes it).
+    // mResolvingPendingIndexes marks an active call so a synchronous re-entry returns immediately
+    // and the recursion stays bounded; mHandlesPendingLoad records the handles already sent to
+    // load so an unmappable one is not retried (and re-loaded) forever across calls.
+    QSet<mega::MegaHandle> mHandlesPendingLoad;
+    bool mResolvingPendingIndexes = false;
 };
 
 #endif // NODESELECTORSELECTIONCOORDINATOR_H

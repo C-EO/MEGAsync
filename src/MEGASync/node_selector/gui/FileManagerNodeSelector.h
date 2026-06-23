@@ -29,6 +29,9 @@ protected:
 
     void onLanguageChangeEvent() override;
 
+    void applyNewFolderSelection(NodeSelectorTreeViewWidget* sourceWidget,
+                                 mega::MegaNode* newNode) override;
+
 protected slots:
     void onCustomButtonClicked(uint id) override;
     void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int type) override;

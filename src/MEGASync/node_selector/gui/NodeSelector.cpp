@@ -161,9 +161,7 @@ void NodeSelector::onbNewFolderClicked()
         return;
     }
 
-    auto proxyModel = sourceWidget->getProxyModel();
-    auto parentNode =
-        proxyModel ? proxyModel->getNode(sourceWidget->getCurrentRootIndex()) : nullptr;
+    auto parentNode = getNewFolderParentNode(sourceWidget);
     if (!parentNode)
     {
         parentNode = MegaSyncApp->getRootNode();
@@ -175,6 +173,13 @@ void NodeSelector::onbNewFolderClicked()
 
     QPointer<NewFolderDialog> dialog(new NewFolderDialog(parentNode, this));
     dialog->init();
+    // Initialise the parent's children in the model the moment creation is confirmed, so the new
+    // node arrives through the visible add path (addNodes -> nodesAdded -> checkNewFolderAdded)
+    // instead of as EXISTS_BUT_PARENT_UNINITIALISED.
+    connect(dialog,
+            &NewFolderDialog::creatingFolder,
+            sourceWidget,
+            &NodeSelectorTreeViewWidget::expandNodeByHandle);
     DialogOpener::showDialog(
         dialog,
         [this, dialog, sourceWidget]()
@@ -186,7 +191,7 @@ void NodeSelector::onbNewFolderClicked()
             // exists. If so, select the existing folder
             if (newNode)
             {
-                sourceWidget->setNewFolderInfo({newNode->getHandle(), true});
+                applyNewFolderSelection(sourceWidget, newNode.get());
 
                 // Focusing a widget whose top-level window is not the active
                 // window makes Qt call QWindow::requestActivate()
@@ -250,6 +255,7 @@ void NodeSelector::showSearchingIndicator()
 void NodeSelector::onSelectionChanged()
 {
     updateOkButtonState(getCurrentTreeViewWidget());
+    refreshHeaderButtons(getCurrentTreeViewWidget());
     refreshDestinationBreadcrumb();
 }
 
@@ -818,6 +824,13 @@ std::shared_ptr<MegaNode> NodeSelector::getSelectedNode() const
 {
     auto node = std::shared_ptr<MegaNode>(mMegaApi->getNodeByHandle(getSelectedNodeHandle()));
     return node;
+}
+
+std::shared_ptr<MegaNode>
+    NodeSelector::getNewFolderParentNode(NodeSelectorTreeViewWidget* sourceWidget) const
+{
+    auto proxyModel = sourceWidget->getProxyModel();
+    return proxyModel ? proxyModel->getNode(sourceWidget->getCurrentRootIndex()) : nullptr;
 }
 
 void NodeSelector::showNotFoundNodeMessageBox()

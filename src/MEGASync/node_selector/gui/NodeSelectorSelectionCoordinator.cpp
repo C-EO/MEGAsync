@@ -17,6 +17,7 @@ NodeSelectorSelectionCoordinator::NodeSelectorSelectionCoordinator(mega::MegaApi
     mSelectIndex(std::move(policy.selectIndex)),
     mClearSelection(std::move(policy.clearSelection)),
     mOnItemDoubleClick(std::move(policy.onItemDoubleClick)),
+    mOnNewFolderAdded(std::move(policy.onNewFolderAdded)),
     mSetRootIndexToTop(std::move(policy.setRootIndexToTop)),
     mWithSelectionSilenced(std::move(policy.withSelectionSilenced))
 {}
@@ -253,7 +254,7 @@ void NodeSelectorSelectionCoordinator::checkNewFolderAdded(QPointer<NodeSelector
     if (item->getNode()->getHandle() == mNewFolderInfo.handle)
     {
         auto newFolderIndex(mProxyModel->getIndexFromHandle(mNewFolderInfo.handle));
-        mOnItemDoubleClick(newFolderIndex);
+        mOnNewFolderAdded(newFolderIndex);
 
         mNewFolderInfo.handle = mega::INVALID_HANDLE;
         mNewFolderInfo.recentlyAdded = false;

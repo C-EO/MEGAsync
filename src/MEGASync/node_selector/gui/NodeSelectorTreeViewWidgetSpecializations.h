@@ -74,6 +74,7 @@ private:
     bool isCurrentRootIndexReadOnly() const override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
     bool isCurrentSelectionReadOnly() override;
+    bool isNewFolderAllowed() override;
     SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 };
 

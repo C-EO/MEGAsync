@@ -47,6 +47,12 @@ protected:
     void configureSidebar() override;
     void configureHeader() override;
 
+    std::shared_ptr<mega::MegaNode>
+        getNewFolderParentNode(NodeSelectorTreeViewWidget* sourceWidget) const override;
+
+    void applyNewFolderSelection(NodeSelectorTreeViewWidget* sourceWidget,
+                                 mega::MegaNode* newNode) override;
+
 protected slots:
     void onItemsAboutToBeMoved(const QList<mega::MegaHandle>& handles, int actionType) override;
     void onItemsAboutToBeMovedFailed(const QList<mega::MegaHandle>& handles, int type) override;

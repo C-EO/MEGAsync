@@ -138,6 +138,19 @@ void NodeSelectorTreeViewWidget::init()
             {
                 onItemDoubleClick(index);
             },
+            [this](const QModelIndex& index)
+            {
+                // File pickers cannot navigate into folders, so a freshly created folder must be
+                // selected directly. File-manager mode keeps navigating into it.
+                if (mSelectType->isFilePicker())
+                {
+                    selectIndex(index, true, true);
+                }
+                else
+                {
+                    onItemDoubleClick(index);
+                }
+            },
             [this]()
             {
                 setRootIndex(mProxyModel->getTopRootIndex());
@@ -876,6 +889,18 @@ void NodeSelectorTreeViewWidget::onModelRowsChanged()
 void NodeSelectorTreeViewWidget::setNewFolderInfo(const NewFolderInfo& newNewFolderInfo)
 {
     mSelectionCoordinator->setNewFolderInfo(newNewFolderInfo);
+}
+
+void NodeSelectorTreeViewWidget::expandNodeByHandle(mega::MegaHandle handle)
+{
+    // Expanding triggers the children fetch, so the parent becomes initialised in the model.
+    // A freshly created child then arrives via the visible add path (and checkNewFolderAdded
+    // selects it) instead of as EXISTS_BUT_PARENT_UNINITIALISED.
+    const auto index = mProxyModel->getIndexFromHandle(handle);
+    if (index.isValid())
+    {
+        ui->tMegaFolders->setExpanded(index, true);
+    }
 }
 
 void NodeSelectorTreeViewWidget::onLevelLoaded()

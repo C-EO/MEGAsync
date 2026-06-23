@@ -129,6 +129,7 @@ public:
     using NewFolderInfo = NodeSelectorSelectionCoordinator::NewFolderInfo;
 
     void setNewFolderInfo(const NewFolderInfo& newNewFolderInfo);
+    void expandNodeByHandle(mega::MegaHandle handle);
 
     virtual std::optional<IncomingShareHeaderData> incomingShareHeaderData() const
     {
@@ -145,6 +146,13 @@ public:
     virtual bool isCurrentRootIndexReadOnly() const
     {
         return false;
+    }
+
+    // Whether a new folder can be created right now. File pickers (which cannot navigate into
+    // folders) rely on this selection-driven check instead of the navigation root.
+    virtual bool isNewFolderAllowed()
+    {
+        return !isCurrentRootIndexReadOnly() && !isCurrentSelectionReadOnly();
     }
 
     TabItem getTabType() const

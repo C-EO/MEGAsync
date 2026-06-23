@@ -232,6 +232,21 @@ bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentSelectionReadOnly()
     return isSelectionReadOnly(ui->tMegaFolders->selectedRows());
 }
 
+bool NodeSelectorTreeViewWidgetIncomingShares::isNewFolderAllowed()
+{
+    // No navigation in file pickers: a folder can only be created inside a single selected folder
+    // with at least read-write access (read-write or full access).
+    auto selection(ui->tMegaFolders->selectedRows());
+    if (selection.size() != 1)
+    {
+        return false;
+    }
+
+    auto node(mProxyModel->getNode(selection.first()));
+    return node && node->isFolder() &&
+           MegaSyncApp->getMegaApi()->getAccess(node.get()) >= mega::MegaShare::ACCESS_READWRITE;
+}
+
 SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetIncomingShares::getEmptyRootPageInfo()
 {
     SelectType::EmptyPageInfo info;

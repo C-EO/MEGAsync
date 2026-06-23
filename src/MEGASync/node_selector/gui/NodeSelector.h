@@ -89,6 +89,15 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void addBackupsView();
     std::shared_ptr<mega::MegaNode> getSelectedNode() const;
+    // Resolves the parent folder for a newly created folder. Base behaviour uses the current
+    // navigation root; the file picker overrides it to use the selected folder.
+    virtual std::shared_ptr<mega::MegaNode>
+        getNewFolderParentNode(NodeSelectorTreeViewWidget* sourceWidget) const;
+    // Applies a newly created (or existing-duplicate) folder to the view. The file manager marks it
+    // via setNewFolderInfo so it navigates into it once it is added; the file picker reveals and
+    // selects the folder directly.
+    virtual void applyNewFolderSelection(NodeSelectorTreeViewWidget* sourceWidget,
+                                         mega::MegaNode* newNode) = 0;
     void initSpecialisedWidgets(NodeSelectorTreeViewWidget* wid);
     void createActionButtons();
     bool eventFilter(QObject* obj, QEvent* event) override;

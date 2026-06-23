@@ -139,6 +139,18 @@ bool SelectType::cloudDriveIsCurrentRootIndex(NodeSelectorTreeViewWidget* wdg)
     return rootItem && rootItem->isCloudDrive();
 }
 
+bool FilePickerType::checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg, uint buttonId)
+{
+    if (buttonId == SelectType::ButtonId::NEW_FOLDER)
+    {
+        // File pickers create the folder inside the current selection, so the button depends on
+        // having a writable selected folder rather than on the (non-navigable) root index.
+        return wdg && hasNewFolderButton() && wdg->isNewFolderAllowed();
+    }
+
+    return SelectType::checkActionButtonVisibility(wdg, buttonId);
+}
+
 bool SelectType::showEmptyStateUploadButton(NodeSelectorTreeViewWidget*) const
 {
     return false;

@@ -180,6 +180,8 @@ class FilePickerType: public SelectType
 public:
     FilePickerType() = default;
 
+    bool checkActionButtonVisibility(NodeSelectorTreeViewWidget* wdg, uint buttonId) override;
+
     EmptyPageInfo getEmptyFolderPageInfo() const override;
     EmptyPageInfo getEmptyCloudDrivePage() const override;
 
