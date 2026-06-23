@@ -592,6 +592,11 @@
         <translation>Laporkan masalah</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>Masalah anda tidak dapat dikirim karena terjadi kesalahan. Coba lagi nanti atau hubungi [A]Bantuan[/A] jika masalah berlanjut.</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation type="unfinished"></translation>
@@ -645,6 +650,11 @@
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
         <translation>Mohon jelaskan masalah anda secara detail. Minimal harus terdiri dari 30 karakter.</translation>
+    </message>
+    <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>Silakan coba lagi nanti atau hubungi [A]Bantuan[/A] jika masalah berlanjut.</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -3081,6 +3091,11 @@ Tunggu hingga unggahan selesai.</translation>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
         <translation>Anda telah keluar dari perangkat ini dari lokasi lain</translation>
+    </message>
+    <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>Anda telah keluar. Hubungi [A]Bantuan[/A] jika masalah ini terus berlanjut.</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -6821,7 +6836,7 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Delete folder from MEGA</source>
         <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
-        <translation>Delete folder from MEGA</translation>
+        <translation>Hapus folder dari MEGA</translation>
     </message>
     <message>
         <source>Delete folder permanently</source>
@@ -6841,7 +6856,7 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Move folder to Cloud drive</source>
         <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
-        <translation>Move folder to Cloud drive</translation>
+        <translation>Pindahkan folder ke penyimpanan Cloud</translation>
     </message>
     <message>
         <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
@@ -6851,7 +6866,7 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
         <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
-        <translation>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</translation>
+        <translation>Pindahkan folder ini ke penyimpanan Cloud anda untuk mendapatkan akses penuh ke dataanda. Folder ini tidak akan lagi dicadangkan.</translation>
     </message>
     <message>
         <source>Move to:</source>
@@ -6871,7 +6886,7 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
         <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
-        <translation>The folder will be deleted from MEGA, but it won’t be deleted from your device. [B]This action can’t be undone.[/B]</translation>
+        <translation>Folder tersebut akan dihapus dari MEGA, tetapi tidak akan dihapus dari perangkat anda. [B]Tindakan ini tidak dapat dibatalkan.[/B]</translation>
     </message>
     <message>
         <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
@@ -6881,7 +6896,7 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>To stop backing up this folder, you need to either move it or delete it</source>
         <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
-        <translation>To stop backing up this folder, you need to either move it or delete it</translation>
+        <translation>Untuk menghentikan pencadangan folder ini, anda perlu memindahkannya atau menghapusnya</translation>
     </message>
 </context>
 <context>
@@ -7539,7 +7554,7 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Error opening megaignore file</source>
         <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
-        <translation>Error opening .megaignore file</translation>
+        <translation>Gagal membuka file .megaignore</translation>
     </message>
 </context>
 <context>
@@ -7547,27 +7562,27 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Add a backup to protect your folders automatically</source>
         <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
-        <translation>Add a backup to protect your folders automatically</translation>
+        <translation>Tambahkan cadangan untuk melindungi folder anda secara otomatis</translation>
     </message>
     <message>
         <source>Add a sync to keep folders up to date</source>
         <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
-        <translation>Keep folders up to date across devices</translation>
+        <translation>Pastikan folder selalu diperbarui di semua perangkat</translation>
     </message>
     <message>
         <source>Add backup</source>
         <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
-        <translation>Add backup</translation>
+        <translation>Tambahkan cadangan</translation>
     </message>
     <message>
         <source>Add sync</source>
         <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
-        <translation>Set up sync</translation>
+        <translation>Siapkan sinkronisasi</translation>
     </message>
     <message>
         <source>Automatic sync issue resolution</source>
         <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>Automatically resolve sync issues</translation>
+        <translation>Atasi masalah sinkronisasi secara otomatis</translation>
     </message>
     <message>
         <source>Available[BR]%1</source>
@@ -7577,12 +7592,12 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Backed up</source>
         <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
-        <translation>Backed up</translation>
+        <translation>Dicadangkan</translation>
     </message>
     <message>
         <source>Backup folder</source>
         <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
-        <translation>Backup folder</translation>
+        <translation>Folder cadangan</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -7617,17 +7632,17 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Disabled</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Disabled</translation>
+        <translation>Dimatikan</translation>
     </message>
     <message>
         <source>Enable backup</source>
         <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
-        <translation>Enable backup</translation>
+        <translation>Aktifkan pencadangan</translation>
     </message>
     <message>
         <source>Enable sync</source>
         <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
-        <translation>Enable sync</translation>
+        <translation>Aktifkan sinkronisasi</translation>
     </message>
     <message>
         <source>File versions</source>
@@ -7642,92 +7657,82 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Get more storage</source>
         <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
-        <translation></translation>
+        <translation>Dapatkan lebih banyak ruang penyimpanan</translation>
     </message>
     <message>
         <source>Loading</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Loading</translation>
+        <translation>Memuat</translation>
     </message>
     <message>
         <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
         <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</translation>
+        <translation>MEGA secara otomatis mendeteksi dan menyelesaikan masalah sinkronisasi untuk anda. Matikan fitur ini jika anda lebih suka meninjau dan menanganinya secara manual. [A]Pelajari selengkapnya[/A]</translation>
     </message>
     <message>
         <source>Manage exclusions</source>
         <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
-        <translation>Manage exclusions</translation>
+        <translation>Kelola pengecualian</translation>
     </message>
     <message>
         <source>No backups</source>
         <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
-        <translation>No backups</translation>
+        <translation>Tidak ada cadangan</translation>
     </message>
     <message>
         <source>No syncs set up</source>
         <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
-        <translation>No syncs set up</translation>
+        <translation>Tidak ada sinkronisasi yang diatur</translation>
     </message>
     <message>
         <source>Open in MEGA</source>
         <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
-        <translation>Open in MEGA</translation>
-    </message>
-    <message>
-        <source>Open in mega</source>
-        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
-        <translation>Open in MEGA</translation>
+        <translation>Buka di MEGA</translation>
     </message>
     <message>
         <source>Pause</source>
         <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
-        <translation>Pause</translation>
+        <translation>Jeda</translation>
     </message>
     <message>
         <source>Paused</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Paused</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
-        <translation>Restart</translation>
+        <translation>Dijeda</translation>
     </message>
     <message>
         <source>Reboot backup</source>
         <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
-        <translation>Reboot backup</translation>
+        <translation>Mulai ulang pencadangan</translation>
     </message>
     <message>
         <source>Reboot sync</source>
         <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
-        <translation>Reboot sync</translation>
+        <translation>Mulai ulang sinkronisasi</translation>
     </message>
     <message>
         <source>Remove synced folder</source>
         <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
-        <translation>Remove synced folder</translation>
+        <translation>Hapus folder yang disinkronkan</translation>
     </message>
     <message>
         <source>Rescan</source>
         <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
-        <translation>Rescan</translation>
+        <translation>Pindai ulang</translation>
     </message>
     <message>
         <source>Restore folder</source>
         <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
-        <translation>Restore folder</translation>
+        <translation>Pulihkan folder</translation>
     </message>
     <message>
         <source>Resume</source>
         <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
-        <translation>Resume</translation>
+        <translation>Lanjutkan</translation>
     </message>
     <message>
         <source>Retry</source>
         <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
-        <translation>Retry</translation>
+        <translation>Coba kembali</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7742,32 +7747,32 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Scanning</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Scanning</translation>
+        <translation>Memindai</translation>
     </message>
     <message>
         <source>Show in File Explorer</source>
         <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
-        <translation>Show in File Explorer</translation>
+        <translation>Tampilkan di File Explorer</translation>
     </message>
     <message>
         <source>Show in Finder</source>
         <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
-        <translation>Show in Finder</translation>
+        <translation>Tampilkan di Finder</translation>
     </message>
     <message>
         <source>Show in folder</source>
         <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
-        <translation>Show in folder</translation>
+        <translation>Tampilkan dalam folder</translation>
     </message>
     <message>
         <source>Start new backup</source>
         <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
-        <translation>Start new backup</translation>
+        <translation>Mulai pencadangan baru</translation>
     </message>
     <message>
         <source>Start new sync</source>
         <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
-        <translation>Start new sync</translation>
+        <translation>Mulai sinkronisasi baru</translation>
     </message>
     <message>
         <source>Status</source>
@@ -7777,7 +7782,7 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Stop backup</source>
         <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
-        <translation>Stop backup</translation>
+        <translation>Hentikan pencadangan</translation>
     </message>
     <message>
         <source>Storage Space</source>
@@ -7787,22 +7792,17 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>Synced</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Synced</translation>
+        <translation>Tersinkronisasi</translation>
     </message>
     <message>
         <source>Synced folders</source>
         <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
-        <translation>Synced folders</translation>
-    </message>
-    <message>
-        <source>Syncing</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Syncing</translation>
+        <translation>Folder yang tersinkronkan</translation>
     </message>
     <message>
         <source>Transferring</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Transferring</translation>
+        <translation>Mentransfer</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7822,7 +7822,7 @@ Apakah anda tetap ingin menghapusnya?</translation>
     <message>
         <source>View in MEGA</source>
         <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
-        <translation>View in MEGA</translation>
+        <translation>Lihat di MEGA</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -9046,22 +9046,22 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Can&apos;t restore %1 mega folder</source>
         <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
-        <translation>Can’t restore %1 mega folder</translation>
+        <translation>Tidak dapat memulihkan folder MEGA %1</translation>
     </message>
     <message>
         <source>Close</source>
         <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
-        <translation>Close</translation>
+        <translation>Tutup</translation>
     </message>
     <message>
         <source>Error opening megaignore file</source>
         <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
-        <translation>Error opening .megaignore file</translation>
+        <translation>Gagal membuka file .megaignore</translation>
     </message>
     <message>
         <source>Remove sync</source>
         <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
-        <translation>Remove sync</translation>
+        <translation>Hapus sinkronisasi</translation>
     </message>
 </context>
 <context>
