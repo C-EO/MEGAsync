@@ -7522,6 +7522,10 @@ Do you want to delete it anyway?</translation>
         <translatorcomment>Warning title shown in the Account pane when the account storage is close to full. DSN-2975</translatorcomment>
         <translation>Your MEGA account is nearly full</translation>
     </message>
+    <message>
+        <source>Removing</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ShellExtension</name>

@@ -50,9 +50,10 @@ Item {
                 return SettingsStrings.syncStateSyncing;
             case BackupSettingsModel.IDLE:
                 return SettingsStrings.backupStateBackedUp;
+            case BackupSettingsModel.REMOVING:
+                return SettingsStrings.syncStateRemoving;
         }
     }
-
 
     function backupStatusTextColor(status, hovered) {
         if (hovered && status === BackupSettingsModel.SUSPENDED) {

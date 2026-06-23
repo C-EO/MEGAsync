@@ -46,7 +46,8 @@ public:
         FAIL,
         SCANNING,
         ACTIVE,
-        IDLE
+        IDLE,
+        REMOVING
     };
 
     Q_ENUM(State)
@@ -71,12 +72,14 @@ private:
     State getState(std::shared_ptr<SyncSettings> sync) const;
     void sendDataChanged(int row);
     QString getErrorMessage(std::shared_ptr<SyncSettings> sync) const;
+    void onSyncRemoveBegins(QString);
 
     SyncInfo* mSyncInfo;
     mega::MegaSync::SyncType mType;
     QList<std::shared_ptr<SyncSettings>> mList;
     bool mSortAscending = true;
     QCollator mQCollator;
+    QList<QString> mRemovingSyncs;
 };
 
 #endif // SYNC_SETTINGS_MODEL_BASE_H

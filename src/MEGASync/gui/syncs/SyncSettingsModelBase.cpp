@@ -1,5 +1,6 @@
 #include "SyncSettingsModelBase.h"
 
+#include "SyncController.h"
 #include "SyncInfo.h"
 
 #include <QCoreApplication>
@@ -15,9 +16,30 @@ SyncSettingsModelBase::SyncSettingsModelBase(mega::MegaSync::SyncType type, QObj
     connect(mSyncInfo, &SyncInfo::syncStateChanged, this, &SyncSettingsModelBase::insertItem);
     connect(mSyncInfo, &SyncInfo::syncStatsUpdated, this, &SyncSettingsModelBase::updateStats);
     connect(mSyncInfo, &SyncInfo::syncRemoved, this, &SyncSettingsModelBase::removeItem);
+    connect(&SyncController::instance(),
+            &SyncController::syncRemoveBegins,
+            this,
+            &SyncSettingsModelBase::onSyncRemoveBegins);
 
     mList = mSyncInfo->getSyncSettingsByType(mType);
     sortByName(true);
+}
+
+void SyncSettingsModelBase::onSyncRemoveBegins(QString syncId)
+{
+    auto foundIt = std::find_if(mList.cbegin(),
+                                mList.cend(),
+                                [&syncId](auto& sync)
+                                {
+                                    return (sync->getSyncID() == syncId);
+                                });
+
+    if (foundIt != mList.cend())
+    {
+        auto row = std::distance(mList.cbegin(), foundIt);
+        mRemovingSyncs.append(syncId);
+        sendDataChanged(static_cast<int>(row));
+    }
 }
 
 void SyncSettingsModelBase::sortByName(bool ascending)
@@ -201,6 +223,11 @@ std::shared_ptr<SyncSettings> SyncSettingsModelBase::getSyncSetting(int index) c
 SyncSettingsModelBase::State
     SyncSettingsModelBase::getState(std::shared_ptr<SyncSettings> sync) const
 {
+    if (mRemovingSyncs.contains(sync->getSyncID()))
+    {
+        return State::REMOVING;
+    }
+
     switch (sync->getRunState())
     {
         case ::mega::MegaSync::RUNSTATE_PENDING:

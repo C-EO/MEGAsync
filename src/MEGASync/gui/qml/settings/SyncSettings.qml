@@ -43,6 +43,8 @@ Item {
                 return SettingsStrings.syncStateSyncing;
             case SyncSettingsModel.IDLE:
                 return SettingsStrings.syncStateSynced;
+            case SyncSettingsModel.REMOVING:
+                return SettingsStrings.syncStateRemoving;
         }
     }
 

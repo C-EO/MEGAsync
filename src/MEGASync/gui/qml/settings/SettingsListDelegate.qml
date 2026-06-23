@@ -505,7 +505,7 @@ Rectangle {
                 removeIcon: root.removeIcon
                 removeAction: root.errorRemoveNonConfirmation
                               ? function() { settingsAccess.removeNonConfirmation(itemIndex); }
-                              : function() { settingsAccess.remove(itemIndex); }
+                              : function() { settingsAccess.remove(itemIndex);}
                 buttonVerticalPadding: root.errorButtonVerticalPadding
             }
         }
