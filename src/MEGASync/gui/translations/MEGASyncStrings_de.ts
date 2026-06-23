@@ -599,11 +599,6 @@
         <translation>Problem melden</translation>
     </message>
     <message>
-        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
-        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
-        <translation>Ihre Meldung konnte aufgrund eines Fehlers nicht übermittelt werden. Versuchen Sie es später erneut oder wenden Sie sich an den [A]Support[/A], falls das Problem weiterhin besteht.</translation>
-    </message>
-    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>Ihre Meldung konnte aufgrund eines Fehlers nicht hochgeladen werden. Versuchen Sie es später noch einmal oder wenden Sie sich an unser Supportteam unter [A]https://mega.nz/support[/A], falls das Problem weiterhin besteht.</translation>
@@ -657,11 +652,6 @@
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
         <translation>Bitte beschreiben Sie Ihr Problem im Detail. Mindestens 30 Zeichen erforderlich.</translation>
-    </message>
-    <message>
-        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
-        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
-        <translation>Bitte versuchen Sie es später erneut oder wenden Sie sich an den [A]Support[/A], falls das Problem weiterhin besteht.</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -3119,11 +3109,6 @@ Warten Sie, bis der Upload abgeschlossen ist.</translation>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
         <translation>Sie wurden aus der Ferne von diesem Gerät abgemeldet</translation>
-    </message>
-    <message>
-        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
-        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
-        <translation>Sie wurden ausgeloggt. Bitte wenden Sie sich an den [A]Support[/A], falls das Problem weiterhin besteht.</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -7769,6 +7754,11 @@ Trotzdem löschen?</translation>
         <source>Remove synced folder</source>
         <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
         <translation>Synchronisierten Ordner entfernen</translation>
+    </message>
+    <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Removing</translation>
     </message>
     <message>
         <source>Rescan</source>

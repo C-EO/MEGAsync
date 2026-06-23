@@ -7403,6 +7403,11 @@ Do you want to delete it anyway?</translation>
         <translation>Remove synced folder</translation>
     </message>
     <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Removing</translation>
+    </message>
+    <message>
         <source>Rescan</source>
         <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
         <translation>Rescan</translation>
@@ -7521,11 +7526,6 @@ Do you want to delete it anyway?</translation>
         <source>Your MEGA account is nearly full</source>
         <translatorcomment>Warning title shown in the Account pane when the account storage is close to full. DSN-2975</translatorcomment>
         <translation>Your MEGA account is nearly full</translation>
-    </message>
-    <message>
-        <source>Removing</source>
-        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
-        <translation>Removing</translation>
     </message>
 </context>
 <context>

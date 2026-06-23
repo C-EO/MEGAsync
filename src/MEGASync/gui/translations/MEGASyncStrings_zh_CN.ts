@@ -592,11 +592,6 @@
         <translation>报告问题</translation>
     </message>
     <message>
-        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
-        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
-        <translation>您的问题无法提交，因发生错误。请稍后再试，若问题仍然存在，请联系 [A]支持[/A]。</translation>
-    </message>
-    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>由于发生错误，您的问题无法上传。请稍后再试，或在问题仍然存在时通过 [A]https://mega.nz/support[/A] 联系我们的支持团队。</translation>
@@ -650,11 +645,6 @@
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
         <translation>请详细描述您的问题，字数不少于30个字符（15个汉字）。</translation>
-    </message>
-    <message>
-        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
-        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
-        <translation>请稍后再试，若问题仍然存在，请联系 [A]支持[/A]。</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -3091,11 +3081,6 @@ Please wait for the upload to complete.</source>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
         <translation>您已从其它位置登出此设备</translation>
-    </message>
-    <message>
-        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
-        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
-        <translation>您已退出登录。若此问题仍然存在，请联系 [A]支持[/A]。</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -7713,6 +7698,11 @@ Do you want to delete it anyway?</source>
         <source>Remove synced folder</source>
         <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
         <translation>移除同步文件夹</translation>
+    </message>
+    <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Removing</translation>
     </message>
     <message>
         <source>Rescan</source>
