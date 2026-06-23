@@ -64,6 +64,9 @@ protected:
         ErrorId
     };
 
+    void onSyncRemoveBegins(QString);
+    void onSyncRemoveEnds(QString);
+
 private slots:
     void insertItem(std::shared_ptr<SyncSettings> sync);
     void updateStats(std::shared_ptr<mega::MegaSyncStats> stats);
@@ -73,8 +76,6 @@ private:
     State getState(std::shared_ptr<SyncSettings> sync) const;
     void sendDataChanged(int row);
     QString getErrorMessage(std::shared_ptr<SyncSettings> sync) const;
-    void onSyncRemoveBegins(QString);
-    void onSyncRemoveEnds(QString);
 
     SyncInfo* mSyncInfo;
     mega::MegaSync::SyncType mType;

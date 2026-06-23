@@ -1,6 +1,5 @@
 #include "SyncSettingsModelBase.h"
 
-#include "SyncController.h"
 #include "SyncInfo.h"
 
 #include <QCoreApplication>
@@ -16,15 +15,6 @@ SyncSettingsModelBase::SyncSettingsModelBase(mega::MegaSync::SyncType type, QObj
     connect(mSyncInfo, &SyncInfo::syncStateChanged, this, &SyncSettingsModelBase::insertItem);
     connect(mSyncInfo, &SyncInfo::syncStatsUpdated, this, &SyncSettingsModelBase::updateStats);
     connect(mSyncInfo, &SyncInfo::syncRemoved, this, &SyncSettingsModelBase::removeItem);
-    connect(&SyncController::instance(),
-            &SyncController::syncRemoveBegins,
-            this,
-            &SyncSettingsModelBase::onSyncRemoveBegins);
-
-    connect(&SyncController::instance(),
-            &SyncController::syncRemoveEnds,
-            this,
-            &SyncSettingsModelBase::onSyncRemoveEnds);
 
     mList = mSyncInfo->getSyncSettingsByType(mType);
     sortByName(true);
