@@ -564,6 +564,39 @@ void PlatformImplementation::applyCurrentThemeOnCurrentDialogFrame(QWindow* wind
     }
 }
 
+void PlatformImplementation::raiseToForeground(QWidget* widget)
+{
+    if (widget == nullptr)
+    {
+        return;
+    }
+
+    auto* hwnd = reinterpret_cast<HWND>(widget->winId());
+    if (hwnd == nullptr)
+    {
+        return;
+    }
+
+    // When the foreground process is not MEGAsync (typically the browser, since the download
+    // request comes from the webclient), Windows blocks SetForegroundWindow and only flashes
+    // the taskbar button. Qt5 used to force the activation; Qt6 no longer does. Attaching our
+    // input queue to the current foreground thread makes Windows treat the call as coming from
+    // the active app, so the foreground change is allowed.
+    const DWORD foregroundThread = GetWindowThreadProcessId(GetForegroundWindow(), nullptr);
+    const DWORD currentThread = GetCurrentThreadId();
+    const bool attached = foregroundThread != 0 && foregroundThread != currentThread &&
+                          AttachThreadInput(currentThread, foregroundThread, TRUE);
+
+    BringWindowToTop(hwnd);
+    SetForegroundWindow(hwnd);
+    SetActiveWindow(hwnd);
+
+    if (attached)
+    {
+        AttachThreadInput(currentThread, foregroundThread, FALSE);
+    }
+}
+
 void PlatformImplementation::setRenderingBackend() const
 {
     auto qtOpengl = qEnvironmentVariable("QT_OPENGL");

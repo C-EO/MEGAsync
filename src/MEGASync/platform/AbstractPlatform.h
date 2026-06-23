@@ -134,6 +134,11 @@ public:
     virtual Preferences::ThemeAppeareance getPanelTheme() const;
     virtual void applyCurrentThemeOnCurrentDialogFrame(QWindow* window);
 
+    // Brings a top-level widget to the foreground even when MEGAsync is not the active
+    // process (e.g. a download request triggered from the browser). Default is a no-op;
+    // platforms that need OS-specific handling override it.
+    virtual void raiseToForeground(QWidget* widget) {}
+
     virtual void setRenderingBackend() const {}
 
     // Severs connections with assistive-technology clients before UI teardown.

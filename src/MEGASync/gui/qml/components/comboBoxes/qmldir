@@ -1,3 +1,3 @@
-module components.comboBox
+module components.comboBoxes
 ComboBox 1.0 ComboBox.qml
 Sizes 1.0 Sizes.qml

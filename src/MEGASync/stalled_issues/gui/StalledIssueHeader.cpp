@@ -192,12 +192,21 @@ void StalledIssueHeader::onMultipleActionClicked()
         {
             QMenu *menu(new QMenu(ui->multipleActionButton));
             menu->setProperty("class", QLatin1String("MegaMenu"));
+            menu->setProperty("icon-token", QLatin1String("icon-primary"));
             menu->setAttribute(Qt::WA_DeleteOnClose);
 
             foreach(auto action, actions)
             {
-                // Show in system file explorer action
-                auto actionItem(new MegaMenuItemAction(action.actionText, QString()));
+                QString iconName;
+                if (!action.iconName.isEmpty())
+                {
+                    iconName = Utilities::getPixmapName(action.iconName,
+                                                        Utilities::AttributeType::SMALL |
+                                                            Utilities::AttributeType::THIN |
+                                                            Utilities::AttributeType::OUTLINE,
+                                                        false);
+                }
+                auto actionItem(new MegaMenuItemAction(action.actionText, iconName));
                 auto id(action.id);
                 connect(actionItem,
                         &MegaMenuItemAction::triggered,
@@ -523,19 +532,43 @@ void StalledIssueHeader::resetSolvingWidgets()
 
 void StalledIssueHeader::updateMultipleActionButtonIcon()
 {
-    bool hasMultipleActions(getActions().size() > 1);
+    auto actions(getActions());
+    bool hasMultipleActions(actions.size() > 1);
 
-    if (hasMultipleActions && ui->multipleActionButton->icon().isNull())
+    if (hasMultipleActions)
     {
-        ui->multipleActionButton->setIcon(
-            ui->multipleActionButton->property(MULTIACTION_ICON).value<QIcon>());
+        // Multiple actions open a pop-up menu, so the button shows the dropdown
+        // chevron. Restore it if a previous single-action reuse replaced it.
+        auto savedChevron(ui->multipleActionButton->property(MULTIACTION_ICON));
+        if (savedChevron.isValid())
+        {
+            ui->multipleActionButton->setIcon(savedChevron.value<QIcon>());
+        }
     }
-    else if (!hasMultipleActions && !ui->multipleActionButton->icon().isNull())
+    else
     {
-        ui->multipleActionButton->setProperty(
-            MULTIACTION_ICON,
-            QVariant::fromValue<QIcon>(ui->multipleActionButton->icon()));
-        ui->multipleActionButton->setIcon(QIcon());
+        // A single action makes the button perform it directly (no pop-up), so the
+        // button shows the action icon instead of the dropdown chevron.
+        if (!ui->multipleActionButton->property(MULTIACTION_ICON).isValid() &&
+            !ui->multipleActionButton->icon().isNull())
+        {
+            // Preserve the stylesheet chevron for later multi-action reuse.
+            ui->multipleActionButton->setProperty(
+                MULTIACTION_ICON,
+                QVariant::fromValue<QIcon>(ui->multipleActionButton->icon()));
+        }
+
+        QIcon actionIcon;
+        if (!actions.isEmpty() && !actions.first().iconName.isEmpty())
+        {
+            actionIcon = QIcon(Utilities::getColoredPixmap(actions.first().iconName,
+                                                           Utilities::AttributeType::SMALL |
+                                                               Utilities::AttributeType::THIN |
+                                                               Utilities::AttributeType::OUTLINE,
+                                                           QLatin1String("icon-primary"),
+                                                           ui->multipleActionButton->iconSize()));
+        }
+        ui->multipleActionButton->setIcon(actionIcon);
     }
 }
 

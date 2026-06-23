@@ -169,6 +169,11 @@ MegaApplication::MegaApplication(int& argc, char** argv):
 
     appfinished = false;
 
+    // Required for the Qt::QueuedConnection signals/slots that pass a QQueue<QString>
+    // (e.g. shell upload/export queues). Q_DECLARE_METATYPE alone is not enough for
+    // queued connections; the type must also be registered at runtime.
+    qRegisterMetaType<QQueue<QString>>("QQueue<QString>");
+
     bool logToStdout = false;
 
 #if defined(LOG_TO_STDOUT)
@@ -2002,7 +2007,13 @@ void MegaApplication::rebootApplication(bool update)
     }
 
     mTrayIconManager->hide();
-    QApplication::exit();
+    // Qt6: see exitApplication() — exit() emits aboutToQuit synchronously.
+    QTimer::singleShot(0,
+                       this,
+                       []()
+                       {
+                           QApplication::exit();
+                       });
 }
 
 int* testCrashPtr = nullptr;
@@ -2489,6 +2500,7 @@ void MegaApplication::cleanAll()
     removeSyncsAndBackupsMenus();
 
     preferences->setLastExit(QDateTime::currentMSecsSinceEpoch());
+    preferences->sync();
 
     // Remove models using deleteLater to be sure that they are removed after removing Transfer and
     // Stalled issues dialogs. Otherwise we need to set to null the view models as the views will
@@ -3220,7 +3232,16 @@ void MegaApplication::exitApplication()
 {
     reboot = false;
     mTrayIconManager->hide();
-    QApplication::exit();
+    // Qt6: QCoreApplication::exit() emits aboutToQuit synchronously, and
+    // cleanAll() deletes the QML engine. Defer the call so the engine is
+    // never destroyed while a QML signal handler is still on the stack
+    // (e.g. the exit-confirmation dialog button that triggers this path).
+    QTimer::singleShot(0,
+                       this,
+                       []()
+                       {
+                           QApplication::exit();
+                       });
 }
 
 QString MegaApplication::getDefaultUploadPath()
@@ -4867,8 +4888,18 @@ void MegaApplication::processDownloads()
         return;
     }
 
+    // A request coming from the webclient is triggered while the browser owns the foreground.
+    // Unlike Qt5, Qt6 no longer forces the window activation, so the dialog can stay behind;
+    // we force it to the foreground only in that case.
+    const bool fromHTTPServer = qobject_cast<HTTPServer*>(sender()) != nullptr;
+
     auto downloadFolderSelector = new DownloadFromMegaDialog(preferences->downloadFolder());
     DialogOpener::showDialog<DownloadFromMegaDialog, TransferManager>(downloadFolderSelector, false, this, &MegaApplication::onDownloadFromMegaFinished);
+
+    if (fromHTTPServer)
+    {
+        Platform::getInstance()->raiseToForeground(downloadFolderSelector);
+    }
     emit meaningfulInteraction();
 }
 
