@@ -415,6 +415,10 @@ public:
 
     void setAcceptDragAndDrop(bool newAcceptDragAndDrop);
     bool acceptDragAndDrop(const QMimeData* data);
+    // Controls the phantom extra space row at the bottom of a folder's children, used as a drop
+    // target and as the right-click (context menu) area. Disabled for selectors without those
+    // interactions (e.g. file pickers), where it would only be dead space.
+    void setExtraSpaceEnabled(bool enabled);
 
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
     QMimeData* mimeData(const QList<mega::MegaHandle>& handles) const;
@@ -594,6 +598,7 @@ private:
     bool mExtraSpaceAdded;
     bool mExtraSpaceRemoved;
     bool mRemovingPreviousExtraSpace;
+    bool mExtraSpaceEnabled;
 };
 
 Q_DECLARE_METATYPE(std::shared_ptr<mega::MegaNodeList>)

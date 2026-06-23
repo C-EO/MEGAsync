@@ -804,7 +804,8 @@ NodeSelectorModel::NodeSelectorModel(QObject* parent):
     mRemoveNodesQueue(this),
     mExtraSpaceAdded(false),
     mExtraSpaceRemoved(false),
-    mRemovingPreviousExtraSpace(false)
+    mRemovingPreviousExtraSpace(false),
+    mExtraSpaceEnabled(true)
 {
     mCameraFolderAttribute = UserAttributes::CameraUploadFolder::requestCameraUploadFolder();
     mMyChatFilesFolderAttribute = UserAttributes::MyChatFilesFolder::requestMyChatFilesFolder();
@@ -938,7 +939,7 @@ void NodeSelectorModel::protectModelWhenPerformingActions()
 
 void NodeSelectorModel::executeRemoveExtraSpaceLogic(const QModelIndex& previousIndex)
 {
-    if (canDropMimeData())
+    if (/*canDropMimeData() && */ mExtraSpaceEnabled)
     {
         // Remove the previous current index extra row
         if (mExtraSpaceAdded && previousIndex.isValid() && !mExtraSpaceRemoved)
@@ -971,7 +972,7 @@ void NodeSelectorModel::executeAddExtraSpaceLogic(const QModelIndex& currentInde
         return;
     }
 
-    if (canDropMimeData())
+    if (/*canDropMimeData() && */ mExtraSpaceEnabled)
     {
         NodeSelectorModelItem* item =
             static_cast<NodeSelectorModelItem*>(currentIndex.internalPointer());
@@ -1220,6 +1221,11 @@ Qt::ItemFlags NodeSelectorModel::flags(const QModelIndex& index) const
 void NodeSelectorModel::setAcceptDragAndDrop(bool newAcceptDragAndDrop)
 {
     mAcceptDragAndDrop = newAcceptDragAndDrop;
+}
+
+void NodeSelectorModel::setExtraSpaceEnabled(bool enabled)
+{
+    mExtraSpaceEnabled = enabled;
 }
 
 bool NodeSelectorModel::acceptDragAndDrop(const QMimeData* data)

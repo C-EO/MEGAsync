@@ -215,6 +215,7 @@ void NodeSelectorTreeViewWidget::init()
     mNodeActions.setModel(mModel.get());
 
     enableDragAndDrop(mSelectType->acceptDrops(mTabType));
+    mModel->setExtraSpaceEnabled(!mSelectType->isFilePicker());
 
     ui->tMegaFolders->setSortingEnabled(true);
     ui->tMegaFolders->viewport()->installEventFilter(this);
