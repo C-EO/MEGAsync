@@ -1472,6 +1472,11 @@ void NodeSelectorHeaderView::paintSection(QPainter* painter,
             QStyleOptionHeader labelOpt(opt);
             // Margin to align header to delegate label
             labelOpt.rect.adjust(3, 0, 0, 0);
+            // Explicitly force vertical centering: Linux platform proxies (GTK/KDE) may
+            // ignore the flag carried by initStyleOption and draw text at the section top.
+            labelOpt.textAlignment =
+                Qt::AlignVCenter |
+                (layoutDirection() == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft);
 
             style()->drawControl(QStyle::CE_HeaderLabel, &labelOpt, painter, this);
             return;
@@ -1505,6 +1510,9 @@ void NodeSelectorHeaderView::paintSection(QPainter* painter,
         painter->drawPixmap(arrowRect, sortArrowPixmap(sortIndicatorOrder()));
 
         QStyleOptionHeader labelOpt(opt);
+        // Force vertical centering explicitly: on Linux, platform proxies (GTK/KDE) can
+        // override CE_HeaderLabel and ignore the alignment set by initStyleOption.
+        labelOpt.textAlignment = Qt::AlignVCenter | (isRtl ? Qt::AlignRight : Qt::AlignLeft);
         if (isRtl)
         {
             labelOpt.rect.adjust(0, 0, -(sortArrowSize + sortArrowMargin + sortArrowSpacing), 0);
