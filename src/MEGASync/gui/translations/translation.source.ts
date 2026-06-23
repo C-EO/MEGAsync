@@ -7524,7 +7524,8 @@ Do you want to delete it anyway?</translation>
     </message>
     <message>
         <source>Removing</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Removing</translation>
     </message>
 </context>
 <context>
