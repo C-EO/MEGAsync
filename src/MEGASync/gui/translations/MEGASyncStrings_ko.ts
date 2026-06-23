@@ -592,9 +592,14 @@
         <translation>문제 신고</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>오류로 인해 문제가 접수되지 않았습니다. 나중에 다시 시도하거나 문제가 계속 되면 [A]지원[/A]에 연락하세요.</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>오류로 인해 문제를 업로드할 수 없습니다. 나중에 다시 시도하거나 문제가 지속될 경우 [A]https://mega.nz/support[/A]에서 지원 팀에 연락하세요.</translation>
     </message>
     <message>
         <source>Bug report is uploading, it may take a few minutes</source>
@@ -647,9 +652,14 @@
         <translation>문제를 자세히 설명해주세요. 최소 30자 이상이어야 합니다.</translation>
     </message>
     <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>나중에 다시 시도하거나 문제가 계속 되면 [A]지원[/A]에 연락하세요.</translation>
+    </message>
+    <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
         <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>문제가 계속 되면 나중에 다시 시도하거나 [A]https://mega.nz/support[/A]에서 지원 팀에 연락하세요.</translation>
     </message>
     <message>
         <source>Please wait until the current upload is completed.</source>
@@ -3083,9 +3093,14 @@ Please wait for the upload to complete.</source>
         <translation>다른 위치에서 이 장치를 로그아웃 하였습니다</translation>
     </message>
     <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>로그아웃 되었습니다. 문제가 계속 되면 [A]지원[/A]에 연락하세요.</translation>
+    </message>
+    <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
         <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. CON-541</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>로그아웃 되었습니다. 문제가 계속 되면 [A]https://mega.nz/support[/A]에서 지원 부서에 연락주세요.</translation>
     </message>
 </context>
 <context>
@@ -6821,7 +6836,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Delete folder from MEGA</source>
         <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
-        <translation>Delete folder from MEGA</translation>
+        <translation>MEGA에서 폴더 삭제</translation>
     </message>
     <message>
         <source>Delete folder permanently</source>
@@ -6841,7 +6856,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Move folder to Cloud drive</source>
         <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
-        <translation>Move folder to Cloud drive</translation>
+        <translation>폴더를 클라우드 드라이브로 이동</translation>
     </message>
     <message>
         <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
@@ -6851,7 +6866,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
         <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
-        <translation>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</translation>
+        <translation>이 폴더를 클라우드 드라이브로 이동하면 데이터에 완전히 액세스할 수 있습니다. 더 이상 백업되지 않습니다.</translation>
     </message>
     <message>
         <source>Move to:</source>
@@ -6871,7 +6886,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
         <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
-        <translation>The folder will be deleted from MEGA, but it won’t be deleted from your device. [B]This action can’t be undone.[/B]</translation>
+        <translation>이 폴더는 MEGA에서 삭제되지만 기기에서는 삭제되지 않습니다. [B]이 작업은 되돌릴 수 없습니다.[/B]</translation>
     </message>
     <message>
         <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
@@ -6881,7 +6896,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>To stop backing up this folder, you need to either move it or delete it</source>
         <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
-        <translation>To stop backing up this folder, you need to either move it or delete it</translation>
+        <translation>이 폴더의 백업을 중단하려면, 폴더를 이동하거나 삭제해야 합니다</translation>
     </message>
 </context>
 <context>
@@ -7539,7 +7554,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Error opening megaignore file</source>
         <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
-        <translation>Error opening .megaignore file</translation>
+        <translation>.megaignore 파일 여는 중 오류</translation>
     </message>
 </context>
 <context>
@@ -7547,27 +7562,27 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Add a backup to protect your folders automatically</source>
         <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
-        <translation>Add a backup to protect your folders automatically</translation>
+        <translation>폴더를 자동으로 보호하려면 백업을 추가하세요.</translation>
     </message>
     <message>
         <source>Add a sync to keep folders up to date</source>
         <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
-        <translation>Keep folders up to date across devices</translation>
+        <translation>여러 기기에서 폴더를 최신 상태로 유지하세요.</translation>
     </message>
     <message>
         <source>Add backup</source>
         <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
-        <translation>Add backup</translation>
+        <translation>백업 추가</translation>
     </message>
     <message>
         <source>Add sync</source>
         <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
-        <translation>Set up sync</translation>
+        <translation>동기화 설정</translation>
     </message>
     <message>
         <source>Automatic sync issue resolution</source>
         <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>Automatically resolve sync issues</translation>
+        <translation>동기화 문제를 자동으로 해결합니다.</translation>
     </message>
     <message>
         <source>Available[BR]%1</source>
@@ -7577,12 +7592,12 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Backed up</source>
         <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
-        <translation>Backed up</translation>
+        <translation>백업됨</translation>
     </message>
     <message>
         <source>Backup folder</source>
         <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
-        <translation>Backup folder</translation>
+        <translation>백업 폴더</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -7617,17 +7632,17 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Disabled</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Disabled</translation>
+        <translation>비활성화됨</translation>
     </message>
     <message>
         <source>Enable backup</source>
         <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
-        <translation>Enable backup</translation>
+        <translation>백업 활성화</translation>
     </message>
     <message>
         <source>Enable sync</source>
         <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
-        <translation>Enable sync</translation>
+        <translation>동기화 활성화</translation>
     </message>
     <message>
         <source>File versions</source>
@@ -7642,92 +7657,82 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Get more storage</source>
         <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
-        <translation></translation>
+        <translation>더 많은 저장소 받기</translation>
     </message>
     <message>
         <source>Loading</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Loading</translation>
+        <translation>불러오는 중</translation>
     </message>
     <message>
         <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
         <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</translation>
+        <translation>MEGA가 자동으로 동기화 문제를 감지하고 해결해 드립니다. 수동으로 검토하고 처리하려면 끄세요. [A]자세히 알아보기[/A]</translation>
     </message>
     <message>
         <source>Manage exclusions</source>
         <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
-        <translation>Manage exclusions</translation>
+        <translation>제외 관리</translation>
     </message>
     <message>
         <source>No backups</source>
         <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
-        <translation>No backups</translation>
+        <translation>백업 없음</translation>
     </message>
     <message>
         <source>No syncs set up</source>
         <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
-        <translation>No syncs set up</translation>
+        <translation>설정된 동기화가 없습니다</translation>
     </message>
     <message>
         <source>Open in MEGA</source>
         <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
-        <translation>Open in MEGA</translation>
-    </message>
-    <message>
-        <source>Open in mega</source>
-        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
-        <translation>Open in MEGA</translation>
+        <translation>MEGA에서 열기</translation>
     </message>
     <message>
         <source>Pause</source>
         <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
-        <translation>Pause</translation>
+        <translation>일시정지</translation>
     </message>
     <message>
         <source>Paused</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Paused</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
-        <translation>Restart</translation>
+        <translation>일시정지됨</translation>
     </message>
     <message>
         <source>Reboot backup</source>
         <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
-        <translation>Reboot backup</translation>
+        <translation>백업 재시작</translation>
     </message>
     <message>
         <source>Reboot sync</source>
         <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
-        <translation>Reboot sync</translation>
+        <translation>동기화 재시작</translation>
     </message>
     <message>
         <source>Remove synced folder</source>
         <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
-        <translation>Remove synced folder</translation>
+        <translation>동기화 폴더 삭제</translation>
     </message>
     <message>
         <source>Rescan</source>
         <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
-        <translation>Rescan</translation>
+        <translation>다시 스캔</translation>
     </message>
     <message>
         <source>Restore folder</source>
         <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
-        <translation>Restore folder</translation>
+        <translation>폴더 복원</translation>
     </message>
     <message>
         <source>Resume</source>
         <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
-        <translation>Resume</translation>
+        <translation>재개</translation>
     </message>
     <message>
         <source>Retry</source>
         <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
-        <translation>Retry</translation>
+        <translation>재시도</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7742,42 +7747,42 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Scanning</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Scanning</translation>
+        <translation>탐색중</translation>
     </message>
     <message>
         <source>Show in File Explorer</source>
         <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
-        <translation>Show in File Explorer</translation>
+        <translation>파일 탐색기에서 보기</translation>
     </message>
     <message>
         <source>Show in Finder</source>
         <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
-        <translation>Show in Finder</translation>
+        <translation>Finder에서 보기</translation>
     </message>
     <message>
         <source>Show in folder</source>
         <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
-        <translation>Show in folder</translation>
+        <translation>폴더 안에 보이기</translation>
     </message>
     <message>
         <source>Start new backup</source>
         <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
-        <translation>Start new backup</translation>
+        <translation>새 백업 시작</translation>
     </message>
     <message>
         <source>Start new sync</source>
         <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
-        <translation>Start new sync</translation>
+        <translation>새 동기화 시작</translation>
     </message>
     <message>
         <source>Status</source>
         <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
-        <translation>Status</translation>
+        <translation>상태</translation>
     </message>
     <message>
         <source>Stop backup</source>
         <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
-        <translation>Stop backup</translation>
+        <translation>백업 중단</translation>
     </message>
     <message>
         <source>Storage Space</source>
@@ -7787,22 +7792,17 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Synced</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Synced</translation>
+        <translation>동기화됨</translation>
     </message>
     <message>
         <source>Synced folders</source>
         <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
-        <translation>Synced folders</translation>
-    </message>
-    <message>
-        <source>Syncing</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Syncing</translation>
+        <translation>동기화된 폴더</translation>
     </message>
     <message>
         <source>Transferring</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Transferring</translation>
+        <translation>전송 중</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7822,7 +7822,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>View in MEGA</source>
         <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
-        <translation>View in MEGA</translation>
+        <translation>MEGA에서 보기</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -8908,7 +8908,8 @@ Please, refresh the list.</source>
         <source>Target is too deep on your folder structure.
 Please move it to a location that is less than 64 folders deep.</source>
         <translatorcomment>Title for the header widget of sync stall that occurs when the file is more than 64 folders deep.SNC-2565</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>대상이 폴더 구조의 너무 깊은 곳에 있습니다. 동기화를 정지하고, 폴더를 64단계보다 얕은 곳으로 이동한 뒤 동기화를 다시 만드세요.
+이렇게 해도 문제가 해결되지 않는다면, https://mega.nz/support에서 지원 부서에 연락주세요</translation>
     </message>
     <message>
         <source>Unable to sync [B]%1[/B]</source>
@@ -9046,22 +9047,22 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Can&apos;t restore %1 mega folder</source>
         <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
-        <translation>Can’t restore %1 mega folder</translation>
+        <translation>MEGA 폴더 %1을 복원할 수 없습니다.</translation>
     </message>
     <message>
         <source>Close</source>
         <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
-        <translation>Close</translation>
+        <translation>닫기</translation>
     </message>
     <message>
         <source>Error opening megaignore file</source>
         <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
-        <translation>Error opening .megaignore file</translation>
+        <translation>.megaignore 파일 여는 중 오류</translation>
     </message>
     <message>
         <source>Remove sync</source>
         <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
-        <translation>Remove sync</translation>
+        <translation>동기화 제거</translation>
     </message>
 </context>
 <context>

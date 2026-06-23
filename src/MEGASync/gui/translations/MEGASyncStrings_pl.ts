@@ -606,6 +606,11 @@
         <translation>Zgłoś problem</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>Twoje zgłoszenie nie mogło zostać przesłane z powodu błędu. Spróbuj ponownie później lub skontaktuj się z [A]Wsparciem[/A], jeśli problem będzie się utrzymywał.</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>Twoje zgłoszenie nie mogło zostać przesłane z powodu błędu. Spróbuj ponownie później lub skontaktuj się z naszym zespołem wsparcia pod adresem https://mega.nz/support, jeśli problem będzie się utrzymywał.</translation>
@@ -659,6 +664,11 @@
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
         <translation>Proszę opisać szczegółowo swój problem. Musi zawierać co najmniej 30 znaków.</translation>
+    </message>
+    <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>Spróbuj ponownie później lub skontaktuj się z [A]Wsparcie[/A], jeśli problem będzie się utrzymywał.</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -3137,6 +3147,11 @@ Poczekaj na zakończenie przesyłania.</translation>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
         <translation>Zostałeś wylogowany z tego urządzenia z innej lokalizacji</translation>
+    </message>
+    <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>Zostałeś wylogowany. Skontaktuj się z [A]Wsparciem[/A], jeśli problem nadal występuje.</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -6925,7 +6940,7 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Delete folder from MEGA</source>
         <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
-        <translation>Delete folder from MEGA</translation>
+        <translation>Usuń folder z MEGA</translation>
     </message>
     <message>
         <source>Delete folder permanently</source>
@@ -6945,7 +6960,7 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Move folder to Cloud drive</source>
         <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
-        <translation>Move folder to Cloud drive</translation>
+        <translation>Przenieś folder do dysku w chmurze</translation>
     </message>
     <message>
         <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
@@ -6955,7 +6970,7 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
         <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
-        <translation>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</translation>
+        <translation>Przenieś ten folder na swój dysk w chmurze, aby uzyskać pełny dostęp do swoich danych. Dane nie będą już objęte kopią zapasową.</translation>
     </message>
     <message>
         <source>Move to:</source>
@@ -6975,7 +6990,7 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
         <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
-        <translation>The folder will be deleted from MEGA, but it won’t be deleted from your device. [B]This action can’t be undone.[/B]</translation>
+        <translation>Folder zostanie usunięty z MEGA, ale nie z Twojego urządzenia. [B]Ta operacja nie może zostać cofnięta.[/B]</translation>
     </message>
     <message>
         <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
@@ -6985,7 +7000,7 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>To stop backing up this folder, you need to either move it or delete it</source>
         <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
-        <translation>To stop backing up this folder, you need to either move it or delete it</translation>
+        <translation>Aby przestać tworzyć kopie zapasowe tego folderu, musisz go przenieść lub usunąć</translation>
     </message>
 </context>
 <context>
@@ -7651,7 +7666,7 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Error opening megaignore file</source>
         <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
-        <translation>Error opening .megaignore file</translation>
+        <translation>Błąd otwierania pliku .megaignore</translation>
     </message>
 </context>
 <context>
@@ -7659,27 +7674,27 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Add a backup to protect your folders automatically</source>
         <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
-        <translation>Add a backup to protect your folders automatically</translation>
+        <translation>Dodaj kopię zapasową, aby automatycznie chronić swoje foldery</translation>
     </message>
     <message>
         <source>Add a sync to keep folders up to date</source>
         <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
-        <translation>Keep folders up to date across devices</translation>
+        <translation>Utrzymuj foldery na bieżąco na wszystkich urządzeniach</translation>
     </message>
     <message>
         <source>Add backup</source>
         <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
-        <translation>Add backup</translation>
+        <translation>Dodaj kopię zapasową</translation>
     </message>
     <message>
         <source>Add sync</source>
         <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
-        <translation>Set up sync</translation>
+        <translation>Skonfiguruj synchronizację</translation>
     </message>
     <message>
         <source>Automatic sync issue resolution</source>
         <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>Automatically resolve sync issues</translation>
+        <translation>Automatyczne rozwiązywanie problemów synchronizacji</translation>
     </message>
     <message>
         <source>Available[BR]%1</source>
@@ -7689,12 +7704,12 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Backed up</source>
         <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
-        <translation>Backed up</translation>
+        <translation>Wykonano kopię zapasową</translation>
     </message>
     <message>
         <source>Backup folder</source>
         <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
-        <translation>Backup folder</translation>
+        <translation>Folder kopii zapasowej</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -7729,17 +7744,17 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Disabled</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Disabled</translation>
+        <translation>Zablokowany</translation>
     </message>
     <message>
         <source>Enable backup</source>
         <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
-        <translation>Enable backup</translation>
+        <translation>Włącz kopię zapasową</translation>
     </message>
     <message>
         <source>Enable sync</source>
         <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
-        <translation>Enable sync</translation>
+        <translation>Włącz synchronizację</translation>
     </message>
     <message>
         <source>File versions</source>
@@ -7754,92 +7769,82 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Get more storage</source>
         <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
-        <translation></translation>
+        <translation>Zyskaj więcej miejsca</translation>
     </message>
     <message>
         <source>Loading</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Loading</translation>
+        <translation>Ładowanie</translation>
     </message>
     <message>
         <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
         <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
-        <translation>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</translation>
+        <translation>MEGA automatycznie wykrywa i rozwiązuje problemy synchronizacji dla ciebie. Wyłącz to, jeśli wolisz przeglądać i obsługiwać je ręcznie. [A]Dowiedz się więcej[/A]</translation>
     </message>
     <message>
         <source>Manage exclusions</source>
         <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
-        <translation>Manage exclusions</translation>
+        <translation>Zarządzaj wykluczeniami</translation>
     </message>
     <message>
         <source>No backups</source>
         <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
-        <translation>No backups</translation>
+        <translation>Brak kopii zapasowych</translation>
     </message>
     <message>
         <source>No syncs set up</source>
         <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
-        <translation>No syncs set up</translation>
+        <translation>Brak ustawień synchronizacji</translation>
     </message>
     <message>
         <source>Open in MEGA</source>
         <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
-        <translation>Open in MEGA</translation>
-    </message>
-    <message>
-        <source>Open in mega</source>
-        <translatorcomment>Sync menu command to open the mega sync folder in the mega webclient. SNC-6404</translatorcomment>
-        <translation>Open in MEGA</translation>
+        <translation>Otwórz w MEGA</translation>
     </message>
     <message>
         <source>Pause</source>
         <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
-        <translation>Pause</translation>
+        <translation>Pauza</translation>
     </message>
     <message>
         <source>Paused</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Paused</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translatorcomment>Sync menu command to reboot the sync. SNC-6404</translatorcomment>
-        <translation>Restart</translation>
+        <translation>Wstrzymano</translation>
     </message>
     <message>
         <source>Reboot backup</source>
         <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
-        <translation>Reboot backup</translation>
+        <translation>Uruchom ponownie kopię zapasową</translation>
     </message>
     <message>
         <source>Reboot sync</source>
         <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
-        <translation>Reboot sync</translation>
+        <translation>Zrestartuj synchronizację</translation>
     </message>
     <message>
         <source>Remove synced folder</source>
         <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
-        <translation>Remove synced folder</translation>
+        <translation>Usuń zsynchronizowany folder</translation>
     </message>
     <message>
         <source>Rescan</source>
         <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
-        <translation>Rescan</translation>
+        <translation>Skanuj ponownie</translation>
     </message>
     <message>
         <source>Restore folder</source>
         <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
-        <translation>Restore folder</translation>
+        <translation>Przywróć folder</translation>
     </message>
     <message>
         <source>Resume</source>
         <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
-        <translation>Resume</translation>
+        <translation>Wznów</translation>
     </message>
     <message>
         <source>Retry</source>
         <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
-        <translation>Retry</translation>
+        <translation>Spróbuj ponownie</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7854,32 +7859,32 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Scanning</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Scanning</translation>
+        <translation>Skanowanie</translation>
     </message>
     <message>
         <source>Show in File Explorer</source>
         <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
-        <translation>Show in File Explorer</translation>
+        <translation>Pokaż w Eksploratorze plików</translation>
     </message>
     <message>
         <source>Show in Finder</source>
         <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
-        <translation>Show in Finder</translation>
+        <translation>Pokaż w Finderze</translation>
     </message>
     <message>
         <source>Show in folder</source>
         <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
-        <translation>Show in folder</translation>
+        <translation>Pokaż w folderze</translation>
     </message>
     <message>
         <source>Start new backup</source>
         <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
-        <translation>Start new backup</translation>
+        <translation>Rozpocznij nową kopię zapasową</translation>
     </message>
     <message>
         <source>Start new sync</source>
         <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
-        <translation>Start new sync</translation>
+        <translation>Rozpocznij nową synchronizację</translation>
     </message>
     <message>
         <source>Status</source>
@@ -7889,7 +7894,7 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Stop backup</source>
         <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
-        <translation>Stop backup</translation>
+        <translation>Wstrzymaj tworzenie kopii</translation>
     </message>
     <message>
         <source>Storage Space</source>
@@ -7899,22 +7904,17 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>Synced</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Synced</translation>
+        <translation>Zsynchronizowano</translation>
     </message>
     <message>
         <source>Synced folders</source>
         <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
-        <translation>Synced folders</translation>
-    </message>
-    <message>
-        <source>Syncing</source>
-        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Syncing</translation>
+        <translation>Synchronizowane foldery</translation>
     </message>
     <message>
         <source>Transferring</source>
         <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
-        <translation>Transferring</translation>
+        <translation>Przesyłanie</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7934,7 +7934,7 @@ Czy mimo to chcesz je usunąć?</translation>
     <message>
         <source>View in MEGA</source>
         <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
-        <translation>View in MEGA</translation>
+        <translation>Zobacz w MEGA</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -9182,22 +9182,22 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Can&apos;t restore %1 mega folder</source>
         <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
-        <translation>Can’t restore %1 mega folder</translation>
+        <translation>Nie można przywrócić folderu MEGA %1</translation>
     </message>
     <message>
         <source>Close</source>
         <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
-        <translation>Close</translation>
+        <translation>Zamknij</translation>
     </message>
     <message>
         <source>Error opening megaignore file</source>
         <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
-        <translation>Error opening .megaignore file</translation>
+        <translation>Błąd otwierania pliku .megaignore</translation>
     </message>
     <message>
         <source>Remove sync</source>
         <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
-        <translation>Remove sync</translation>
+        <translation>Usuń synchronizację</translation>
     </message>
 </context>
 <context>

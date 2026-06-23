@@ -126,11 +126,6 @@ bool ServiceUrls::isDataReady(bool emitSignal)
     return mDataReady;
 }
 
-QUrl ServiceUrls::getSupportEmail()
-{
-    return {QLatin1String("mailto:support@mega.io")};
-}
-
 QUrl ServiceUrls::getBaseUrl() const
 {
     QUrl url;
@@ -168,6 +163,13 @@ QUrl ServiceUrls::getRemoteSetLinkUrl(const QString& handle, const QString& key)
     auto url = getLinkBaseUrl();
     url.setPath(url.path() + QString::fromUtf8("/collection/%1").arg(handle));
     url.setFragment(key);
+    return url;
+}
+
+QUrl ServiceUrls::getSupportFormUrl() const
+{
+    auto url = getBaseUrl();
+    url.setPath(QLatin1String("/support"));
     return url;
 }
 

@@ -417,9 +417,9 @@
         <translation>Attach diagnostic log files to assist with debugging</translation>
     </message>
     <message>
-        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
-        <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
-        <translation>Your issue couldn’t be uploaded due to an error. Try again later or contact our support team via [A]https://mega.nz/support[/A] if the problem persists.</translation>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>Your issue couldn’t be submitted due to an error. Try again later or contact [A]Support[/A] if the problem persists.</translation>
     </message>
     <message>
         <source>Bug report is uploading, it may take a few minutes</source>
@@ -462,9 +462,9 @@
         <translation>Please describe your issue in detail. Must be at least 30 characters.</translation>
     </message>
     <message>
-        <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
-        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
-        <translation>Please try again later or contact our support team via [A]https://mega.nz/support[/A] if the problem persists.</translation>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>Please try again later or contact [A]Support[/A] if the problem persists.</translation>
     </message>
     <message>
         <source>Please wait until the current upload is completed.</source>
@@ -2919,9 +2919,9 @@ Wait for the upload to complete.</translation>
         <translation>You’ve been logged out of this device from another location</translation>
     </message>
     <message>
-        <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
-        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. CON-541</translatorcomment>
-        <translation>You have been logged out. Contact support at [A]https://mega.nz/support[/A] if this issue persists.</translation>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>You have been logged out. Contact [A]Support[/A] if this issue persists.</translation>
     </message>
 </context>
 <context>
@@ -7345,7 +7345,7 @@ Do you want to delete it anyway?</translation>
     <message>
         <source>Get more storage</source>
         <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
-        <translation></translation>
+        <translation>Get more storage</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -8623,7 +8623,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Can&apos;t restore %1 mega folder</source>
         <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
-        <translation>Can’t restore %1 mega folder</translation>
+        <translation>Can’t restore MEGA folder %1</translation>
     </message>
     <message>
         <source>Close</source>
