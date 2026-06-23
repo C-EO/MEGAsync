@@ -294,6 +294,11 @@ public:
 
     ~ClickableLabel() {}
 
+    void setEnterCursorOverride(bool enabled)
+    {
+        mEnterCursorOverride = enabled;
+    }
+
 signals:
     void clicked();
 
@@ -305,14 +310,23 @@ protected:
 #ifndef __APPLE__
     void enterEvent(QEvent*)
     {
-        setCursor(Qt::PointingHandCursor);
+        if (mEnterCursorOverride)
+        {
+            setCursor(Qt::PointingHandCursor);
+        }
     }
 
     void leaveEvent(QEvent*)
     {
-        setCursor(Qt::ArrowCursor);
+        if (mEnterCursorOverride)
+        {
+            setCursor(Qt::ArrowCursor);
+        }
     }
 #endif
+
+private:
+    bool mEnterCursorOverride = true;
 };
 
 class OverlayWidget: public QWidget

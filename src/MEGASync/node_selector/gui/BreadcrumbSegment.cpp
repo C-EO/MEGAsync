@@ -38,6 +38,7 @@ void BreadcrumbSegment::setHighlighted(bool highlighted)
 
 void BreadcrumbSegment::setInteractive(bool interactive)
 {
+    setEnterCursorOverride(interactive);
     setCursor(interactive ? Qt::PointingHandCursor : Qt::ArrowCursor);
 }
 
