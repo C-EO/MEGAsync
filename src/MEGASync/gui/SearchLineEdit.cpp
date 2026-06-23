@@ -32,7 +32,6 @@ SearchLineEdit::SearchLineEdit(QWidget* parent):
     connect(ui->leSearchField, &QLineEdit::textChanged, this, &SearchLineEdit::onTextChanged);
 
     ui->tSearchCancel->setGraphicsEffect(new QGraphicsOpacityEffect());
-    ui->leSearchField->setGraphicsEffect(new QGraphicsOpacityEffect());
     ui->customWidget->setGraphicsEffect(new QGraphicsOpacityEffect());
 
     ui->leSearchField->installEventFilter(this);
