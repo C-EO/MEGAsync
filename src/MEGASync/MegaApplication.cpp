@@ -4492,11 +4492,13 @@ void MegaApplication::runUploadActionWithTargetHandle(const MegaHandle& targetFo
             OverQuotaDialog::createDialogIfNeeded(OverQuotaDialogType::STORAGE_UPLOAD);
         if (overQuotaDialog)
         {
-            overQuotaDialog->setParent(parent);
+            overQuotaDialog->setParent(parent, overQuotaDialog->windowFlags());
             DialogOpener::showDialog<OverQuotaDialog>(overQuotaDialog, [processUpload]()
             {
                 processUpload();
             });
+
+            return;
         }
     }
 

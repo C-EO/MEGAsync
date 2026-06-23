@@ -708,10 +708,21 @@ void NodeSelectorTreeViewWidget::updateHeaderDividerGeometry()
 {
     auto* header = ui->tMegaFolders->header();
     const int dividerY = header->mapTo(ui->treeViewPage, QPoint(0, header->height())).y();
-    ui->headerDivider->setGeometry(0,
-                                   dividerY,
-                                   ui->treeViewPage->width(),
-                                   ui->headerDivider->height());
+
+    int dividerWidth = ui->treeViewPage->width();
+
+#ifdef Q_OS_LINUX
+    // On Linux the vertical scrollbar spans up to the header height, so a full-width divider would
+    // be painted on top of the scrollbar. Trim the divider by the scrollbar width while it is
+    // visible so the separator stops before the scrollbar.
+    auto* verticalScrollBar = ui->tMegaFolders->verticalScrollBar();
+    if (verticalScrollBar && verticalScrollBar->isVisible())
+    {
+        dividerWidth -= verticalScrollBar->width();
+    }
+#endif
+
+    ui->headerDivider->setGeometry(0, dividerY, dividerWidth, ui->headerDivider->height());
     ui->headerDivider->raise();
 }
 
