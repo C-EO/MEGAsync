@@ -58,6 +58,7 @@ private:
     void rebuildSegments(bool force = true);
     void refreshOverflowPopup();
     void updateOverflowPopupContent();
+    void positionOverflowPopup();
     void resolveSegmentNames();
     QString resolveSegmentText(const NodeSelectorBreadcrumbSegment& segment) const;
     void recalculateSegmentMetrics();

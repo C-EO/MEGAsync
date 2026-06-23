@@ -321,6 +321,16 @@ void Breadcrumb::updateOverflowPopupContent()
 
     mOverflowPopup->setSegments(hiddenSegments, mOverflowSegmentsNavigable ? 0 : -1);
 
+    positionOverflowPopup();
+}
+
+void Breadcrumb::positionOverflowPopup()
+{
+    if (!mOverflowPopup)
+    {
+        return;
+    }
+
     // Horizontal: anchored to the overflow button (shifted left). Vertical: anchored to the
     // bottom of the whole path row so the popup clears it.
     const int globalX = ui->bOverflow->mapToGlobal(QPoint(POPUP_HORIZONTAL_OFFSET, 0)).x();
@@ -450,8 +460,13 @@ void Breadcrumb::showOverflowPopup()
 
     mOverflowPopup = popup;
     updateOverflowButtonStyle(true);
-    // Show first, then size + position: a top-level Qt::Popup may ignore a move() issued
-    // before it is shown (notably on macOS), which would leave it mispositioned.
-    popup->show();
+    // Populate, size and position BEFORE showing: on Wayland an xdg_popup's position is fixed by
+    // its positioner at map time (i.e. at show()), and a move() issued afterwards is an unreliable
+    // reposition request that older compositors/Qt builds ignore, leaving the popup at a
+    // compositor-chosen spot. Setting geometry first gives the positioner the correct anchor.
     updateOverflowPopupContent();
+    popup->show();
+    // Re-apply the position after showing as well: a top-level Qt::Popup may ignore a move()
+    // issued before it is shown (notably on macOS). Cheap, no content rebuild.
+    positionOverflowPopup();
 }
