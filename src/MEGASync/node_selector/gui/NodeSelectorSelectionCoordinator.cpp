@@ -213,6 +213,11 @@ void NodeSelectorSelectionCoordinator::onNodesAdded(
             }
 
             auto node = item->getNode();
+            if (!node)
+            {
+                continue;
+            }
+
             if (!NodeSelectorMergeTargetUtils::isNodeInsideMergeTargetSubtree(mMegaApi,
                                                                               mMergeTargetFolders,
                                                                               node.get()))
@@ -240,7 +245,7 @@ void NodeSelectorSelectionCoordinator::checkNewFolderAdded(QPointer<NodeSelector
         return;
     }
 
-    if (!item)
+    if (!item || !item->getNode())
     {
         return;
     }

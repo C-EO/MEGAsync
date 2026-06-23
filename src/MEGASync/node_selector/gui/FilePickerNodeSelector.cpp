@@ -262,22 +262,25 @@ QList<NodeSelectorBreadcrumbSegment> FilePickerNodeSelector::breadcrumbSegmentsF
 
     const auto names = QString::fromUtf8(path.get()).split(QLatin1Char('/'), Qt::SkipEmptyParts);
 
-    // Capture one handle per path component by walking up from the node, so the
-    // breadcrumb can resolve fresh names later (e.g. when the overflow popup opens).
-    QList<mega::MegaHandle> handles;
-    handles.reserve(names.size());
+    // Walk up from the node pairing each path component with its handle, so the breadcrumb
+    // can resolve fresh names later (e.g. when the overflow popup opens). names is top-down
+    // while the walk is bottom-up, so iterate names from the deepest end to keep each name
+    // aligned with its own handle. If an ancestor cannot be retrieved the walk stops and the
+    // remaining (top) components fall back to INVALID_HANDLE.
+    QList<NodeSelectorBreadcrumbSegment> nodeSegments;
     std::shared_ptr<mega::MegaNode> current = node;
-    for (int i = 0; i < names.size() && current; ++i)
+    for (int i = names.size() - 1; i >= 0; --i)
     {
-        handles.prepend(current->getHandle());
-        current.reset(mMegaApi->getNodeByHandle(current->getParentHandle()));
+        const auto handle = current ? current->getHandle() : mega::INVALID_HANDLE;
+        nodeSegments.prepend({handle, names.at(i)});
+
+        if (current)
+        {
+            current.reset(mMegaApi->getNodeByHandle(current->getParentHandle()));
+        }
     }
 
-    for (int i = 0; i < names.size(); ++i)
-    {
-        const auto handle = i < handles.size() ? handles.at(i) : mega::INVALID_HANDLE;
-        segments.append({handle, names.at(i)});
-    }
+    segments.append(nodeSegments);
 
     return segments;
 }

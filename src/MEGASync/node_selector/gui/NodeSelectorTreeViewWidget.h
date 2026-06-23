@@ -232,6 +232,9 @@ protected:
     Ui::NodeSelectorTreeViewWidget* ui;
     std::shared_ptr<NodeSelectorProxyModel> mProxyModel;
     std::unique_ptr<NodeSelectorModel> mModel;
+    // Containers used to ignore specific nodes updates. Declared before the coordinators
+    // because mModelUpdateCoordinator holds a reference to it and must be destroyed first.
+    QSet<mega::MegaHandle> mNodesToBeReplaced;
     std::unique_ptr<NodeSelectorSelectionCoordinator> mSelectionCoordinator;
     std::unique_ptr<NodeSelectorModelUpdateCoordinator> mModelUpdateCoordinator;
     NodeSelectorNodeActions mNodeActions;
@@ -321,9 +324,6 @@ private:
     bool mNewFolderButtonVisible = true;
     bool mViewInitialized = false;
     ViewType mCurrentViewType = ViewType::VIEW;
-
-    // Containers used to ignore specific nodes updates
-    QSet<mega::MegaHandle> mNodesToBeReplaced;
 
     QTimer mNodesUpdateTimer;
 

@@ -65,10 +65,10 @@ void NodeSelectorNodeActions::deleteNodes(const QList<mega::MegaHandle>& handles
         msgInfo.parent = mDialogParent;
         msgInfo.buttons = QMessageBox::Yes | QMessageBox::No;
         msgInfo.defaultButton = QMessageBox::Yes;
-        msgInfo.finishFunc =
-            [model = mModel, handles, permanently](QPointer<MessageDialogResult> msg)
+        msgInfo.finishFunc = [model = QPointer<NodeSelectorModel>(mModel), handles, permanently](
+                                 QPointer<MessageDialogResult> msg)
         {
-            if (msg->result() == QMessageBox::Yes)
+            if (model && msg->result() == QMessageBox::Yes)
             {
                 model->deleteNodes(handles, permanently);
             }
@@ -183,9 +183,10 @@ void NodeSelectorNodeActions::leaveShare(const QList<mega::MegaHandle>& handles)
         "If you leave the folder, you will not be able to see it again.",
         "",
         int(handles.size()));
-    msgInfo.finishFunc = [model = mModel, handles](QPointer<MessageDialogResult> msg)
+    msgInfo.finishFunc =
+        [model = QPointer<NodeSelectorModel>(mModel), handles](QPointer<MessageDialogResult> msg)
     {
-        if (msg->result() == QMessageBox::Yes)
+        if (model && msg->result() == QMessageBox::Yes)
         {
             model->deleteNodes(handles, true);
         }

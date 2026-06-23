@@ -559,7 +559,7 @@ void FileManagerNodeSelector::checkMovingItems(const QList<mega::MegaHandle>& ha
             type == NodeSelector::IncreaseOrDecrease::INCREASE ?
                 mCloudDriveWidget->increaseMovingNodes(
                     static_cast<int>(tabsInfo.cloudDriveNodes.size())) :
-                mIncomingSharesWidget->decreaseMovingNodes(
+                mCloudDriveWidget->decreaseMovingNodes(
                     static_cast<int>(tabsInfo.cloudDriveNodes.size()));
         }
 

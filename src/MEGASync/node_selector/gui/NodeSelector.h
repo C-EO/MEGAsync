@@ -175,11 +175,11 @@ protected:
     NodeSelectorTreeViewWidget* addSearchTreeViewWidget();
     NodeSelectorTreeViewWidget* addRubbish();
 
-    NodeSelectorTreeViewWidgetCloudDrive* mCloudDriveWidget;
-    NodeSelectorTreeViewWidgetIncomingShares* mIncomingSharesWidget;
-    NodeSelectorTreeViewWidgetBackups* mBackupsWidget;
-    NodeSelectorTreeViewWidgetSearch* mSearchWidget;
-    NodeSelectorTreeViewWidgetRubbish* mRubbishWidget;
+    NodeSelectorTreeViewWidgetCloudDrive* mCloudDriveWidget = nullptr;
+    NodeSelectorTreeViewWidgetIncomingShares* mIncomingSharesWidget = nullptr;
+    NodeSelectorTreeViewWidgetBackups* mBackupsWidget = nullptr;
+    NodeSelectorTreeViewWidgetSearch* mSearchWidget = nullptr;
+    NodeSelectorTreeViewWidgetRubbish* mRubbishWidget = nullptr;
 
     mega::MegaApi* mMegaApi;
     Ui::NodeSelector* ui;
