@@ -939,7 +939,7 @@ void NodeSelectorModel::protectModelWhenPerformingActions()
 
 void NodeSelectorModel::executeRemoveExtraSpaceLogic(const QModelIndex& previousIndex)
 {
-    if (/*canDropMimeData() && */ mExtraSpaceEnabled)
+    if (mExtraSpaceEnabled)
     {
         // Remove the previous current index extra row
         if (mExtraSpaceAdded && previousIndex.isValid() && !mExtraSpaceRemoved)
@@ -972,7 +972,7 @@ void NodeSelectorModel::executeAddExtraSpaceLogic(const QModelIndex& currentInde
         return;
     }
 
-    if (/*canDropMimeData() && */ mExtraSpaceEnabled)
+    if (mExtraSpaceEnabled)
     {
         NodeSelectorModelItem* item =
             static_cast<NodeSelectorModelItem*>(currentIndex.internalPointer());
