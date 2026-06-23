@@ -439,6 +439,14 @@ bool NodeSelectorTreeViewWidget::event(QEvent* event)
 
 bool NodeSelectorTreeViewWidget::eventFilter(QObject* watched, QEvent* event)
 {
+#ifdef Q_OS_LINUX
+    if (watched == ui->tMegaFolders->verticalScrollBar() &&
+        (event->type() == QEvent::Show || event->type() == QEvent::Hide))
+    {
+        updateHeaderDividerGeometry();
+        return QWidget::eventFilter(watched, event);
+    }
+#endif
     if (event->type() == QEvent::DragEnter)
     {
         if (auto dropEvent = static_cast<QDragEnterEvent*>(event))
@@ -703,6 +711,12 @@ void NodeSelectorTreeViewWidget::setupHeaderDivider()
 
     // The header geometry is not valid during construction; defer the first placement.
     QTimer::singleShot(0, this, &NodeSelectorTreeViewWidget::updateHeaderDividerGeometry);
+
+#ifdef Q_OS_LINUX
+    // On Linux the scrollbar show/hide does not always trigger a viewport resize, so install an
+    // event filter to catch those transitions and re-run the geometry update explicitly.
+    ui->tMegaFolders->verticalScrollBar()->installEventFilter(this);
+#endif
 }
 
 void NodeSelectorTreeViewWidget::updateHeaderDividerGeometry()
@@ -719,7 +733,7 @@ void NodeSelectorTreeViewWidget::updateHeaderDividerGeometry()
     auto* verticalScrollBar = ui->tMegaFolders->verticalScrollBar();
     if (verticalScrollBar && verticalScrollBar->isVisible())
     {
-        dividerWidth -= verticalScrollBar->width();
+        dividerWidth = ui->tMegaFolders->viewport()->width();
     }
 #endif
 
