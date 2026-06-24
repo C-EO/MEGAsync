@@ -2,10 +2,10 @@
 
 #include "CommonMessages.h"
 #include "DialogOpener.h"
+#include "FilePickerNodeSelectorSpecializations.h"
 #include "ImportListWidgetItem.h"
 #include "MegaApplication.h"
 #include "MessageDialogOpener.h"
-#include "NodeSelectorSpecializations.h"
 #include "Platform.h"
 #include "ui_ImportMegaLinksDialog.h"
 #include "Utilities.h"

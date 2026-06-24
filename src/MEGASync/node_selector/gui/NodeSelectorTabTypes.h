@@ -1,0 +1,19 @@
+#ifndef NODESELECTORTABTYPES_H
+#define NODESELECTORTABTYPES_H
+
+#include <QFlags>
+#include <QMetaEnum>
+
+enum class TabType
+{
+    NONE = 0x0,
+    BACKUP = 0x01,
+    INCOMING_SHARE = 0x02,
+    CLOUD_DRIVE = 0x04,
+    RUBBISH = 0x08,
+};
+Q_DECLARE_FLAGS(TabTypes, TabType)
+Q_DECLARE_OPERATORS_FOR_FLAGS(TabTypes)
+Q_DECLARE_METATYPE(TabTypes)
+
+#endif // NODESELECTORTABTYPES_H

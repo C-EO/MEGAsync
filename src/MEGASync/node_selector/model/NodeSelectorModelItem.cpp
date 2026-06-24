@@ -3,6 +3,7 @@
 #include "Avatar.h"
 #include "FullName.h"
 #include "MegaApplication.h"
+#include "MyBackupsHandle.h"
 #include "Utilities.h"
 
 const int NodeSelectorModelItem::ICON_SIZE = 17;
@@ -56,7 +57,7 @@ std::shared_ptr<mega::MegaNode> NodeSelectorModelItem::getNode() const
 
 bool NodeSelectorModelItem::isSpecialNode() const
 {
-    return (isCloudDrive() || isMyBackupsFolder() || isRubbishBin());
+    return (isCloudDrive() || isMyBackupsFolder() || isRubbishBin() || isS4Container());
 }
 
 bool NodeSelectorModelItem::isTakenDown() const
@@ -67,7 +68,7 @@ bool NodeSelectorModelItem::isTakenDown() const
 bool NodeSelectorModelItem::canBeRenamed() const
 {
     if (isTakenDown() || isCloudDrive() || isMyBackupsFolder() || isRubbishBin() ||
-        isInRubbishBin() || (mMegaApi->isInVault(mNode.get())) ||
+        isInRubbishBin() || isS4Container() || (mMegaApi->isInVault(mNode.get())) ||
         (getNodeAccess() < mega::MegaShare::ACCESS_FULL))
     {
         return false;
@@ -379,7 +380,7 @@ QList<QPointer<NodeSelectorModelItem>>
     NodeSelectorModelItem::addNodes(QList<std::shared_ptr<MegaNode>> nodes)
 {
     auto items = buildNodes(nodes);
-    appendNodes(items);
+    initializeChildItems(items);
     return items;
 }
 
@@ -431,9 +432,15 @@ void NodeSelectorModelItem::calculateSyncStatus()
 
     mStatus = Status::NONE;
 
-    // if current item has a parent and the parent is already a sync or a sync_child, current item
-    // is also a sync_child if not, continue checking. This avoid to block the mutex in the megaapi
-    // call below.
+    if (isBackupFolder())
+    {
+        mStatus = Status::BACKUP;
+        return;
+    }
+
+    // if current item has a parent and the parent is already a sync or a sync_child, current
+    // item is also a sync_child if not, continue checking. This avoid to block the mutex in the
+    // megaapi call below.
     if (parent())
     {
         if (auto parent_item = qobject_cast<NodeSelectorModelItem*>(parent()))
@@ -444,9 +451,12 @@ void NodeSelectorModelItem::calculateSyncStatus()
                 case Status::SYNC_CHILD:
                 {
                     mStatus = Status::SYNC_CHILD;
+                    return;
                 }
                 default:
+                {
                     break;
+                }
             }
         }
     }
@@ -507,6 +517,11 @@ bool NodeSelectorModelItem::isFile() const
     return getNode() && getNode()->isFile();
 }
 
+bool NodeSelectorModelItem::isBackupFolder() const
+{
+    return false;
+}
+
 bool NodeSelectorModelItem::isInShare() const
 {
     return mNode->isInShare();
@@ -517,13 +532,20 @@ bool NodeSelectorModelItem::isInVault() const
     return MegaSyncApp->getMegaApi()->isInVault(mNode.get());
 }
 
+bool NodeSelectorModelItem::isS4Container() const
+{
+    // Do not cache the container handle: the SDK docs state it can change at any
+    // time (e.g. S4 being enabled/disabled from another client)
+    return mNode && mMegaApi->isS4Enabled() && mNode->getHandle() == mMegaApi->getS4Container();
+}
+
 NodeSelectorModelItemSearch::NodeSelectorModelItemSearch(std::unique_ptr<mega::MegaNode> node,
-                                                         Types type,
+                                                         TabTypes type,
                                                          NodeSelectorModelItem* parentItem):
     NodeSelectorModelItem(std::move(node), false, parentItem),
     mType(type)
 {
-    if (mType & NodeSelectorModelItemSearch::Type::INCOMING_SHARE)
+    if (mType & TabType::INCOMING_SHARE)
     {
         auto user = std::unique_ptr<mega::MegaUser>(
             MegaSyncApp->getMegaApi()->getUserFromInShare(mNode.get(), true));
@@ -531,24 +553,59 @@ NodeSelectorModelItemSearch::NodeSelectorModelItemSearch(std::unique_ptr<mega::M
     }
 
     calculateSyncStatus();
-
-    qRegisterMetaType<Types>("Types");
 }
 
 NodeSelectorModelItemSearch::~NodeSelectorModelItemSearch() {}
 
-void NodeSelectorModelItemSearch::setType(Types type)
+void NodeSelectorModelItemSearch::setType(TabTypes type)
 {
     if (mType != type)
     {
         mType = type;
-        emit typeChanged(type);
+        emit tabTypeChanged(type);
     }
 }
 
 int NodeSelectorModelItemSearch::getNumChildren()
 {
-    return 0;
+    return static_cast<int>(mChildItems.size());
+}
+
+bool NodeSelectorModelItemSearch::isMyBackupsFolder() const
+{
+    if (!mType.testFlag(TabType::BACKUP) || !mNode)
+    {
+        return false;
+    }
+
+    // Identify by the actual node, not by tree position: the "My Backups" root is excluded
+    // from search paths, so the topmost backup item is a device folder, which used to be
+    // wrongly classified as the My Backups folder when relying on parent() == nullptr.
+    auto backupsHandle =
+        UserAttributes::MyBackupsHandle::requestMyBackupsHandle()->getMyBackupsHandle();
+    return mNode->getHandle() == backupsHandle;
+}
+
+bool NodeSelectorModelItemSearch::isDeviceFolder() const
+{
+    if (!mType.testFlag(TabType::BACKUP) || !mNode)
+    {
+        return false;
+    }
+
+    // A device folder is the only backup node carrying a device id.
+    return !QString::fromUtf8(mNode->getDeviceId()).isEmpty();
+}
+
+bool NodeSelectorModelItemSearch::isBackupFolder() const
+{
+    if (!mType.testFlag(TabType::BACKUP))
+    {
+        return false;
+    }
+
+    auto parentItem = getParent();
+    return parentItem && parentItem->isDeviceFolder();
 }
 
 NodeSelectorModelItem*
@@ -557,8 +614,7 @@ NodeSelectorModelItem*
                                                  NodeSelectorModelItem* parentItem)
 {
     Q_UNUSED(showFiles)
-    Q_UNUSED(parentItem)
-    return nullptr;
+    return new NodeSelectorModelItemSearch(std::move(node), mType, parentItem);
 }
 
 NodeSelectorModelItemIncomingShare::NodeSelectorModelItemIncomingShare(
@@ -603,14 +659,27 @@ bool NodeSelectorModelItemBackup::isSyncable()
 
 bool NodeSelectorModelItemBackup::isMyBackupsFolder() const
 {
-    // If it is a backup item and it doesn't have parent it is the MyBackups folder
-    return parent() == nullptr;
+    if (!mNode)
+    {
+        return false;
+    }
+
+    // Identify by the actual node, not by tree position, so the classification stays correct
+    // regardless of where the item sits in the tree.
+    auto backupsHandle =
+        UserAttributes::MyBackupsHandle::requestMyBackupsHandle()->getMyBackupsHandle();
+    return mNode->getHandle() == backupsHandle;
 }
 
 bool NodeSelectorModelItemBackup::isDeviceFolder() const
 {
-    auto parentItem = getParent();
-    return parentItem && parentItem->isMyBackupsFolder();
+    if (!mNode)
+    {
+        return false;
+    }
+
+    // A device folder is the only backup node carrying a device id.
+    return !QString::fromUtf8(mNode->getDeviceId()).isEmpty();
 }
 
 bool NodeSelectorModelItemBackup::isBackupFolder() const

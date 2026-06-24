@@ -657,29 +657,6 @@
     </message>
 </context>
 <context>
-    <name>CloudDriveNodeSelector</name>
-    <message>
-        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
-        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>All items will be permanently deleted. This action can [B]not[/B] be undone.</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>Cancel</translation>
-    </message>
-    <message>
-        <source>Empty</source>
-        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>Empty</translation>
-    </message>
-    <message>
-        <source>Empty Rubbish bin?</source>
-        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>Empty Rubbish bin?</translation>
-    </message>
-</context>
-<context>
     <name>CloudFingerprintMissingHeader</name>
     <message>
         <source>Apply</source>
@@ -1172,6 +1149,19 @@
     </message>
 </context>
 <context>
+    <name>DestinationBreadcrumb</name>
+    <message>
+        <source>Destination</source>
+        <translatorcomment>Label/title of the destination breadcrumb in the node selector, showing the folder files will be uploaded to. SNC-6420</translatorcomment>
+        <translation>Destination</translation>
+    </message>
+    <message>
+        <source>Always upload to this destination</source>
+        <translatorcomment>Checkbox label in the node selector destination breadcrumb to set the current folder as the default upload destination. SNC-6420</translatorcomment>
+        <translation>Always upload to this destination</translation>
+    </message>
+</context>
+<context>
     <name>DownloadFromMegaDialog</name>
     <message>
         <source>Always download to this destination</source>
@@ -1351,6 +1341,11 @@
         <source>The new folder will be merged with the folder at this destination.</source>
         <translatorcomment>Text explaining the result of the folder merge action</translatorcomment>
         <translation>The new folder will be merged with the folder at this destination.</translation>
+    </message>
+    <message>
+        <source>The folder will be renamed as:</source>
+        <translatorcomment>Text explaining the result of the folder rename action. SNC-6420</translatorcomment>
+        <translation>The folder will be renamed as:</translation>
     </message>
 </context>
 <context>
@@ -1833,6 +1828,37 @@
         <source>Can´t sync [B]%1[/B]</source>
         <translatorcomment>Title for the header widget of sync stall shown when there&apos;s an issue with a file or folder which requires user&apos;s intervention, [B] is for bold.SNC-2565</translatorcomment>
         <translation>Can’t sync [B]%1[/B]</translation>
+    </message>
+</context>
+<context>
+    <name>FileManagerNodeSelector</name>
+    <message numerus="yes">
+        <source>%n result</source>
+        <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
+        <translation>
+            <numerusform>%n result</numerusform>
+            <numerusform>%n results</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Empty</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <source>Empty Rubbish bin?</source>
+        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Empty Rubbish bin?</translation>
+    </message>
+    <message>
+        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
+        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>All items will be permanently deleted. This action can [B]not[/B] be undone.</translation>
     </message>
 </context>
 <context>
@@ -4495,29 +4521,57 @@ Enter a different name.</translation>
 <context>
     <name>NodeSelector</name>
     <message>
-        <source>Always upload to this destination</source>
-        <translatorcomment>Label to inform the user upload files/folder to a default destination. with a checkbox. SNC-5804</translatorcomment>
-        <translation>Always upload to this destination</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translatorcomment>Sidebar title. SNC.5804</translatorcomment>
-        <translation>Files</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translatorcomment>Search button header</translatorcomment>
-        <translation>Search</translation>
-    </message>
-    <message>
-        <source>Select a MEGA folder</source>
-        <translatorcomment>Node selector dialog title</translatorcomment>
-        <translation>Select a MEGA folder</translation>
-    </message>
-    <message>
         <source>The item you selected has been removed. To reselect, close this window and try again.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>The item you selected has been removed. To reselect, close this window and try again.</translation>
+    </message>
+    <message>
+        <source>Searching…</source>
+        <translatorcomment>Loading text shown in the node selector while a search for nodes is in progress. SNC-6420</translatorcomment>
+        <translation>Searching…</translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translatorcomment>Node selector dialog title. SNC-6420</translatorcomment>
+        <translation>Files</translation>
+    </message>
+</context>
+<context>
+    <name>NodeSelectorLabelColors</name>
+    <message>
+        <source>Red</source>
+        <translatorcomment>Color name for the &quot;Red&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Red</translation>
+    </message>
+    <message>
+        <source>Orange</source>
+        <translatorcomment>Color name for the &quot;Orange&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Orange</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translatorcomment>Color name for the &quot;Yellow&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Yellow</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translatorcomment>Color name for the &quot;Green&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Green</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translatorcomment>Color name for the &quot;Blue&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Blue</translation>
+    </message>
+    <message>
+        <source>Purple</source>
+        <translatorcomment>Color name for the &quot;Purple&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Purple</translation>
+    </message>
+    <message>
+        <source>Grey</source>
+        <translatorcomment>Color name for the &quot;Grey&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Grey</translation>
     </message>
 </context>
 <context>
@@ -4797,6 +4851,16 @@ Enter a different name.</translation>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>This folder has been the subject of a takedown notice</translation>
     </message>
+    <message>
+        <source>Label</source>
+        <translatorcomment>Column header for the node label in the node selector. SNC-6420</translatorcomment>
+        <translation>Label</translation>
+    </message>
+    <message>
+        <source>Sort by label</source>
+        <translatorcomment>Sort option to order nodes by their label in the node selector. SNC-6420</translatorcomment>
+        <translation>Sort by label</translation>
+    </message>
 </context>
 <context>
     <name>NodeSelectorTreeView</name>
@@ -4824,11 +4888,6 @@ Enter a different name.</translation>
         <source>Move to Rubbish bin</source>
         <translatorcomment>Contextual menu text that appears when we right click on a folder/file on node selector. It removes the node (file or folder).</translatorcomment>
         <translation>Move to Rubbish bin</translation>
-    </message>
-    <message>
-        <source>New folder</source>
-        <translatorcomment>Contextual menu text that appears when we right click on an empty space (or empty folder) on node selector. It creates a new folder. SNC-5804</translatorcomment>
-        <translation>New folder</translation>
     </message>
     <message>
         <source>Paste</source>
@@ -4870,6 +4929,11 @@ Enter a different name.</translation>
         <translatorcomment>Contextual menu text that appears when we right click on an empty space (or empty folder) on node selector. It uploads to the selected. SNC-5804</translatorcomment>
         <translation>Upload</translation>
     </message>
+    <message>
+        <source>New folder</source>
+        <translatorcomment>Contextual menu text in the node selector to create a new folder. SNC-6420</translatorcomment>
+        <translation>New folder</translation>
+    </message>
 </context>
 <context>
     <name>NodeSelectorTreeViewWidget</name>
@@ -4904,30 +4968,9 @@ Enter a different name.</translation>
         <translation>Empty Rubbish bin</translation>
     </message>
     <message>
-        <source>Folder is empty</source>
-        <translatorcomment>Message on the view when there are no items in a folder. SNC-5804</translatorcomment>
-        <translation>Folder is empty</translation>
-    </message>
-    <message numerus="yes">
-        <source>If you leave the folder, you will not be able to see it again.</source>
-        <translatorcomment>Body of the confirmation messagebox to leave an inshared folder. CON-1255</translatorcomment>
-        <translation>
-            <numerusform>If you leave the folder, you will not be able to see it again.</numerusform>
-            <numerusform>If you leave these folders, you will not be able to see them again.</numerusform>
-        </translation>
-    </message>
-    <message>
         <source>Leave</source>
         <translatorcomment>Button text to accept the confirm messagebox when leaving a inshared folder</translatorcomment>
         <translation>Leave</translation>
-    </message>
-    <message numerus="yes">
-        <source>Leave this shared folder?</source>
-        <translatorcomment>Title of the confirmation messagebox to leave an inshared folder. CON-1255</translatorcomment>
-        <translation>
-            <numerusform>Leave this shared folder?</numerusform>
-            <numerusform>Leave these shared folders?</numerusform>
-        </translation>
     </message>
     <message>
         <source>Move</source>
@@ -4939,19 +4982,6 @@ Enter a different name.</translation>
         <translatorcomment>Main text of the confirmation messagebox to move a single item (file or folder) pto the rubbish bin. %1 is the name of the item to delete. CON-334</translatorcomment>
         <translation>Move %1 to Rubbish bin?</translation>
     </message>
-    <message numerus="yes">
-        <source>Move %n items to Rubbish bin?</source>
-        <translatorcomment>Main text of the confirmation messagebox to move some items (files or folders) pto the rubbish bin. %n is the number of items to delete. CON-334</translatorcomment>
-        <translation>
-            <numerusform>Move %n item to Rubbish bin?</numerusform>
-            <numerusform>Move %n items to Rubbish bin?</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>New folder</source>
-        <translatorcomment>Button label to create a New folder at your MEGA cloud drive. Keep capital letters. String as short as possible.</translatorcomment>
-        <translation>New folder</translation>
-    </message>
     <message>
         <source>No folders to select</source>
         <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
@@ -4961,6 +4991,11 @@ Enter a different name.</translation>
         <source>Ok</source>
         <translatorcomment>Button text to accept and close the dialog</translatorcomment>
         <translation>OK</translation>
+    </message>
+    <message>
+        <source>You cannot undo this action</source>
+        <translatorcomment>Second part of the messagebox text when the user is about to remove permanently a node. SAT-426</translatorcomment>
+        <translation>You cannot undo this action</translation>
     </message>
     <message>
         <source>Only folders can be synced</source>
@@ -4991,10 +5026,94 @@ Enter a different name.</translation>
             <numerusform>You are about to permanently delete %n items. Would you like to proceed?</numerusform>
         </translation>
     </message>
+    <message numerus="yes">
+        <source>Move %n items to Rubbish bin?</source>
+        <translatorcomment>Main text of the confirmation messagebox to move some items (files or folders) pto the rubbish bin. %n is the number of items to delete. CON-334</translatorcomment>
+        <translation>
+            <numerusform>Move %n item to Rubbish bin?</numerusform>
+            <numerusform>Move %n items to Rubbish bin?</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>Leave this shared folder?</source>
+        <translatorcomment>Title of the confirmation messagebox to leave an inshared folder. CON-1255</translatorcomment>
+        <translation>
+            <numerusform>Leave this shared folder?</numerusform>
+            <numerusform>Leave these shared folders?</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>If you leave the folder, you will not be able to see it again.</source>
+        <translatorcomment>Body of the confirmation messagebox to leave an inshared folder. CON-1255</translatorcomment>
+        <translation>
+            <numerusform>If you leave the folder, you will not be able to see it again.</numerusform>
+            <numerusform>If you leave these folders, you will not be able to see them again.</numerusform>
+        </translation>
+    </message>
     <message>
-        <source>You cannot undo this action</source>
-        <translatorcomment>Second part of the messagebox text when the user is about to remove permanently a node. SAT-426</translatorcomment>
-        <translation>You cannot undo this action</translation>
+        <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
+        <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
+        <translation>This folder is empty. Keep something safe with zero-knowledge encryption.</translation>
+    </message>
+    <message>
+        <source>Drag and drop your files here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to drag and drop files. SNC-6420</translatorcomment>
+        <translation>Drag and drop your files here</translation>
+    </message>
+    <message>
+        <source>Nothing in your private vault yet</source>
+        <translatorcomment>Empty-state message shown in the node selector when the private vault has no items yet. SNC-6420</translatorcomment>
+        <translation>Nothing in your private vault yet</translation>
+    </message>
+    <message>
+        <source>No folders in Cloud drive</source>
+        <translatorcomment>Empty-state message shown in the node selector when the Cloud drive has no folders. SNC-6420</translatorcomment>
+        <translation>No folders in Cloud drive</translation>
+    </message>
+    <message>
+        <source>Create a folder to move your content here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
+        <translation>Create a folder to move your content here</translation>
+    </message>
+    <message>
+        <source>Add backup</source>
+        <translatorcomment>Empty-state button in the node selector to start adding a backup. SNC-6420</translatorcomment>
+        <translation>Add backup</translation>
+    </message>
+    <message>
+        <source>Sync</source>
+        <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
+        <translation>Sync</translation>
+    </message>
+    <message>
+        <source>Upload</source>
+        <translatorcomment>Action button in the node selector to upload to the selected folder. SNC-6420</translatorcomment>
+        <translation>Upload</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translatorcomment>Action button in the node selector to download the selected folder. SNC-6420</translatorcomment>
+        <translation>Download</translation>
+    </message>
+    <message>
+        <source>This folder is read and write. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-and-write shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>This folder is read and write. Ask for full access to sync</translation>
+    </message>
+    <message>
+        <source>This folder is read-only. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>This folder is read-only. Ask for full access to sync</translation>
+    </message>
+    <message>
+        <source>New folder</source>
+        <translatorcomment>Action button in the node selector to create a new folder. SNC-6420</translatorcomment>
+        <translation>New folder</translation>
+    </message>
+    <message>
+        <source>Empty folder</source>
+        <translatorcomment>Empty state label shown in the node selector view when the selected folder has no items. SNC-6420</translatorcomment>
+        <translation>Empty folder</translation>
     </message>
 </context>
 <context>
@@ -5006,14 +5125,6 @@ Enter a different name.</translation>
     </message>
 </context>
 <context>
-    <name>NodeSelectorTreeViewWidgetCloudDrive</name>
-    <message>
-        <source>Cloud drive is empty</source>
-        <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
-        <translation>Cloud drive is empty</translation>
-    </message>
-</context>
-<context>
     <name>NodeSelectorTreeViewWidgetIncomingShares</name>
     <message>
         <source>No incoming shares</source>
@@ -5021,21 +5132,16 @@ Enter a different name.</translation>
         <translation>No incoming shares</translation>
     </message>
     <message>
-        <source>No incoming shares you can sync</source>
-        <translatorcomment>Title message on the view when there are no items in the Sync view. SNC-5804</translatorcomment>
-        <translation>No incoming shares you can sync</translation>
-    </message>
-    <message>
-        <source>You can only sync a shared folder if you’ve been given full access</source>
-        <translatorcomment>Description message on the view when there are no items in the sync view. It says you don´t have shared folders with the needed rights. SNC-5804</translatorcomment>
-        <translation>You can only sync a shared folder if you’ve been given full access</translation>
+        <source>Folders shared with you will appear here</source>
+        <translatorcomment>Empty-state message in the node selector incoming shares view, shown when there are no shared folders. SNC-6420</translatorcomment>
+        <translation>Folders shared with you will appear here</translation>
     </message>
 </context>
 <context>
     <name>NodeSelectorTreeViewWidgetRubbish</name>
     <message>
-        <source>The Rubbish bin is empty</source>
-        <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
+        <source>Rubbish bin is empty</source>
+        <translatorcomment>Empty-state message in the node selector rubbish bin view, shown when the rubbish bin has no items. SNC-6420</translatorcomment>
         <translation>Rubbish bin is empty</translation>
     </message>
 </context>
@@ -5050,9 +5156,14 @@ Enter a different name.</translation>
         </translation>
     </message>
     <message>
-        <source>No search results</source>
-        <translatorcomment>Message on the view when the search did not find any coincidence. SNC-5804</translatorcomment>
-        <translation>No search results</translation>
+        <source>No results found</source>
+        <translatorcomment>Empty-state title in the node selector search view, shown when the search returns no matches. SNC-6420</translatorcomment>
+        <translation>No results found</translation>
+    </message>
+    <message>
+        <source>Try a different name or check the spelling</source>
+        <translatorcomment>Empty-state hint in the node selector search view, suggesting the user refine their search. SNC-6420</translatorcomment>
+        <translation>Try a different name or check the spelling</translation>
     </message>
 </context>
 <context>
@@ -8117,6 +8228,11 @@ Refresh the list.</translation>
         <translatorcomment>Warning message when users try to select a folder for streaming</translatorcomment>
         <translation>You can’t stream folders. Select a file to stream.</translation>
     </message>
+    <message>
+        <source>Select a file to stream</source>
+        <translatorcomment>Guidance message in the streaming node selector prompting the user to pick a file to stream. SNC-6420</translatorcomment>
+        <translation>Select a file to stream</translation>
+    </message>
 </context>
 <context>
     <name>StreamingFromMegaDialog</name>
@@ -8621,6 +8737,31 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>You need Full access right to be able to sync the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying sync a non compatible folder</translatorcomment>
         <translation>To sync this folder, you need to have full-access permission to it.</translation>
+    </message>
+    <message>
+        <source>Select a full access shared folder to sync</source>
+        <translatorcomment>Guidance message in the sync node selector prompting the user to choose a full-access shared folder to sync. SNC-6420</translatorcomment>
+        <translation>Select a full access shared folder to sync</translation>
+    </message>
+    <message>
+        <source>Folder to sync</source>
+        <translatorcomment>Label in the sync node selector for the folder that will be synced. SNC-6420</translatorcomment>
+        <translation>Folder to sync</translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This folder is already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected folder is already synced. SNC-6420</translatorcomment>
+        <translation>Choose a different folder. This folder is already synced</translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This location contains a folder that&apos;s already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected location contains a folder that is already synced. SNC-6420</translatorcomment>
+        <translation>Choose a different folder. This location contains a folder that&apos;s already synced</translation>
+    </message>
+    <message>
+        <source>Only shared folders with full access can be synced</source>
+        <translatorcomment>Informational message in the sync node selector indicating only full-access shared folders can be synced. SNC-6420</translatorcomment>
+        <translation>Only shared folders with full access can be synced</translation>
     </message>
 </context>
 <context>
@@ -9609,6 +9750,11 @@ Please delete the folder sync from settings to cancel them.</source>
         <source>You need Read &amp; Write or Full access rights to be able to upload to the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying upload files to a non compatible folder</translatorcomment>
         <translation>To upload this folder, you need to have read and write or full-access permissions to it.</translation>
+    </message>
+    <message>
+        <source>Select a shared folder to upload your items to</source>
+        <translatorcomment>Guidance banner in the upload node selector, shown in Incoming Shares when no folder is selected, prompting the user to pick a shared folder as the upload destination. SNC-6420</translatorcomment>
+        <translation>Select a shared folder to upload your items to</translation>
     </message>
 </context>
 <context>

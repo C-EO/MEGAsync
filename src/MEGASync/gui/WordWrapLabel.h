@@ -18,6 +18,7 @@ public:
     void setMaximumHeight(int maxHeight);
     void resetSizeLimits();
 
+    bool isEmpty() const;
     void setText(const QString& text);
 
     //Try not to use maxLines/maxHeight with rich text strings, as it could potentially remove the hmtl tags when eliding

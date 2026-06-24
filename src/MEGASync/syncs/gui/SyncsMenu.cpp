@@ -2,11 +2,11 @@
 
 #include "DeviceNames.h"
 #include "DialogOpener.h"
+#include "FileManagerNodeSelector.h"
 #include "MegaApplication.h"
 #include "MegaMenuItemAction.h"
 #include "MyBackupsHandle.h"
 #include "NodeSelector.h"
-#include "NodeSelectorSpecializations.h"
 #include "Preferences.h"
 #include "SyncController.h"
 #include "SyncInfo.h"
@@ -324,7 +324,7 @@ void BackupSyncsMenu::onDeviceRowTriggered()
         return;
     }
 
-    auto* nodeSelector = new CloudDriveNodeSelector();
+    auto* nodeSelector = new FileManagerNodeSelector();
     nodeSelector->init();
     nodeSelector->setSelectedNodeHandle(myBackupsNode);
     DialogOpener::showGeometryRetainerDialog<NodeSelector>(nodeSelector);

@@ -77,18 +77,12 @@ private slots:
     void onModelSortedFiltered();
 };
 
-class NodeSelectorProxyModelStream: public NodeSelectorProxyModel
-{
-public:
-    explicit NodeSelectorProxyModelStream(QObject* parent = nullptr);
-    void applyProxyModelFlags(Qt::ItemFlags& flags, const QModelIndex& index) const override;
-};
-
 class NodeSelectorProxyModelSync: public NodeSelectorProxyModel
 {
 public:
     explicit NodeSelectorProxyModelSync(QObject* parent = nullptr);
     void applyProxyModelFlags(Qt::ItemFlags& flags, const QModelIndex& index) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 };
 
 class NodeSelectorProxyModelSearch: public NodeSelectorProxyModel
@@ -98,7 +92,7 @@ class NodeSelectorProxyModelSearch: public NodeSelectorProxyModel
 public:
     explicit NodeSelectorProxyModelSearch(std::shared_ptr<NodeSelectorProxyModel> mainProxyModel,
                                           QObject* parent = nullptr);
-    void setMode(NodeSelectorModelItemSearch::Types mode, bool forceFilter = true);
+    void setMode(TabTypes mode, bool forceFilter = true);
     bool canBeDeleted() const override;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
 
@@ -109,7 +103,7 @@ protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
 private:
-    NodeSelectorModelItemSearch::Types mMode;
+    TabTypes mMode;
     std::shared_ptr<NodeSelectorProxyModel> mMainProxyModel;
 };
 

@@ -2,6 +2,7 @@
 #define MODELSELECTORMODELITEM_H
 
 #include "megaapi.h"
+#include "NodeSelectorTabTypes.h"
 
 #include <QIcon>
 #include <QList>
@@ -67,8 +68,10 @@ public:
     virtual bool isMyBackupsFolder() const;
     virtual bool isDeviceFolder() const;
     bool isFile() const;
+    virtual bool isBackupFolder() const;
     bool isInShare() const;
     bool isInVault() const;
+    bool isS4Container() const;
     bool isCloudDrive() const;
     bool isRubbishBin() const;
     bool isInRubbishBin() const;
@@ -162,7 +165,7 @@ public:
     bool isSyncable() override;
     bool isMyBackupsFolder() const override;
     bool isDeviceFolder() const override;
-    bool isBackupFolder() const;
+    bool isBackupFolder() const override;
 
 private:
     NodeSelectorModelItem* createModelItem(std::unique_ptr<mega::MegaNode> node,
@@ -175,37 +178,30 @@ class NodeSelectorModelItemSearch: public NodeSelectorModelItem
     Q_OBJECT
 
 public:
-    enum class Type
-    {
-        NONE = 0x0,
-        BACKUP = 0x01,
-        INCOMING_SHARE = 0x02,
-        CLOUD_DRIVE = 0x04,
-        RUBBISH = 0x08,
-    };
-    Q_DECLARE_FLAGS(Types, Type);
-
     explicit NodeSelectorModelItemSearch(std::unique_ptr<mega::MegaNode> node,
-                                         Types type,
+                                         TabTypes type,
                                          NodeSelectorModelItem* parentItem = 0);
     ~NodeSelectorModelItemSearch();
 
-    Types getType()
+    TabTypes getType()
     {
         return mType;
     }
 
-    void setType(Types type);
+    void setType(TabTypes type);
     int getNumChildren() override;
+    bool isMyBackupsFolder() const override;
+    bool isDeviceFolder() const override;
+    bool isBackupFolder() const override;
 
 signals:
-    void typeChanged(Types type);
+    void tabTypeChanged(TabTypes type);
 
 private:
     NodeSelectorModelItem* createModelItem(std::unique_ptr<mega::MegaNode> node,
                                            bool showFiles,
                                            NodeSelectorModelItem* parentItem = 0) override;
-    Types mType;
+    TabTypes mType;
 };
 
 class NodeSelectorModelItemRubbish: public NodeSelectorModelItem
@@ -221,8 +217,5 @@ private:
                                            bool showFiles,
                                            NodeSelectorModelItem* parentItem = 0) override;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(NodeSelectorModelItemSearch::Types)
-Q_DECLARE_METATYPE(NodeSelectorModelItemSearch::Types)
 
 #endif // MODELSELECTORMODELITEM_H

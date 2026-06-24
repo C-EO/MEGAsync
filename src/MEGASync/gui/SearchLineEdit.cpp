@@ -1,19 +1,24 @@
 #include "SearchLineEdit.h"
 
 #include "EventHelper.h"
+#include "ThemeManager.h"
 #include "TokenParserWidgetManager.h"
 #include "ui_SearchLineEdit.h"
 #include "Utilities.h"
 
 #include <QDebug>
 #include <QEvent>
+#include <QGraphicsEffect>
 #include <QKeyEvent>
+#include <QMoveEvent>
+#include <QResizeEvent>
 
 static int COLLAPSE_SIZE = 32; /* Square */
 
 SearchLineEdit::SearchLineEdit(QWidget* parent):
     QFrame(parent),
-    ui(new Ui::SearchLineEdit)
+    ui(new Ui::SearchLineEdit),
+    mMode(Mode::EXPANDABLE)
 {
     ui->setupUi(this);
 
@@ -27,7 +32,6 @@ SearchLineEdit::SearchLineEdit(QWidget* parent):
     connect(ui->leSearchField, &QLineEdit::textChanged, this, &SearchLineEdit::onTextChanged);
 
     ui->tSearchCancel->setGraphicsEffect(new QGraphicsOpacityEffect());
-    ui->leSearchField->setGraphicsEffect(new QGraphicsOpacityEffect());
     ui->customWidget->setGraphicsEffect(new QGraphicsOpacityEffect());
 
     ui->leSearchField->installEventFilter(this);
@@ -44,6 +48,8 @@ SearchLineEdit::SearchLineEdit(QWidget* parent):
 
     setFocusProxy(ui->leSearchField);
 
+    applyPlaceholderColor();
+
     mTopParent = Utilities::getTopParent<QDialog>(this);
     if (mTopParent)
     {
@@ -58,7 +64,7 @@ SearchLineEdit::~SearchLineEdit()
 
 void SearchLineEdit::setText(const QString& text)
 {
-    ui->leSearchField->setVisible(!text.isEmpty());
+    ui->leSearchField->setVisible(mMode == Mode::ALWAYS_EXPANDED || !text.isEmpty());
     ui->leSearchField->setText(text);
 }
 
@@ -66,6 +72,11 @@ void SearchLineEdit::showTextEntry(bool state, bool force)
 {
     if (!force &&
         ((state && ui->leSearchField->isVisible()) || (!state && !ui->leSearchField->isVisible())))
+    {
+        return;
+    }
+
+    if (!state && mMode == Mode::ALWAYS_EXPANDED)
     {
         return;
     }
@@ -93,14 +104,7 @@ void SearchLineEdit::showTextEntry(bool state, bool force)
                     this,
                     [this]()
                     {
-                        ui->leSearchField->show();
-                        ui->leSearchField->resize(ui->leSearchField->sizeHint());
-                        if (!ui->leSearchField->text().isEmpty())
-                        {
-                            ui->tSearchCancel->resize(ui->tSearchCancel->sizeHint());
-                            ui->tSearchCancel->show();
-                        }
-                        ui->customWidget->hide();
+                        expand();
                     });
         }
 
@@ -123,6 +127,15 @@ void SearchLineEdit::showTextEntry(bool state, bool force)
     }
 }
 
+void SearchLineEdit::setMode(Mode mode)
+{
+    mMode = mode;
+    if (mode == Mode::ALWAYS_EXPANDED)
+    {
+        expand();
+    }
+}
+
 QPropertyAnimation* SearchLineEdit::runGeometryAnimation(QWidget* target,
                                                          const QRect& startRect,
                                                          const QRect& endRect,
@@ -137,6 +150,40 @@ QPropertyAnimation* SearchLineEdit::runGeometryAnimation(QWidget* target,
     return animation;
 }
 
+void SearchLineEdit::expand()
+{
+    ui->leSearchField->show();
+    ui->leSearchField->resize(ui->leSearchField->sizeHint());
+    if (!ui->leSearchField->text().isEmpty())
+    {
+        ui->tSearchCancel->resize(ui->tSearchCancel->sizeHint());
+        ui->tSearchCancel->show();
+    }
+    ui->customWidget->hide();
+}
+
+void SearchLineEdit::setContainerStyle(const QString& backgroundToken,
+                                       const QString& borderToken,
+                                       const int borderRadius)
+{
+    // Build a tokenized stylesheet so TokenParserWidgetManager re-themes it on theme changes.
+    // One color token per line: the tokenizer's regex does not span newlines.
+    QString sheet = QLatin1String("#searchContainer\n{\n");
+    sheet +=
+        QString::fromLatin1("background-color: #000000; /*colorToken.%1*/\n").arg(backgroundToken);
+    sheet += QLatin1String("border-radius: %1px;\n").arg(QString::number(borderRadius));
+    if (!borderToken.isEmpty())
+    {
+        sheet +=
+            QString::fromLatin1("border: 1px solid #000000; /*colorToken.%1*/\n").arg(borderToken);
+    }
+    sheet += QLatin1String("}\n");
+
+    ui->searchContainer->setStyleSheet(sheet);
+    ui->searchContainer->style()->unpolish(ui->searchContainer);
+    ui->searchContainer->style()->polish(ui->searchContainer);
+}
+
 void SearchLineEdit::addCustomWidget(QWidget* widget)
 {
     ui->customLayout->addWidget(widget);
@@ -148,8 +195,50 @@ bool SearchLineEdit::event(QEvent* event)
     {
         ui->retranslateUi(this);
     }
+    else if (event->type() == ThemeManager::ThemeChanged)
+    {
+        applyPlaceholderColor();
+    }
 
     return QFrame::event(event);
+}
+
+void SearchLineEdit::moveEvent(QMoveEvent* event)
+{
+    QFrame::moveEvent(event);
+    refreshClearButtonEffect();
+}
+
+void SearchLineEdit::resizeEvent(QResizeEvent* event)
+{
+    QFrame::resizeEvent(event);
+    refreshClearButtonEffect();
+}
+
+void SearchLineEdit::refreshClearButtonEffect()
+{
+    // A relayout of the parent header (e.g. when the action buttons collapse as the ghost
+    // search tab appears) can leave the clear button's opacity effect with a stale cached
+    // pixmap, so it renders clipped until a hover repaint re-grabs the source. effect->update()
+    // only recomposites that stale cache; toggling the effect off/on drops it and forces a
+    // full re-render at the current geometry.
+    if (auto* effect = ui->tSearchCancel->graphicsEffect())
+    {
+        const bool wasEnabled = effect->isEnabled();
+        effect->setEnabled(false);
+        effect->setEnabled(wasEnabled);
+    }
+}
+
+void SearchLineEdit::applyPlaceholderColor()
+{
+    // QSS cannot style the placeholder text color, so the token is resolved to a QColor and
+    // applied through QPalette::PlaceholderText. Re-applied on theme changes (see event()).
+    QPalette palette = ui->leSearchField->palette();
+    palette.setColor(
+        QPalette::PlaceholderText,
+        TokenParserWidgetManager::instance()->getColor(QLatin1String("text-placeholder")));
+    ui->leSearchField->setPalette(palette);
 }
 
 bool SearchLineEdit::eventFilter(QObject* obj, QEvent* evnt)
@@ -159,9 +248,8 @@ bool SearchLineEdit::eventFilter(QObject* obj, QEvent* evnt)
         QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>(evnt);
         if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)
         {
-            if (!ui->leSearchField->text().isEmpty() && mOldString != ui->leSearchField->text())
+            if (!ui->leSearchField->text().isEmpty())
             {
-                mOldString = ui->leSearchField->text();
                 emit search(ui->leSearchField->text());
             }
         }
@@ -172,15 +260,18 @@ bool SearchLineEdit::eventFilter(QObject* obj, QEvent* evnt)
             return true;
         }
     }
-    else if (obj == ui->leSearchField && evnt->type() == QEvent::FocusOut &&
-             ui->leSearchField->text().isEmpty())
+    else if (mMode == Mode::EXPANDABLE)
     {
-        showTextEntry(false, true);
-    }
-    else if (mTopParent == obj && evnt->type() == QEvent::MouseButtonRelease)
-    {
-        onClearClicked();
-        showTextEntry(false);
+        if (obj == ui->leSearchField && evnt->type() == QEvent::FocusOut &&
+            ui->leSearchField->text().isEmpty())
+        {
+            showTextEntry(false, true);
+        }
+        else if (mTopParent == obj && evnt->type() == QEvent::MouseButtonRelease)
+        {
+            onClearClicked();
+            showTextEntry(false);
+        }
     }
 
     return QFrame::eventFilter(obj, evnt);
@@ -197,7 +288,6 @@ void SearchLineEdit::onClearClicked()
     {
         ui->tSearchCancel->hide();
     }
-    mOldString = QString();
 }
 
 void SearchLineEdit::onTextChanged(const QString& text)
@@ -209,6 +299,11 @@ void SearchLineEdit::onTextChanged(const QString& text)
     else if (text.isEmpty() && ui->tSearchCancel->isVisible())
     {
         toggleClearButton(false);
+    }
+
+    if (text.isEmpty())
+    {
+        emit cleared();
     }
 }
 

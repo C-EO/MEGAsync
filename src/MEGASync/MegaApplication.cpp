@@ -18,6 +18,8 @@
 #include "EventUpdater.h"
 #include "ExportProcessor.h"
 #include "FatalEventHandler.h"
+#include "FileManagerNodeSelector.h"
+#include "FilePickerNodeSelectorSpecializations.h"
 #include "FullName.h"
 #include "gui/TrayIconManager.h"
 #include "GuiUtilities.h"
@@ -32,7 +34,6 @@
 #include "MessageDialogOpener.h"
 #include "MyBackupsHandle.h"
 #include "NodeSelector.h"
-#include "NodeSelectorSpecializations.h"
 #include "offer/OfferComponent.h"
 #include "Onboarding.h"
 #include "OverQuotaDialog.h"
@@ -4319,7 +4320,7 @@ void MegaApplication::goToFiles()
 {
     if (infoDialog)
     {
-        CloudDriveNodeSelector* nodeSelector = new CloudDriveNodeSelector();
+        FileManagerNodeSelector* nodeSelector = new FileManagerNodeSelector();
         nodeSelector->init();
         DialogOpener::showGeometryRetainerDialog<NodeSelector>(nodeSelector);
 
@@ -4491,11 +4492,13 @@ void MegaApplication::runUploadActionWithTargetHandle(const MegaHandle& targetFo
             OverQuotaDialog::createDialogIfNeeded(OverQuotaDialogType::STORAGE_UPLOAD);
         if (overQuotaDialog)
         {
-            overQuotaDialog->setParent(parent);
+            overQuotaDialog->setParent(parent, overQuotaDialog->windowFlags());
             DialogOpener::showDialog<OverQuotaDialog>(overQuotaDialog, [processUpload]()
             {
                 processUpload();
             });
+
+            return;
         }
     }
 
@@ -4953,7 +4956,7 @@ void MegaApplication::sendPeriodicStats() const
         }
     }
 
-    CloudDriveNodeSelector::sendStats();
+    FileManagerNodeSelector::sendStats();
 }
 
 void MegaApplication::createUserMessageController()

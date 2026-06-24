@@ -1,9 +1,9 @@
 #include "RemoveBackupDialog.h"
 
 #include "DialogOpener.h"
+#include "FilePickerNodeSelectorSpecializations.h"
 #include "MegaApplication.h"
 #include "MegaNodeNames.h"
-#include "NodeSelectorSpecializations.h"
 #include "StatsEventHandler.h"
 #include "TextDecorator.h"
 #include "ui_RemoveBackupDialog.h"
@@ -107,6 +107,8 @@ void RemoveBackupDialog::onChangeButtonClicked()
     clearTargetFolderError();
 
     auto nodeSelector = new MoveBackupNodeSelector(this);
+    std::shared_ptr<mega::MegaNode> defaultNode(mMegaApi->getNodeByHandle(mTargetFolder));
+    nodeSelector->setSelectedNodeHandle(defaultNode);
     nodeSelector->init();
     DialogOpener::showDialog<NodeSelector>(
         nodeSelector,

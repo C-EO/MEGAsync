@@ -11,6 +11,7 @@ class TabSelector;
 }
 
 class TokenPropertySetter;
+class ArrowTooltip;
 
 class TabSelector: public QWidget
 {
@@ -21,6 +22,9 @@ public:
     ~TabSelector();
 
     Q_PROPERTY(QString title MEMBER mTitle WRITE setTitle READ getTitle)
+    Q_PROPERTY(bool iconOnly WRITE setIconOnly READ isIconOnly)
+    Q_PROPERTY(QString normal_off WRITE setNormalOff READ getNormalOff)
+    Q_PROPERTY(QString normal_on WRITE setNormalOn READ getNormalOn)
     void setTitle(const QString& title);
     QString getTitle() const;
 
@@ -28,7 +32,8 @@ public:
     void setIcon(const QIcon& icon);
     QIcon getIcon() const;
 
-    Q_PROPERTY(QSize iconSize READ getIconSize)
+    Q_PROPERTY(QSize iconSize WRITE setIconSize READ getIconSize)
+    void setIconSize(const QSize& size);
     QSize getIconSize() const;
 
     Q_PROPERTY(bool closeButtonVisible WRITE setCloseButtonVisible READ isCloseButtonVisible)
@@ -36,11 +41,20 @@ public:
     bool isCloseButtonVisible() const;
 
     void setCounter(unsigned long long count);
-    bool isEmpty();
+    bool hasEmptyCount();
 
     void setSelected(bool state);
     bool isSelected() const;
     void toggleOffSiblings();
+
+    void setIconOnly(bool state);
+    bool isIconOnly() const;
+
+    void setNormalOff(const QString& token);
+    QString getNormalOff() const;
+
+    void setNormalOn(const QString& token);
+    QString getNormalOn() const;
 
     void setIconTokens(const std::shared_ptr<TokenPropertySetter>& newIconTokens);
     void hideIcon();
@@ -54,6 +68,9 @@ public:
 
     // Convenient method to select tab
     static void selectTabIf(QWidget* parent, const char* property, const QVariant& value);
+
+    // Convenient method to deselect every tab under a parent
+    static void deselectAll(QWidget* parent);
 
     // Convenient method to get the tabs
     static QList<TabSelector*> getTabSelectorByParent(QWidget* parent);
@@ -79,6 +96,15 @@ private:
     std::shared_ptr<TokenPropertySetter> mCloseButtonTokens;
     QString mTitle;
     bool mConnectedToDropEvent;
+    bool mCloseButtonVisible;
+    bool mIconOnly;
+    QString mNormalOff;
+    QString mNormalOn;
+
+    QPointer<ArrowTooltip> mTooltip;
+
+    void showCollapsedTooltip();
+    void closeCollapsedTooltip();
 };
 
 #endif // TABSELECTOR_H

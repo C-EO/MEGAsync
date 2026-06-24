@@ -20,7 +20,8 @@ public:
         BANNER_WARNING = 1,
         BANNER_ERROR = 2,
         BANNER_INFO = 3,
-        BANNER_SUCCESS = 4
+        BANNER_SUCCESS = 4,
+        BANNER_MESSAGE = 5
     };
 
     explicit BannerWidget(QWidget* parent = nullptr);
@@ -42,6 +43,7 @@ protected:
 private:
     void checkLayoutOrientation();
     void updateTitleWeight();
+    void setLabelToken();
 
     Ui::BannerWidget* mUi;
     Type mType;

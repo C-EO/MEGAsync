@@ -2,8 +2,8 @@
 
 #include "CommonMessages.h"
 #include "DialogOpener.h"
+#include "FilePickerNodeSelectorSpecializations.h"
 #include "MegaApplication.h"
-#include "NodeSelectorSpecializations.h"
 #include "RequestListenerManager.h"
 #include "ui_UploadToMegaDialog.h"
 

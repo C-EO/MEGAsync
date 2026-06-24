@@ -125,7 +125,7 @@ TransferBaseDelegateWidget *MegaTransferDelegate::getTransferItemWidget(const QM
         auto nbRowsMaxInView(1);
         if(size.height() > 0)
         {
-            nbRowsMaxInView = mView->height() / size.height() + 1;
+            nbRowsMaxInView = std::min(mView->height() / size.height() + 1, 60);
         }
         auto row (index.row() % nbRowsMaxInView);
 

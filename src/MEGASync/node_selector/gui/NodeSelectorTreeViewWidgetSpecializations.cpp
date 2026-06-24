@@ -2,6 +2,7 @@
 
 #include "DeviceNames.h"
 #include "MegaNodeNames.h"
+#include "NodeSelectorDelegates.h"
 #include "NodeSelectorModel.h"
 #include "NodeSelectorModelSpecialised.h"
 #include "NodeSelectorProxyModel.h"
@@ -13,10 +14,8 @@
 ///////////////////////////////////////////////////////////////////
 NodeSelectorTreeViewWidgetCloudDrive::NodeSelectorTreeViewWidgetCloudDrive(SelectTypeSPtr mode,
                                                                            QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
-{
-    setTitle(MegaNodeNames::getCloudDriveName());
-}
+    NodeSelectorTreeViewWidget(mode, TabItem::CLOUD_DRIVE, parent)
+{}
 
 void NodeSelectorTreeViewWidgetCloudDrive::setShowEmptyView(bool newShowEmptyView)
 {
@@ -28,7 +27,7 @@ bool NodeSelectorTreeViewWidgetCloudDrive::isNodeCompatibleWithModel(mega::MegaN
     return MegaSyncApp->getMegaApi()->isInCloud(node);
 }
 
-QString NodeSelectorTreeViewWidgetCloudDrive::getRootText()
+QString NodeSelectorTreeViewWidgetCloudDrive::getRootText() const
 {
     return MegaNodeNames::getCloudDriveName();
 }
@@ -40,32 +39,22 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetCloudDrive::createM
 
 void NodeSelectorTreeViewWidgetCloudDrive::setViewPage()
 {
-    auto rootIndex = mModel->index(0, 0);
-    if (mModel->rowCount(rootIndex) == 0 && showEmptyView())
+    if (mProxyModel->rowCount(getCurrentRootIndex()) == 0 && showEmptyView())
     {
-        ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+        setCurrentPage(ViewType::ROOT_EMPTY);
     }
     else
     {
-        ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+        NodeSelectorTreeViewWidget::setViewPage();
     }
 }
 
-QIcon NodeSelectorTreeViewWidgetCloudDrive::getEmptyIcon()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetCloudDrive::getEmptyRootPageInfo()
 {
-    return Utilities::getIcon(QLatin1String("cloud"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
+    return mSelectType->getEmptyCloudDrivePage();
 }
 
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetCloudDrive::getEmptyLabel()
-{
-    EmptyLabelInfo info;
-    info.description = tr("Cloud drive is empty");
-    return info;
-}
-
-bool NodeSelectorTreeViewWidgetCloudDrive::isCurrentRootIndexReadOnly()
+bool NodeSelectorTreeViewWidgetCloudDrive::isCurrentRootIndexReadOnly() const
 {
     return false;
 }
@@ -88,29 +77,16 @@ MegaHandle
     return mega::INVALID_HANDLE;
 }
 
-void NodeSelectorTreeViewWidgetCloudDrive::onRootIndexChanged(const QModelIndex& source_idx)
-{
-    Q_UNUSED(source_idx)
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::USER);
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ACCESS);
-
-    NodeSelectorTreeViewWidget::onRootIndexChanged(source_idx);
-}
-
 /////////////////////////////////////////////////////////////////
 /// \brief NodeSelectorTreeViewWidgetIncomingShares::NodeSelectorTreeViewWidgetIncomingShares
 /// \param mode
 /// \param parent
 
-const char* ACCESS_PROPERTY = "access";
-
 NodeSelectorTreeViewWidgetIncomingShares::NodeSelectorTreeViewWidgetIncomingShares(
     SelectTypeSPtr mode,
     QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
-{
-    setTitle(MegaNodeNames::getIncomingSharesName());
-}
+    NodeSelectorTreeViewWidget(mode, TabItem::SHARES, parent)
+{}
 
 bool NodeSelectorTreeViewWidgetIncomingShares::isNodeCompatibleWithModel(mega::MegaNode* node)
 {
@@ -124,13 +100,83 @@ bool NodeSelectorTreeViewWidgetIncomingShares::isNodeCompatibleWithModel(mega::M
     return access != mega::MegaShare::ACCESS_OWNER && access != mega::MegaShare::ACCESS_UNKNOWN;
 }
 
-void NodeSelectorTreeViewWidgetIncomingShares::setTitleText(const QString& nodeName)
+std::optional<IncomingShareHeaderData>
+    NodeSelectorTreeViewWidgetIncomingShares::incomingShareHeaderData() const
 {
-    ui->sh_folderName->setText(nodeName);
-    NodeSelectorTreeViewWidget::setTitleText(nodeName);
+    const auto rootIndex = getCurrentRootIndex();
+    if (!rootIndex.isValid())
+    {
+        return std::nullopt;
+    }
+
+    // The header must only be shown when the current root folder is the incoming
+    // share itself, not when navigating into one of its nested folders.
+    auto rootItem = NodeSelectorModel::getItemByIndex(rootIndex);
+    if (!rootItem || !rootItem->getNode() || !rootItem->getNode()->isInShare())
+    {
+        return std::nullopt;
+    }
+
+    IncomingShareHeaderData incomingInfo;
+    incomingInfo.folderName = rootIndex.data(Qt::DisplayRole).toString();
+
+    auto inShareIndex = getParentIncomingShareByIndex(rootIndex);
+    auto item = NodeSelectorModel::getItemByIndex(inShareIndex);
+    if (inShareIndex.isValid() && item)
+    {
+        inShareIndex = inShareIndex.sibling(inShareIndex.row(), NodeSelectorModel::Column::USER);
+        incomingInfo.userIcon = qvariant_cast<QPixmap>(inShareIndex.data(Qt::DecorationRole));
+
+        inShareIndex = inShareIndex.sibling(inShareIndex.row(), NodeSelectorModel::Column::ACCESS);
+        incomingInfo.accessIcon = qvariant_cast<QPixmap>(inShareIndex.data(Qt::DecorationRole));
+        incomingInfo.accessLabel = inShareIndex.data(Qt::DisplayRole).toString();
+        incomingInfo.accessType =
+            inShareIndex.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
+        incomingInfo.userEmail = item->getOwnerEmail();
+        incomingInfo.userName = item->getOwnerName();
+    }
+
+    return incomingInfo;
 }
 
-QString NodeSelectorTreeViewWidgetIncomingShares::getRootText()
+void NodeSelectorTreeViewWidgetIncomingShares::makeViewConnections()
+{
+    auto incomingSharesModel = qobject_cast<NodeSelectorModelIncomingShares*>(mModel.get());
+    if (!incomingSharesModel)
+    {
+        return;
+    }
+
+    connect(
+        incomingSharesModel,
+        &NodeSelectorModelIncomingShares::incomingShareInfoChanged,
+        this,
+        [this](mega::MegaHandle handle)
+        {
+            emit incomingShareAccessChanged();
+
+            const auto rootIndex = getCurrentRootIndex();
+            if (!rootIndex.isValid())
+            {
+                return;
+            }
+
+            if (getHandleByIndex(rootIndex) == handle)
+            {
+                notifyViewStateChanged();
+                return;
+            }
+
+            const auto incomingShareIndex = getParentIncomingShareByIndex(rootIndex);
+            if (incomingShareIndex.isValid() && getHandleByIndex(incomingShareIndex) == handle)
+            {
+                notifyViewStateChanged();
+            }
+        },
+        Qt::UniqueConnection);
+}
+
+QString NodeSelectorTreeViewWidgetIncomingShares::getRootText() const
 {
     return MegaNodeNames::getIncomingSharesName();
 }
@@ -140,74 +186,7 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetIncomingShares::cre
     return std::unique_ptr<NodeSelectorModelIncomingShares>(new NodeSelectorModelIncomingShares);
 }
 
-void NodeSelectorTreeViewWidgetIncomingShares::onRootIndexChanged(const QModelIndex& idx)
-{
-    if (idx.isValid())
-    {
-        ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::USER);
-        ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ACCESS);
-    }
-    else
-    {
-        ui->tMegaFolders->header()->showSection(NodeSelectorModel::Column::USER);
-        ui->tMegaFolders->header()->showSection(NodeSelectorModel::Column::ACCESS);
-    }
-
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ADDED_DATE);
-
-    NodeSelectorTreeViewWidget::onRootIndexChanged(idx);
-
-    // Fill Incoming info
-    QModelIndex in_share_idx = getParentIncomingShareByIndex(idx);
-    auto item(NodeSelectorModel::getItemByIndex(in_share_idx));
-    if (in_share_idx.isValid() && item)
-    {
-        in_share_idx = in_share_idx.sibling(in_share_idx.row(), NodeSelectorModel::Column::USER);
-        QPixmap folderPixmap = qvariant_cast<QPixmap>(idx.data(Qt::DecorationRole));
-        QPixmap pm = qvariant_cast<QPixmap>(in_share_idx.data(Qt::DecorationRole));
-        ui->sh_folderIcon->setIcon(folderPixmap);
-        ui->sh_userIcon->setIcon(pm);
-
-        in_share_idx = in_share_idx.sibling(in_share_idx.row(), NodeSelectorModel::Column::ACCESS);
-        QPixmap accessPixmap = qvariant_cast<QPixmap>(in_share_idx.data(Qt::DecorationRole));
-        ui->sh_accessIcon->setIcon(accessPixmap);
-
-        ui->sh_accessLabel->setText(in_share_idx.data(Qt::DisplayRole).toString());
-
-        // Background-color
-        auto accessType = in_share_idx.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
-        ui->sh_accessContainer->setProperty(ACCESS_PROPERTY, accessType);
-        if (accessType == mega::MegaShare::ACCESS_FULL)
-        {
-            ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
-                                           QLatin1String("support-success"));
-        }
-        else if (accessType == mega::MegaShare::ACCESS_READ)
-        {
-            ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff,
-                                           QLatin1String("text-secondary"));
-        }
-        else if (accessType == mega::MegaShare::ACCESS_READWRITE)
-        {
-            ui->sh_accessIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-info"));
-        }
-        // Update dynamic properties
-        ui->sh_accessContainer->setStyleSheet(ui->sh_accessContainer->styleSheet());
-
-        ui->sh_folderName->setText(idx.data(Qt::DisplayRole).toString());
-        ui->sh_userEmail->setText(item->getOwnerEmail());
-        ui->sh_userName->setText(item->getOwnerName());
-        ui->incomingInfo->setVisible(true);
-        ui->lFolderName->setVisible(false);
-    }
-    else
-    {
-        ui->incomingInfo->setVisible(false);
-        ui->lFolderName->setVisible(true);
-    }
-}
-
-bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentRootIndexReadOnly()
+bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentRootIndexReadOnly() const
 {
     auto rootIndex(ui->tMegaFolders->rootIndex());
     if (rootIndex.isValid())
@@ -253,25 +232,29 @@ bool NodeSelectorTreeViewWidgetIncomingShares::isCurrentSelectionReadOnly()
     return isSelectionReadOnly(ui->tMegaFolders->selectedRows());
 }
 
-QIcon NodeSelectorTreeViewWidgetIncomingShares::getEmptyIcon()
+bool NodeSelectorTreeViewWidgetIncomingShares::isNewFolderAllowed()
 {
-    return Utilities::getIcon(QLatin1String("folder-users"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
+    // No navigation in file pickers: a folder can only be created inside a single selected folder
+    // with at least read-write access (read-write or full access).
+    auto selection(ui->tMegaFolders->selectedRows());
+    if (selection.size() != 1)
+    {
+        return false;
+    }
+
+    auto node(mProxyModel->getNode(selection.first()));
+    return node && node->isFolder() &&
+           MegaSyncApp->getMegaApi()->getAccess(node.get()) >= mega::MegaShare::ACCESS_READWRITE;
 }
 
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetIncomingShares::getEmptyLabel()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetIncomingShares::getEmptyRootPageInfo()
 {
-    EmptyLabelInfo info;
-    if (std::dynamic_pointer_cast<SyncType>(mSelectType))
-    {
-        info.title = tr("No incoming shares you can sync");
-        info.description = tr("You can only sync a shared folder if you’ve been given full access");
-    }
-    else
-    {
-        info.description = tr("No incoming shares");
-    }
+    SelectType::EmptyPageInfo info;
+
+    info.title = tr("No incoming shares");
+    info.description = tr("Folders shared with you will appear here");
+    info.icon.addFile(Utilities::getPixmapName(QLatin1String("empty_incoming_shares"),
+                                               Utilities::AttributeType::NONE));
 
     return info;
 }
@@ -279,10 +262,8 @@ NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetIncomingSha
 /////////////////////////////////////////////////////////////////
 NodeSelectorTreeViewWidgetBackups::NodeSelectorTreeViewWidgetBackups(SelectTypeSPtr mode,
                                                                      QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
+    NodeSelectorTreeViewWidget(mode, TabItem::BACKUPS, parent)
 {
-    setTitle(MegaNodeNames::getBackupsName());
-
     // Monitor Device Names changes and update the title if the current folder is a Device Folder
     auto deviceNamesRequest = UserAttributes::DeviceNames::requestDeviceNames();
     connect(deviceNamesRequest.get(),
@@ -294,12 +275,12 @@ NodeSelectorTreeViewWidgetBackups::NodeSelectorTreeViewWidgetBackups(SelectTypeS
                 auto* item = NodeSelectorModel::getItemByIndex(rootIndex);
                 if (item && item->isDeviceFolder())
                 {
-                    setTitleText(rootIndex.data(Qt::DisplayRole).toString());
+                    notifyViewStateChanged();
                 }
             });
 }
 
-QString NodeSelectorTreeViewWidgetBackups::getRootText()
+QString NodeSelectorTreeViewWidgetBackups::getRootText() const
 {
     return MegaNodeNames::getBackupsName();
 }
@@ -309,95 +290,116 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetBackups::createMode
     return std::unique_ptr<NodeSelectorModelBackups>(new NodeSelectorModelBackups);
 }
 
-QIcon NodeSelectorTreeViewWidgetBackups::getEmptyIcon()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetBackups::getEmptyRootPageInfo()
 {
-    return Utilities::getIcon(QLatin1String("devices"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
-}
-
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetBackups::getEmptyLabel()
-{
-    EmptyLabelInfo info;
-    info.description = tr("No backups");
+    SelectType::EmptyPageInfo info;
+    info.title = tr("No backups");
+    info.icon.addFile(
+        Utilities::getPixmapName(QLatin1String("empty_backups"), Utilities::AttributeType::NONE));
+    info.buttons = SelectType::ButtonId::ADD_BACKUP;
     return info;
-}
-
-void NodeSelectorTreeViewWidgetBackups::onRootIndexChanged(const QModelIndex& idx)
-{
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::USER);
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ACCESS);
-
-    NodeSelectorTreeViewWidget::onRootIndexChanged(idx);
 }
 
 /////////////////////////////////////////////////////////////////
 
-const char* TAB_TYPE = "search_tab_type";
-
 NodeSelectorTreeViewWidgetSearch::NodeSelectorTreeViewWidgetSearch(SelectTypeSPtr mode,
                                                                    QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent),
-    mHasRows(false),
-    mNewSearch(true)
-
+    NodeSelectorTreeViewWidget(mode, TabItem::SEARCH, parent)
 {
-    auto setTypeToTabSelector = [](TabSelector* tab, NodeSelectorModelItemSearch::Type type)
-    {
-        tab->setProperty(TAB_TYPE, static_cast<int>(type));
-    };
-
-    setTypeToTabSelector(ui->cloudDriveSearch, NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
-    setTypeToTabSelector(ui->incomingSharesSearch,
-                         NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
-    setTypeToTabSelector(ui->backupsSearch, NodeSelectorModelItemSearch::Type::BACKUP);
-    setTypeToTabSelector(ui->rubbishSearch, NodeSelectorModelItemSearch::Type::RUBBISH);
+    mSearchController = std::make_unique<NodeSelectorSearchController>(ui);
 
     connect(ui->cloudDriveSearch,
             &TabSelector::clicked,
             this,
-            &NodeSelectorTreeViewWidgetSearch::onCloudDriveSearchClicked);
+            [this]()
+            {
+                onSearchTabClicked(TabType::CLOUD_DRIVE);
+            });
 
     connect(ui->incomingSharesSearch,
             &TabSelector::clicked,
             this,
-            &NodeSelectorTreeViewWidgetSearch::onIncomingSharesSearchClicked);
+            [this]()
+            {
+                onSearchTabClicked(TabType::INCOMING_SHARE);
+            });
 
     connect(ui->backupsSearch,
             &TabSelector::clicked,
             this,
-            &NodeSelectorTreeViewWidgetSearch::onBackupsSearchClicked);
+            [this]()
+            {
+                onSearchTabClicked(TabType::BACKUP);
+            });
 
     connect(ui->rubbishSearch,
             &TabSelector::clicked,
             this,
-            &NodeSelectorTreeViewWidgetSearch::onRubbishSearchClicked);
+            [this]()
+            {
+                onSearchTabClicked(TabType::RUBBISH);
+            });
 
     ui->tMegaFolders->loadingView().setDelayTimeToShowInMs(0);
 }
 
+void NodeSelectorTreeViewWidgetSearch::prepareForInitialDisplay()
+{
+    if (mSelectType->isFilePicker())
+    {
+        // The search view does not load content on startup. Pre-attaching the view avoids the
+        // first visible search having to build the tree view and delegates mid-transition.
+        setLoadingSceneVisible(false);
+        onLevelLoaded();
+    }
+}
+
+void NodeSelectorTreeViewWidgetSearch::setSearchScope(std::optional<TabType> scope)
+{
+    mSearchController->setSearchScope(scope);
+}
+
+void NodeSelectorTreeViewWidgetSearch::resetSearchState()
+{
+    if (auto model = searchModel())
+    {
+        model->stopSearch();
+    }
+
+    mSearchController->resetSearch();
+}
+
 void NodeSelectorTreeViewWidgetSearch::search(const QString& text)
 {
-    resetChipsVisibility();
+    // The search destroys the model items in the worker thread. Clear the selection
+    // now (while the items are still alive) so no dangling ranges remain that would
+    // later dereference freed memory. The model reset also clears it (see the
+    // modelAboutToBeReset connection); this is the first line of defense.
+    clearSelection();
 
-    mNewSearch = true;
-    mSearchStr = text;
-
-    // Reset it and wait for the updated text
-    setTitleText(QString());
-
-    ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+    mSearchController->beginSearch(text);
     setStyleSheet(styleSheet());
 
-    auto search_model = static_cast<NodeSelectorModelSearch*>(mModel.get());
-    search_model->searchByText(text);
+    if (mSearchDelegate)
+    {
+        mSearchDelegate->setSearchText(text);
+    }
+
+    if (auto model = searchModel())
+    {
+        model->setAllowedTabTypes(
+            mSearchController->allowedTypes(getSelectType()->allowedTabTypes()));
+        model->searchByText(text);
+    }
 }
 
 void NodeSelectorTreeViewWidgetSearch::stopSearch()
 {
-    auto search_model = static_cast<NodeSelectorModelSearch*>(mModel.get());
-    search_model->stopSearch();
-    mHasRows = false;
+    if (auto model = searchModel())
+    {
+        model->stopSearch();
+    }
+    mSearchController->stopSearch();
 }
 
 std::shared_ptr<NodeSelectorProxyModel> NodeSelectorTreeViewWidgetSearch::createProxyModel()
@@ -418,7 +420,7 @@ std::shared_ptr<NodeSelectorProxyModel> NodeSelectorTreeViewWidgetSearch::create
     return proxy;
 }
 
-bool NodeSelectorTreeViewWidgetSearch::isCurrentRootIndexReadOnly()
+bool NodeSelectorTreeViewWidgetSearch::isCurrentRootIndexReadOnly() const
 {
     return true;
 }
@@ -428,53 +430,17 @@ bool NodeSelectorTreeViewWidgetSearch::isSelectionReadOnly(const QModelIndexList
     return true;
 }
 
-void NodeSelectorTreeViewWidgetSearch::treeViewWidgetSelected()
-{
-    // By default, all visible the first time
-    if (ui->searchButtonsWidget->isHidden())
-    {
-        resetChipsVisibility();
-    }
-}
-
 void NodeSelectorTreeViewWidgetSearch::resetMovingNumber()
 {
-    mModel->moveProcessedByNumber(mModel->getMoveRequestsCounter());
-}
-
-void NodeSelectorTreeViewWidgetSearch::checkSearchButtonsVisibility()
-{
-    NodeSelectorModelItemSearch::Types searchedTypes = NodeSelectorModelItemSearch::Type::NONE;
-    auto searchModel = dynamic_cast<NodeSelectorModelSearch*>(mModel.get());
-    if (searchModel)
-    {
-        searchedTypes = searchModel->searchedTypes();
-    }
-
-    ui->backupsSearch->setVisible(
-        searchedTypes.testFlag(NodeSelectorModelItemSearch::Type::BACKUP));
-    ui->incomingSharesSearch->setVisible(
-        searchedTypes.testFlag(NodeSelectorModelItemSearch::Type::INCOMING_SHARE));
-    ui->cloudDriveSearch->setVisible(
-        searchedTypes.testFlag(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE));
-    ui->rubbishSearch->setVisible(
-        searchedTypes.testFlag(NodeSelectorModelItemSearch::Type::RUBBISH));
+    mModel->finishMovingNodes();
 }
 
 bool NodeSelectorTreeViewWidgetSearch::isNodeCompatibleWithModel(mega::MegaNode* node)
 {
-    auto nodeName(QString::fromUtf8(node->getName()));
-    auto containsText = nodeName.contains(mSearchStr, Qt::CaseInsensitive);
-    return containsText;
+    return mSearchController->matchesNodeName(node);
 }
 
-QModelIndex NodeSelectorTreeViewWidgetSearch::getAddedNodeParent(mega::MegaHandle parentHandle)
-{
-    Q_UNUSED(parentHandle)
-    return QModelIndex();
-}
-
-void NodeSelectorTreeViewWidgetSearch::makeCustomConnections()
+void NodeSelectorTreeViewWidgetSearch::makeViewConnections()
 {
     connect(ui->tMegaFolders,
             &NodeSelectorTreeView::restoreClicked,
@@ -488,7 +454,7 @@ NodeSelectorTreeViewWidget::NodeState
 {
     NodeState result(NodeState::DOESNT_EXIST);
 
-    if (mHasRows && node)
+    if (mSearchController->hasRows() && node)
     {
         if (index.isValid())
         {
@@ -503,32 +469,19 @@ NodeSelectorTreeViewWidget::NodeState
     return result;
 }
 
-void NodeSelectorTreeViewWidgetSearch::onBackupsSearchClicked()
+void NodeSelectorTreeViewWidgetSearch::onSearchTabClicked(TabType type)
 {
-    auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(NodeSelectorModelItemSearch::Type::BACKUP);
-    changeColumnsVisibility(NodeSelectorModelItemSearch::Type::BACKUP);
-}
-
-void NodeSelectorTreeViewWidgetSearch::onRubbishSearchClicked()
-{
-    auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(NodeSelectorModelItemSearch::Type::RUBBISH);
-    changeColumnsVisibility(NodeSelectorModelItemSearch::Type::RUBBISH);
-}
-
-void NodeSelectorTreeViewWidgetSearch::onIncomingSharesSearchClicked()
-{
-    auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
-    changeColumnsVisibility(NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
-}
-
-void NodeSelectorTreeViewWidgetSearch::onCloudDriveSearchClicked()
-{
-    auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-    proxy_model->setMode(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
-    changeColumnsVisibility(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
+    mSearchController->activateMode(
+        type,
+        searchProxyModel(),
+        [this](TabType t)
+        {
+            changeColumnsVisibility(t);
+        },
+        [this]()
+        {
+            expandSearchResults();
+        });
 }
 
 void NodeSelectorTreeViewWidgetSearch::onItemDoubleClick(const QModelIndex& index)
@@ -538,138 +491,48 @@ void NodeSelectorTreeViewWidgetSearch::onItemDoubleClick(const QModelIndex& inde
     emit nodeDoubleClicked(node, true);
 }
 
-void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(
-    NodeSelectorModelItemSearch::Type type)
+void NodeSelectorTreeViewWidgetSearch::changeColumnsVisibility(TabType type)
 {
-    bool hideUserColumn(true);
-    bool hideAccessColumn(true);
-    bool hideAddedDate(true);
-
-    switch (type)
-    {
-        case NodeSelectorModelItemSearch::Type::BACKUP:
-        case NodeSelectorModelItemSearch::Type::CLOUD_DRIVE:
-        {
-            hideAddedDate = false;
-            break;
-        }
-        case NodeSelectorModelItemSearch::Type::INCOMING_SHARE:
-        {
-            hideUserColumn = false;
-            hideAccessColumn = false;
-            break;
-        }
-        case NodeSelectorModelItemSearch::Type::RUBBISH:
-        default:
-            break;
-    }
-
-    ui->tMegaFolders->setColumnHidden(NodeSelectorModel::Column::USER, hideUserColumn);
-    ui->tMegaFolders->setColumnHidden(NodeSelectorModel::Column::ACCESS, hideAccessColumn);
-    ui->tMegaFolders->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, hideAddedDate);
-
-    onRootIndexChanged(QModelIndex());
+    emit searchTabTypeChanged(type);
 }
 
-void NodeSelectorTreeViewWidgetSearch::resetChipsVisibility()
+void NodeSelectorTreeViewWidgetSearch::expandSearchResults()
 {
-    ui->backupsSearch->setVisible(true);
-    ui->incomingSharesSearch->setVisible(true);
-    ui->cloudDriveSearch->setVisible(true);
-    ui->rubbishSearch->setVisible(true);
-
-    ui->searchButtonsWidget->setVisible(true);
+    // Expand once the data is ready; the view defers it if the model is detached.
+    ui->tMegaFolders->expandAllWhenReady();
 }
 
 void NodeSelectorTreeViewWidgetSearch::onLevelLoaded()
 {
-    if (mNewSearch)
-    {
-        checkSearchButtonsVisibility();
-
-        // Get the searched types returned by the SDK
-        NodeSelectorModelItemSearch::Types searchedTypes = NodeSelectorModelItemSearch::Type::NONE;
-        auto searchModel = dynamic_cast<NodeSelectorModelSearch*>(mModel.get());
-        if (searchModel)
+    mSearchController->handleExpandReady(
+        searchModel(),
+        searchProxyModel(),
+        ui->tMegaFolders->model() != nullptr,
+        [this]()
         {
-            searchedTypes = searchModel->searchedTypes();
-        }
-
-        NodeSelectorModelItemSearch::Type tabSelected(NodeSelectorModelItemSearch::Type::NONE);
-        // Set the model and the tab selector
-        auto setMode = [this, searchedTypes, &tabSelected](NodeSelectorModelItemSearch::Type type)
+            NodeSelectorTreeViewWidget::onLevelLoaded();
+        },
+        [this](TabType type)
         {
-            if (tabSelected != NodeSelectorModelItemSearch::Type::NONE)
-            {
-                return;
-            }
-
-            auto proxy_model = static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
-            if (searchedTypes.testFlag(type))
-            {
-                tabSelected = type;
-                // If it is the first time we load the model, the base method will run a sort/filter
-                // action, so we don´t need to do it, just set the mode without sorting/filtering
-                if (ui->tMegaFolders->model() == nullptr)
-                {
-                    // Block the chip signals to avoid calling the slot, which will sort/filter the
-                    // model
-                    TabSelector::applyActionToTabSelectors(ui->searchButtonsWidget,
-                                                           [](TabSelector* tab)
-                                                           {
-                                                               tab->blockSignals(true);
-                                                           });
-                    TabSelector::selectTabIf(ui->searchButtonsWidget,
-                                             TAB_TYPE,
-                                             static_cast<int>(type));
-                    TabSelector::applyActionToTabSelectors(ui->searchButtonsWidget,
-                                                           [](TabSelector* tab)
-                                                           {
-                                                               tab->blockSignals(false);
-                                                           });
-                    proxy_model->setMode(type, false);
-                }
-                // If it is not the first time, we just click on the correct chip, and it will
-                // sort/filter for us
-                else
-                {
-                    TabSelector::selectTabIf(ui->searchButtonsWidget,
-                                             TAB_TYPE,
-                                             static_cast<int>(type));
-                }
-            }
-        };
-
-        // Only one will be set, in this order
-        setMode(NodeSelectorModelItemSearch::Type::CLOUD_DRIVE);
-        setMode(NodeSelectorModelItemSearch::Type::INCOMING_SHARE);
-        setMode(NodeSelectorModelItemSearch::Type::BACKUP);
-        setMode(NodeSelectorModelItemSearch::Type::RUBBISH);
-
-        mNewSearch = false;
-
-        NodeSelectorTreeViewWidget::onLevelLoaded();
-
-        // Do it after setting the model to the view, otherwise it won´t work
-        changeColumnsVisibility(tabSelected);
-    }
-    else
-    {
-        NodeSelectorTreeViewWidget::onLevelLoaded();
-    }
+            changeColumnsVisibility(type);
+        },
+        [this]()
+        {
+            expandSearchResults();
+        });
 }
 
-QString NodeSelectorTreeViewWidgetSearch::getRootText()
+QString NodeSelectorTreeViewWidgetSearch::getRootText() const
 {
-    auto resultNumber(mModel->rowCount());
-    QString resultString(tr("%n result found", "", resultNumber));
-    return resultString;
+    const auto count = searchModel() ? searchModel()->searchResultCount() : 0;
+    return tr("%n result found", "", count);
 }
 
 std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel()
 {
     auto model = std::unique_ptr<NodeSelectorModelSearch>(
-        new NodeSelectorModelSearch(getSelectType()->allowedTypes()));
+        new NodeSelectorModelSearch(getSelectType()->allowedTabTypes(),
+                                    getSelectType()->flattenSearchResults()));
 
     connect(model.get(),
             &NodeSelectorModelSearch::nodeTypeHasChanged,
@@ -682,32 +545,46 @@ std::unique_ptr<NodeSelectorModel> NodeSelectorTreeViewWidgetSearch::createModel
     connect(model.get(),
             &QAbstractItemModel::rowsInserted,
             this,
-            &NodeSelectorTreeViewWidgetSearch::updateRootTitle);
+            &NodeSelectorTreeViewWidget::notifyViewStateChanged);
 
     connect(model.get(),
             &QAbstractItemModel::rowsRemoved,
             this,
-            &NodeSelectorTreeViewWidgetSearch::updateRootTitle);
+            &NodeSelectorTreeViewWidget::notifyViewStateChanged);
 
     connect(model.get(),
             &QAbstractItemModel::modelReset,
             this,
-            &NodeSelectorTreeViewWidgetSearch::updateRootTitle);
+            &NodeSelectorTreeViewWidget::notifyViewStateChanged);
+
+    connect(model.get(),
+            &QAbstractItemModel::rowsInserted,
+            this,
+            &NodeSelectorTreeViewWidgetSearch::searchCounterChanged);
+    connect(model.get(),
+            &QAbstractItemModel::rowsRemoved,
+            this,
+            &NodeSelectorTreeViewWidgetSearch::searchCounterChanged);
+    connect(model.get(),
+            &QAbstractItemModel::modelReset,
+            this,
+            &NodeSelectorTreeViewWidgetSearch::searchCounterChanged);
 
     return model;
 }
 
-QIcon NodeSelectorTreeViewWidgetSearch::getEmptyIcon()
+int NodeSelectorTreeViewWidgetSearch::searchResultCount() const
 {
-    return Utilities::getIcon(QLatin1String("search"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
+    return searchModel() ? searchModel()->searchResultCount() : 0;
 }
 
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetSearch::getEmptyLabel()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetSearch::getEmptyRootPageInfo()
 {
-    EmptyLabelInfo info;
-    info.description = tr("No search results");
+    SelectType::EmptyPageInfo info;
+    info.title = tr("No results found");
+    info.description = tr("Try a different name or check the spelling");
+    info.icon.addFile(
+        Utilities::getPixmapName(QLatin1String("empty_search"), Utilities::AttributeType::NONE));
     return info;
 }
 
@@ -722,30 +599,46 @@ void NodeSelectorTreeViewWidgetSearch::setViewPage()
 
     if (ui->tMegaFolders->model())
     {
-        mHasRows = ui->tMegaFolders->model()->rowCount() > 0;
-        if (!mHasRows && showEmptyView())
+        const bool hasRows = ui->tMegaFolders->model()->rowCount() > 0;
+        mSearchController->setHasRows(hasRows);
+        if (!hasRows && showEmptyView())
         {
-            ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+            setCurrentPage(ViewType::ROOT_EMPTY);
             return;
         }
     }
-    ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+    setCurrentPage(ViewType::VIEW);
+}
+
+NodeSelectorModelSearch* NodeSelectorTreeViewWidgetSearch::searchModel() const
+{
+    return static_cast<NodeSelectorModelSearch*>(mModel.get());
+}
+
+NodeSelectorProxyModelSearch* NodeSelectorTreeViewWidgetSearch::searchProxyModel() const
+{
+    return static_cast<NodeSelectorProxyModelSearch*>(mProxyModel.get());
+}
+
+NodeSelectorDelegate* NodeSelectorTreeViewWidgetSearch::createItemDelegate(QObject* parent)
+{
+    auto delegate = new NodeSearchRowDelegate(parent);
+    mSearchDelegate = delegate;
+    return delegate;
 }
 
 ///////////////////////
 NodeSelectorTreeViewWidgetRubbish::NodeSelectorTreeViewWidgetRubbish(SelectTypeSPtr mode,
                                                                      QWidget* parent):
-    NodeSelectorTreeViewWidget(mode, parent)
-{
-    setTitle(MegaNodeNames::getRubbishName());
-}
+    NodeSelectorTreeViewWidget(mode, TabItem::RUBBISH, parent)
+{}
 
 void NodeSelectorTreeViewWidgetRubbish::setShowEmptyView(bool newShowEmptyView)
 {
     mShowEmptyView = newShowEmptyView;
 }
 
-bool NodeSelectorTreeViewWidgetRubbish::isEmpty() const
+bool NodeSelectorTreeViewWidgetRubbish::isTopRootEmpty() const
 {
     auto rootIndex = mModel->index(0, 0);
     return mModel->rowCount(rootIndex) == 0;
@@ -756,7 +649,7 @@ bool NodeSelectorTreeViewWidgetRubbish::isNodeCompatibleWithModel(mega::MegaNode
     return MegaSyncApp->getMegaApi()->isInRubbish(node);
 }
 
-void NodeSelectorTreeViewWidgetRubbish::makeCustomConnections()
+void NodeSelectorTreeViewWidgetRubbish::makeViewConnections()
 {
     connect(ui->tMegaFolders,
             &NodeSelectorTreeView::restoreClicked,
@@ -764,7 +657,7 @@ void NodeSelectorTreeViewWidgetRubbish::makeCustomConnections()
             &RestoreNodeManager::onRestoreClicked);
 }
 
-QString NodeSelectorTreeViewWidgetRubbish::getRootText()
+QString NodeSelectorTreeViewWidgetRubbish::getRootText() const
 {
     return MegaNodeNames::getRubbishName();
 }
@@ -783,36 +676,23 @@ void NodeSelectorTreeViewWidgetRubbish::setViewPage()
     auto rootIndex = mModel->index(0, 0);
     if (mModel->rowCount(rootIndex) == 0 && showEmptyView())
     {
-        ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+        setCurrentPage(ViewType::ROOT_EMPTY);
 
         // The rubbish has been emptied, so we can unset the loading view
         ui->tMegaFolders->loadingView().toggleLoadingScene(false);
     }
     else
     {
-        ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
+        NodeSelectorTreeViewWidget::setViewPage();
     }
 }
 
-QIcon NodeSelectorTreeViewWidgetRubbish::getEmptyIcon()
+SelectType::EmptyPageInfo NodeSelectorTreeViewWidgetRubbish::getEmptyRootPageInfo()
 {
-    return Utilities::getIcon(QLatin1String("trash"),
-                              Utilities::AttributeType::SMALL | Utilities::AttributeType::THIN |
-                                  Utilities::AttributeType::OUTLINE);
-}
+    SelectType::EmptyPageInfo info;
+    info.title = tr("Rubbish bin is empty");
+    info.icon.addFile(
+        Utilities::getPixmapName(QLatin1String("empty_rubbish"), Utilities::AttributeType::NONE));
 
-NodeSelectorTreeViewWidget::EmptyLabelInfo NodeSelectorTreeViewWidgetRubbish::getEmptyLabel()
-{
-    EmptyLabelInfo info;
-    info.description = tr("The Rubbish bin is empty");
     return info;
-}
-
-void NodeSelectorTreeViewWidgetRubbish::onRootIndexChanged(const QModelIndex& source_idx)
-{
-    Q_UNUSED(source_idx)
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::USER);
-    ui->tMegaFolders->header()->hideSection(NodeSelectorModel::Column::ACCESS);
-
-    NodeSelectorTreeViewWidget::onRootIndexChanged(source_idx);
 }

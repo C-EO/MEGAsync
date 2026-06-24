@@ -5,6 +5,7 @@
 #include "NodeSelectorModel.h"
 #include "QThread"
 
+#include <QCoreApplication>
 #include <QDebug>
 
 NodeSelectorProxyModel::NodeSelectorProxyModel(QObject* parent):
@@ -182,6 +183,12 @@ bool NodeSelectorProxyModel::lessThan(const QModelIndex& left, const QModelIndex
             {
                 result = left.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt() <
                          right.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
+            }
+            else if (left.column() == NodeSelectorModel::Column::LABEL &&
+                     right.column() == NodeSelectorModel::Column::LABEL)
+            {
+                result = left.data(toInt(NodeSelectorModelRoles::LABEL_ORDER_ROLE)).toInt() <
+                         right.data(toInt(NodeSelectorModelRoles::LABEL_ORDER_ROLE)).toInt();
             }
             else
             {
@@ -372,21 +379,6 @@ void NodeSelectorProxyModel::onModelSortedFiltered()
     mItemsToMap.clear();
 }
 
-NodeSelectorProxyModelStream::NodeSelectorProxyModelStream(QObject* parent):
-    NodeSelectorProxyModel(parent)
-{}
-
-void NodeSelectorProxyModelStream::applyProxyModelFlags(Qt::ItemFlags& flags,
-                                                        const QModelIndex& index) const
-{
-    NodeSelectorProxyModel::applyProxyModelFlags(flags, index);
-
-    if (index.isValid() && !index.data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool())
-    {
-        flags &= ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    }
-}
-
 NodeSelectorProxyModelSync::NodeSelectorProxyModelSync(QObject* parent):
     NodeSelectorProxyModel(parent)
 {}
@@ -403,29 +395,59 @@ void NodeSelectorProxyModelSync::applyProxyModelFlags(Qt::ItemFlags& flags,
     }
 }
 
+QVariant NodeSelectorProxyModelSync::data(const QModelIndex& index, int role) const
+{
+    // Whole-row tooltip for incoming-share folders that cannot be synced because the user does not
+    // have full access. Overrides the base per-cell ToolTipRole on every column so the styled
+    // tooltip covers the whole row (owner/takedown tooltips still apply to full-access folders).
+    if (role == Qt::ToolTipRole && index.isValid())
+    {
+        if (auto* item = NodeSelectorModel::getItemByIndex(index))
+        {
+            const auto node = item->getNode();
+            const int access = item->getNodeAccess();
+            if (node && node->isFolder() && access < mega::MegaShare::ACCESS_FULL)
+            {
+                return access == mega::MegaShare::ACCESS_READWRITE ?
+                           QCoreApplication::translate(
+                               "NodeSelectorTreeViewWidget",
+                               "This folder is read and write. Ask for full access to sync") :
+                           QCoreApplication::translate(
+                               "NodeSelectorTreeViewWidget",
+                               "This folder is read-only. Ask for full access to sync");
+            }
+        }
+    }
+
+    return NodeSelectorProxyModel::data(index, role);
+}
+
 NodeSelectorProxyModelSearch::NodeSelectorProxyModelSearch(
     std::shared_ptr<NodeSelectorProxyModel> mainProxyModel,
     QObject* parent):
     NodeSelectorProxyModel(parent),
-    mMode(NodeSelectorModelItemSearch::Type::NONE),
+    mMode(TabType::NONE),
     mMainProxyModel(mainProxyModel)
 {}
 
-void NodeSelectorProxyModelSearch::setMode(NodeSelectorModelItemSearch::Types mode,
-                                           bool forceFilter)
+void NodeSelectorProxyModelSearch::setMode(TabTypes mode, bool forceFilter)
 {
     if (mMode == mode)
     {
         return;
     }
 
-    getMegaModel()->sendBlockUiSignal(true);
     mMode = mode;
+    // Only block/invalidate when actually re-filtering. Doing it unconditionally emitted a
+    // blockUi(false) during the initial-mode setup (forceFilter=false), which reached the view
+    // before its model/header were attached and crashed. Invalidate first so rowCount() below
+    // reflects the new mode when deciding whether the result set is empty.
     if (forceFilter)
     {
+        getMegaModel()->sendBlockUiSignal(true);
         invalidateFilter();
+        getMegaModel()->sendBlockUiSignal(false);
     }
-    getMegaModel()->sendBlockUiSignal(false);
     if (rowCount() == 0)
     {
         emit modeEmpty();
@@ -434,7 +456,7 @@ void NodeSelectorProxyModelSearch::setMode(NodeSelectorModelItemSearch::Types mo
 
 bool NodeSelectorProxyModelSearch::canBeDeleted() const
 {
-    if (mMode & NodeSelectorModelItemSearch::Type::BACKUP)
+    if (mMode & TabType::BACKUP)
     {
         return false;
     }
@@ -456,7 +478,7 @@ Qt::ItemFlags NodeSelectorProxyModelSearch::flags(const QModelIndex& index) cons
 bool NodeSelectorProxyModelSearch::filterAcceptsRow(int sourceRow,
                                                     const QModelIndex& sourceParent) const
 {
-    if (mMode == static_cast<int>(NodeSelectorModelItemSearch::Type::NONE))
+    if (!mMode)
     {
         return true;
     }

@@ -543,7 +543,7 @@ void TransferManager::refreshStateStats()
     else
     {
         // If we didn't have transfers, launch timer and show speed.
-        if (tabSelector->isEmpty() && !mSpeedRefreshTimer->isActive())
+        if (tabSelector->hasEmptyCount() && !mSpeedRefreshTimer->isActive())
         {
             mSpeedRefreshTimer->start(SPEED_REFRESH_PERIOD_MS);
         }

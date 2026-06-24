@@ -4,6 +4,8 @@
 
 #include <QBitmap>
 #include <QDebug>
+#include <QLinearGradient>
+#include <QPainter>
 #include <QToolButton>
 #include <QWidget>
 
@@ -152,4 +154,29 @@ std::optional<QPixmap> IconTokenizer::changePixmapColor(const QPixmap& pixmap, Q
     }
 
     return QPixmap::fromImage(image);
+}
+
+std::optional<QPixmap> IconTokenizer::changePixmapToGradient(const QPixmap& pixmap,
+                                                             const QColor& fromColor,
+                                                             const QColor& toColor)
+{
+    if (pixmap.isNull())
+    {
+        qWarning() << __func__ << " Error pixmap argument is invalid";
+        return std::nullopt;
+    }
+
+    QPixmap out = pixmap;
+    QPainter painter(&out);
+
+    // Bottom-to-top gradient: start (fromColor) at bottom, end (toColor) at top.
+    QLinearGradient gradient(0, out.rect().height(), 0, 0);
+    gradient.setColorAt(0.0, fromColor);
+    gradient.setColorAt(1.0, toColor);
+
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.fillRect(out.rect(), gradient);
+    painter.end();
+
+    return out;
 }

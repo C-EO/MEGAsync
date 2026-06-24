@@ -2,16 +2,22 @@
 #define NODESELECTORTREEVIEWWIDGETSPECIALIZATIONS_H
 
 #include "NodeSelectorProxyModel.h"
+#include "NodeSelectorSearchController.h"
 #include "NodeSelectorTreeViewWidget.h"
 
 #include <QLabel>
 #include <QModelIndex>
+#include <QPointer>
 #include <QToolButton>
 #include <QWidget>
 
 #include <memory>
+#include <optional>
 
 class NodeSelectorModel;
+class NodeSelectorModelSearch;
+class NodeSelectorProxyModelSearch;
+class NodeSearchRowDelegate;
 class RestoreNodeManager;
 class TabSelector;
 
@@ -28,18 +34,17 @@ protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
 
 private:
-    QString getRootText() override;
-    void onRootIndexChanged(const QModelIndex& idx) override;
+    QString getRootText() const override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     void setViewPage() override;
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 
     bool showEmptyView() override
     {
         return mShowEmptyView;
     }
-    bool isCurrentRootIndexReadOnly() override;
+
+    bool isCurrentRootIndexReadOnly() const override;
 
     mega::MegaHandle findMergedSibling(std::shared_ptr<mega::MegaNode> node);
 
@@ -55,19 +60,22 @@ public:
     explicit NodeSelectorTreeViewWidgetIncomingShares(SelectTypeSPtr mode,
                                                       QWidget* parent = nullptr);
 
+signals:
+    void incomingShareAccessChanged();
+
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
-    void setTitleText(const QString& nodeName) override;
+    std::optional<IncomingShareHeaderData> incomingShareHeaderData() const override;
+    void makeViewConnections() override;
 
 private:
-    QString getRootText() override;
+    QString getRootText() const override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
-    void onRootIndexChanged(const QModelIndex& idx) override;
-    bool isCurrentRootIndexReadOnly() override;
+    bool isCurrentRootIndexReadOnly() const override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
     bool isCurrentSelectionReadOnly() override;
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    bool isNewFolderAllowed() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 };
 
 class NodeSelectorTreeViewWidgetBackups: public NodeSelectorTreeViewWidget
@@ -78,11 +86,10 @@ public:
     explicit NodeSelectorTreeViewWidgetBackups(SelectTypeSPtr mode, QWidget* parent = nullptr);
 
 private:
-    QString getRootText() override;
-    void onRootIndexChanged(const QModelIndex& idx) override;
+    QString getRootText() const override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
 
-    bool isCurrentRootIndexReadOnly() override
+    bool isCurrentRootIndexReadOnly() const override
     {
         return true;
     }
@@ -97,8 +104,7 @@ private:
         return true;
     }
 
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 };
 
 class NodeSelectorTreeViewWidgetSearch: public NodeSelectorTreeViewWidget
@@ -107,14 +113,16 @@ class NodeSelectorTreeViewWidgetSearch: public NodeSelectorTreeViewWidget
 
 public:
     explicit NodeSelectorTreeViewWidgetSearch(SelectTypeSPtr mode, QWidget* parent = nullptr);
+    void prepareForInitialDisplay();
+    void resetSearchState();
     void search(const QString& text);
     void stopSearch();
-    bool isCurrentRootIndexReadOnly() override;
+    void setSearchScope(std::optional<TabType> scope);
+    bool isCurrentRootIndexReadOnly() const override;
     bool isSelectionReadOnly(const QModelIndexList& selection) override;
 
     std::shared_ptr<RestoreNodeManager> getRestoreManager() const;
-
-    void treeViewWidgetSelected() override;
+    int searchResultCount() const;
 
 public slots:
     void resetMovingNumber();
@@ -123,42 +131,34 @@ public slots:
 signals:
     void nodeDoubleClicked(std::shared_ptr<mega::MegaNode> node, bool goToInit);
     void searchCounterChanged();
+    void searchTabTypeChanged(TabType type);
 
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
-    QModelIndex getAddedNodeParent(mega::MegaHandle parentHandle) override;
-    void makeCustomConnections() override;
     void onLevelLoaded() override;
+    void makeViewConnections() override;
 
 protected slots:
     NodeState getNodeOnModelState(const QModelIndex& index, mega::MegaNode* node) override;
 
 private slots:
-    void onBackupsSearchClicked();
-    void onIncomingSharesSearchClicked();
-    void onCloudDriveSearchClicked();
-    void onRubbishSearchClicked();
     void onItemDoubleClick(const QModelIndex& index) override;
 
 private:
-    void checkSearchButtonsVisibility();
-    void changeColumnsVisibility(NodeSelectorModelItemSearch::Type type);
-    void resetChipsVisibility();
-    QString getRootText() override;
+    void onSearchTabClicked(TabType type);
+    void changeColumnsVisibility(TabType type);
+    void expandSearchResults();
+    QString getRootText() const override;
     std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
+    NodeSelectorDelegate* createItemDelegate(QObject* parent) override;
+    NodeSelectorModelSearch* searchModel() const;
+    NodeSelectorProxyModelSearch* searchProxyModel() const;
 
-    bool newFolderBtnCanBeVisisble() override
-    {
-        return false;
-    }
-    bool mHasRows;
-    QString mSearchStr;
-    bool mNewSearch;
-
+    std::unique_ptr<NodeSelectorSearchController> mSearchController;
     std::shared_ptr<RestoreNodeManager> mRestoreManager;
+    QPointer<NodeSearchRowDelegate> mSearchDelegate;
 };
 
 class NodeSelectorTreeViewWidgetRubbish: public NodeSelectorTreeViewWidget
@@ -168,26 +168,24 @@ class NodeSelectorTreeViewWidgetRubbish: public NodeSelectorTreeViewWidget
 public:
     explicit NodeSelectorTreeViewWidgetRubbish(SelectTypeSPtr mode, QWidget* parent = nullptr);
     void setShowEmptyView(bool newShowEmptyView);
-    bool isEmpty() const;
+    bool isTopRootEmpty() const;
 
 protected:
     bool isNodeCompatibleWithModel(mega::MegaNode* node) override;
-    void makeCustomConnections() override;
+    void makeViewConnections() override;
 
 private:
-    QString getRootText() override;
-    void onRootIndexChanged(const QModelIndex& idx) override;
+    QString getRootText() const override;
     std::unique_ptr<NodeSelectorModel> createModel() override;
     void setViewPage() override;
-    QIcon getEmptyIcon() override;
-    EmptyLabelInfo getEmptyLabel() override;
+    SelectType::EmptyPageInfo getEmptyRootPageInfo() override;
 
     bool showEmptyView() override
     {
         return mShowEmptyView;
     }
 
-    bool isCurrentRootIndexReadOnly() override
+    bool isCurrentRootIndexReadOnly() const override
     {
         return true;
     }
@@ -200,11 +198,6 @@ private:
     bool isSelectionReadOnly(const QModelIndexList&) override
     {
         return true;
-    }
-
-    bool newFolderBtnCanBeVisisble() override
-    {
-        return false;
     }
 
     bool mShowEmptyView = true;

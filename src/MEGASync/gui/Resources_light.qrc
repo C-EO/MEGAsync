@@ -169,5 +169,7 @@
         <file alias="info_small_thin_outline_text_info">images/themed/light/info_small_thin_outline_text_info.svg</file>
         <file alias="x_circle_small_thin_outline_text_error">images/themed/light/x_circle_small_thin_outline_text_error.svg</file>
         <file alias="folder_small_thin">images/themed/light/folder_small_thin_outline.svg</file>
+        <file alias="arrow-down_small_thin_outline_icon_secondary">images/themed/light/arrow-down_small_thin_outline_icon_secondary.svg</file>
+        <file alias="arrow-up_small_thin_outline_icon_secondary">images/themed/light/arrow-up_small_thin_outline_icon_secondary.svg</file>
     </qresource>
 </RCC>

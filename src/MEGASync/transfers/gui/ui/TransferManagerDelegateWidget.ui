@@ -54,7 +54,7 @@ color: #303233; /*colorToken.text-primary*/
     min-height: 1px;
     max-height: 1px;
     border: none;
-    background: #FFB0B1B31A; /*colorToken.border-subtle*/
+    background: #B1B31A; /*colorToken.border-subtle*/
 	margin-left: 16px;
 	margin-right: 16px;
 }
@@ -313,9 +313,6 @@ QProgressBar
                <property name="textFormat">
                 <enum>Qt::PlainText</enum>
                </property>
-               <property name="font-size" stdset="0">
-                <string notr="true">body-2</string>
-               </property>
               </widget>
              </item>
              <item>
@@ -336,7 +333,7 @@ QProgressBar
                 <string notr="true"/>
                </property>
                <property name="icon">
-                <iconset>
+                <iconset resource="../../../gui/Resources_common.qrc">
                  <normaloff>:/sync-01_small_thin_outline</normaloff>:/sync-01_small_thin_outline</iconset>
                </property>
                <property name="normal_off" stdset="0">
@@ -578,7 +575,7 @@ QProgressBar
            <number>0</number>
           </property>
           <item alignment="Qt::AlignLeft">
-           <widget class="TokenizableButton" name="bItemSpeed">
+           <widget class="TokenizableButton" name="bItemSpeed" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -597,10 +594,10 @@ QProgressBar
               <height>16777215</height>
              </size>
             </property>
-            <property name="text">
+            <property name="text" stdset="0">
              <string notr="true"/>
             </property>
-            <property name="iconSize">
+            <property name="iconSize" stdset="0">
              <size>
               <width>16</width>
               <height>16</height>
@@ -648,7 +645,7 @@ QProgressBar
           </size>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="pActive">
           <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -1013,7 +1010,7 @@ QProgressBar
                </widget>
               </item>
               <item>
-               <widget class="TokenizableButton" name="tItemRetry">
+               <widget class="TokenizableButton" name="tItemRetry" native="true">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1032,7 +1029,7 @@ QProgressBar
                   <height>16777215</height>
                  </size>
                 </property>
-                <property name="text">
+                <property name="text" stdset="0">
                  <string/>
                 </property>
                 <property name="type" stdset="0">
@@ -1255,21 +1252,23 @@ QProgressBar
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TokenizableToolButton</class>
-   <extends>QToolButton</extends>
-   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
-  </customwidget>
-  <customwidget>
    <class>IconLabel</class>
    <extends>QToolButton</extends>
    <header>tokenizer/TokenizableItems/IconLabel.h</header>
   </customwidget>
   <customwidget>
    <class>TokenizableButton</class>
-   <extends>QPushButton</extends>
-   <header>tokenizer/TokenizableItems/TokenizableButtons.h</header>
+   <extends>QWidget</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
+  </customwidget>
+  <customwidget>
+   <class>TokenizableToolButton</class>
+   <extends>QToolButton</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h </header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../../gui/Resources_common.qrc"/>
+ </resources>
  <connections/>
 </ui>
