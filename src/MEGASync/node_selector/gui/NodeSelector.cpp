@@ -1224,7 +1224,10 @@ void NodeSelector::connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
     // mPendingColumnHidden is populated before a loading-scene restore runs for them.
     const auto refreshColumns = [this, widget, configure]()
     {
-        (this->*configure)(widget);
+        if (widget == getCurrentTreeViewWidget())
+        {
+            (this->*configure)(widget);
+        }
     };
 
     connect(widget, &NodeSelectorTreeViewWidget::viewReady, this, refreshColumns);
