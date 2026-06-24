@@ -7,6 +7,7 @@
 #include <QCollator>
 
 #include <memory>
+#include <qmutex.h>
 
 class SyncInfo;
 class SyncSettings;
@@ -46,7 +47,8 @@ public:
         FAIL,
         SCANNING,
         ACTIVE,
-        IDLE
+        IDLE,
+        REMOVING
     };
 
     Q_ENUM(State)
@@ -61,6 +63,9 @@ protected:
         ErrorMessage,
         ErrorId
     };
+
+    void onSyncRemoveBegins(mega::MegaHandle);
+    void onSyncRemoveEnds(mega::MegaHandle);
 
 private slots:
     void insertItem(std::shared_ptr<SyncSettings> sync);
@@ -77,6 +82,8 @@ private:
     QList<std::shared_ptr<SyncSettings>> mList;
     bool mSortAscending = true;
     QCollator mQCollator;
+    QList<mega::MegaHandle> mRemovingSyncs;
+    mutable QMutex mRemoveSyncsMutex;
 };
 
 #endif // SYNC_SETTINGS_MODEL_BASE_H

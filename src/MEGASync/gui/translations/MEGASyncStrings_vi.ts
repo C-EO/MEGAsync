@@ -592,11 +592,6 @@
         <translation>Báo cáo lỗi</translation>
     </message>
     <message>
-        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
-        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
-        <translation>Không thể nộp báo&#xa0;cáo của bạn vì đã xảy&#xa0;ra lỗi. Vui&#xa0;lòng thử lại sau hoặc liên&#xa0;hệ với [A]Hỗ&#xa0;trợ[/A] nếu sự&#xa0;cố vẫn tiếp&#xa0;diễn.</translation>
-    </message>
-    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>Báo&#xa0;cáo lỗi đã không thể gửi đi được do có trục&#xa0;trặc. Hãy thử lại sau hoặc liên&#xa0;hệ với đội trợ&#xa0;giúp qua email [A]https://mega.nz/support[/A] nếu vấn&#xa0;đề vẫn tiếp&#xa0;diễn.</translation>
@@ -650,11 +645,6 @@
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
         <translation>Vui&#xa0;lòng mô&#xa0;tả chi&#xa0;tiết vấn&#xa0;đề. Phải có ít nhất 30 ký&#xa0;tự.</translation>
-    </message>
-    <message>
-        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
-        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
-        <translation>Vui&#xa0;lòng thử lại sau hoặc liên&#xa0;hệ với [A]Hỗ&#xa0;trợ[/A] nếu sự&#xa0;cố vẫn tiếp&#xa0;diễn.</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -3091,11 +3081,6 @@ Hãy chờ cho phiên tải lên được hoàn&#xa0;tất.</translation>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
         <translation>Bạn đã bị đăng&#xa0;xuất ra thiết&#xa0;bị này bởi một phiên đăng&#xa0;nhập từ chỗ khác</translation>
-    </message>
-    <message>
-        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
-        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
-        <translation>Bạn đã đăng&#xa0;xuất. Liên&#xa0;hệ với [A]Hỗ&#xa0;trợ[/A] nếu sự&#xa0;cố vẫn tiếp&#xa0;diễn.</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -7713,6 +7698,11 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <source>Remove synced folder</source>
         <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
         <translation>Loại bỏ thư&#xa0;mục đồng&#xa0;bộ</translation>
+    </message>
+    <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Removing</translation>
     </message>
     <message>
         <source>Rescan</source>

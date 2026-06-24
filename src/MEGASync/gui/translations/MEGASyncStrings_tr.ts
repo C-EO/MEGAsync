@@ -592,11 +592,6 @@
         <translation>Sorun bildir</translation>
     </message>
     <message>
-        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
-        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
-        <translation>Bir hata nedeniyle sorununuz iletilmedi. Lütfen daha sonra yeniden deneyin veya sorun devam ederse [A]Destek[/A] ile iletişime geçin.</translation>
-    </message>
-    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>Sorununuz bir hata nedeniyle yüklenemedi. Daha sonra tekrar deneyin veya sorun devam ederse [A]https://mega.nz/support[/A] üzerinden destek ekibimizle iletişime geçin.</translation>
@@ -650,11 +645,6 @@
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
         <translation>Lütfen sorununuzu ayrıntılı bir şekilde açıklayın. En az 30 karakter olmalıdır.</translation>
-    </message>
-    <message>
-        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
-        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
-        <translation>Lütfen daha sonra yeniden deneyin veya sorun devam ederse [A]Destek[/A] ile iletişime geçin.</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -3091,11 +3081,6 @@ Yüklemenin tamamlanmasını bekleyin.</translation>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
         <translation>Bu cihazdan başka bir konumdan çıkış yapıldı</translation>
-    </message>
-    <message>
-        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
-        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
-        <translation>Çıkış yaptınız. Bu sorun devam ederse lütfen [A]Destek[/A] ile iletişime geçin.</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -7713,6 +7698,11 @@ Yine de silmek istiyor musunuz?</translation>
         <source>Remove synced folder</source>
         <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
         <translation>Senkronize edilmiş klasörü kaldır</translation>
+    </message>
+    <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Removing</translation>
     </message>
     <message>
         <source>Rescan</source>

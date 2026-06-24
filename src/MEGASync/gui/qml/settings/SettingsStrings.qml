@@ -37,6 +37,7 @@ QtObject {
     readonly property string syncStateScanning: qsTr("Scanning")
     readonly property string syncStateSyncing: qsTr("Transferring")
     readonly property string syncStateSynced: qsTr("Synced")
+    readonly property string syncStateRemoving: qsTr("Removing")
     readonly property string syncIssueTitle: qsTr("Automatic sync issue resolution")
     readonly property string syncIssueDescription: qsTr("MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]")
     readonly property string menuActionsShowInFolder: qsTr("Show in folder")

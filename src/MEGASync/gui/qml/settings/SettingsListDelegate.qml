@@ -45,25 +45,25 @@ Rectangle {
 
     // status cell colours (per-tab); default to the Syncs behaviour
     property var resolveStatusTextColor: function(status, hovered) {
-        if (hovered && status === SettingsModel.SUSPENDED) {
+        if (hovered && (status === SettingsModel.SUSPENDED || status === SettingsModel.REMOVING)) {
             return ColorTheme.textPrimary;
         }
         else if (status === SettingsModel.FAIL) {
             return ColorTheme.textError;
         }
-        else if (status === SettingsModel.SUSPENDED) {
+        else if (status === SettingsModel.SUSPENDED || status === SettingsModel.REMOVING) {
             return ColorTheme.textSecondary;
         }
         return ColorTheme.textPrimary;
     }
     property var resolveStatusIconColor: function(status, hovered) {
-        if (hovered && status === SettingsModel.SUSPENDED) {
+        if (hovered && (status === SettingsModel.SUSPENDED || status === SettingsModel.REMOVING)) {
             return ColorTheme.iconPrimary;
         }
         else if (status === SettingsModel.FAIL) {
             return ColorTheme.textError;
         }
-        else if (status === SettingsModel.SUSPENDED) {
+        else if (status === SettingsModel.SUSPENDED || status === SettingsModel.REMOVING) {
             return ColorTheme.iconSecondary;
         }
         return ColorTheme.iconPrimary;
@@ -114,7 +114,7 @@ Rectangle {
         if (status === SettingsModel.FAIL) {
             return ColorTheme.textError;
         }
-        else if (status === SettingsModel.SUSPENDED) {
+        else if (status === SettingsModel.SUSPENDED || status === SettingsModel.REMOVING) {
             return ColorTheme.textSecondary;
         }
         return ColorTheme.textPrimary;
@@ -124,7 +124,7 @@ Rectangle {
         if (status === SettingsModel.FAIL) {
             return ColorTheme.textError;
         }
-        else if (status === SettingsModel.SUSPENDED) {
+        else if (status === SettingsModel.SUSPENDED || status === SettingsModel.REMOVING) {
             return ColorTheme.iconSecondary;
         }
         return ColorTheme.iconPrimary;
@@ -220,7 +220,7 @@ Rectangle {
                                 wrapMode: Text.NoWrap
                                 elide: Text.ElideRight
                                 Layout.preferredWidth: Math.min(implicitWidth, nameContent.width - folderSearchIcon.width - 2 * root.contentSpacing)
-                                color: nameAndFolderSearchMouseArea.containsMouse && status === SettingsModel.SUSPENDED ? ColorTheme.textPrimary : root.getItemTextColor()
+                                color: nameAndFolderSearchMouseArea.containsMouse && (status === SettingsModel.SUSPENDED || status === SettingsModel.REMOVING) ? ColorTheme.textPrimary : root.getItemTextColor()
 
                                 ToolTip {
                                     visible: nameMouseArea.containsMouse && (itemName.implicitWidth > (nameContent.width - folderSearchIcon.width - 2 * root.contentSpacing))
@@ -240,7 +240,7 @@ Rectangle {
                             SvgImage {
                                 id: folderSearchIcon
 
-                                color: nameAndFolderSearchMouseArea.containsMouse && status === SettingsModel.SUSPENDED ? ColorTheme.iconPrimary : root.getItemIconColor()
+                                color: nameAndFolderSearchMouseArea.containsMouse && (status === SettingsModel.SUSPENDED || status === SettingsModel.REMOVING) ? ColorTheme.iconPrimary : root.getItemIconColor()
                                 source: Images.folder_search_small_thin_outline
                                 sourceSize: Qt.size(root.iconSize, root.iconSize)
                                 visible: item.itemContainsMouse
@@ -298,7 +298,7 @@ Rectangle {
                                 color: root.resolveStatusIconColor(status, statusMouseArea.containsMouse)
                                 source: root.getStatusIcon(status)
                                 sourceSize: Qt.size(root.iconSize, root.iconSize)
-                                visible: status !== SettingsModel.SCANNING
+                                visible: status !== SettingsModel.SCANNING && status !== SettingsModel.REMOVING
                             }
 
                             SvgImage {
@@ -308,7 +308,7 @@ Rectangle {
                                 color: root.resolveStatusIconColor(status, statusMouseArea.containsMouse)
                                 source: "qrc:/activity_indicator_" + (Math.floor(root.scanFrame) % root.loadingAnimationNumberOfFrames + 1) + ".svg"
                                 sourceSize: Qt.size(root.iconSize, root.iconSize)
-                                visible: status === SettingsModel.SCANNING
+                                visible: status === SettingsModel.SCANNING || status === SettingsModel.REMOVING
                             }
 
                             NumberAnimation {
@@ -318,7 +318,7 @@ Rectangle {
                                 to: root.loadingAnimationNumberOfFrames
                                 duration: 1800
                                 loops: Animation.Infinite
-                                running: status === SettingsModel.SCANNING
+                                running: status === SettingsModel.SCANNING || status === SettingsModel.REMOVING
                                 onStopped: root.scanFrame = 0
                             }
 
@@ -336,7 +336,7 @@ Rectangle {
 
                             anchors.fill: parent
                             hoverEnabled: true
-                            cursorShape: status === SettingsModel.SUSPENDED ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            cursorShape: (status === SettingsModel.SUSPENDED) ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
                                 if (status === SettingsModel.SUSPENDED) {
                                     settingsAccess.resume(index);
@@ -355,7 +355,7 @@ Rectangle {
                             spacing: 0
                             textLineHeight: root.iconSize
                         }
-                        visible: item.itemContainsMouse
+                        visible: item.itemContainsMouse && status !== SettingsModel.REMOVING
                         Layout.alignment: Qt.AlignVCenter
                         onClicked: {
                             menu.popup(item.width - menu.width, item.height)
@@ -400,7 +400,7 @@ Rectangle {
                 }
 
                 ContextMenuItem {
-                    visible: status === SettingsModel.IDLE
+                    visible: (status === SettingsModel.IDLE || status === SettingsModel.SCANNING || status == SettingsModel.ACTIVE || status == SettingsModel.LOADING)
                     height: visible ? implicitHeight : 0
                     text: SettingsStrings.menuActionsPause
                     icon.source: Images.pause_thin_small_thin_outline
@@ -505,7 +505,7 @@ Rectangle {
                 removeIcon: root.removeIcon
                 removeAction: root.errorRemoveNonConfirmation
                               ? function() { settingsAccess.removeNonConfirmation(itemIndex); }
-                              : function() { settingsAccess.remove(itemIndex); }
+                              : function() { settingsAccess.remove(itemIndex);}
                 buttonVerticalPadding: root.errorButtonVerticalPadding
             }
         }

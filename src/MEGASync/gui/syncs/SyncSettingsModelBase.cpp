@@ -20,6 +20,44 @@ SyncSettingsModelBase::SyncSettingsModelBase(mega::MegaSync::SyncType type, QObj
     sortByName(true);
 }
 
+void SyncSettingsModelBase::onSyncRemoveBegins(mega::MegaHandle backupId)
+{
+    auto foundIt = std::find_if(mList.cbegin(),
+                                mList.cend(),
+                                [&backupId](auto& sync)
+                                {
+                                    return (sync->backupId() == backupId);
+                                });
+    {
+        QMutexLocker locker(&mRemoveSyncsMutex);
+        mRemovingSyncs.append(backupId);
+    }
+
+    if (foundIt != mList.cend())
+    {
+        sendDataChanged(static_cast<int>(std::distance(mList.cbegin(), foundIt)));
+    }
+}
+
+void SyncSettingsModelBase::onSyncRemoveEnds(mega::MegaHandle backupId)
+{
+    auto foundIt = std::find_if(mList.cbegin(),
+                                mList.cend(),
+                                [&backupId](auto& sync)
+                                {
+                                    return (sync->backupId() == backupId);
+                                });
+    {
+        QMutexLocker locker(&mRemoveSyncsMutex);
+        mRemovingSyncs.removeAll(backupId);
+    }
+
+    if (foundIt != mList.cend())
+    {
+        sendDataChanged(static_cast<int>(std::distance(mList.cbegin(), foundIt)));
+    }
+}
+
 void SyncSettingsModelBase::sortByName(bool ascending)
 {
     mSortAscending = ascending;
@@ -201,6 +239,14 @@ std::shared_ptr<SyncSettings> SyncSettingsModelBase::getSyncSetting(int index) c
 SyncSettingsModelBase::State
     SyncSettingsModelBase::getState(std::shared_ptr<SyncSettings> sync) const
 {
+    {
+        QMutexLocker locker(&mRemoveSyncsMutex);
+        if (mRemovingSyncs.contains(sync->backupId()))
+        {
+            return State::REMOVING;
+        }
+    }
+
     switch (sync->getRunState())
     {
         case ::mega::MegaSync::RUNSTATE_PENDING:
