@@ -1837,7 +1837,7 @@
         <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
         <translation>
             <numerusform>%n result</numerusform>
-            <numerusform>%n result</numerusform>
+            <numerusform>%n results</numerusform>
         </translation>
     </message>
     <message>
