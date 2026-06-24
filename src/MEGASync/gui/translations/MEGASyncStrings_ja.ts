@@ -592,6 +592,11 @@
         <translation>問題を報告</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>エラーが発生したため、問題を送信できませんでした。時間を置いてもう一度お試しいただくか、問題が解消しない場合は[A]サポート[/A]までご連絡ください。</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>エラーのため、問題をアップロードできませんでした。後でもう一度お試しいただくか、問題が解決しない場合は[A]https://mega.nz/support[/A]経由で当社サポートチームにご連絡ください。</translation>
@@ -645,6 +650,11 @@
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
         <translation>問題の詳細を記述してください（30文字以上）。</translation>
+    </message>
+    <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>時間を置いてもう一度お試しいただくか、問題が解消しない場合は[A]サポート[/A]までご連絡ください。</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -1349,6 +1359,19 @@
     </message>
 </context>
 <context>
+    <name>DestinationBreadcrumb</name>
+    <message>
+        <source>Always upload to this destination</source>
+        <translatorcomment>Checkbox label in the node selector destination breadcrumb to set the current folder as the default upload destination. SNC-6420</translatorcomment>
+        <translation>常にこの宛先にアップロードする</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translatorcomment>Label/title of the destination breadcrumb in the node selector, showing the folder files will be uploaded to. SNC-6420</translatorcomment>
+        <translation>保存先</translation>
+    </message>
+</context>
+<context>
     <name>DownloadFromMegaDialog</name>
     <message>
         <source>Always download to this destination</source>
@@ -1518,6 +1541,11 @@
         <source>The folder at this destination will be maintained.</source>
         <translatorcomment>Text explaining the result of the folder skip action</translatorcomment>
         <translation>この場所のフォルダは維持されます。</translation>
+    </message>
+    <message>
+        <source>The folder will be renamed as:</source>
+        <translatorcomment>Text explaining the result of the folder rename action. SNC-6420</translatorcomment>
+        <translation>フォルダ名は以下のように変更されます：</translation>
     </message>
     <message>
         <source>The new folder will be merged with the folder at this destination.</source>
@@ -2005,6 +2033,36 @@
         <source>Can´t sync [B]%1[/B]</source>
         <translatorcomment>Title for the header widget of sync stall shown when there&apos;s an issue with a file or folder which requires user&apos;s intervention, [B] is for bold.SNC-2565</translatorcomment>
         <translation>[B]%1[/B]を同期できません</translation>
+    </message>
+</context>
+<context>
+    <name>FileManagerNodeSelector</name>
+    <message numerus="yes">
+        <source>%n result</source>
+        <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
+        <translation>
+            <numerusform>%n件の結果</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
+        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>すべてのアイテムが完全に削除されます。この操作は取り消すことが[B]できません[/B]。</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>空にする</translation>
+    </message>
+    <message>
+        <source>Empty Rubbish bin?</source>
+        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>ごみ箱を空にしますか？</translation>
     </message>
 </context>
 <context>
@@ -3081,6 +3139,11 @@ Please wait for the upload to complete.</source>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
         <translation>別の場所から、この端末はログアウトされました</translation>
+    </message>
+    <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>ログアウトされました。この問題が解消しない場合は、[A]サポート[/A]までご連絡ください。</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -4665,6 +4728,11 @@ Enter a different name</source>
         <translation>検索</translation>
     </message>
     <message>
+        <source>Searching…</source>
+        <translatorcomment>Loading text shown in the node selector while a search for nodes is in progress. SNC-6420</translatorcomment>
+        <translation>検索中…</translation>
+    </message>
+    <message>
         <source>Select a MEGA folder</source>
         <translatorcomment>Node selector dialog title</translatorcomment>
         <translation>MEGAフォルダを選択</translation>
@@ -4673,6 +4741,44 @@ Enter a different name</source>
         <source>The item you selected has been removed. To reselect, close this window and try again.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>選択した項目は削除されました。再選択するには、このウィンドウを閉じて、もう一度やり直してください。</translation>
+    </message>
+</context>
+<context>
+    <name>NodeSelectorLabelColors</name>
+    <message>
+        <source>Blue</source>
+        <translatorcomment>Color name for the &quot;Blue&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>青</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translatorcomment>Color name for the &quot;Green&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>緑</translation>
+    </message>
+    <message>
+        <source>Grey</source>
+        <translatorcomment>Color name for the &quot;Grey&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>グレー</translation>
+    </message>
+    <message>
+        <source>Orange</source>
+        <translatorcomment>Color name for the &quot;Orange&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>オレンジ</translation>
+    </message>
+    <message>
+        <source>Purple</source>
+        <translatorcomment>Color name for the &quot;Purple&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>紫</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translatorcomment>Color name for the &quot;Red&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>赤</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translatorcomment>Color name for the &quot;Yellow&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>黄</translation>
     </message>
 </context>
 <context>
@@ -4803,6 +4909,11 @@ Enter a different name</source>
         <translation>フォルダの内容はすでに同期されています</translation>
     </message>
     <message>
+        <source>Label</source>
+        <translatorcomment>Column header for the node label in the node selector. SNC-6420</translatorcomment>
+        <translation>ラベル</translation>
+    </message>
+    <message>
         <source>Last modified</source>
         <translatorcomment>Table header title for node last modified date info. SNC.5804</translatorcomment>
         <translation>最終更新日</translation>
@@ -4826,6 +4937,11 @@ Enter a different name</source>
         <source>Sort by date added</source>
         <translatorcomment>Table header tooltip for Date added column. SNC.5804</translatorcomment>
         <translation>追加日で並べ替え</translation>
+    </message>
+    <message>
+        <source>Sort by label</source>
+        <translatorcomment>Sort option to order nodes by their label in the node selector. SNC-6420</translatorcomment>
+        <translation>ラベルで並べ替え</translation>
     </message>
     <message>
         <source>Sort by last modified date</source>
@@ -5029,6 +5145,11 @@ Enter a different name</source>
 <context>
     <name>NodeSelectorTreeViewWidget</name>
     <message>
+        <source>Add backup</source>
+        <translatorcomment>Empty-state button in the node selector to start adding a backup. SNC-6420</translatorcomment>
+        <translation>バックアップを追加</translation>
+    </message>
+    <message>
         <source>Any shared files or folders will no longer be accessible to the people you shared them with. You can still access these items in the Rubbish bin, restore, and share them.</source>
         <translatorcomment>Informative text about the potential issues of removing the nodes. CON-334</translatorcomment>
         <translation>共有ファイルやフォルダは、共有相手からはアクセスできなくなります。ごみ箱内のそれらの項目に引き続きアクセスし、復元し、共有することはできます。</translation>
@@ -5037,6 +5158,11 @@ Enter a different name</source>
         <source>Cancel</source>
         <translatorcomment>Label for cancel button.</translatorcomment>
         <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Create a folder to move your content here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
+        <translation>ここにコンテンツを移動するにはフォルダを作成してください</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -5054,9 +5180,24 @@ Enter a different name</source>
         <translation>移動しません</translation>
     </message>
     <message>
+        <source>Download</source>
+        <translatorcomment>Action button in the node selector to download the selected folder. SNC-6420</translatorcomment>
+        <translation>ダウンロード</translation>
+    </message>
+    <message>
+        <source>Drag and drop your files here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to drag and drop files. SNC-6420</translatorcomment>
+        <translation>ここにファイルをドラッグ＆ドロップ</translation>
+    </message>
+    <message>
         <source>Empty Rubbish bin</source>
         <translatorcomment>Button text to empty the rubbish bin. SAT-426</translatorcomment>
         <translation>ごみ箱を空にする</translation>
+    </message>
+    <message>
+        <source>Empty folder</source>
+        <translatorcomment>Empty state label shown in the node selector view when the selected folder has no items. SNC-6420</translatorcomment>
+        <translation>空のフォルダ</translation>
     </message>
     <message>
         <source>Folder is empty</source>
@@ -5105,9 +5246,19 @@ Enter a different name</source>
         <translation>新しいフォルダ</translation>
     </message>
     <message>
+        <source>No folders in Cloud drive</source>
+        <translatorcomment>Empty-state message shown in the node selector when the Cloud drive has no folders. SNC-6420</translatorcomment>
+        <translation>クラウドドライブ内にフォルダがありません</translation>
+    </message>
+    <message>
         <source>No folders to select</source>
         <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>選択できるフォルダがありません</translation>
+    </message>
+    <message>
+        <source>Nothing in your private vault yet</source>
+        <translatorcomment>Empty-state message shown in the node selector when the private vault has no items yet. SNC-6420</translatorcomment>
+        <translation>プライベート保管庫にはまだ何もありません</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -5118,6 +5269,31 @@ Enter a different name</source>
         <source>Only folders can be synced</source>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>同期できるのはフォルダのみです</translation>
+    </message>
+    <message>
+        <source>Sync</source>
+        <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
+        <translation>同期</translation>
+    </message>
+    <message>
+        <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
+        <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
+        <translation>このフォルダは空です。ゼロ知識暗号化でファイルを安全に保護しましょう。</translation>
+    </message>
+    <message>
+        <source>This folder is read and write. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-and-write shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>このフォルダは読み書き可能です。同期するにはフルアクセス権をリクエストしてください。</translation>
+    </message>
+    <message>
+        <source>This folder is read-only. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>このフォルダは読み取り専用です。同期するにはフルアクセス権をリクエストしてください。</translation>
+    </message>
+    <message>
+        <source>Upload</source>
+        <translatorcomment>Action button in the node selector to upload to the selected folder. SNC-6420</translatorcomment>
+        <translation>アップロード</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -5165,6 +5341,11 @@ Enter a different name</source>
 <context>
     <name>NodeSelectorTreeViewWidgetIncomingShares</name>
     <message>
+        <source>Folders shared with you will appear here</source>
+        <translatorcomment>Empty-state message in the node selector incoming shares view, shown when there are no shared folders. SNC-6420</translatorcomment>
+        <translation>共有されたフォルダがここに表示されます</translation>
+    </message>
+    <message>
         <source>No incoming shares</source>
         <translatorcomment>Title message on the view when there are no items in the normal view. SNC-5804</translatorcomment>
         <translation>受信共有なし</translation>
@@ -5183,6 +5364,11 @@ Enter a different name</source>
 <context>
     <name>NodeSelectorTreeViewWidgetRubbish</name>
     <message>
+        <source>Rubbish bin is empty</source>
+        <translatorcomment>Empty-state message in the node selector rubbish bin view, shown when the rubbish bin has no items. SNC-6420</translatorcomment>
+        <translation>ごみ箱は空です</translation>
+    </message>
+    <message>
         <source>The Rubbish bin is empty</source>
         <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
         <translation>ごみ箱は空です</translation>
@@ -5198,9 +5384,19 @@ Enter a different name</source>
         </translation>
     </message>
     <message>
+        <source>No results found</source>
+        <translatorcomment>Empty-state title in the node selector search view, shown when the search returns no matches. SNC-6420</translatorcomment>
+        <translation>結果が見つかりません</translation>
+    </message>
+    <message>
         <source>No search results</source>
         <translatorcomment>Message on the view when the search did not find any coincidence. SNC-5804</translatorcomment>
         <translation>検索結果がありません</translation>
+    </message>
+    <message>
+        <source>Try a different name or check the spelling</source>
+        <translatorcomment>Empty-state hint in the node selector search view, suggesting the user refine their search. SNC-6420</translatorcomment>
+        <translation>別の名前を試すか、スペルを確認してください</translation>
     </message>
 </context>
 <context>
@@ -6232,6 +6428,18 @@ Enter a different name</source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
         <translation>- 重複したフォルダ名の競合が自動的に解決されるようになりました。
 - クラウドドライブ、同期、バックアップ、設定の各ダイアログがより分かりやすく、一貫性のあるデザインになりました。
+- バグを修正し、パフォーマンスが向上しました。</translation>
+    </message>
+    <message>
+        <source>- Revamped and improved File Manager.
+- Revamped Syncs and Backups tabs in the Settings dialog.
+- Improved Wayland support.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.5.0. SNC-6656</translatorcomment>
+        <translation>- ファイルマネージャーを刷新し、機能を改善しました。
+- 設定ダイアログの「同期」および「バックアップ」タブを刷新しました。
+- Waylandのサポートを向上させました。
 - バグを修正し、パフォーマンスが向上しました。</translation>
     </message>
 </context>
@@ -7701,7 +7909,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Removing</source>
         <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
-        <translation>Removing</translation>
+        <translation>削除中</translation>
     </message>
     <message>
         <source>Rescan</source>
@@ -8401,6 +8609,11 @@ Please, refresh the list.</source>
         <translatorcomment>Warning message when users try to select a folder for streaming</translatorcomment>
         <translation>フォルダをストリーミングすることはできません。ストリーミングするファイルを選択します。</translation>
     </message>
+    <message>
+        <source>Select a file to stream</source>
+        <translatorcomment>Guidance message in the streaming node selector prompting the user to pick a file to stream. SNC-6420</translatorcomment>
+        <translation>ストリーミングするファイルを選択してください</translation>
+    </message>
 </context>
 <context>
     <name>StreamingFromMegaDialog</name>
@@ -9017,10 +9230,35 @@ Please move it to a location that is less than 64 folders deep.</source>
 <context>
     <name>SyncNodeSelector</name>
     <message>
+        <source>Choose a different folder. This folder is already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected folder is already synced. SNC-6420</translatorcomment>
+        <translation>別のフォルダを選択してください。このフォルダはすでに同期されています。</translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This location contains a folder that&apos;s already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected location contains a folder that is already synced. SNC-6420</translatorcomment>
+        <translation>別のフォルダを選択してください。この場所にはすでに同期されているフォルダが含まれています。</translation>
+    </message>
+    <message>
+        <source>Folder to sync</source>
+        <translatorcomment>Label in the sync node selector for the folder that will be synced. SNC-6420</translatorcomment>
+        <translation>同期するフォルダ</translation>
+    </message>
+    <message>
         <source>Invalid folder for synchronization.
 Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apos; or &apos;:&apos; in your folder names.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>フォルダを同期できません。フォルダ名に「\」、「/」、または「:」を使用していないことを確認してください。</translation>
+    </message>
+    <message>
+        <source>Only shared folders with full access can be synced</source>
+        <translatorcomment>Informational message in the sync node selector indicating only full-access shared folders can be synced. SNC-6420</translatorcomment>
+        <translation>フルアクセス権のある共有フォルダのみ同期できます</translation>
+    </message>
+    <message>
+        <source>Select a full access shared folder to sync</source>
+        <translatorcomment>Guidance message in the sync node selector prompting the user to choose a full-access shared folder to sync. SNC-6420</translatorcomment>
+        <translation>同期するフルアクセス権付きの共有フォルダを選択してください</translation>
     </message>
     <message>
         <source>You need Full access right to be able to sync the selected folder.</source>
@@ -10135,6 +10373,11 @@ Please delete the folder sync from settings to cancel them.</source>
 </context>
 <context>
     <name>UploadNodeSelector</name>
+    <message>
+        <source>Select a shared folder to upload your items to</source>
+        <translatorcomment>Guidance banner in the upload node selector, shown in Incoming Shares when no folder is selected, prompting the user to pick a shared folder as the upload destination. SNC-6420</translatorcomment>
+        <translation>アイテムのアップロード先となる共有フォルダを選択してください</translation>
+    </message>
     <message>
         <source>You need Read &amp; Write or Full access rights to be able to upload to the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying upload files to a non compatible folder</translatorcomment>
