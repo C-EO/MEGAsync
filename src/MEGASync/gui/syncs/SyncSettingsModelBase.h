@@ -64,8 +64,8 @@ protected:
         ErrorId
     };
 
-    void onSyncRemoveBegins(QString);
-    void onSyncRemoveEnds(QString);
+    void onSyncRemoveBegins(mega::MegaHandle);
+    void onSyncRemoveEnds(mega::MegaHandle);
 
 private slots:
     void insertItem(std::shared_ptr<SyncSettings> sync);
@@ -82,7 +82,7 @@ private:
     QList<std::shared_ptr<SyncSettings>> mList;
     bool mSortAscending = true;
     QCollator mQCollator;
-    QList<QString> mRemovingSyncs;
+    QList<mega::MegaHandle> mRemovingSyncs;
     mutable QMutex mRemoveSyncsMutex;
 };
 

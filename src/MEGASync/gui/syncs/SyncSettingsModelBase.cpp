@@ -20,39 +20,41 @@ SyncSettingsModelBase::SyncSettingsModelBase(mega::MegaSync::SyncType type, QObj
     sortByName(true);
 }
 
-void SyncSettingsModelBase::onSyncRemoveBegins(QString syncId)
+void SyncSettingsModelBase::onSyncRemoveBegins(mega::MegaHandle backupId)
 {
     auto foundIt = std::find_if(mList.cbegin(),
                                 mList.cend(),
-                                [&syncId](auto& sync)
+                                [&backupId](auto& sync)
                                 {
-                                    return (sync->getSyncID() == syncId);
+                                    return (sync->backupId() == backupId);
                                 });
+    {
+        QMutexLocker locker(&mRemoveSyncsMutex);
+        mRemovingSyncs.append(backupId);
+    }
 
     if (foundIt != mList.cend())
     {
-        auto row = std::distance(mList.cbegin(), foundIt);
-        QMutexLocker locker(&mRemoveSyncsMutex);
-        mRemovingSyncs.append(syncId);
-        sendDataChanged(static_cast<int>(row));
+        sendDataChanged(static_cast<int>(std::distance(mList.cbegin(), foundIt)));
     }
 }
 
-void SyncSettingsModelBase::onSyncRemoveEnds(QString syncId)
+void SyncSettingsModelBase::onSyncRemoveEnds(mega::MegaHandle backupId)
 {
     auto foundIt = std::find_if(mList.cbegin(),
                                 mList.cend(),
-                                [&syncId](auto& sync)
+                                [&backupId](auto& sync)
                                 {
-                                    return (sync->getSyncID() == syncId);
+                                    return (sync->backupId() == backupId);
                                 });
+    {
+        QMutexLocker locker(&mRemoveSyncsMutex);
+        mRemovingSyncs.removeAll(backupId);
+    }
 
     if (foundIt != mList.cend())
     {
-        auto row = std::distance(mList.cbegin(), foundIt);
-        QMutexLocker locker(&mRemoveSyncsMutex);
-        mRemovingSyncs.removeAll(syncId);
-        sendDataChanged(static_cast<int>(row));
+        sendDataChanged(static_cast<int>(std::distance(mList.cbegin(), foundIt)));
     }
 }
 
@@ -238,7 +240,8 @@ SyncSettingsModelBase::State
     SyncSettingsModelBase::getState(std::shared_ptr<SyncSettings> sync) const
 {
     {
-        if (mRemovingSyncs.contains(sync->getSyncID()))
+        QMutexLocker locker(&mRemoveSyncsMutex);
+        if (mRemovingSyncs.contains(sync->backupId()))
         {
             return State::REMOVING;
         }
