@@ -174,7 +174,10 @@ signals:
     void enterKeyPressed();
     void onCustomButtonClicked(uint id);
     void newFolderRequested();
-    void viewReady();
+    void viewReady(NodeSelectorTreeViewWidget*);
+    // Emitted once the proxy model has been reattached to the view after a loading cycle, so the
+    // owner can re-apply column visibility (which is no longer buffered in the loading scene).
+    void modelReattached(NodeSelectorTreeViewWidget*);
     void uiIsBlocked(bool state);
     void selectionHasChanged();
     void viewStateChanged();

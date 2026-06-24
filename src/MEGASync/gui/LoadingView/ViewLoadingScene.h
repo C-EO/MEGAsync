@@ -646,19 +646,12 @@ public:
         ViewType::setRootIndex(index);
     }
 
-    // Defers column-hidden changes while the model is detached (the header has no columns
-    // then, so the change would be a no-op). Re-applied on reattach in restoreLoadingViewState.
+    // Column visibility is owned by the consumer, which re-applies it on every model reattach
+    // (the loading scene emits sceneVisibilityChange(false) once the model is back). While the
+    // model is detached the header has no sections, so this is a harmless no-op; we no longer
+    // buffer the change (the buffer could desync and leave columns wrongly shown/hidden).
     void setColumnHidden(int column, bool hide)
     {
-        // Defer while the model is detached, and also before it has ever been attached (fresh
-        // view: the header has no sections yet, so the change would be a no-op and lost).
-        // Re-applied on the next reattach in restoreLoadingViewState.
-        if (mDetachedModel || ViewType::header()->count() == 0)
-        {
-            mPendingColumnHidden[column] = hide;
-            return;
-        }
-
         ViewType::setColumnHidden(column, hide);
     }
 
@@ -749,13 +742,8 @@ public:
             mSavedHeaderState.clear();
         }
 
-        // Apply column-hidden changes requested while detached (they override the restored
-        // header state, which predates that configuration).
-        for (auto it = mPendingColumnHidden.cbegin(); it != mPendingColumnHidden.cend(); ++it)
-        {
-            ViewType::setColumnHidden(it.key(), it.value());
-        }
-        mPendingColumnHidden.clear();
+        // Column visibility is not restored from mSavedHeaderState here: the consumer re-applies
+        // it after reattach (on sceneVisibilityChange(false)), which is the single source of truth.
 
         if (mPreservedSelectionModel)
         {
@@ -886,7 +874,7 @@ protected:
     // Views that must detach their model during loading override this to return true.
     virtual bool detachModelDuringLoading() const
     {
-        return false;
+        return true;
     }
 
 private:
@@ -915,7 +903,6 @@ private:
     QPersistentModelIndex mSavedRootIndex;
     bool mSwappingModel = false;
     QByteArray mSavedHeaderState;
-    QHash<int, bool> mPendingColumnHidden;
     bool mSavedHasVScroll = false;
     int mSavedVScroll = 0;
     bool mSavedHasHScroll = false;

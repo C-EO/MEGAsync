@@ -1198,6 +1198,15 @@ void NodeSelector::specialisedTreeViewWidgetsCreated()
                 {
                     configureSearchWidget(TabType::NONE);
                 });
+        // Column visibility is no longer buffered by the loading scene; re-apply it (for the
+        // active search chip) whenever the search model is reattached after a loading cycle.
+        connect(mSearchWidget,
+                &NodeSelectorTreeViewWidget::modelReattached,
+                this,
+                [this]()
+                {
+                    configureSearchWidget(mActiveSearchTabType);
+                });
         connect(mSearchWidget,
                 &NodeSelectorTreeViewWidgetSearch::searchTabTypeChanged,
                 this,
@@ -1220,17 +1229,20 @@ void NodeSelector::connectViewConfiguration(NodeSelectorTreeViewWidget* widget,
         return;
     }
 
-    // Always run for ALL widgets: non-current widgets need their columns configured so
-    // mPendingColumnHidden is populated before a loading-scene restore runs for them.
-    const auto refreshColumns = [this, widget, configure]()
+    // Run for ALL widgets (not just the current one): each widget owns its column visibility and
+    // re-applies it whenever its own model is reattached after a loading cycle.
+    const auto refreshColumns = [this, configure](NodeSelectorTreeViewWidget* wid)
     {
-        if (widget == getCurrentTreeViewWidget())
+        if (wid)
         {
-            (this->*configure)(widget);
+            (this->*configure)(wid);
         }
     };
 
     connect(widget, &NodeSelectorTreeViewWidget::viewReady, this, refreshColumns);
+    // The loading scene no longer buffers column-hidden changes; re-apply column visibility every
+    // time the model is reattached (the header is reset by setModel/restoreState on reattach).
+    connect(widget, &NodeSelectorTreeViewWidget::modelReattached, this, refreshColumns);
     // Permanent (not per-current-widget) so it exists before the first setRootIndex.
     // refreshNavigationBreadcrumb resolves against the current widget, so a non-current
     // widget firing this is harmless.

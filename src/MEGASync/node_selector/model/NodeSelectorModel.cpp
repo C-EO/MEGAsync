@@ -3244,7 +3244,22 @@ bool NodeSelectorModel::fetchItemChildren(const QModelIndex& parent)
     const auto itemNumChildren = item->getNumChildren();
     if (itemNumChildren > 0)
     {
-        sendBlockUiSignal(true);
+        // fetchItemChildren runs synchronously from QTreeView's layout() (Qt calls fetchMore()
+        // while expanding a row). sendBlockUiSignal(true) shows the loading scene, which detaches
+        // the view's model (setModel(nullptr)) and clears the view's internal viewItems mid-layout;
+        // layout() then indexes the now-empty vector (QVector out of range -> assert in debug,
+        // silent out-of-bounds read in release). Defer the UI block so it runs after layout()
+        // returns. The child fetch itself is already async (requestChildNodes is a queued
+        // connection), so no data is lost by deferring the block. The sort path blocks the UI
+        // synchronously through its own sendBlockUiSignal call, so that detach still precedes the
+        // background sort.
+        QMetaObject::invokeMethod(
+            this,
+            [this]()
+            {
+                sendBlockUiSignal(true);
+            },
+            Qt::QueuedConnection);
         emit requestChildNodes(item, parent);
 
         return true;

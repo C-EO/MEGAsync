@@ -1002,7 +1002,7 @@ void NodeSelectorTreeViewWidget::onLevelLoaded()
         mViewInitialized = true;
     }
 
-    emit viewReady();
+    emit viewReady(this);
 }
 
 void NodeSelectorTreeViewWidget::onRemovedIndexAffectsCurrentRoot(const QModelIndex& indexToRemove)
@@ -1212,10 +1212,13 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
         onSelectionHasChanged();
         mSelectionCoordinator->expandPendingIndexes();
         mSelectionCoordinator->selectPendingIndexes();
-        // The model is reattached now (the loading scene hid), so the header has its columns
-        // back. QHeaderView::restoreState() (run by the loading scene on reattach) does NOT
-        // restore per-section resize modes, so NODE loses its Stretch on every reattach; re-assert
-        // the modes before recomputing the widths that were skipped while detached.
+        // The model is reattached now (the loading scene hid), so the header has its columns back.
+        // Column visibility is no longer buffered by the loading scene; re-apply it here (the owner
+        // reconfigures on modelReattached) BEFORE recomputing widths so hidden columns get none.
+        emit modelReattached(this);
+        // QHeaderView::restoreState() (run by the loading scene on reattach) does NOT restore
+        // per-section resize modes, so NODE loses its Stretch on every reattach; re-assert the
+        // modes before recomputing the widths that were skipped while detached.
         updateColumnResizeModes();
         updateColumnsWidth(true);
 

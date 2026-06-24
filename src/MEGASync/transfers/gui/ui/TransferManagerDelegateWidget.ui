@@ -54,7 +54,7 @@ color: #303233; /*colorToken.text-primary*/
     min-height: 1px;
     max-height: 1px;
     border: none;
-    background: #FFB0B1B31A; /*colorToken.border-subtle*/
+    background: #B1B31A; /*colorToken.border-subtle*/
 	margin-left: 16px;
 	margin-right: 16px;
 }
