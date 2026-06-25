@@ -10,6 +10,7 @@ class MegaQuickWidget: public QQuickWidget
 
 public:
     explicit MegaQuickWidget(QWidget* parent = nullptr);
+    ~MegaQuickWidget() override;
 
 protected:
     bool event(QEvent* event) override;

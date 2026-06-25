@@ -62,7 +62,7 @@ void SyncSettingsModelBase::sortByName(bool ascending)
 {
     mSortAscending = ascending;
 
-    beginResetModel();
+    emit layoutAboutToBeChanged({}, QAbstractItemModel::VerticalSortHint);
     std::sort(mList.begin(),
               mList.end(),
               [this, ascending](const auto& sync1, const auto& sync2)
@@ -71,14 +71,14 @@ void SyncSettingsModelBase::sortByName(bool ascending)
                       mQCollator.compare(sync1->name(false, true), sync2->name(false, true));
                   return ascending ? result <= 0 : result > 0;
               });
-    endResetModel();
+    emit layoutChanged({}, QAbstractItemModel::VerticalSortHint);
 }
 
 void SyncSettingsModelBase::sortByStatus(bool ascending)
 {
     mSortAscending = ascending;
 
-    beginResetModel();
+    emit layoutAboutToBeChanged({}, QAbstractItemModel::VerticalSortHint);
     std::sort(mList.begin(),
               mList.end(),
               [this, ascending](const auto& sync1, const auto& sync2)
@@ -86,7 +86,7 @@ void SyncSettingsModelBase::sortByStatus(bool ascending)
                   return ascending ? getState(sync1) <= getState(sync2) :
                                      getState(sync1) > getState(sync2);
               });
-    endResetModel();
+    emit layoutChanged({}, QAbstractItemModel::VerticalSortHint);
 }
 
 void SyncSettingsModelBase::insertItem(std::shared_ptr<SyncSettings> sync)

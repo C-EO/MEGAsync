@@ -31,21 +31,64 @@ RowLayout {
     Layout.leftMargin: tablePadding
     spacing: 0
 
-    Text {
-        id: nameColumn
+    Item {
+        id: nameHeaderArea
 
-        property bool sortByNameAscending: true
+        Layout.fillWidth: true
+        implicitHeight: nameColumnContent.implicitHeight
+        Layout.alignment: Qt.AlignVCenter
 
-        text: root.nameText
-        color: root.labelColor
-        font.pixelSize: root.titlePixelSize
-        font.weight: Font.DemiBold
-        elide: Text.ElideRight
+        RowLayout {
+            anchors.fill: parent
+            spacing: 0
+
+            RowLayout {
+                id: nameColumnContent
+
+                spacing: 0
+                Layout.alignment: Qt.AlignVCenter
+
+                Text {
+                    id: nameColumn
+
+                    property bool sortByNameAscending: true
+
+                    text: root.nameText
+                    color: root.labelColor
+                    font.pixelSize: root.titlePixelSize
+                    font.weight: Font.DemiBold
+                    elide: Text.ElideRight
+                }
+
+                Item {
+                    Layout.preferredWidth: root.contentSpacing
+                    Layout.maximumWidth: root.contentSpacing
+                    Layout.minimumWidth: root.contentSpacing
+                }
+
+                SvgImage {
+                    id: nameColumnOrderSymbol
+
+                    source: nameColumn.sortByNameAscending ? Images.arrow_up_medium_regular_outline : Images.arrow_down_medium_regular_outline
+                    visible: root.showInitialNameIndicator
+                    sourceSize: root.iconOrderFlagSize
+                    color: ColorTheme.iconPrimary
+                }
+            }
+
+            Item {
+                id: spacer
+                Layout.fillWidth: true
+            }
+        }
 
         MouseArea {
+            id: mouseAreaNameColumnSpace
+
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
+
             onClicked: {
                 nameColumn.sortByNameAscending = !nameColumn.sortByNameAscending
                 root.sortByName(nameColumn.sortByNameAscending)
@@ -56,69 +99,69 @@ RowLayout {
     }
 
     Item {
-        Layout.preferredWidth: root.contentSpacing
-    }
+        id: statusHeaderArea
 
-    SvgImage {
-        id: nameColumnOrderSymbol
-
-        source: nameColumn.sortByNameAscending ? Images.arrow_up_medium_regular_outline : Images.arrow_down_medium_regular_outline
-        visible: root.showInitialNameIndicator
-        sourceSize: root.iconOrderFlagSize
-        color: ColorTheme.iconPrimary
-    }
-
-    Item {
-        Layout.fillWidth: true
-    }
-
-    RowLayout {
+        implicitWidth: statusColumnContent.implicitWidth
+        implicitHeight: statusColumnContent.implicitHeight
         Layout.preferredHeight: parent.height
         Layout.preferredWidth: root.statusLabelWidth
         Layout.maximumWidth: root.statusLabelWidth
         Layout.alignment: Qt.AlignVCenter
-        spacing: 0
 
-        Text {
-            id: statusColumn
+        RowLayout {
+            anchors.fill: parent
+            spacing: 0
 
-            property bool sortByStatusAscending: true
+            RowLayout {
+                id: statusColumnContent
 
-            text: root.statusText
-            color: root.labelColor
-            font.pixelSize: root.titlePixelSize
-            font.weight: Font.DemiBold
-            elide: Text.ElideRight
+                spacing: 0
+                Layout.alignment: Qt.AlignVCenter
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    statusColumn.sortByStatusAscending = !statusColumn.sortByStatusAscending
-                    root.sortByStatus(statusColumn.sortByStatusAscending)
-                    nameColumnOrderSymbol.visible = false
-                    statusColumnOrderSymbol.visible = true
+                Text {
+                    id: statusColumn
+
+                    property bool sortByStatusAscending: true
+
+                    text: root.statusText
+                    color: root.labelColor
+                    font.pixelSize: root.titlePixelSize
+                    font.weight: Font.DemiBold
+                    elide: Text.ElideRight
                 }
+
+                Item {
+                    Layout.preferredWidth: root.contentSpacing
+                    Layout.maximumWidth: root.contentSpacing
+                }
+
+                SvgImage {
+                    id: statusColumnOrderSymbol
+
+                    source: statusColumn.sortByStatusAscending ? Images.arrow_up_medium_regular_outline : Images.arrow_down_medium_regular_outline
+                    visible: false
+                    color: ColorTheme.iconPrimary
+                    sourceSize: root.iconOrderFlagSize
+                }
+            }
+
+            Item {
+                Layout.fillWidth: true
             }
         }
 
-        Item {
-            Layout.preferredWidth: root.contentSpacing
-            Layout.maximumWidth: root.contentSpacing
-        }
+        MouseArea {
+            id: mouseAreaStatusColumnSpace
 
-        SvgImage {
-            id: statusColumnOrderSymbol
-
-            source: statusColumn.sortByStatusAscending ? Images.arrow_up_medium_regular_outline : Images.arrow_down_medium_regular_outline
-            visible: false
-            color: ColorTheme.iconPrimary
-            sourceSize: root.iconOrderFlagSize
-        }
-
-        Item {
-            Layout.fillWidth: true
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                statusColumn.sortByStatusAscending = !statusColumn.sortByStatusAscending
+                root.sortByStatus(statusColumn.sortByStatusAscending)
+                nameColumnOrderSymbol.visible = false
+                statusColumnOrderSymbol.visible = true
+            }
         }
     }
 }
