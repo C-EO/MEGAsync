@@ -181,8 +181,8 @@ public:
             const auto parentGeometry = parent->geometry();
 
             // Set on QmlDialog to use for showWhenCreatedQMLs
-            QmlDialogWrapperUtilities::setParentGeometry(mWindow, parentGeometry);
-            QmlDialogWrapperUtilities::setParentGeometry(this, parentGeometry);
+            DialogOpener::setParentGeometry(mWindow, parentGeometry);
+            DialogOpener::setParentGeometry(this, parentGeometry);
         }
     }
 
@@ -315,8 +315,8 @@ public:
                 {
                     const auto parentGeometry = parent->frameGeometry();
                     // Set on QmlDialog to use for showWhenCreatedQMLs
-                    QmlDialogWrapperUtilities::setParentGeometry(mWindow, parentGeometry);
-                    QmlDialogWrapperUtilities::setParentGeometry(this, parentGeometry);
+                    DialogOpener::setParentGeometry(mWindow, parentGeometry);
+                    DialogOpener::setParentGeometry(this, parentGeometry);
                 }
             }
 

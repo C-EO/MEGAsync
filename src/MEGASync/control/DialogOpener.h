@@ -14,6 +14,7 @@
 #include <QPointer>
 #include <QQueue>
 #include <QRect>
+#include <QScreen>
 #include <QWindow>
 
 #include <functional>
@@ -209,6 +210,8 @@ private:
         bool isEmpty() const {return geometry.isEmpty();}
     };
 
+    static constexpr const char* PARENT_GEOMETRY_PROPERTY = "ParentGeometry";
+
 public:
     static QPoint initialDialogPosition(const QSize& dialogSize)
     {
@@ -218,6 +221,30 @@ public:
     static QPoint initialDialogPosition(const QSize& dialogSize, const QRect& parentGeometry)
     {
         return Platform::getInstance()->initialDialogPosition(dialogSize, parentGeometry);
+    }
+
+    // Remembers, on a dialog, the geometry of the window it should be centered
+    // on. Stored as a dynamic property so it works for any dialog type (QML
+    // wrappers and plain QWidget/QDialog alike) and, crucially, lets a dialog be
+    // centered on a window WITHOUT making that window its Qt parent (which would
+    // couple modality and lifetime). Read back when positioning the dialog.
+    static void setParentGeometry(QObject* dialog, const QRect& parentGeometry)
+    {
+        if (dialog)
+        {
+            dialog->setProperty(PARENT_GEOMETRY_PROPERTY, parentGeometry);
+        }
+    }
+
+    static QRect getParentGeometry(const QObject* dialog)
+    {
+        if (!dialog)
+        {
+            return QRect();
+        }
+
+        const auto value(dialog->property(PARENT_GEOMETRY_PROPERTY));
+        return value.isValid() ? value.toRect() : QRect();
     }
 
     template <class DialogType>
@@ -631,13 +658,53 @@ private:
                 // QML dialogs with parent are centered on its parent
                 if (isQML)
                 {
-                    parentGeo = QmlDialogWrapperUtilities::getParentGeometry(dialog);
+                    parentGeo = getParentGeometry(dialog);
+                }
+                else
+                {
+                    // Non-QML dialogs: an explicitly stored parent geometry (set
+                    // via setParentGeometry, to center on a window without a Qt
+                    // parent and thus without coupling modality/lifetime) takes
+                    // precedence; otherwise center on the Qt parent's top-level
+                    // window. Geometry-retaining dialogs (NodeSelector,
+                    // TransferManager, StalledIssuesDialog) have neither, so they
+                    // keep restoring their saved geometry.
+                    parentGeo = getParentGeometry(dialog);
+                    if (!parentGeo.isValid())
+                    {
+                        if (QWidget* parentWidget = dialog->parentWidget())
+                        {
+                            parentGeo = parentWidget->window()->frameGeometry();
+                        }
+                    }
                 }
 
                 if (parentGeo.isValid())
                 {
-                    dialog->move(initialDialogPosition(dialog->geometry().size(), parentGeo));
-                    dialog->show();
+                    QWindow* qmlWindow = isQML ? dialog->windowHandle() : nullptr;
+                    if (qmlWindow)
+                    {
+                        // QML dialogs: the visible window is the inner QQuickWindow,
+                        // not the wrapper QWidget. Moving the wrapper mis-converts
+                        // the coordinates on high-DPI secondary monitors (the wrapper
+                        // and the QML window can be bound to different screens/DPR, so
+                        // the logical->native conversion lands the window off-screen).
+                        // Position the QML window directly, binding it to the target
+                        // screen first so the conversion uses the right DPI.
+                        QScreen* targetScreen = QGuiApplication::screenAt(parentGeo.center());
+                        if (targetScreen && qmlWindow->screen() != targetScreen)
+                        {
+                            qmlWindow->setScreen(targetScreen);
+                        }
+                        qmlWindow->setFramePosition(
+                            initialDialogPosition(qmlWindow->size(), parentGeo));
+                        dialog->show();
+                    }
+                    else
+                    {
+                        dialog->move(initialDialogPosition(dialog->geometry().size(), parentGeo));
+                        dialog->show();
+                    }
                 }
                 else
                 {

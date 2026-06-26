@@ -9,7 +9,6 @@
 namespace QmlDialogWrapperUtilities
 {
 
-constexpr const char* PARENT_GEOMETRY_PROPERTY = "ParentGeometry";
 constexpr const char* SHOW_WHEN_CREATED_PROPERTY = "ShowWhenCreated";
 
 // A dialog is QML when its visible window is a QQuickWindow. The caller must
@@ -21,25 +20,6 @@ constexpr const char* SHOW_WHEN_CREATED_PROPERTY = "ShowWhenCreated";
 inline bool isQML(const QWindow* window)
 {
     return qobject_cast<const QQuickWindow*>(window) != nullptr;
-}
-
-inline QRect getParentGeometry(const QObject* dialog)
-{
-    if (!dialog)
-    {
-        return QRect();
-    }
-
-    auto value(dialog->property(PARENT_GEOMETRY_PROPERTY));
-    return value.isValid() ? value.toRect() : QRect();
-}
-
-inline void setParentGeometry(QObject* dialog, const QRect& parentGeometry)
-{
-    if (dialog)
-    {
-        dialog->setProperty(PARENT_GEOMETRY_PROPERTY, parentGeometry);
-    }
 }
 
 inline void setShowWhenCreated(QObject* dialog, bool showWhenCreated)
