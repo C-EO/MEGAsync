@@ -211,6 +211,7 @@ private:
     };
 
     static constexpr const char* PARENT_GEOMETRY_PROPERTY = "ParentGeometry";
+    static constexpr const char* VISUAL_PARENT_PROPERTY = "VisualParent";
 
 public:
     static QPoint initialDialogPosition(const QSize& dialogSize)
@@ -228,6 +229,8 @@ public:
     // wrappers and plain QWidget/QDialog alike) and, crucially, lets a dialog be
     // centered on a window WITHOUT making that window its Qt parent (which would
     // couple modality and lifetime). Read back when positioning the dialog.
+    // For plain QWidget dialogs, prefer setVisualParent() instead — it derives
+    // the geometry live and also supplies the QWindow* needed on Wayland.
     static void setParentGeometry(QObject* dialog, const QRect& parentGeometry)
     {
         if (dialog)
@@ -245,6 +248,28 @@ public:
 
         const auto value(dialog->property(PARENT_GEOMETRY_PROPERTY));
         return value.isValid() ? value.toRect() : QRect();
+    }
+
+    // Stores the visual parent widget so showDialogImpl() can derive both the
+    // centering geometry and (on Wayland) the transient-parent window handle
+    // from a single source — without adding Wayland-specific storage.
+    // Use this instead of setParentGeometry() whenever a QWidget* is available.
+    static void setVisualParent(QObject* dialog, QWidget* parentWidget)
+    {
+        if (dialog && parentWidget)
+        {
+            dialog->setProperty(VISUAL_PARENT_PROPERTY,
+                                QVariant::fromValue<QObject*>(parentWidget->window()));
+        }
+    }
+
+    static QWidget* getVisualParent(const QObject* dialog)
+    {
+        if (!dialog)
+        {
+            return nullptr;
+        }
+        return qobject_cast<QWidget*>(dialog->property(VISUAL_PARENT_PROPERTY).value<QObject*>());
     }
 
     template <class DialogType>
@@ -655,20 +680,31 @@ private:
             else
             {
                 QRect parentGeo;
-                // QML dialogs with parent are centered on its parent
-                if (isQML)
+                QWindow* visualParentWindow = nullptr;
+                // Prefer a stored visual parent (setVisualParent): derives the
+                // centering geometry live and — for non-QML dialogs on Wayland —
+                // also supplies the transient-parent window handle so the
+                // compositor can centre the dialog itself.
+                // Falls back to an explicit QRect (setParentGeometry, used by the
+                // QML→QML path where only a QQuickWindow* is available) or the
+                // Qt parent's top-level frame. Geometry-retaining dialogs
+                // (NodeSelector, TransferManager, StalledIssuesDialog) have none
+                // of the above and keep restoring their saved geometry.
+                if (QWidget* visualParent = getVisualParent(dialog))
+                {
+                    parentGeo = visualParent->frameGeometry();
+                    if (!isQML)
+                    {
+                        visualParentWindow = visualParent->windowHandle();
+                    }
+                }
+                else if (isQML)
                 {
                     parentGeo = getParentGeometry(dialog);
                 }
                 else
                 {
-                    // Non-QML dialogs: an explicitly stored parent geometry (set
-                    // via setParentGeometry, to center on a window without a Qt
-                    // parent and thus without coupling modality/lifetime) takes
-                    // precedence; otherwise center on the Qt parent's top-level
-                    // window. Geometry-retaining dialogs (NodeSelector,
-                    // TransferManager, StalledIssuesDialog) have neither, so they
-                    // keep restoring their saved geometry.
+                    // Non-QML without visual parent
                     parentGeo = getParentGeometry(dialog);
                     if (!parentGeo.isValid())
                     {
@@ -702,7 +738,10 @@ private:
                     }
                     else
                     {
-                        dialog->move(initialDialogPosition(dialog->geometry().size(), parentGeo));
+                        Platform::getInstance()->moveDialog(
+                            dialog,
+                            initialDialogPosition(dialog->geometry().size(), parentGeo),
+                            visualParentWindow);
                         dialog->show();
                     }
                 }

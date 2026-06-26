@@ -313,10 +313,9 @@ public:
 
                 if (parent)
                 {
-                    const auto parentGeometry = parent->frameGeometry();
                     // Set on QmlDialog to use for showWhenCreatedQMLs
-                    DialogOpener::setParentGeometry(mWindow, parentGeometry);
-                    DialogOpener::setParentGeometry(this, parentGeometry);
+                    DialogOpener::setVisualParent(mWindow, parent);
+                    DialogOpener::setVisualParent(this, parent);
                 }
             }
 

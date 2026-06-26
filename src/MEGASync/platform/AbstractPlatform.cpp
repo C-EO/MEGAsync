@@ -37,6 +37,11 @@ bool AbstractPlatform::isWayland()
     return QGuiApplication::platformName().startsWith(QLatin1String("wayland"));
 }
 
+void AbstractPlatform::moveDialog(QWidget* dialog, const QPoint& pos, QWindow* /*visualParent*/)
+{
+    dialog->move(pos);
+}
+
 QPoint AbstractPlatform::initialDialogPosition(const QSize& dialogSize) const
 {
     // Without a parent to center on, prefer the screen the user is working on

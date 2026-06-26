@@ -934,7 +934,7 @@ void SettingsDialog::on_bSendBug_clicked()
     // Center on Settings without parenting it: a Qt parent would make the dialog
     // modal and tie its visibility/lifetime to Settings. We only want the initial
     // position centered on this window.
-    DialogOpener::setParentGeometry(dialog, window()->frameGeometry());
+    DialogOpener::setVisualParent(dialog, this);
     DialogOpener::showDialog(dialog);
 }
 
