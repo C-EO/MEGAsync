@@ -93,11 +93,21 @@ void NodeSelectorSelectionCoordinator::expandPendingIndexes()
 
 void NodeSelectorSelectionCoordinator::selectPendingIndexes()
 {
+    // A synchronous re-entry (an unresolved handle below triggers loadTreeFromNode, which emits
+    // blockUi(false) synchronously and re-invokes this) must bail out before draining the queue,
+    // so the recursion stays bounded and the pending handles survive for the real later pass.
+    if (mResolvingPendingIndexes)
+    {
+        return;
+    }
+
     auto indexesToBeSelected = mModel->needsToBeSelected();
     if (indexesToBeSelected.isEmpty())
     {
         return;
     }
+
+    mResolvingPendingIndexes = true;
 
     // Only a restore jumps to the top root (nodes may have different parents); a move/merge
     // stays in the current folder.
@@ -120,17 +130,35 @@ void NodeSelectorSelectionCoordinator::selectPendingIndexes()
                     auto proxyIndex = mProxyModel->getIndexFromHandle(handle);
                     if (proxyIndex.isValid())
                     {
+                        mHandlesPendingLoad.remove(handle);
                         mSelectIndex(proxyIndex, true, false);
+                    }
+                    else if (!mHandlesPendingLoad.contains(handle))
+                    {
+                        // First time this handle cannot be mapped: load its tree path once so it
+                        // becomes selectable. The load is triggered only once; re-triggering it on
+                        // every pass is what caused the infinite recursion.
+                        mHandlesPendingLoad.insert(handle);
+                        setSelectedNodeHandle(handle);
+                        allSelected = false;
                     }
                     else
                     {
-                        setSelectedNodeHandle(handle);
+                        // The load is already in flight: an ancestor's children are still being
+                        // fetched asynchronously (the worker delivers them through a queued
+                        // nodesReady, so the rows are inserted only after this synchronous pass
+                        // returns). Re-queue the handle WITHOUT re-triggering the load, so the next
+                        // pass -- fired once the rows are actually inserted -- resolves and selects
+                        // it. Dropping it here is what left incoming-share files unselected.
+                        mModel->selectIndexesByHandleAsync(QSet<mega::MegaHandle>() << handle);
                         allSelected = false;
                     }
                 }
             }
             return allSelected;
         });
+
+    mResolvingPendingIndexes = false;
 }
 
 void NodeSelectorSelectionCoordinator::resetMoveNodesToSelect()
