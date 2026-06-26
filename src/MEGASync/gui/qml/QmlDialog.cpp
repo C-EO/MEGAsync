@@ -5,7 +5,6 @@
 #include "QmlDialogWrapperUtilities.h"
 
 #include <QEvent>
-#include <QGuiApplication>
 #include <QResizeEvent>
 #include <QScreen>
 
@@ -265,13 +264,7 @@ void QmlDialog::placeAndRaise()
     // the primary screen's DPI and the dialog lands off-position on secondary
     // monitors. Bind it to the target screen first so the conversion is correct.
     const QPoint screenRef = parentGeometry.isValid() ? parentGeometry.center() : targetPos;
-    if (auto* targetScreen = QGuiApplication::screenAt(screenRef))
-    {
-        if (screen() != targetScreen)
-        {
-            setScreen(targetScreen);
-        }
-    }
+    QmlDialogWrapperUtilities::bindToScreenForPositioning(this, screenRef, targetPos);
 
     QmlDialog::setFramePosition(targetPos);
 

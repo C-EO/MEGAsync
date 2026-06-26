@@ -14,11 +14,14 @@
 #include <QPointer>
 #include <QQueue>
 #include <QRect>
-#include <QScreen>
 #include <QWindow>
 
 #include <functional>
 #include <memory>
+
+// Needed to store a QPointer<QWidget> in a dynamic property (QVariant) so the
+// visual-parent reference nulls automatically when the parent is destroyed.
+Q_DECLARE_METATYPE(QPointer<QWidget>)
 
 template<typename T>
 class QmlDialogWrapper;
@@ -258,8 +261,13 @@ public:
     {
         if (dialog && parentWidget)
         {
+            // Stored as a QPointer so it nulls automatically if the parent window
+            // is destroyed before the dialog is shown. The dialog is deliberately
+            // NOT Qt-parented to the visual parent (see setParentGeometry's note on
+            // decoupling lifetime), so their lifetimes are independent; a raw
+            // pointer would dangle and crash getVisualParent()/showDialogImpl().
             dialog->setProperty(VISUAL_PARENT_PROPERTY,
-                                QVariant::fromValue<QObject*>(parentWidget->window()));
+                                QVariant::fromValue(QPointer<QWidget>(parentWidget->window())));
         }
     }
 
@@ -269,7 +277,7 @@ public:
         {
             return nullptr;
         }
-        return qobject_cast<QWidget*>(dialog->property(VISUAL_PARENT_PROPERTY).value<QObject*>());
+        return dialog->property(VISUAL_PARENT_PROPERTY).value<QPointer<QWidget>>().data();
     }
 
     template <class DialogType>
@@ -727,13 +735,12 @@ private:
                         // the logical->native conversion lands the window off-screen).
                         // Position the QML window directly, binding it to the target
                         // screen first so the conversion uses the right DPI.
-                        QScreen* targetScreen = QGuiApplication::screenAt(parentGeo.center());
-                        if (targetScreen && qmlWindow->screen() != targetScreen)
-                        {
-                            qmlWindow->setScreen(targetScreen);
-                        }
-                        qmlWindow->setFramePosition(
-                            initialDialogPosition(qmlWindow->size(), parentGeo));
+                        const QPoint targetPos =
+                            initialDialogPosition(qmlWindow->size(), parentGeo);
+                        QmlDialogWrapperUtilities::bindToScreenForPositioning(qmlWindow,
+                                                                              parentGeo.center(),
+                                                                              targetPos);
+                        qmlWindow->setFramePosition(targetPos);
                         dialog->show();
                     }
                     else
