@@ -338,12 +338,16 @@ void NodeSelectorTreeViewWidget::setCurrentPage(ViewType type)
     {
         case ViewType::ROOT_EMPTY:
         {
+            mWasEmpty = true;
+            mRootWasEmpty = true;
             showRootEmptyState();
             ui->stackedWidget->setCurrentWidget(ui->emptyPage);
             break;
         }
         case ViewType::FOLDER_EMPTY:
         {
+            mWasEmpty = true;
+            mRootWasEmpty = true;
             showFolderEmptyState();
             ui->stackedWidget->setCurrentWidget(ui->emptyPage);
             break;
@@ -351,6 +355,8 @@ void NodeSelectorTreeViewWidget::setCurrentPage(ViewType type)
         case ViewType::VIEW:
         default:
         {
+            mWasEmpty = false;
+            mRootWasEmpty = false;
             mCurrentViewType = ViewType::VIEW;
             ui->stackedWidget->setCurrentWidget(ui->treeViewPage);
             break;
@@ -1585,12 +1591,10 @@ void NodeSelectorTreeViewWidget::setCurrentViewWidget()
     auto currentRootIndex(getCurrentRootIndex());
     auto topRootIndex(mProxyModel->getTopRootIndex());
 
-    // Keep the empty-state flags in sync with the shown folder so a later content change
-    // (e.g. an async OS upload into an empty folder) is detected as a toggle and the view
-    // switches away from the empty page.
+    // The empty-state flags (mWasEmpty / mRootWasEmpty) are owned by setCurrentPage(), which
+    // sets them from the page actually shown. Here we only need the emptiness of the current
+    // root to choose between the "Empty folder" page and the normal view.
     const bool isEmpty = (mProxyModel->rowCount(currentRootIndex) == 0);
-    mWasEmpty = isEmpty;
-    mRootWasEmpty = isEmpty;
 
     // If we are inside a folder, show the "Empty folder" page.
     if ((currentRootIndex != topRootIndex) && isEmpty)
