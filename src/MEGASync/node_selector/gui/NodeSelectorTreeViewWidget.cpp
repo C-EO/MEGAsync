@@ -1203,6 +1203,9 @@ void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
         mUiBlocked = state;
     }
 
+    // Hide the header separator while the loading scene is shown.
+    ui->headerDivider->setVisible(!state);
+
     emit uiIsBlocked(mUiBlocked);
     ui->searchButtonsWidget->setDisabled(state);
 

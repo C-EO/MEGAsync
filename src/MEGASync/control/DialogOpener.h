@@ -443,6 +443,11 @@ public:
                 activateWidgetWaylandSafe(dialog->parentWidget());
             }
 
+            // End any attached transient child (e.g. macOS sheet) while this
+            // dialog's native window is still alive, to avoid an orphaned sheet
+            // crashing on its own teardown.
+            detachTransientChildren(dialog->windowHandle());
+
             dialog->deleteLater();
         }
     }
@@ -533,6 +538,32 @@ private:
     static QQueue<std::shared_ptr<DialogInfoBase>> mDialogsQueue;
     static QMap<QString, GeometryInfo> mSavedGeometries;
 
+    // Before a dialog's window is destroyed or recreated, end any transient
+    // child windows (e.g. macOS sheets) while this parent is still alive.
+    // A WindowModal QML dialog attached as a macOS sheet keeps a transient-parent
+    // link to this window; if the parent goes away first, Qt silently nulls the
+    // link but the native NSWindow stays a sheet, so the child's later teardown
+    // calls endSheet on a null parent (QCocoaWindow::setVisible) and crashes.
+    // Hiding the child now ends the sheet cleanly; clearing the link drops the
+    // dangling reference.
+    static void detachTransientChildren(QWindow* parentWindow)
+    {
+        if (!parentWindow)
+        {
+            return;
+        }
+
+        const auto windows = QGuiApplication::topLevelWindows();
+        for (QWindow* window: windows)
+        {
+            if (window != parentWindow && window->transientParent() == parentWindow)
+            {
+                window->setVisible(false);
+                window->setTransientParent(nullptr);
+            }
+        }
+    }
+
     template <class DialogType>
     static void removeWhenClose(QPointer<DialogType> dialog)
     {
@@ -603,6 +634,10 @@ private:
             {
                 TokenParserWidgetManager::instance()->applyCurrentTheme(dialog);
             }
+
+            // setParent() below can recreate the native window; detach attached
+            // transient children first so they don't end up orphaned sheets.
+            detachTransientChildren(dialog->windowHandle());
 
             // Use to reload the widget stylesheet. Without this line, the new stylesheet is not
             // correctly applied.
