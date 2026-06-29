@@ -2,7 +2,6 @@
 
 #include "ArrowTooltip.h"
 #include "TokenizableItems/TokenPropertySetter.h"
-#include "TokenParserWidgetManager.h"
 #include "ui_TabSelector.h"
 #include "Utilities.h"
 
@@ -153,10 +152,6 @@ void TabSelector::setSelected(bool state)
         ui->lIcon->setChecked(state);
         setProperty(SELECTED, state);
         setStyleSheet(styleSheet());
-
-        // Title is bold when selected; an empty "bold" property resets it to regular weight
-        ui->lTitle->setProperty("bold", state ? QVariant(true) : QVariant());
-        TokenParserWidgetManager::instance()->polish(ui->lTitle);
 
         if (state)
         {
