@@ -57,6 +57,8 @@ void NodeSelectorDestinationOverflowPopup::setSegments(const QStringList& segmen
             auto* clickableLabel = new ClickableLabel(ui->scrollContent);
             clickableLabel->setCursor(Qt::PointingHandCursor);
             clickableLabel->setProperty("clickable", true);
+            // QLabel ignores :hover; ClickableLabel drives the row highlight via [hovered="true"].
+            clickableLabel->setHoverHighlightEnabled(true);
             connect(clickableLabel,
                     &ClickableLabel::clicked,
                     this,
@@ -78,7 +80,7 @@ void NodeSelectorDestinationOverflowPopup::setSegments(const QStringList& segmen
         label->setMargin(0);
         label->setIndent(0);
         label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        // No eliding: the label keeps its natural width so the popup can resize-to-contents.
+        // Long names are elided to MAX_ROW_WIDTH below; shorter ones keep their natural width.
         label->setProperty("font-size", QLatin1String("body-2"));
         label->setProperty("regular", true);
 
@@ -90,11 +92,31 @@ void NodeSelectorDestinationOverflowPopup::setSegments(const QStringList& segmen
 
     layout->activate();
 
+    static constexpr int MAX_ROW_WIDTH = 280;
+
     int maxRowWidth = 0;
-    for (auto* rowWidget: rowWidgets)
+    for (int i = 0; i < rowWidgets.size(); ++i)
     {
-        rowWidget->ensurePolished();
-        maxRowWidth = qMax(maxRowWidth, rowWidget->sizeHint().width());
+        auto* label = qobject_cast<QLabel*>(rowWidgets.at(i));
+        if (!label)
+        {
+            continue;
+        }
+
+        label->ensurePolished();
+
+        // Cap a very long ancestor name with a middle ellipsis (full name kept as tooltip) so a
+        // single long segment can't blow up the popup width.
+        const QString fullText = segments.at(i);
+        const QString elided =
+            label->fontMetrics().elidedText(fullText, Qt::ElideMiddle, MAX_ROW_WIDTH);
+        if (elided != fullText)
+        {
+            label->setText(elided);
+            label->setToolTip(fullText);
+        }
+
+        maxRowWidth = qMax(maxRowWidth, label->sizeHint().width());
     }
 
     const int rowCount = segments.size();
