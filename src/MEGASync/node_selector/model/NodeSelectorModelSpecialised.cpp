@@ -182,6 +182,11 @@ bool NodeSelectorModelIncomingShares::rootNodeUpdated(mega::MegaNode* node)
         if (folderIndex.isValid())
         {
             updateItemNode(folderIndex, std::shared_ptr<mega::MegaNode>(node->copy()));
+            // updateItemNode refreshes the list row via dataChanged, but the navigation
+            // breadcrumb and the incoming-share header resolve the share name from the current
+            // root / its parent share and are not driven by dataChanged. Reuse the share-info
+            // signal so both refresh when the renamed share is the current root or an ancestor.
+            emit incomingShareInfoChanged(node->getHandle());
             return true;
         }
     }
