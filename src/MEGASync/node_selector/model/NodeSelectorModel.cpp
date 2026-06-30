@@ -18,6 +18,7 @@
 #include <QFont>
 #include <QPainter>
 #include <QToolTip>
+#include <QUrl>
 
 const char* INDEX_PROPERTY = "INDEX";
 
@@ -1230,7 +1231,27 @@ void NodeSelectorModel::setExtraSpaceEnabled(bool enabled)
 
 bool NodeSelectorModel::acceptDragAndDrop(const QMimeData* data)
 {
-    return (data->hasUrls() || data->hasFormat(MIME_DATA_INTERNAL_MOVE));
+    if (data->hasFormat(MIME_DATA_INTERNAL_MOVE))
+    {
+        return true;
+    }
+
+    if (data->hasUrls())
+    {
+        // Only accept the drop when at least one URL resolves to a local file.
+        // A drag&drop from the OS file manager can carry non-local URLs (web
+        // images, iCloud files not downloaded, promised files, etc.) that
+        // cannot be uploaded.
+        const auto urls = data->urls();
+        return std::any_of(urls.cbegin(),
+                           urls.cend(),
+                           [](const QUrl& url)
+                           {
+                               return !url.toLocalFile().isEmpty();
+                           });
+    }
+
+    return false;
 }
 
 bool NodeSelectorModel::canDropMimeData(const QMimeData* data,

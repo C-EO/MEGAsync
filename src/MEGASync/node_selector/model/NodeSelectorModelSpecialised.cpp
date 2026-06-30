@@ -203,6 +203,15 @@ bool NodeSelectorModelIncomingShares::canDropMimeData(const QMimeData* data,
     // The drop target is the hovered folder itself (the view passes its row/col/parent),
     // including top-level shares whose parent is the invalid root.
     auto dropIndex(index(row, column, parent));
+
+    // The paste path (canPasteNodes -> canDropMimeData with row/col = -1) passes the target
+    // folder directly as 'parent', so index(row, column, parent) is invalid. Fall back to
+    // 'parent', which is the actual drop target in that case.
+    if (!dropIndex.isValid())
+    {
+        dropIndex = parent;
+    }
+
     auto item = getItemByIndex(dropIndex);
     if (!item)
     {

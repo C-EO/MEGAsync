@@ -401,6 +401,14 @@ bool TransferData::canBeRetried(mega::MegaTransfer* transfer)
 {
     auto result(false);
 
+    // An upload without a valid local source path cannot be retried (e.g. it
+    // came from a drag&drop source that did not resolve to a local file).
+    if (transfer->getType() == mega::MegaTransfer::TYPE_UPLOAD &&
+        QString::fromUtf8(transfer->getPath()).isEmpty())
+    {
+        return false;
+    }
+
     if (transfer->isSyncTransfer())
     {
         if (transfer->getType() == mega::MegaTransfer::TYPE_DOWNLOAD)

@@ -428,6 +428,10 @@ private:
 
     void retryTransfers(const QMultiMap<unsigned long long, QExplicitlySharedDataPointer<TransferData>> &transfersToRetry);
 
+    // Returns an empty C string instead of nullptr, so the result can be safely
+    // assigned to a std::string or passed to the SDK without dereferencing null.
+    static const char* safeCharPtr(const char* value);
+
     bool isUiBlockedModeActive() const ;
     void setUiBlockedMode(bool state);
 

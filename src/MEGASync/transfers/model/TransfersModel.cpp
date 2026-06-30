@@ -1692,8 +1692,8 @@ void TransfersModel::retryTransfers(const QMultiMap<unsigned long long, QExplici
                         // If node is null, then it was intended to be undeleted
                         bool undelete = (!node);
                         mMegaApi->startDownload(node.get(),
-                                                failedTransfer->getPath(),
-                                                failedTransfer->getFileName(),
+                                                safeCharPtr(failedTransfer->getPath()),
+                                                safeCharPtr(failedTransfer->getFileName()),
                                                 appDataRaw,
                                                 false,
                                                 nullptr,
@@ -1708,11 +1708,11 @@ void TransfersModel::retryTransfers(const QMultiMap<unsigned long long, QExplici
                             MegaSyncApp->getMegaApi()->getNodeByHandle(
                                 failedTransfer->getParentHandle()));
                         MegaUploadOptions options;
-                        options.fileName = failedTransfer->getFileName();
+                        options.fileName = safeCharPtr(failedTransfer->getFileName());
                         options.appData = appDataRaw;
                         options.pitagTrigger = mega::MegaApi::PITAG_TRIGGER_PICKER;
 
-                        mMegaApi->startUpload(failedTransfer->getPath(),
+                        mMegaApi->startUpload(safeCharPtr(failedTransfer->getPath()),
                                               parentNode.get(),
                                               nullptr,
                                               &options,
@@ -1730,6 +1730,11 @@ void TransfersModel::retryTransfers(const QMultiMap<unsigned long long, QExplici
             {
                 updateTransfersCount();
             });
+}
+
+const char* TransfersModel::safeCharPtr(const char* value)
+{
+    return value ? value : "";
 }
 
 void TransfersModel::retryTransferByIndex(const QModelIndex& index)

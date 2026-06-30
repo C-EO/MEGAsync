@@ -79,6 +79,17 @@ NodeSelector::NodeSelector(SelectTypeSPtr selectType, QWidget* parent):
 
     ui->incomingShareContainer->hide();
 
+    connect(ui->incomingShareHeaderWidget,
+            &IncomingShareHeaderWidget::menuRequested,
+            this,
+            [this](const QPoint& globalPos)
+            {
+                if (auto* wid = getCurrentTreeViewWidget())
+                {
+                    wid->showCurrentRootContextMenu(globalPos);
+                }
+            });
+
     resize(1024, 720);
     setMinimumSize(660, 560);
 }
