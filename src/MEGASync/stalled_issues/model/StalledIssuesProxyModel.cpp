@@ -56,8 +56,8 @@ void StalledIssuesProxyModel::filter(StalledIssueFilterCriterion filterCriterion
     else
     {
         sourceM->blockUi();
-        sourceM->unBlockUi();
 
+        // unBlockUi() is now centralized in onModelSortedFiltered().
         onModelSortedFiltered();
     }
 }
@@ -132,6 +132,14 @@ void StalledIssuesProxyModel::onModelSortedFiltered()
 {
     emit layoutChanged();
     emit modelFiltered();
+
+    // Hide the loading scene once sorting/filtering is done. This used to be driven by the
+    // delegate's sizeHint(), but the view detaches its model while loading, so sizeHint() never
+    // runs during loading and the unblock must happen here.
+    if (auto sourceM = qobject_cast<StalledIssuesModel*>(sourceModel()))
+    {
+        sourceM->unBlockUi();
+    }
 }
 
 StalledIssueFilterCriterion StalledIssuesProxyModel::filterCriterion() const
