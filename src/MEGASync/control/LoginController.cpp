@@ -130,6 +130,21 @@ void LoginController::setState(State state)
             !mPreferences->isOneTimeActionUserDone(Preferences::ONE_TIME_ACTION_ONBOARDING_SHOWN) &&
             !(mPreferences->isFirstBackupDone() || mPreferences->isFirstSyncDone());
 
+        // TODO: temporary diagnostics for the blocked-login onboarding bug
+        mega::MegaApi::log(
+            mega::MegaApi::LOG_LEVEL_DEBUG,
+            QString::fromUtf8("Onboarding decision: force=%1 onboardingShown=%2 firstSync=%3 "
+                              "firstBackup=%4 logged=%5 -> showOnboarding=%6")
+                .arg(mForceOnboarding)
+                .arg(mPreferences->isOneTimeActionUserDone(
+                    Preferences::ONE_TIME_ACTION_ONBOARDING_SHOWN))
+                .arg(mPreferences->isFirstSyncDone())
+                .arg(mPreferences->isFirstBackupDone())
+                .arg(mPreferences->logged())
+                .arg(mForceOnboarding || showOnboarding)
+                .toUtf8()
+                .constData());
+
         if (mTriggerFatalErrorAfterFetchnodes)
         {
             // The user, if mTriggerFatalErrorAfterFetchnodes is set to true, is presented
