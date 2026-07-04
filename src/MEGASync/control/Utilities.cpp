@@ -1875,7 +1875,11 @@ QString Utilities::getNodeStringAccess(MegaHandle handle)
 
 QString Utilities::getNodeStringAccess(MegaNode* node)
 {
-    auto access(getNodeAccess(node));
+    return getNodeStringAccess(getNodeAccess(node));
+}
+
+QString Utilities::getNodeStringAccess(int access)
+{
     switch (access)
     {
         case MegaShare::ACCESS_READ:
@@ -1909,7 +1913,11 @@ QIcon Utilities::getNodeAccessIcon(MegaHandle handle)
 
 QIcon Utilities::getNodeAccessIcon(MegaNode* node)
 {
-    auto access(getNodeAccess(node));
+    return getNodeAccessIcon(getNodeAccess(node));
+}
+
+QIcon Utilities::getNodeAccessIcon(int access)
+{
     switch (access)
     {
         case MegaShare::ACCESS_READ:

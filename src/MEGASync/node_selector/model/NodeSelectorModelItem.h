@@ -98,14 +98,18 @@ signals:
     void infoUpdated(int role);
 
 protected:
+    // Resolves the access level through the SDK and caches it. Only inshare root nodes
+    // (isInShare() == true) need it, and only from the NodeRequester worker thread: resolving
+    // it from the GUI thread would block on the SDK mutex while a children fetch is in flight.
+    void primeNodeAccess();
+
     QString mOwnerEmail;
     Status mStatus;
     bool mRequestingChildren;
     int mChildrenCounter;
     bool mShowFiles;
     bool mChildrenAreInit;
-    mutable int mNodeAccess;
-    mutable qint64 mNodeAccessLastUpdate;
+    int mNodeAccess;
 
     mega::MegaApi* mMegaApi;
     std::shared_ptr<mega::MegaNode> mNode;

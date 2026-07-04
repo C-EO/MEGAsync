@@ -1109,7 +1109,7 @@ QVariant NodeSelectorModel::data(const QModelIndex& index, int role) const
                 }
                 case toInt(NodeSelectorModelRoles::ACCESS_ROLE):
                 {
-                    return Utilities::getNodeAccess(item->getNode().get());
+                    return item->getNodeAccess();
                 }
                 case toInt(NodeSelectorModelRoles::HANDLE_ROLE):
                 {
@@ -2894,7 +2894,7 @@ QVariant NodeSelectorModel::getIcon(const QModelIndex& index, NodeSelectorModelI
         {
             if (showAccess(item->getNode().get()))
             {
-                auto icon = Utilities::getNodeAccessIcon(item->getNode().get());
+                auto icon = Utilities::getNodeAccessIcon(item->getNodeAccess());
                 return QVariant::fromValue<QPixmap>(
                     IconTokenizer::changePixmapColor(
                         icon.pixmap(
@@ -3002,7 +3002,7 @@ QVariant NodeSelectorModel::getLastModifiedDateText(NodeSelectorModelItem* item)
 QVariant NodeSelectorModel::getAccessText(NodeSelectorModelItem* item) const
 {
     return showAccess(item->getNode().get()) ?
-               Utilities::getNodeStringAccess(item->getNode().get()) :
+               Utilities::getNodeStringAccess(item->getNodeAccess()) :
                QVariant();
 }
 

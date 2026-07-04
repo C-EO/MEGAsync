@@ -7,7 +7,6 @@
 #include "Utilities.h"
 
 const int NodeSelectorModelItem::ICON_SIZE = 17;
-const int UPDATE_ACCESS_THRESHOLD_MS = 50;
 
 using namespace mega;
 
@@ -20,7 +19,6 @@ NodeSelectorModelItem::NodeSelectorModelItem(std::unique_ptr<MegaNode> node,
     mRequestingChildren(false),
     mShowFiles(showFiles),
     mNodeAccess(mega::MegaShare::ACCESS_OWNER),
-    mNodeAccessLastUpdate(0),
     mMegaApi(MegaSyncApp->getMegaApi()),
     mNode(std::move(node)),
     mOwner(nullptr)
@@ -161,14 +159,17 @@ void NodeSelectorModelItem::resetChildrenCounter()
 
 int NodeSelectorModelItem::getNodeAccess() const
 {
-    auto currentTimestamp(QDateTime::currentMSecsSinceEpoch());
-    if ((currentTimestamp - mNodeAccessLastUpdate) > UPDATE_ACCESS_THRESHOLD_MS)
-    {
-        mNodeAccess = Utilities::getNodeAccess(mNode.get());
-        mNodeAccessLastUpdate = currentTimestamp;
-    }
-
+    // Only inshare root nodes resolve their access level (primed on the NodeRequester worker);
+    // no consumer needs it for any other node, so the rest keep the ACCESS_OWNER default.
+    // Never resolve it here: this getter runs in paint paths on the GUI thread, and
+    // megaApi->getAccess blocks on the SDK mutex while the worker is fetching children
+    // (500ms+ freezes on huge folders).
     return mNodeAccess;
+}
+
+void NodeSelectorModelItem::primeNodeAccess()
+{
+    mNodeAccess = Utilities::getNodeAccess(mNode.get());
 }
 
 QPointer<NodeSelectorModelItem> NodeSelectorModelItem::getParent() const
@@ -421,6 +422,11 @@ int NodeSelectorModelItem::row()
 void NodeSelectorModelItem::updateNode(std::shared_ptr<mega::MegaNode> node)
 {
     mNode = node;
+    // The updated node may carry a different share access level; only inshare roots resolve it.
+    if (mNode->isInShare())
+    {
+        primeNodeAccess();
+    }
 }
 
 void NodeSelectorModelItem::calculateSyncStatus()
@@ -550,6 +556,10 @@ NodeSelectorModelItemSearch::NodeSelectorModelItemSearch(std::unique_ptr<mega::M
         auto user = std::unique_ptr<mega::MegaUser>(
             MegaSyncApp->getMegaApi()->getUserFromInShare(mNode.get(), true));
         setOwner(std::move(user));
+        if (mNode->isInShare())
+        {
+            primeNodeAccess();
+        }
     }
 
     calculateSyncStatus();
@@ -562,6 +572,11 @@ void NodeSelectorModelItemSearch::setType(TabTypes type)
     if (mType != type)
     {
         mType = type;
+        // Same rule as the constructor; this slot also runs on the NodeRequester worker.
+        if ((mType & TabType::INCOMING_SHARE) && mNode->isInShare())
+        {
+            primeNodeAccess();
+        }
         emit tabTypeChanged(type);
     }
 }
@@ -623,6 +638,14 @@ NodeSelectorModelItemIncomingShare::NodeSelectorModelItemIncomingShare(
     NodeSelectorModelItem* parentItem):
     NodeSelectorModelItem(std::move(node), showFiles, parentItem)
 {
+    // Only the inshare root resolves its access level through the SDK (this constructor runs
+    // on the NodeRequester worker); the access of the nodes inside the share is not used
+    // anywhere, so they keep the ACCESS_OWNER default.
+    if (mNode->isInShare())
+    {
+        primeNodeAccess();
+    }
+
     if (!parentItem)
     {
         auto user = std::unique_ptr<mega::MegaUser>(

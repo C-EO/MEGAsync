@@ -56,6 +56,21 @@ void FilePickerNodeSelector::applyNewFolderSelection(NodeSelectorTreeViewWidget*
 
 void FilePickerNodeSelector::refreshDestinationBreadcrumb()
 {
+    // Building the destination path goes through the SDK (getNodeByHandle/getNodePath). While
+    // the model's worker thread is fetching children, getChildren holds the SDK mutex for
+    // hundreds of ms on huge folders, so those calls would freeze the GUI thread and prevent
+    // the loading view from showing. Skip the refresh in that case: the post-load selection
+    // pass (onUiBlocked(false) -> onSelectionHasChanged) runs it again once the fetch is done.
+    if (auto* currentWidget = getCurrentTreeViewWidget())
+    {
+        const auto proxyModel = currentWidget->getProxyModel();
+        if (proxyModel && proxyModel->getMegaModel() &&
+            proxyModel->getMegaModel()->isRequestingNodes())
+        {
+            return;
+        }
+    }
+
     const bool shouldShowPath = mSelectType && mSelectType->showsDestinationBreadcrumb() &&
                                 selectedSearchChipTreeViewWidget();
     const auto banner = destinationBannerInfo();
