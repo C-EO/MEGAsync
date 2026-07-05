@@ -1334,9 +1334,8 @@ void NodeSelector::configureSearchWidget(TabType type)
     mSearchWidget->setColumnHidden(NodeSelectorModel::Column::IS_EXPORTED,
                                    (type == TabType::RUBBISH || type == TabType::INCOMING_SHARE));
 
-    // Search results are flat (no shares top-root list), so the Incoming Shares owner/access
-    // columns are never shown in the search view.
-    setIncomingShareColumnsVisibility(mSearchWidget, false);
+    // Mirror the Incoming Shares tab columns while its search chip is active.
+    setIncomingShareColumnsVisibility(mSearchWidget, type == TabType::INCOMING_SHARE);
     configureTypeSpecificColumns(mSearchWidget);
 
     mSearchWidget->resetAutoColumnWidths();

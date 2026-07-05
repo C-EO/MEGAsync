@@ -766,16 +766,6 @@ void NodeSelectorModelSearch::proxyInvalidateFinished()
     mNodeRequesterWorker->lockSearchMutex(false);
 }
 
-bool NodeSelectorModelSearch::showAccess(mega::MegaNode* node) const
-{
-    if (node->isInShare())
-    {
-        return true;
-    }
-    auto access = Utilities::getNodeAccess(node);
-    return access < mega::MegaShare::ACCESS_OWNER && access > mega::MegaShare::ACCESS_UNKNOWN;
-}
-
 void NodeSelectorModelSearch::onRootItemsCreated()
 {
     if (mNodeRequesterWorker->trySearchLock())

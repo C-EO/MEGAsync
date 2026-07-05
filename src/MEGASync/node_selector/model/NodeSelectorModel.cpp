@@ -1058,8 +1058,12 @@ QVariant NodeSelectorModel::data(const QModelIndex& index, int role) const
                 {
                     if (index.column() == NodeSelectorModel::Column::USER)
                     {
-                        return item->getOwnerName() + QLatin1String(" (") + item->getOwnerEmail() +
-                               QLatin1String(")");
+                        if (showAccess(item->getNode().get()))
+                        {
+                            return item->getOwnerName() + QLatin1String(" (") +
+                                   item->getOwnerEmail() + QLatin1String(")");
+                        }
+                        return QVariant();
                     }
                     else if (item->isTakenDown())
                     {
@@ -2888,7 +2892,12 @@ QVariant NodeSelectorModel::getIcon(const QModelIndex& index, NodeSelectorModelI
         }
         case NodeSelectorModel::Column::USER:
         {
-            return QVariant::fromValue<QPixmap>(item->getOwnerIcon());
+            // Keep the icon consistent with getUserText(): only inshare roots show the owner.
+            if (showAccess(item->getNode().get()))
+            {
+                return QVariant::fromValue<QPixmap>(item->getOwnerIcon());
+            }
+            break;
         }
         case NodeSelectorModel::Column::ACCESS:
         {

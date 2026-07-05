@@ -78,6 +78,19 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
                 mResizeEventsReceived = 0;
             });
 
+    // A proxy refilter emits one rowsInserted per contiguous range (~1600 on a search chip
+    // switch), and bulk node updates from other clients arrive as long bursts of add/remove
+    // events. Refreshing the page/header/breadcrumb per event froze the UI, so the requests
+    // are coalesced: the first one arms the timer and the refresh runs once when it fires,
+    // with the final model state (at most one execution per interval during a sustained
+    // stream).
+    mCheckViewOnModelChangeDebounce.setSingleShot(true);
+    mCheckViewOnModelChangeDebounce.setInterval(100);
+    connect(&mCheckViewOnModelChangeDebounce,
+            &QTimer::timeout,
+            this,
+            &NodeSelectorTreeViewWidget::executeCheckViewOnModelChange);
+
     // Empty pages
     ui->emptyPage->installEventFilter(this);
     ui->emptyPage->setFocusPolicy(Qt::StrongFocus);
@@ -874,6 +887,14 @@ void NodeSelectorTreeViewWidget::rebuildVisibleColumns()
 }
 
 void NodeSelectorTreeViewWidget::checkViewOnModelChange()
+{
+    if (!mCheckViewOnModelChangeDebounce.isActive())
+    {
+        mCheckViewOnModelChangeDebounce.start();
+    }
+}
+
+void NodeSelectorTreeViewWidget::executeCheckViewOnModelChange()
 {
     setCurrentViewWidget();
     emit viewStateChanged();

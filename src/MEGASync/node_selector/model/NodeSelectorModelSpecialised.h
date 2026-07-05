@@ -181,7 +181,6 @@ public:
 
 protected:
     void proxyInvalidateFinished() override;
-    bool showAccess(mega::MegaNode* node) const override;
 
 signals:
     void searchNodes(const QString& text, TabTypes, bool flatten);

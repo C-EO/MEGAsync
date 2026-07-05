@@ -158,8 +158,14 @@ void FileManagerNodeSelector::configureTypeSpecificColumns(NodeSelectorTreeViewW
         widget->getTabType() == NodeSelectorTreeViewWidget::TabItem::SHARES &&
         !widget->getCurrentRootIndex().isValid();
 
-    widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE, incomingSharesTopRoot);
-    widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE, incomingSharesTopRoot);
+    // The search view mirrors the Incoming Shares tab columns while its chip is active.
+    const bool searchingIncomingShares =
+        widget == mSearchWidget && mActiveSearchTabType == TabType::INCOMING_SHARE;
+
+    widget->setColumnHidden(NodeSelectorModel::Column::ADDED_DATE,
+                            incomingSharesTopRoot || searchingIncomingShares);
+    widget->setColumnHidden(NodeSelectorModel::Column::LAST_MODIFIED_DATE,
+                            incomingSharesTopRoot || searchingIncomingShares);
 }
 
 void FileManagerNodeSelector::configureSidebar()

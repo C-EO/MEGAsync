@@ -551,15 +551,14 @@ NodeSelectorModelItemSearch::NodeSelectorModelItemSearch(std::unique_ptr<mega::M
     NodeSelectorModelItem(std::move(node), false, parentItem),
     mType(type)
 {
-    if (mType & TabType::INCOMING_SHARE)
+    // Owner and access are only shown for inshare roots; nested nodes keep the
+    // columns empty, so don't resolve the owner (avoids avatar/fullname requests).
+    if ((mType & TabType::INCOMING_SHARE) && mNode->isInShare())
     {
         auto user = std::unique_ptr<mega::MegaUser>(
             MegaSyncApp->getMegaApi()->getUserFromInShare(mNode.get(), true));
         setOwner(std::move(user));
-        if (mNode->isInShare())
-        {
-            primeNodeAccess();
-        }
+        primeNodeAccess();
     }
 
     calculateSyncStatus();
