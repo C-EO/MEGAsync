@@ -520,6 +520,20 @@ NodeSelectorModelSearch::NodeSelectorModelSearch(TabTypes allowedTabTypes,
     mDeviceNamesRequest(UserAttributes::DeviceNames::requestDeviceNames())
 {
     qRegisterMetaType<TabTypes>("TabTypes");
+
+    // Deleting/moving nodes visible in the search tab re-adds their paths one node-update at
+    // a time: the worker emits searchPathItemsAdded per pass, and re-sorting on every
+    // emission runs one full concurrent sort (with its blockUi/detach/reattach cycle) per
+    // node. Coalesce each burst into a single re-sort at the end of the window.
+    mSearchPathItemsAddedDebounce.setSingleShot(true);
+    mSearchPathItemsAddedDebounce.setInterval(100);
+    connect(&mSearchPathItemsAddedDebounce,
+            &QTimer::timeout,
+            this,
+            [this]()
+            {
+                emit levelsAdded({}, false);
+            });
 }
 
 void NodeSelectorModelSearch::firstLoad()
@@ -777,7 +791,10 @@ void NodeSelectorModelSearch::onRootItemsCreated()
 
 void NodeSelectorModelSearch::onSearchPathItemsAdded()
 {
-    emit levelsAdded({}, false);
+    if (!mSearchPathItemsAddedDebounce.isActive())
+    {
+        mSearchPathItemsAddedDebounce.start();
+    }
 }
 
 bool NodeSelectorModelSearch::matchesCurrentSearch(mega::MegaNode* node) const

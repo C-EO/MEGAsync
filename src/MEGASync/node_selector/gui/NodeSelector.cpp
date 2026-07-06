@@ -810,7 +810,7 @@ void NodeSelector::closeEvent(QCloseEvent* event)
         if (viewContainer)
         {
             viewContainer->abort();
-            if (viewContainer->getProxyModel()->isModelProcessing())
+            if (viewContainer->getProxyModel()->isWorking())
             {
                 connect(viewContainer->getProxyModel()->getMegaModel(),
                         &NodeSelectorModel::blockUi,

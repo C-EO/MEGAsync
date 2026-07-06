@@ -243,7 +243,19 @@ void NodeSelectorTreeViewWidget::init()
     enableDragAndDrop(mSelectType->acceptDrops(mTabType));
     mModel->setExtraSpaceEnabled(!mSelectType->isFilePicker());
 
-    ui->tMegaFolders->setSortingEnabled(true);
+    // Do not use QTreeView::setSortingEnabled(): with it enabled, QTreeView::setModel() and
+    // QHeaderView::restoreState() re-trigger model->sort() while the loading scene is
+    // reattaching the view. At that point the previous QFutureWatcher already reports
+    // finished, so a new concurrent sort job starts and mutates the proxy mapping while the
+    // reattach walks it (setSelectionModel -> QHeaderView::currentChanged) -> crash.
+    // Replicate the same UX (clickable header + sort indicator) and route genuine indicator
+    // changes to the proxy explicitly instead.
+    ui->tMegaFolders->header()->setSortIndicatorShown(true);
+    ui->tMegaFolders->header()->setSectionsClickable(true);
+    connect(ui->tMegaFolders->header(),
+            &QHeaderView::sortIndicatorChanged,
+            mProxyModel.get(),
+            &NodeSelectorProxyModel::onSortIndicatorChanged);
     ui->tMegaFolders->viewport()->installEventFilter(this);
 
     mProxyModel->setSourceModel(mModel.get());

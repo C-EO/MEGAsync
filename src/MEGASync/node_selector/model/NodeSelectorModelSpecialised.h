@@ -4,6 +4,8 @@
 #include "DeviceNames.h"
 #include "NodeSelectorModel.h"
 
+#include <QTimer>
+
 #include <memory>
 
 namespace UserAttributes
@@ -204,6 +206,7 @@ private:
     bool mFlattenSearchResults;
     QString mLastSearchText;
     std::shared_ptr<const UserAttributes::DeviceNames> mDeviceNamesRequest;
+    QTimer mSearchPathItemsAddedDebounce;
 };
 
 class NodeSelectorModelRubbish: public NodeSelectorModel

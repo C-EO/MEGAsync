@@ -146,3 +146,8 @@ StalledIssueFilterCriterion StalledIssuesProxyModel::filterCriterion() const
 {
     return mFilterCriterion;
 }
+
+bool StalledIssuesProxyModel::isWorking() const
+{
+    return mFilterWatcher.isRunning();
+}

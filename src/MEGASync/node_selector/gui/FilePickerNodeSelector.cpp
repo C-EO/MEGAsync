@@ -222,7 +222,11 @@ void FilePickerNodeSelector::configureHeader()
     if (auto* topRowLayout = ui->headerLayout)
     {
         ui->navigationRowLayout->removeWidget(ui->lNavigationRoot);
-        topRowLayout->insertWidget(0, ui->lNavigationRoot, 0, Qt::AlignLeft | Qt::AlignTop);
+        // The 8px indent only compensates the navigation row's reduced left margin; the
+        // header top row keeps the full 20px margin.
+        ui->lNavigationRoot->setIndent(0);
+        // Vertically centered so the label sits on the same line as the 40px search field.
+        topRowLayout->insertWidget(0, ui->lNavigationRoot, 0, Qt::AlignLeft | Qt::AlignVCenter);
     }
 }
 
