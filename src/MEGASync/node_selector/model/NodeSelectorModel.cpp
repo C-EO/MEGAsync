@@ -129,6 +129,13 @@ void NodeRequester::search(const QString& text, TabTypes typesAllowed, bool flat
     mSearchedTypes = TabType::NONE;
     int validMatches = 0;
 
+    // Items already placed in the result tree, keyed by node handle (each node appears at most
+    // once in the tree, so the handle is a unique key). Turns the per-path lookups from linear
+    // scans -- O(N^2) with tens of thousands of results under the same parents -- into O(1)
+    // hash lookups.
+    QHash<mega::MegaHandle, NodeSelectorModelItem*> alreadyProcessedItemsByHandle;
+    alreadyProcessedItemsByHandle.reserve(nodeList->size());
+
     for (int i = 0; i < nodeList->size(); i++)
     {
         auto type = NodeSelectorModelSearch::calculateSearchType(nodeList->get(i));
@@ -146,7 +153,7 @@ void NodeRequester::search(const QString& text, TabTypes typesAllowed, bool flat
             else
             {
                 auto path = createSearchPath(nodeList->get(i), type);
-                addSearchPath(items, path, type);
+                addSearchPath(items, path, type, {}, &alreadyProcessedItemsByHandle);
             }
         }
     }
@@ -337,7 +344,8 @@ void NodeRequester::addSearchPathItems(QList<std::shared_ptr<mega::MegaNode>> no
 void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
                                   const QList<std::shared_ptr<mega::MegaNode>>& path,
                                   TabTypes type,
-                                  AppendChildrenFn appendChildren)
+                                  AppendChildrenFn appendChildren,
+                                  QHash<mega::MegaHandle, NodeSelectorModelItem*>* handleIndex)
 {
     if (path.isEmpty())
     {
@@ -349,8 +357,11 @@ void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
     NodeSelectorModelItem* parentItem(nullptr);
     for (const auto& node: path)
     {
-        auto existingItem = parentItem ? findSearchChild(parentItem, node->getHandle()) :
-                                         findSearchItem(items, node->getHandle());
+        const auto handle = node->getHandle();
+
+        auto existingItem = handleIndex ? handleIndex->value(handle, nullptr) :
+                                          (parentItem ? findSearchChild(parentItem, handle) :
+                                                        findSearchItem(items, handle));
         if (!existingItem)
         {
             if (parentItem)
@@ -386,6 +397,11 @@ void NodeRequester::addSearchPath(QList<NodeSelectorModelItem*>& items,
         if (!existingItem)
         {
             return;
+        }
+
+        if (handleIndex)
+        {
+            handleIndex->insert(handle, existingItem);
         }
 
         parentItem = existingItem;
