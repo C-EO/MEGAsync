@@ -16,6 +16,7 @@
 #include <QRect>
 #include <QWindow>
 
+#include <algorithm>
 #include <functional>
 #include <memory>
 
@@ -89,6 +90,7 @@ private:
         virtual bool isVisible() = 0;
         virtual bool isActive() = 0;
         virtual bool isParent(QObject* parent) = 0;
+        virtual bool ownsWindow(QWindow* window) const = 0;
         virtual QRect frameGeometry() const = 0;
         virtual void applyCurrentTheme() = 0;
 
@@ -181,6 +183,11 @@ private:
         bool isParent(QObject* parent) override
         {
             return mDialog->parent() == parent;
+        }
+
+        bool ownsWindow(QWindow* window) const override
+        {
+            return mDialog && mDialog->windowHandle() == window;
         }
 
         QRect frameGeometry() const override
@@ -556,11 +563,36 @@ private:
         const auto windows = QGuiApplication::topLevelWindows();
         for (QWindow* window: windows)
         {
-            if (window != parentWindow && window->transientParent() == parentWindow)
+            if (window == parentWindow || window->transientParent() != parentWindow)
             {
-                window->setVisible(false);
-                window->setTransientParent(nullptr);
+                continue;
             }
+
+            // A transient child backed by a dialog tracked in mOpenedDialogs
+            // (e.g. a WindowModal child opened through DialogOpener) must be
+            // closed through its dialog: finished() then drives the usual
+            // cleanup (removeWhenClose -> deleteLater -> tracking removal) and
+            // delivers any pending result callbacks. A bare hide would leave
+            // it tracked forever, invisible but still "open". Closing also
+            // ends a macOS sheet cleanly, so the crash this sweep prevents
+            // stays prevented.
+            const auto it = std::find_if(mOpenedDialogs.cbegin(),
+                                         mOpenedDialogs.cend(),
+                                         [window](const std::shared_ptr<DialogInfoBase>& info)
+                                         {
+                                             return info->ownsWindow(window);
+                                         });
+            if (it != mOpenedDialogs.cend())
+            {
+                // Keep the info alive across close(); the call can trigger
+                // cleanup of this very list entry.
+                const auto childInfo = *it;
+                childInfo->close();
+                continue;
+            }
+
+            window->setVisible(false);
+            window->setTransientParent(nullptr);
         }
     }
 

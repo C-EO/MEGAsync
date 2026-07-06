@@ -10,6 +10,8 @@
 #include <QVBoxLayout>
 #include <QVector>
 
+#include <algorithm>
+
 NodeSelectorDestinationOverflowPopup::NodeSelectorDestinationOverflowPopup(QWidget* parent):
     QFrame(parent, Qt::Popup | Qt::FramelessWindowHint),
     ui(new Ui::NodeSelectorDestinationOverflowPopup)
@@ -116,11 +118,11 @@ void NodeSelectorDestinationOverflowPopup::setSegments(const QStringList& segmen
             label->setToolTip(fullText);
         }
 
-        maxRowWidth = qMax(maxRowWidth, label->sizeHint().width());
+        maxRowWidth = (std::max)(maxRowWidth, label->sizeHint().width());
     }
 
     const int rowCount = segments.size();
-    const int visibleRows = qMin(MAX_VISIBLE_ROWS, rowCount);
+    const int visibleRows = (std::min)(MAX_VISIBLE_ROWS, rowCount);
     const bool needsScrollbar = rowCount > MAX_VISIBLE_ROWS;
     const auto margins = layout->contentsMargins();
     const int spacing = layout->spacing();
@@ -128,9 +130,9 @@ void NodeSelectorDestinationOverflowPopup::setSegments(const QStringList& segmen
 
     // Inner content holds ALL rows (so it can scroll); the viewport is capped at MAX_VISIBLE_ROWS.
     const int fullContentHeight =
-        verticalMargins + rowCount * ROW_HEIGHT + qMax(0, rowCount - 1) * spacing;
+        verticalMargins + rowCount * ROW_HEIGHT + (std::max)(0, rowCount - 1) * spacing;
     const int viewportHeight =
-        verticalMargins + visibleRows * ROW_HEIGHT + qMax(0, visibleRows - 1) * spacing;
+        verticalMargins + visibleRows * ROW_HEIGHT + (std::max)(0, visibleRows - 1) * spacing;
 
     const int contentWidth = margins.left() + margins.right() + maxRowWidth;
     const int scrollbarWidth =

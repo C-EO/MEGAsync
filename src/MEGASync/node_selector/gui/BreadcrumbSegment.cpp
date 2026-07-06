@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QStyle>
 
+#include <algorithm>
+
 BreadcrumbSegment::BreadcrumbSegment(QWidget* parent):
     ClickableLabel(parent)
 {
@@ -53,7 +55,7 @@ void BreadcrumbSegment::setFirst(bool first)
 QSize BreadcrumbSegment::sizeHint() const
 {
     QSize hint = ClickableLabel::sizeHint();
-    hint.setWidth(qMin(hint.width(), MAX_WIDTH));
+    hint.setWidth((std::min)(hint.width(), MAX_WIDTH));
     return hint;
 }
 
