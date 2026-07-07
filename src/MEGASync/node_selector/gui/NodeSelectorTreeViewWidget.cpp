@@ -900,6 +900,14 @@ void NodeSelectorTreeViewWidget::rebuildVisibleColumns()
 
 void NodeSelectorTreeViewWidget::checkViewOnModelChange()
 {
+    // While the UI is blocked (a concurrent proxy job is running / the loading scene is
+    // shown) the refresh is pointless and unsafe: onUiBlocked(false) runs it
+    // unconditionally on unblock, so just skip.
+    if (mUiBlocked)
+    {
+        return;
+    }
+
     if (!mCheckViewOnModelChangeDebounce.isActive())
     {
         mCheckViewOnModelChangeDebounce.start();
@@ -1237,6 +1245,12 @@ QModelIndex NodeSelectorTreeViewWidget::getAddedNodeParent(mega::MegaHandle pare
 
 void NodeSelectorTreeViewWidget::onUiBlocked(bool state)
 {
+    // Blocking always precedes the concurrent proxy job (sort() emits blockUi(true)
+    // synchronously before launching it), so cancelling here guarantees the debounced
+    // refresh can never touch the proxy mid-job; the unblock branch below re-runs the
+    // same refresh (setCurrentViewWidget + viewStateChanged) unconditionally.
+    mCheckViewOnModelChangeDebounce.stop();
+
     if (mUiBlocked != state)
     {
         mUiBlocked = state;
