@@ -29,6 +29,14 @@ NodeSelectorModelItem::NodeSelectorModelItem(std::unique_ptr<MegaNode> node,
         mNode = std::make_shared<mega::MegaNode>();
     }
 
+    // Share access is uniform across an inshare subtree: nested items inherit the parent's
+    // cached level (primed on the inshare root through the SDK on the worker), so consumers
+    // (rename/delete/link-share/sync eligibility) see the real access with no SDK call.
+    if (parentItem)
+    {
+        mNodeAccess = parentItem->mNodeAccess;
+    }
+
     resetChildrenCounter();
 
     if (mNode->isFile() || mNode->isInShare())
@@ -426,6 +434,20 @@ void NodeSelectorModelItem::updateNode(std::shared_ptr<mega::MegaNode> node)
     if (mNode->isInShare())
     {
         primeNodeAccess();
+        // Descendants hold a cached copy inherited at construction: keep them in sync.
+        propagateNodeAccessToChildren();
+    }
+}
+
+void NodeSelectorModelItem::propagateNodeAccessToChildren()
+{
+    for (const auto& child: mChildItems)
+    {
+        if (child)
+        {
+            child->mNodeAccess = mNodeAccess;
+            child->propagateNodeAccessToChildren();
+        }
     }
 }
 
@@ -638,8 +660,8 @@ NodeSelectorModelItemIncomingShare::NodeSelectorModelItemIncomingShare(
     NodeSelectorModelItem(std::move(node), showFiles, parentItem)
 {
     // Only the inshare root resolves its access level through the SDK (this constructor runs
-    // on the NodeRequester worker); the access of the nodes inside the share is not used
-    // anywhere, so they keep the ACCESS_OWNER default.
+    // on the NodeRequester worker); nested nodes inherit the cached level from their parent
+    // (see the base constructor).
     if (mNode->isInShare())
     {
         primeNodeAccess();
