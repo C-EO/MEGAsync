@@ -1691,9 +1691,13 @@ void TransfersModel::retryTransfers(const QMultiMap<unsigned long long, QExplici
                         std::unique_ptr<mega::MegaNode> node = failedTransferdata->getNode();
                         // If node is null, then it was intended to be undeleted
                         bool undelete = (!node);
+                        // getPath()/getFileName() may be null; pass them through untouched:
+                        // the SDK treats a null localPath/customName as "use the default
+                        // download folder / the node's name", while an empty string bypasses
+                        // that handling (and asserts in Path::normalizeAbsolute in debug).
                         mMegaApi->startDownload(node.get(),
-                                                safeCharPtr(failedTransfer->getPath()),
-                                                safeCharPtr(failedTransfer->getFileName()),
+                                                failedTransfer->getPath(),
+                                                failedTransfer->getFileName(),
                                                 appDataRaw,
                                                 false,
                                                 nullptr,

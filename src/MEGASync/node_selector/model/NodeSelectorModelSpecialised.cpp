@@ -12,6 +12,11 @@
 
 using namespace mega;
 
+// Coalescing window for the search re-sort on searchPathItemsAdded bursts. Keep in sync
+// with VIEW_REFRESH_DEBOUNCE_MS (NodeSelectorTreeViewWidget.cpp): both coalesce the two
+// halves of the same node-update storm.
+const int SEARCH_PATH_ITEMS_RESORT_DEBOUNCE_MS = 100;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 NodeSelectorModelCloudDrive::NodeSelectorModelCloudDrive(QObject* parent):
     NodeSelectorModel(parent)
@@ -526,12 +531,22 @@ NodeSelectorModelSearch::NodeSelectorModelSearch(TabTypes allowedTabTypes,
     // emission runs one full concurrent sort (with its blockUi/detach/reattach cycle) per
     // node. Coalesce each burst into a single re-sort at the end of the window.
     mSearchPathItemsAddedDebounce.setSingleShot(true);
-    mSearchPathItemsAddedDebounce.setInterval(100);
+    mSearchPathItemsAddedDebounce.setInterval(SEARCH_PATH_ITEMS_RESORT_DEBOUNCE_MS);
     connect(&mSearchPathItemsAddedDebounce,
             &QTimer::timeout,
             this,
             [this]()
             {
+                // A structural change is open (the blocking begin was delivered but the
+                // queued end is still pending) or the model is mid-reset: emitting now
+                // would launch the concurrent sort against a mapping that is being
+                // rebuilt. Retry once the model is idle.
+                if (isBeingModified())
+                {
+                    mSearchPathItemsAddedDebounce.start();
+                    return;
+                }
+
                 emit levelsAdded({}, false);
             });
 }
@@ -570,6 +585,9 @@ void NodeSelectorModelSearch::createRootNodes()
 
 void NodeSelectorModelSearch::searchByText(const QString& text)
 {
+    // A deferred re-sort scheduled by the previous results must never fire against the
+    // new search's model generation.
+    mSearchPathItemsAddedDebounce.stop();
     mNodeRequesterWorker->restartSearch();
     mLastSearchText = text;
     addRootItems();
@@ -578,6 +596,7 @@ void NodeSelectorModelSearch::searchByText(const QString& text)
 
 void NodeSelectorModelSearch::stopSearch()
 {
+    mSearchPathItemsAddedDebounce.stop();
     mNodeRequesterWorker->restartSearch();
 }
 

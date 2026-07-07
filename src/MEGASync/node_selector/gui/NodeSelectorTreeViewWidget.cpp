@@ -22,6 +22,10 @@
 
 const int CHECK_UPDATED_NODES_INTERVAL = 1000;
 const int IMMEDIATE_CHECK_UPDATES_NODES_THRESHOLD = 200;
+// Coalescing window for view-state refreshes on model row changes. Keep in sync with
+// SEARCH_PATH_ITEMS_RESORT_DEBOUNCE_MS (NodeSelectorModelSpecialised.cpp): both coalesce
+// the two halves of the same node-update storm.
+const int VIEW_REFRESH_DEBOUNCE_MS = 100;
 
 NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
                                                        TabItem tabType,
@@ -85,7 +89,7 @@ NodeSelectorTreeViewWidget::NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
     // with the final model state (at most one execution per interval during a sustained
     // stream).
     mCheckViewOnModelChangeDebounce.setSingleShot(true);
-    mCheckViewOnModelChangeDebounce.setInterval(100);
+    mCheckViewOnModelChangeDebounce.setInterval(VIEW_REFRESH_DEBOUNCE_MS);
     connect(&mCheckViewOnModelChangeDebounce,
             &QTimer::timeout,
             this,
@@ -1538,8 +1542,11 @@ void NodeSelectorTreeViewWidget::setSelectedNodeHandle(const MegaHandle& selecte
 
 QList<MegaHandle> NodeSelectorTreeViewWidget::getMultiSelectionNodeHandle()
 {
-    auto selectedRows(ui->tMegaFolders->selectedRows());
-    return ui->tMegaFolders->getMultiSelectionNodeHandle(selectedRows);
+    // Use the same selection source as okButtonEnabled() (getSelectedIndexes(), which
+    // falls back to the current folder when nothing is explicitly selected): Ok enablement
+    // and the handles actually returned must never disagree, otherwise Ok can accept with
+    // an empty list and silently do nothing.
+    return ui->tMegaFolders->getMultiSelectionNodeHandle(getSelectedIndexes());
 }
 
 QModelIndexList NodeSelectorTreeViewWidget::getSelectedIndexes() const

@@ -1867,17 +1867,6 @@ int Utilities::getNodeAccess(MegaNode* node)
     }
 }
 
-QString Utilities::getNodeStringAccess(MegaHandle handle)
-{
-    auto node = std::unique_ptr<MegaNode>(MegaSyncApp->getMegaApi()->getNodeByHandle(handle));
-    return getNodeStringAccess(node.get());
-}
-
-QString Utilities::getNodeStringAccess(MegaNode* node)
-{
-    return getNodeStringAccess(getNodeAccess(node));
-}
-
 QString Utilities::getNodeStringAccess(int access)
 {
     switch (access)
@@ -1903,17 +1892,6 @@ QString Utilities::getNodeStringAccess(int access)
             return QCoreApplication::translate("IncomingShareAccess", "Unknown");
         }
     }
-}
-
-QIcon Utilities::getNodeAccessIcon(MegaHandle handle)
-{
-    auto node = std::unique_ptr<MegaNode>(MegaSyncApp->getMegaApi()->getNodeByHandle(handle));
-    return getNodeAccessIcon(node.get());
-}
-
-QIcon Utilities::getNodeAccessIcon(MegaNode* node)
-{
-    return getNodeAccessIcon(getNodeAccess(node));
 }
 
 QIcon Utilities::getNodeAccessIcon(int access)
