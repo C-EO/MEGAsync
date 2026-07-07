@@ -34,7 +34,7 @@ NodeSelectorModelItem::NodeSelectorModelItem(std::unique_ptr<MegaNode> node,
     // (rename/delete/link-share/sync eligibility) see the real access with no SDK call.
     if (parentItem)
     {
-        mNodeAccess = parentItem->mNodeAccess;
+        mNodeAccess = parentItem->mNodeAccess.load();
     }
 
     resetChildrenCounter();
@@ -430,8 +430,12 @@ int NodeSelectorModelItem::row()
 void NodeSelectorModelItem::updateNode(std::shared_ptr<mega::MegaNode> node)
 {
     mNode = node;
-    // The updated node may carry a different share access level; only inshare roots resolve it.
-    if (mNode->isInShare())
+    // Re-resolve the access level only when the update actually flags a share change:
+    // this runs on the GUI thread (rootNodeUpdated / update coordinator), so the blocking
+    // getAccess call must stay out of the common update storms (renames, attribute
+    // changes). A genuine permission change is rare and single-node, so the bounded
+    // SDK call is acceptable here.
+    if (mNode->isInShare() && (mNode->getChanges() & mega::MegaNode::CHANGE_TYPE_INSHARE))
     {
         primeNodeAccess();
         // Descendants hold a cached copy inherited at construction: keep them in sync.
@@ -445,7 +449,7 @@ void NodeSelectorModelItem::propagateNodeAccessToChildren()
     {
         if (child)
         {
-            child->mNodeAccess = mNodeAccess;
+            child->mNodeAccess = mNodeAccess.load();
             child->propagateNodeAccessToChildren();
         }
     }
@@ -593,11 +597,10 @@ void NodeSelectorModelItemSearch::setType(TabTypes type)
     if (mType != type)
     {
         mType = type;
-        // Same rule as the constructor; this slot also runs on the NodeRequester worker.
-        if ((mType & TabType::INCOMING_SHARE) && mNode->isInShare())
-        {
-            primeNodeAccess();
-        }
+        // No access re-resolution here: this runs on the GUI thread (rootNodeUpdated,
+        // CHANGE_TYPE_PARENT branch), and a type change comes from a parent move — an
+        // inshare root can never become one through a move, so there is nothing to prime.
+        // New inshare roots are created (and primed) on the NodeRequester worker.
         emit tabTypeChanged(type);
     }
 }

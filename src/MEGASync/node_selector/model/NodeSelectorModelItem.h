@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QPointer>
 
+#include <atomic>
 #include <memory>
 
 namespace UserAttributes
@@ -114,7 +115,9 @@ protected:
     int mChildrenCounter;
     bool mShowFiles;
     bool mChildrenAreInit;
-    int mNodeAccess;
+    // Atomic: read from the proxy's concurrent sort/filter job (pool thread) while the GUI
+    // thread may re-prime it on a share permission change (see updateNode).
+    std::atomic<int> mNodeAccess;
 
     mega::MegaApi* mMegaApi;
     std::shared_ptr<mega::MegaNode> mNode;
