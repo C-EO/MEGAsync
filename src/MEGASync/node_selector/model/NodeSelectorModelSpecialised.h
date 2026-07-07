@@ -204,6 +204,7 @@ private:
 
     TabTypes mAllowedTabTypes;
     bool mFlattenSearchResults;
+    bool mSearchInFlight = false;
     QString mLastSearchText;
     std::shared_ptr<const UserAttributes::DeviceNames> mDeviceNamesRequest;
     QTimer mSearchPathItemsAddedDebounce;

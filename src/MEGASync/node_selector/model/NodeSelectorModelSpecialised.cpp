@@ -590,6 +590,7 @@ void NodeSelectorModelSearch::searchByText(const QString& text)
     mSearchPathItemsAddedDebounce.stop();
     mNodeRequesterWorker->restartSearch();
     mLastSearchText = text;
+    mSearchInFlight = true;
     addRootItems();
     emit searchNodes(text, mAllowedTabTypes, mFlattenSearchResults);
 }
@@ -598,6 +599,16 @@ void NodeSelectorModelSearch::stopSearch()
 {
     mSearchPathItemsAddedDebounce.stop();
     mNodeRequesterWorker->restartSearch();
+
+    // A canceled search never reports back (the worker skips searchItemsCreated), so the
+    // reset opened by addRootItems() and the UI block would stay pending forever. Close
+    // both here so the header is re-enabled when the search is dismissed mid-flight.
+    if (mSearchInFlight)
+    {
+        mSearchInFlight = false;
+        rootItemsLoaded();
+        sendBlockUiSignal(false);
+    }
 }
 
 void NodeSelectorModelSearch::setAllowedTabTypes(TabTypes allowedTypes)
@@ -801,8 +812,16 @@ void NodeSelectorModelSearch::proxyInvalidateFinished()
 
 void NodeSelectorModelSearch::onRootItemsCreated()
 {
+    // Results from a search stopped after the worker had already finished: the pending
+    // reset was closed in stopSearch(), so discard them instead of double-ending it.
+    if (!mSearchInFlight)
+    {
+        return;
+    }
+
     if (mNodeRequesterWorker->trySearchLock())
     {
+        mSearchInFlight = false;
         rootItemsLoaded();
         emit levelsAdded(mIndexesToBeExpanded, true);
     }
