@@ -156,7 +156,10 @@ bool NodeSelectorModelIncomingShares::rootNodeUpdated(mega::MegaNode* node)
             {
                 if (mNodeRequesterWorker->isIncomingShareCompatible(node))
                 {
-                    updateRow(folderIndex);
+                    // A permission change must reach the item: updateItemNode re-primes the
+                    // cached access and propagates it to the child subtree (updateRow alone
+                    // repaints with the stale cached value).
+                    updateItemNode(folderIndex, std::shared_ptr<mega::MegaNode>(node->copy()));
                     emit incomingShareInfoChanged(node->getHandle());
                 }
                 else
@@ -694,7 +697,9 @@ bool NodeSelectorModelSearch::rootNodeUpdated(mega::MegaNode* node)
             }
             else
             {
-                updateRow(index);
+                // See NodeSelectorModelIncomingShares::rootNodeUpdated: the item (and its
+                // subtree) must receive the permission change, not just repaint.
+                updateItemNode(index, std::shared_ptr<mega::MegaNode>(node->copy()));
             }
         }
 
