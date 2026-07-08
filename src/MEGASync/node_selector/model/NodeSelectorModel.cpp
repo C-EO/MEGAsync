@@ -3408,7 +3408,14 @@ void NodeSelectorModel::updateItemNode(const QModelIndex& indexToUpdate,
     auto item = getItemByIndex(indexToUpdate);
     if (item)
     {
+        // updateNode() may walk the item's child subtree (propagateNodeAccessToChildren on a
+        // share-permission change). That traversal reads mChildItems, which the NodeRequester
+        // worker structurally mutates (createChildItems/initializeChildItems/appendNodes) under
+        // this same data mutex. Serialize against the worker so the GUI-thread walk cannot race
+        // an in-flight child fetch of the affected subtree.
+        mNodeRequesterWorker->lockDataMutex(true);
         item->updateNode(node);
+        mNodeRequesterWorker->lockDataMutex(false);
         updateRow(indexToUpdate);
     }
 }
