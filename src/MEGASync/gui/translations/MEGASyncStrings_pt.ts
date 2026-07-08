@@ -5335,7 +5335,7 @@ Digite um nome diferente.
     <message>
         <source>Upload</source>
         <translatorcomment>Action button in the node selector to upload to the selected folder. SNC-6420</translatorcomment>
-        <translation>Upload</translation>
+        <translation>Fazer upload</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -5728,7 +5728,7 @@ Digite um nome diferente.
     <message>
         <source>Backup to:</source>
         <translatorcomment>Text indicating where the selected folders are going to be backed up CON-468</translatorcomment>
-        <translation>Salvar backup em:</translation>
+        <translation>Salvar o backup em:</translation>
     </message>
     <message>
         <source>Backup: Confirm</source>

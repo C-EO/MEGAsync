@@ -592,6 +592,11 @@
         <translation>Sorun bildir</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>Bir hata nedeniyle sorununuz gönderilemedi. Daha sonra tekrar deneyin veya sorun devam ederse [A]Destek[/A] ile iletişime geçin.</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
         <translation>Sorununuz bir hata nedeniyle yüklenemedi. Daha sonra tekrar deneyin veya sorun devam ederse [A]https://mega.nz/support[/A] üzerinden destek ekibimizle iletişime geçin.</translation>
@@ -645,6 +650,11 @@
         <source>Please describe your issue in detail. Must be at least 30 characters.</source>
         <translatorcomment>Validation error shown when the reported issue description does not reach the minimum required length. SNC-6268</translatorcomment>
         <translation>Lütfen sorununuzu ayrıntılı bir şekilde açıklayın. En az 30 karakter olmalıdır.</translation>
+    </message>
+    <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>Lütfen daha sonra tekrar deneyin veya sorun devam ederse [A]Destek[/A] ile iletişime geçin.</translation>
     </message>
     <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
@@ -1353,12 +1363,12 @@
     <message>
         <source>Always upload to this destination</source>
         <translatorcomment>Checkbox label in the node selector destination breadcrumb to set the current folder as the default upload destination. SNC-6420</translatorcomment>
-        <translation>Her zaman bu hedefe yükle</translation>
+        <translation>Her zaman bu konuma yükle</translation>
     </message>
     <message>
         <source>Destination</source>
         <translatorcomment>Label/title of the destination breadcrumb in the node selector, showing the folder files will be uploaded to. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Hedef</translation>
     </message>
 </context>
 <context>
@@ -1535,7 +1545,7 @@
     <message>
         <source>The folder will be renamed as:</source>
         <translatorcomment>Text explaining the result of the folder rename action. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Klasör şu şekilde yeniden adlandırılacak:</translation>
     </message>
     <message>
         <source>The new folder will be merged with the folder at this destination.</source>
@@ -2027,30 +2037,32 @@
 </context>
 <context>
     <name>FileManagerNodeSelector</name>
-    <message>
+    <message numerus="yes">
         <source>%n result</source>
         <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>
+            <numerusform>%n sonuç</numerusform>
+        </translation>
     </message>
     <message>
         <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
         <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Tüm öğeler kalıcı olarak silinecektir. Bu işlem [B]geri alınamaz[/B].</translation>
     </message>
     <message>
         <source>Cancel</source>
         <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>İptal</translation>
+        <translation>İptal et</translation>
     </message>
     <message>
         <source>Empty</source>
         <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>Temizle</translation>
+        <translation>Boşalt</translation>
     </message>
     <message>
         <source>Empty Rubbish bin?</source>
         <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
-        <translation>Çöp kutusu temizlensin mi?</translation>
+        <translation>Çöp kutusu boşaltılsın mı?</translation>
     </message>
 </context>
 <context>
@@ -3127,6 +3139,11 @@ Yüklemenin tamamlanmasını bekleyin.</translation>
         <source>You have been logged out on this computer from another location</source>
         <translatorcomment>Error message indicating that the loggin session has been clossed from another computer. SNC-4122</translatorcomment>
         <translation>Bu cihazdan başka bir konumdan çıkış yapıldı</translation>
+    </message>
+    <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>Çıkış yaptınız. Sorun devam ederse [A]Destek[/A] ile iletişime geçin.</translation>
     </message>
     <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
@@ -4714,7 +4731,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Searching…</source>
         <translatorcomment>Loading text shown in the node selector while a search for nodes is in progress. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Aranıyor…</translation>
     </message>
     <message>
         <source>Select a MEGA folder</source>
@@ -4732,37 +4749,37 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Blue</source>
         <translatorcomment>Color name for the &quot;Blue&quot; node label option in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Mavi</translation>
     </message>
     <message>
         <source>Green</source>
         <translatorcomment>Color name for the &quot;Green&quot; node label option in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Yeşil</translation>
     </message>
     <message>
         <source>Grey</source>
         <translatorcomment>Color name for the &quot;Grey&quot; node label option in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Gri</translation>
     </message>
     <message>
         <source>Orange</source>
         <translatorcomment>Color name for the &quot;Orange&quot; node label option in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Turuncu</translation>
     </message>
     <message>
         <source>Purple</source>
         <translatorcomment>Color name for the &quot;Purple&quot; node label option in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Mor</translation>
     </message>
     <message>
         <source>Red</source>
         <translatorcomment>Color name for the &quot;Red&quot; node label option in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Kırmızı</translation>
     </message>
     <message>
         <source>Yellow</source>
         <translatorcomment>Color name for the &quot;Yellow&quot; node label option in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Sarı</translation>
     </message>
 </context>
 <context>
@@ -4895,7 +4912,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Label</source>
         <translatorcomment>Column header for the node label in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>İşaret</translation>
     </message>
     <message>
         <source>Last modified</source>
@@ -4925,7 +4942,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Sort by label</source>
         <translatorcomment>Sort option to order nodes by their label in the node selector. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>İşarete göre sırala</translation>
     </message>
     <message>
         <source>Sort by last modified date</source>
@@ -5146,7 +5163,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Create a folder to move your content here</source>
         <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>İçeriğinizi buraya taşımak için bir klasör oluşturun</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -5171,7 +5188,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Drag and drop your files here</source>
         <translatorcomment>Empty-state hint in the node selector inviting the user to drag and drop files. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Dosyalarınızı buraya sürükleyip bırakın</translation>
     </message>
     <message>
         <source>Empty Rubbish bin</source>
@@ -5181,7 +5198,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Empty folder</source>
         <translatorcomment>Empty state label shown in the node selector view when the selected folder has no items. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Boş klasör</translation>
     </message>
     <message>
         <source>Folder is empty</source>
@@ -5232,7 +5249,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>No folders in Cloud drive</source>
         <translatorcomment>Empty-state message shown in the node selector when the Cloud drive has no folders. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Bulut depolamada klasör yok</translation>
     </message>
     <message>
         <source>No folders to select</source>
@@ -5242,7 +5259,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Nothing in your private vault yet</source>
         <translatorcomment>Empty-state message shown in the node selector when the private vault has no items yet. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Özel kasanızda henüz bir şey yok</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -5257,22 +5274,22 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Sync</source>
         <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
-        <translation>Senkronizasyon</translation>
+        <translation>Senkronize et</translation>
     </message>
     <message>
         <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
         <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Bu klasör boş. Sıfır bilgi şifrelemesi ile dosyalarınızı güvende tutun.</translation>
     </message>
     <message>
         <source>This folder is read and write. Ask for full access to sync</source>
         <translatorcomment>Informational message in the node selector shown for a read-and-write shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Bu klasör okuma ve yazma erişimine sahip. Senkronize etmek için tam erişim olmalı</translation>
     </message>
     <message>
         <source>This folder is read-only. Ask for full access to sync</source>
         <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Bu klasör salt okunur. Senkronize etmek için tam erişim olmalı</translation>
     </message>
     <message>
         <source>Upload</source>
@@ -5327,7 +5344,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Folders shared with you will appear here</source>
         <translatorcomment>Empty-state message in the node selector incoming shares view, shown when there are no shared folders. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Sizinle paylaşılan klasörler burada görünecektir</translation>
     </message>
     <message>
         <source>No incoming shares</source>
@@ -5370,7 +5387,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>No results found</source>
         <translatorcomment>Empty-state title in the node selector search view, shown when the search returns no matches. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Sonuç bulunamadı</translation>
     </message>
     <message>
         <source>No search results</source>
@@ -5380,7 +5397,7 @@ Farklı bir ad girin.</translation>
     <message>
         <source>Try a different name or check the spelling</source>
         <translatorcomment>Empty-state hint in the node selector search view, suggesting the user refine their search. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Farklı bir isim deneyin veya yazımını kontrol edin</translation>
     </message>
 </context>
 <context>
@@ -6421,7 +6438,10 @@ Hata düzeltmeleri ve performans iyileştirmeleri.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.5.0. SNC-6656</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>- Dosya Yöneticisi yenilendi ve iyileştirildi.
+- Ayarlar kutusundaki Senkronize ve Yedekleme sekmeleri yenilendi.
+- Wayland desteği iyileştirildi.
+- Hata düzeltmeleri ve performans iyileştirmeleri.</translation>
     </message>
 </context>
 <context>
@@ -7888,6 +7908,11 @@ Yine de silmek istiyor musunuz?</translation>
         <translation>Senkronize edilmiş klasörü kaldır</translation>
     </message>
     <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Kaldırılıyor</translation>
+    </message>
+    <message>
         <source>Rescan</source>
         <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
         <translation>Yeniden tara</translation>
@@ -8588,7 +8613,7 @@ Listeyi yenileyin.</translation>
     <message>
         <source>Select a file to stream</source>
         <translatorcomment>Guidance message in the streaming node selector prompting the user to pick a file to stream. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Yayınlamak için bir dosya seçin</translation>
     </message>
 </context>
 <context>
@@ -9208,17 +9233,17 @@ Bu sorunu çözmezse destek için https://mega.nz/support üzerinden iletişime 
     <message>
         <source>Choose a different folder. This folder is already synced</source>
         <translatorcomment>Validation message in the sync node selector shown when the selected folder is already synced. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Farklı bir klasör seçin. Bu klasör zaten senkronize ediliyor.</translation>
     </message>
     <message>
         <source>Choose a different folder. This location contains a folder that&apos;s already synced</source>
         <translatorcomment>Validation message in the sync node selector shown when the selected location contains a folder that is already synced. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Farklı bir klasör seçin. Bu konumda zaten senkronize edilmiş bir klasör bulunuyor.</translation>
     </message>
     <message>
         <source>Folder to sync</source>
         <translatorcomment>Label in the sync node selector for the folder that will be synced. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Senkronize edilecek klasör</translation>
     </message>
     <message>
         <source>Invalid folder for synchronization.
@@ -9229,12 +9254,12 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Only shared folders with full access can be synced</source>
         <translatorcomment>Informational message in the sync node selector indicating only full-access shared folders can be synced. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Yalnızca tam erişime sahip paylaşılan klasörler senkronize edilebilir</translation>
     </message>
     <message>
         <source>Select a full access shared folder to sync</source>
         <translatorcomment>Guidance message in the sync node selector prompting the user to choose a full-access shared folder to sync. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Senkronize etmek için tam erişime sahip paylaşılan bir klasör seçin</translation>
     </message>
     <message>
         <source>You need Full access right to be able to sync the selected folder.</source>
@@ -9250,7 +9275,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Can&apos;t restore %1 mega folder</source>
         <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 MEGA klasörü geri yüklenemiyor</translation>
     </message>
     <message>
         <source>Close</source>
@@ -10352,7 +10377,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Select a shared folder to upload your items to</source>
         <translatorcomment>Guidance banner in the upload node selector, shown in Incoming Shares when no folder is selected, prompting the user to pick a shared folder as the upload destination. SNC-6420</translatorcomment>
-        <translation type="unfinished"></translation>
+        <translation>Öğelerinizi yüklemek için paylaşılan bir klasör seçin</translation>
     </message>
     <message>
         <source>You need Read &amp; Write or Full access rights to be able to upload to the selected folder.</source>
