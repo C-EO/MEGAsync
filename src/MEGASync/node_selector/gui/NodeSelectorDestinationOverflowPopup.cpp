@@ -13,7 +13,7 @@
 #include <algorithm>
 
 NodeSelectorDestinationOverflowPopup::NodeSelectorDestinationOverflowPopup(QWidget* parent):
-    QFrame(parent, Qt::Popup | Qt::FramelessWindowHint),
+    QFrame(parent, Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint),
     ui(new Ui::NodeSelectorDestinationOverflowPopup)
 {
     ui->setupUi(this);
