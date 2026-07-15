@@ -3362,6 +3362,11 @@ Please wait for the upload to complete.</source>
         <translation>البرنامج يحتاج الي اعادة التشغيل لاتمام التحديث</translation>
     </message>
     <message>
+        <source>Cancel</source>
+        <translatorcomment>Label for cancel button. SNC-6678</translatorcomment>
+        <translation>الغاء</translation>
+    </message>
+    <message>
         <source>Checking for updates...</source>
         <translatorcomment>Notification message launched when the user wants to check if there are any available update at the moment.</translatorcomment>
         <translation>جاري التحقق من وجود تحديث…</translation>
@@ -3385,6 +3390,18 @@ Please wait for the upload to complete.</source>
         <source>Dismiss</source>
         <translatorcomment>Button text to discard a notification or message box</translatorcomment>
         <translation>رفض</translation>
+    </message>
+    <message numerus="yes">
+        <source>Do you want to upload %n file to MEGA?</source>
+        <translatorcomment>Label to ask for confirmation about a file(s) to be uploade to your account. SNC-6678</translatorcomment>
+        <translation>
+            <numerusform>هل تريد ترفيع %n ملف إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملف إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملفين إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملفات إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملف إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملف إلى ميغا MEGA؟</numerusform>
+        </translation>
     </message>
     <message>
         <source>Don’t show me again</source>
@@ -3730,6 +3747,11 @@ https://mega.co.nz/#sync</source>
         <source>Upload</source>
         <translatorcomment>Label for the menu item that opens the dialog to upload files to MEGA</translatorcomment>
         <translation>ترفيع</translation>
+    </message>
+    <message>
+        <source>Upload to MEGA</source>
+        <translatorcomment>Title shown at dialog when the user is trying to upload a file to MEGA from Finder explorer context menu option.SNC-6678.</translatorcomment>
+        <translation>الترفيع الى ميغا MEGA</translation>
     </message>
     <message>
         <source>Waiting</source>
@@ -10491,7 +10513,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Cancel all downloads</source>
         <translatorcomment>Tooltip for cancel button when the user is in the downloads category</translatorcomment>
-        <translation>إلغاء كل عمليات تراسل المعطيات في التنزيلات</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel all failed</source>

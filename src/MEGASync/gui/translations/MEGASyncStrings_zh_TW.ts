@@ -2917,7 +2917,7 @@ Please wait for the upload to complete.</source>
     <message>
         <source>The [B]local file[/B] %1 will be uploaded to MEGA and replace the current file, which will be moved to the SyncDebris folder in your MEGA Rubbish bin.</source>
         <translatorcomment>Informative text in a message box shown when the user chooses the local version explaining what happens to the remote file (with versioning disabled), %1 is a placeholder for file name,[B] is for bold.SAT-800</translatorcomment>
-        <translation>本地檔案[B]%1[/B]將上傳到MEGA並取代當前檔案，被取代的檔案將移到MEGA垃圾筒中的同步碎片資料夾。</translation>
+        <translation>本地檔案[B]%1[/B]將上傳到MEGA並取代當前檔案，被取代的檔案將移到MEGA垃圾筒中的SyncDebris資料夾。</translation>
     </message>
     <message>
         <source>The [B]local files[/B] will be moved to the sync debris folder</source>
@@ -2934,7 +2934,7 @@ Please wait for the upload to complete.</source>
     <message>
         <source>The [B]local files[/B] will be uploaded to MEGA and replace the current files, which will be moved to the SyncDebris folder in your MEGA Rubbish bin.</source>
         <translatorcomment>Informative text in a message box shown when the user chooses the local version explaining what happens to the remote files (with versioning disabled),[B] is for bold.SAT-800</translatorcomment>
-        <translation>[B]本地[/B]檔案將上傳到MEGA並取代當前檔案，被取代的檔案將移到MEGA垃圾筒中的同步碎片資料夾中。</translation>
+        <translation>[B]本地[/B]檔案將上傳到MEGA並取代當前檔案，被取代的檔案將移到MEGA垃圾筒中的SyncDebris資料夾。</translation>
     </message>
     <message>
         <source>The [B]local folder[/B] %1 will be moved to the sync debris folder</source>
@@ -4505,12 +4505,12 @@ Please refresh the view</source>
     <message>
         <source>It will be moved to the SyncDebris folder on the MEGA Rubbish Bin along with its versions.[BR]You will be able to retrieve the file and its versions from there.[/BR]</source>
         <translatorcomment>Confirmation message for sync stall solve option, [BR] is for line break .SNC-2565</translatorcomment>
-        <translation>檔案將移到MEGA垃圾筒的同步碎片資料夾。[BR]您將能夠從那裡恢復檔案和任何的檔案版本。[/BR]</translation>
+        <translation>檔案將移到MEGA垃圾筒的SyncDebris資料夾。[BR]您能夠從那裡恢復檔案和任何的檔案版本。[/BR]</translation>
     </message>
     <message>
         <source>It will be moved to the SyncDebris folder on the MEGA Rubbish Bin.[BR]You will be able to retrieve the folder from there.[/BR]</source>
         <translatorcomment>Confirmation message for sync stall solve option, [BR] is for line break .SNC-2565</translatorcomment>
-        <translation>資料夾將移到MEGA垃圾筒的同步碎片資料夾。[BR]您將能夠從那裡恢復資料夾。[/BR]</translation>
+        <translation>資料夾將移到MEGA垃圾筒的SyncDebris資料夾。[BR]您能夠從那裡恢復資料夾。[/BR]</translation>
     </message>
     <message>
         <source>It will be moved to the sync rubbish folder.[BR]You will be able to retrieve the file from there.[/BR]</source>
