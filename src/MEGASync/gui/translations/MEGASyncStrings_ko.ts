@@ -7549,7 +7549,7 @@ Do you want to delete it anyway?</source>
     <message>
         <source>Please let us know if you encounter any issues. Help us by providing as much detail as possible.</source>
         <translatorcomment>Descriptive text label used to encourage users to submit bug reports via the Report Issue button.</translatorcomment>
-        <translation>만약 어떤 문제에 부딪혔다면 우리에게 알려주세요. 가능한 자세한 정보를 제공하여 저희를 도와주세요.</translation>
+        <translation>만약 어떤 문제에 부딪혔다면 저희에게 알려주세요. 가능한 자세한 정보를 제공하여 저희를 도와주세요.</translation>
     </message>
     <message>
         <source>Prevent the computer from going to sleep when transfers or syncs are in progress.</source>

@@ -3217,6 +3217,11 @@ Yüklemenin tamamlanmasını bekleyin.</translation>
         <translation>Güncelleme, uygulama yeniden başlatıldığında uygulanacaktır</translation>
     </message>
     <message>
+        <source>Cancel</source>
+        <translatorcomment>Label for cancel button. SNC-6678</translatorcomment>
+        <translation>İptal et</translation>
+    </message>
+    <message>
         <source>Checking for updates...</source>
         <translatorcomment>Notification message launched when the user wants to check if there are any available update at the moment.</translatorcomment>
         <translation>Güncellemeler kontrol ediliyor…</translation>
@@ -3240,6 +3245,13 @@ Yüklemenin tamamlanmasını bekleyin.</translation>
         <source>Dismiss</source>
         <translatorcomment>Button text to discard a notification or message box</translatorcomment>
         <translation>Yok say</translation>
+    </message>
+    <message numerus="yes">
+        <source>Do you want to upload %n file to MEGA?</source>
+        <translatorcomment>Label to ask for confirmation about a file(s) to be uploade to your account. SNC-6678</translatorcomment>
+        <translation>
+            <numerusform>%n dosyayı MEGA’ya yüklemek istiyor musunuz?</numerusform>
+        </translation>
     </message>
     <message>
         <source>Don’t show me again</source>
@@ -3575,6 +3587,11 @@ https://mega.co.nz/#sync</source>
         <source>Upload</source>
         <translatorcomment>Label for the menu item that opens the dialog to upload files to MEGA</translatorcomment>
         <translation>Yükle</translation>
+    </message>
+    <message>
+        <source>Upload to MEGA</source>
+        <translatorcomment>Title shown at dialog when the user is trying to upload a file to MEGA from Finder explorer context menu option.SNC-6678.</translatorcomment>
+        <translation>MEGA’ya yükle</translation>
     </message>
     <message>
         <source>Waiting</source>
@@ -8681,7 +8698,7 @@ Listeyi yenileyin.</translation>
     <message>
         <source>Open with:</source>
         <translatorcomment>Text above the buttons to open a streaming link</translatorcomment>
-        <translation>Bununla aç:</translation>
+        <translation>Şununla aç:</translation>
     </message>
     <message>
         <source>Please wait...</source>
