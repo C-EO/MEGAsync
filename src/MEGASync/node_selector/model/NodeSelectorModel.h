@@ -6,15 +6,20 @@
 #include "MegaApplication.h"
 #include "MessageDialogData.h"
 #include "NodeSelectorModelItem.h"
+#include "NodeSelectorOperationTracker.h"
 #include "Utilities.h"
 
 #include <QAbstractItemModel>
+#include <QHash>
 #include <QIcon>
 #include <QList>
+#include <QMutex>
 #include <QPointer>
 #include <QQueue>
-#include <QReadWriteLock>
+#include <QRecursiveMutex>
 
+#include <atomic>
+#include <functional>
 #include <memory>
 #include <optional>
 
@@ -39,6 +44,9 @@ enum class NodeSelectorModelRoles
     NODE_ROLE,
     ICON_SIZE_ROLE,
     EXTRA_ROW_ROLE,
+    LABEL_COLOR_ROLE,
+    LABEL_ORDER_ROLE,
+    IS_EXPORTED_ROLE,
     last
 };
 
@@ -93,7 +101,8 @@ public:
     void cancelCurrentRequest();
     void restartSearch();
 
-    const NodeSelectorModelItemSearch::Types& searchedTypes() const;
+    const TabTypes& searchedTypes() const;
+    int lastSearchResultCount() const;
 
     bool showFiles() const;
 
@@ -101,21 +110,22 @@ public:
 
 public slots:
     void requestNodeAndCreateChildren(NodeSelectorModelItem* item, const QModelIndex& parentIndex);
-    void search(const QString& text, NodeSelectorModelItemSearch::Types typesAllowed);
+    void search(const QString& text, TabTypes typesAllowed, bool flatten);
     void createCloudDriveRootItem();
     void createIncomingSharesRootItems(std::shared_ptr<mega::MegaNodeList> nodeList);
     void createRubbishRootItems();
     void addIncomingSharesRootItem(std::shared_ptr<mega::MegaNode> node);
-    void addSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes,
-                           NodeSelectorModelItemSearch::Types typesAllowed);
+    void addSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes, TabTypes typesAllowed);
+    void addSearchPathItems(QList<std::shared_ptr<mega::MegaNode>> nodes, TabTypes typesAllowed);
     void createBackupRootItems(mega::MegaHandle backupsHandle);
 
     void removeRootItem(NodeSelectorModelItem* item);
     void removeRootItem(std::shared_ptr<mega::MegaNode> node);
 
-    void onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> newNodes,
-                             const QModelIndex& parentIndex,
-                             NodeSelectorModelItem* parentItem);
+    QList<QPointer<NodeSelectorModelItem>>
+        onAddNodesRequested(QList<std::shared_ptr<mega::MegaNode>> newNodes,
+                            const QModelIndex& parentIndex,
+                            NodeSelectorModelItem* parentItem);
     void removeItem(NodeSelectorModelItem* item);
     void abort();
 
@@ -128,17 +138,37 @@ signals:
     void rootItemsDeleted();
     void megaBackupRootItemsCreated();
     void searchItemsCreated();
+    void searchPathItemsAdded();
     void nodeAdded(NodeSelectorModelItem* item);
     void nodesAdded(QList<QPointer<NodeSelectorModelItem>> item);
 
 private slots:
-    void onSearchItemTypeChanged(NodeSelectorModelItemSearch::Types type);
+    void onSearchItemTypeChanged(TabTypes type);
 
 private:
     bool isAborted();
-    NodeSelectorModelItem* createSearchItem(mega::MegaNode* node,
-                                            NodeSelectorModelItemSearch::Types typesAllowed);
     void appendRootItems(const QList<NodeSelectorModelItem*>& items);
+
+    NodeSelectorModelItem* createSearchItem(mega::MegaNode* node, TabTypes typesAllowed);
+    NodeSelectorModelItemSearch* createSearchTreeItem(mega::MegaNode* node, TabTypes type);
+    bool canCreateSearchItem(mega::MegaNode* node);
+    QList<std::shared_ptr<mega::MegaNode>> createSearchPath(mega::MegaNode* node,
+                                                            TabTypes type) const;
+    using AppendChildrenFn = std::function<QList<QPointer<NodeSelectorModelItem>>(
+        NodeSelectorModelItem*,
+        const QList<std::shared_ptr<mega::MegaNode>>&)>;
+
+    void addSearchPath(
+        QList<NodeSelectorModelItem*>& items,
+        const QList<std::shared_ptr<mega::MegaNode>>& path,
+        TabTypes type,
+        AppendChildrenFn appendChildren = {},
+        QHash<mega::MegaHandle, NodeSelectorModelItem*>* alreadyProcessedItemsByHandle = nullptr);
+    NodeSelectorModelItem* findSearchItem(const QList<NodeSelectorModelItem*>& items,
+                                          mega::MegaHandle handle) const;
+    NodeSelectorModelItem* findSearchChild(NodeSelectorModelItem* parent,
+                                           mega::MegaHandle handle) const;
+    bool isSearchRootNode(mega::MegaNode* node, TabTypes type) const;
 
     std::atomic<bool> mShowFiles{true};
     std::atomic<bool> mShowReadOnlyFolders{true};
@@ -148,10 +178,13 @@ private:
     std::atomic<bool> mNodesRequested{false};
     NodeSelectorModel* mModel;
     QList<NodeSelectorModelItem*> mRootItems;
-    mutable QMutex mDataMutex;
+    // Recursive so a single caller (e.g. the proxy's async sort) can hold it across an
+    // operation that itself calls the per-access readers below, which re-lock it.
+    mutable QRecursiveMutex mDataMutex;
     mutable QMutex mSearchMutex;
     std::shared_ptr<mega::MegaCancelToken> mCancelToken;
-    NodeSelectorModelItemSearch::Types mSearchedTypes;
+    TabTypes mSearchedTypes;
+    std::atomic<int> mLastSearchResultCount{0};
 };
 
 class AddNodesQueue: public QObject
@@ -225,10 +258,12 @@ public:
     enum Column
     {
         NODE = 0,
+        LABEL,
         USER,
         ACCESS,
         ADDED_DATE,
         LAST_MODIFIED_DATE,
+        IS_EXPORTED,
         last
     };
 
@@ -258,6 +293,7 @@ public:
     bool canFetchMore(const QModelIndex& parent) const override;
 
     void setCurrentRootIndex(const QModelIndex& rootIndex);
+    QModelIndex getCurrentRootIndex() const;
     QModelIndex rootIndex(const QModelIndex& visualRootIndex) const;
     virtual QModelIndex getTopRootIndex() const;
 
@@ -289,10 +325,11 @@ public:
     bool increaseMovingNodes(int number);
     bool isMovingNodes() const;
     bool moveProcessedByNumber(int number);
+    void finishMovingNodes();
 
     int getMoveRequestsCounter()
     {
-        return mMoveRequestsCounter;
+        return mOperationTracker.pendingMoveItems();
     }
 
     // Copy logic
@@ -324,6 +361,7 @@ public:
     QVariant getIcon(const QModelIndex& index, NodeSelectorModelItem* item) const;
     QVariant getText(const QModelIndex& index, NodeSelectorModelItem* item) const;
     virtual QVariant getDisplayText(NodeSelectorModelItem* item) const;
+    virtual QVariant getLabelText(NodeSelectorModelItem* item) const;
     virtual QVariant getAddedDateText(NodeSelectorModelItem* item) const;
     virtual QVariant getLastModifiedDateText(NodeSelectorModelItem* item) const;
     virtual QVariant getAccessText(NodeSelectorModelItem* item) const;
@@ -332,12 +370,23 @@ public:
     void setFetchStep(int step);
 
     void loadTreeFromNode(const std::shared_ptr<mega::MegaNode> node);
+    bool isLoadingTreePath() const;
     QModelIndex getIndexFromNode(const std::shared_ptr<mega::MegaNode> node,
                                  const QModelIndex& parent);
     QModelIndex getIndexFromHandle(const mega::MegaHandle& handle, const QModelIndex& parent);
     QModelIndex findIndexByNodeHandle(const mega::MegaHandle& handle, const QModelIndex& parent);
 
     static NodeSelectorModelItem* getItemByIndex(const QModelIndex& index);
+
+    // Hold the worker's data mutex across a whole operation. The proxy uses this to keep the
+    // source item tree stable while its async sort rebuilds the source-to-proxy mapping, so the
+    // NodeRequester worker cannot structurally mutate mChildItems/mRootItems mid-build (which
+    // would desync the mapping and later fault in proxy_to_source() during paint).
+    void lockDataMutex(bool lock) const
+    {
+        mNodeRequesterWorker->lockDataMutex(lock);
+    }
+
     void updateItemNode(const QModelIndex& indexToUpdate, std::shared_ptr<mega::MegaNode> node);
     void updateRow(const QModelIndex& indexToUpdate);
 
@@ -384,6 +433,10 @@ public:
 
     void setAcceptDragAndDrop(bool newAcceptDragAndDrop);
     bool acceptDragAndDrop(const QMimeData* data);
+    // Controls the phantom extra space row at the bottom of a folder's children, used as a drop
+    // target and as the right-click (context menu) area. Disabled for selectors without those
+    // interactions (e.g. file pickers), where it would only be dead space.
+    void setExtraSpaceEnabled(bool enabled);
 
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
     QMimeData* mimeData(const QList<mega::MegaHandle>& handles) const;
@@ -432,20 +485,39 @@ signals:
     void showDuplicatedNodeDialog(std::shared_ptr<ConflictTypes> conflicts, MoveActionType type);
     void modelIsBeingModifiedChanged(bool status);
     void modelModified();
+    void currentRootIndexChanged();
+    // Emitted when a batch of nodes changes its display name without a path change (e.g. a device
+    // name update in Backups), so the navigation breadcrumb can refresh the affected segments.
+    void nodesRenamed(const QList<mega::MegaHandle>& handles);
+    // Emitted right before a root node is removed (e.g. an incoming share un-shared) while it
+    // still exists, so the view can navigate out of it first if it is the open folder.
+    void rootNodeAboutToBeRemoved(const QModelIndex& sourceIndex);
     void itemsMoved();
     void itemsAboutToBeMoved(const QList<mega::MegaHandle> handles, int actionType);
     void itemsAboutToBeMovedFailed(const QList<mega::MegaHandle> handles, int actionType);
+    void itemRequestsFinished(int actionType);
     void itemsAboutToBeRestored(const QSet<mega::MegaHandle>& targetFolders);
     void itemAboutToBeReplaced(mega::MegaHandle replacedHandle);
     void itemsAboutToBeMerged(const QList<std::shared_ptr<NodeSelectorMergeInfo>>& targetFolders,
                               int actionType);
+    void itemMergeFinished(mega::MegaHandle sourceHandle,
+                           mega::MegaHandle targetHandle,
+                           int actionType);
     void itemsAboutToBeMergedFailed(
         const QList<std::shared_ptr<NodeSelectorMergeInfo>>& targetFolders,
         int actionType);
     void finishAsyncRequest(mega::MegaHandle handle, int error);
 
+public slots:
+    void beginRootItemsInsertion(int first, int last);
+    void beginChildRowsInsertion(const QModelIndex& parent, int first, int last);
+
 protected:
     void beginRemoveRowsAsync(const mega::MegaHandle& handle);
+    MessageDialogInfo buildFailedRequestMessage(
+        int requestType,
+        const QList<mega::MegaHandle>& failedHandles,
+        NodeSelectorOperationTracker::FinishedRequestGroup finishedRequestGroup) const;
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     Qt::DropActions supportedDropActions() const override;
@@ -461,8 +533,6 @@ protected:
 
     virtual bool showAccess(mega::MegaNode* node) const;
 
-    void executeExtraSpaceLogic();
-
     bool mSyncSetupMode;
     NodeRequester* mNodeRequesterWorker;
     QList<std::shared_ptr<mega::MegaNode>> mNodesToLoad;
@@ -474,8 +544,6 @@ protected:
     QList<QPair<mega::MegaHandle, QModelIndex>> mIndexesToBeExpanded;
 
 protected slots:
-    void beginRootItemsInsertion(int first, int last);
-    void beginChildRowsInsertion(const QModelIndex& parent, int first, int last);
     void onRootItemAdded();
 
 private slots:
@@ -498,6 +566,13 @@ private:
 
     void executeRemoveExtraSpaceLogic(const QModelIndex& previousIndex);
     void executeAddExtraSpaceLogic(const QModelIndex& currentIndex);
+    bool isExtraSpaceIndex(const QModelIndex& index) const;
+
+    // Single guarded mutation point for the current root. An invalid index is coerced to the top
+    // root index, so the current root never becomes QModelIndex(-1,-1) while a valid top root
+    // exists. Returns the value actually stored. Callers remain responsible for emitting
+    // currentRootIndexChanged().
+    QModelIndex commitCurrentRootIndex(const QModelIndex& index);
 
     QPair<QIcon, QString> getFolderIcon(NodeSelectorModelItem* item) const;
     bool fetchMoreRecursively(const QModelIndex& parentIndex);
@@ -510,31 +585,11 @@ private:
     QThread* mNodeRequesterThread;
     bool mIsBeingModified; // Used to know if the model is being modified in order to avoid nesting
                            // beginInsertRows and any other begin* methods
-    bool mIsProcessingMoves; // Used to know if the user moved nodes
+    bool mIsProcessingMoves; // Used to avoid duplicate move completion notifications
     bool mAcceptDragAndDrop;
-
-    // Variables related to move (including moving to rubbish bin or remove)
-    QReadWriteLock mRequestCounterLock;
-
-    struct RequestsBeingProcessed
-    {
-        int type = -1;
-        int counter = 0;
-
-        void clear()
-        {
-            type = -1;
-            counter = 0;
-        }
-    };
-
-    RequestsBeingProcessed mRequestsBeingProcessed;
-    void initRequestsBeingProcessed(int type, int counter);
-    int requestFinished();
+    NodeSelectorOperationTracker mOperationTracker;
 
     QList<mega::MegaHandle> mExpectedNodesUpdates;
-    QMultiMap<mega::MegaHandle, int> mRequestFailedByHandle;
-    MovedItemsTypes mMovedItemsType;
 
     // Move nodes
     bool checkMoveProcessing();
@@ -547,20 +602,21 @@ private:
     std::optional<NodeSelectorMergeInfo::RestoreMergeType>
         checkForFoldersToMergeWhenRestoring(std::shared_ptr<ConflictTypes> conflicts);
 
-    int mMoveRequestsCounter;
-
     // If the model is being modified, queue the nodes to add or to remove
     AddNodesQueue mAddNodesQueue;
     RemoveNodesQueue mRemoveNodesQueue;
 
     // Current root index
     QModelIndex mCurrentRootIndex;
-    QModelIndex mAddedIndex;
     bool mAddExpaceWhenLoadingFinish = false;
+    // Set only when a root change is deferred because the model was mid-change; holds the root to
+    // commit once loading finishes. Invalid means the root was already committed and only the
+    // phantom-row add was deferred.
     QModelIndex mPendingRootIndex;
     bool mExtraSpaceAdded;
     bool mExtraSpaceRemoved;
     bool mRemovingPreviousExtraSpace;
+    bool mExtraSpaceEnabled;
 };
 
 Q_DECLARE_METATYPE(std::shared_ptr<mega::MegaNodeList>)

@@ -1,6 +1,7 @@
 #ifndef NODESELECTORPROXYMODEL_H
 #define NODESELECTORPROXYMODEL_H
 
+#include "ILoadingViewModel.h"
 #include "megaapi.h"
 #include "NodeSelectorModelItem.h"
 
@@ -17,7 +18,7 @@ class MegaNode;
 }
 class NodeSelectorModel;
 
-class NodeSelectorProxyModel: public QSortFilterProxyModel
+class NodeSelectorProxyModel: public QSortFilterProxyModel, public ILoadingViewModel
 {
     Q_OBJECT
 
@@ -47,7 +48,12 @@ public:
     }
 
     NodeSelectorModel* getMegaModel() const;
-    bool isModelProcessing() const;
+    bool isWorking() const override;
+
+    // Stop the async sort and prevent it from re-triggering, before the source model is destroyed.
+    void prepareForDeletion();
+
+    void onSortIndicatorChanged(int column, Qt::SortOrder order);
 
     virtual bool canBeDeleted() const;
     bool hasContextMenuOptions(const QModelIndexList& indexes) const;
@@ -70,6 +76,7 @@ private:
     bool mExpandMapped;
     bool mForceInvalidate;
     bool mPendingSortIsLevelLoad;
+    bool mTearingDown = false;
 
 private slots:
     void invalidateModel(const QList<QPair<mega::MegaHandle, QModelIndex> >& parents,
@@ -77,18 +84,12 @@ private slots:
     void onModelSortedFiltered();
 };
 
-class NodeSelectorProxyModelStream: public NodeSelectorProxyModel
-{
-public:
-    explicit NodeSelectorProxyModelStream(QObject* parent = nullptr);
-    void applyProxyModelFlags(Qt::ItemFlags& flags, const QModelIndex& index) const override;
-};
-
 class NodeSelectorProxyModelSync: public NodeSelectorProxyModel
 {
 public:
     explicit NodeSelectorProxyModelSync(QObject* parent = nullptr);
     void applyProxyModelFlags(Qt::ItemFlags& flags, const QModelIndex& index) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 };
 
 class NodeSelectorProxyModelSearch: public NodeSelectorProxyModel
@@ -98,7 +99,7 @@ class NodeSelectorProxyModelSearch: public NodeSelectorProxyModel
 public:
     explicit NodeSelectorProxyModelSearch(std::shared_ptr<NodeSelectorProxyModel> mainProxyModel,
                                           QObject* parent = nullptr);
-    void setMode(NodeSelectorModelItemSearch::Types mode, bool forceFilter = true);
+    void setMode(TabTypes mode, bool forceFilter = true);
     bool canBeDeleted() const override;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
 
@@ -109,7 +110,7 @@ protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
 private:
-    NodeSelectorModelItemSearch::Types mMode;
+    TabTypes mMode;
     std::shared_ptr<NodeSelectorProxyModel> mMainProxyModel;
 };
 

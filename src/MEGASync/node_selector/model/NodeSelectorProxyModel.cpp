@@ -5,7 +5,9 @@
 #include "NodeSelectorModel.h"
 #include "QThread"
 
+#include <QCoreApplication>
 #include <QDebug>
+#include <QScopeGuard>
 
 NodeSelectorProxyModel::NodeSelectorProxyModel(QObject* parent):
     QSortFilterProxyModel(parent),
@@ -25,10 +27,61 @@ NodeSelectorProxyModel::NodeSelectorProxyModel(QObject* parent):
             &NodeSelectorProxyModel::onModelSortedFiltered);
 }
 
-NodeSelectorProxyModel::~NodeSelectorProxyModel() {}
+NodeSelectorProxyModel::~NodeSelectorProxyModel()
+{
+    // Defense in depth: ~QFutureWatcher does not wait for its future, so a still
+    // running concurrent sort would outlive this proxy if no owner called
+    // prepareForDeletion() first (it is idempotent).
+    prepareForDeletion();
+}
+
+void NodeSelectorProxyModel::prepareForDeletion()
+{
+    // Already called (e.g. by NodeSelectorTreeViewWidget before our own destructor
+    // runs): nothing left to stop.
+    if (mTearingDown)
+    {
+        return;
+    }
+
+    // Called during teardown while the source model is still alive. The sort runs on a
+    // QtConcurrent thread and dereferences NodeSelectorModelItem objects owned by the source
+    // model; if it outlives the model it is a use-after-free (crash in getParent()).
+    // Make any later sort() a no-op, stop both re-launch triggers — the finished handler
+    // (which could also reattach the view: levelLoaded -> onLevelLoaded -> setModel) and
+    // the source model level loads — then block until the running task returns.
+    mTearingDown = true;
+
+    disconnect(&mFilterWatcher,
+               &QFutureWatcher<void>::finished,
+               this,
+               &NodeSelectorProxyModel::onModelSortedFiltered);
+
+    // getMegaModel() is null when called from our own destructor after the source
+    // model died (QSortFilterProxyModel resets to an empty source model).
+    if (auto megaModel = getMegaModel())
+    {
+        disconnect(megaModel,
+                   &NodeSelectorModel::levelsAdded,
+                   this,
+                   &NodeSelectorProxyModel::invalidateModel);
+    }
+
+    if (mFilterWatcher.isRunning())
+    {
+        mFilterWatcher.waitForFinished();
+    }
+}
 
 void NodeSelectorProxyModel::sort(int column, Qt::SortOrder order)
 {
+    // Teardown barrier: after prepareForDeletion() a new concurrent sort would
+    // dereference a source model that is being (or has been) destroyed.
+    if (mTearingDown)
+    {
+        return;
+    }
+
     mOrder = order;
     mSortColumn = column;
 
@@ -44,8 +97,26 @@ void NodeSelectorProxyModel::sort(int column, Qt::SortOrder order)
                 auto itemModel = dynamic_cast<NodeSelectorModel*>(sourceModel());
                 if (itemModel)
                 {
+                    // This job runs on a QtConcurrent pool thread and reads the source model
+                    // (rowCount/index/parent/data) across many calls to build the mapping. Hold
+                    // the source data mutex for the whole job so the NodeRequester worker cannot
+                    // insert/remove/reallocate items between those reads: without cross-call
+                    // consistency the mapping ends up referencing source rows that no longer
+                    // match, and a later QTreeView::drawTree faults in proxy_to_source().
+                    itemModel->lockDataMutex(true);
                     blockSignals(true);
                     sourceModel()->blockSignals(true);
+                    // Release the mutex and restore signals on every exit path, including an
+                    // exception (e.g. std::bad_alloc while rebuilding the mapping): otherwise the
+                    // recursive mutex would stay locked forever and deadlock the worker and GUI
+                    // threads on their next access, and the source model would stay silent.
+                    auto restore = qScopeGuard(
+                        [this, itemModel]()
+                        {
+                            blockSignals(false);
+                            sourceModel()->blockSignals(false);
+                            itemModel->lockDataMutex(false);
+                        });
                     invalidateFilter();
                     QSortFilterProxyModel::sort(column, order);
                     for (auto it = mItemsToMap.crbegin(); it != mItemsToMap.crend(); ++it)
@@ -58,12 +129,24 @@ void NodeSelectorProxyModel::sort(int column, Qt::SortOrder order)
                     {
                         invalidate();
                     }
-                    blockSignals(false);
-                    sourceModel()->blockSignals(false);
                 }
             });
         mFilterWatcher.setFuture(filtered);
     }
+}
+
+void NodeSelectorProxyModel::onSortIndicatorChanged(int column, Qt::SortOrder order)
+{
+    // QHeaderView::restoreState() re-emits sortIndicatorChanged unconditionally with the
+    // column/order already applied. Re-sorting here would launch a concurrent sort job in
+    // the middle of the loading-scene view reattach. Genuine header clicks always change
+    // the column or toggle the order, so no-change notifications are safe to ignore.
+    if (column == mSortColumn && order == mOrder)
+    {
+        return;
+    }
+
+    sort(column, order);
 }
 
 Qt::ItemFlags NodeSelectorProxyModel::flags(const QModelIndex& index) const
@@ -183,6 +266,12 @@ bool NodeSelectorProxyModel::lessThan(const QModelIndex& left, const QModelIndex
                 result = left.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt() <
                          right.data(toInt(NodeSelectorModelRoles::ACCESS_ROLE)).toInt();
             }
+            else if (left.column() == NodeSelectorModel::Column::LABEL &&
+                     right.column() == NodeSelectorModel::Column::LABEL)
+            {
+                result = left.data(toInt(NodeSelectorModelRoles::LABEL_ORDER_ROLE)).toInt() <
+                         right.data(toInt(NodeSelectorModelRoles::LABEL_ORDER_ROLE)).toInt();
+            }
             else
             {
                 result = mCollator.compare(left.data(Qt::DisplayRole).toString(),
@@ -285,7 +374,7 @@ NodeSelectorModel* NodeSelectorProxyModel::getMegaModel() const
     return dynamic_cast<NodeSelectorModel*>(sourceModel());
 }
 
-bool NodeSelectorProxyModel::isModelProcessing() const
+bool NodeSelectorProxyModel::isWorking() const
 {
     return mFilterWatcher.isRunning();
 }
@@ -372,21 +461,6 @@ void NodeSelectorProxyModel::onModelSortedFiltered()
     mItemsToMap.clear();
 }
 
-NodeSelectorProxyModelStream::NodeSelectorProxyModelStream(QObject* parent):
-    NodeSelectorProxyModel(parent)
-{}
-
-void NodeSelectorProxyModelStream::applyProxyModelFlags(Qt::ItemFlags& flags,
-                                                        const QModelIndex& index) const
-{
-    NodeSelectorProxyModel::applyProxyModelFlags(flags, index);
-
-    if (index.isValid() && !index.data(toInt(NodeSelectorModelRoles::IS_FILE_ROLE)).toBool())
-    {
-        flags &= ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    }
-}
-
 NodeSelectorProxyModelSync::NodeSelectorProxyModelSync(QObject* parent):
     NodeSelectorProxyModel(parent)
 {}
@@ -403,29 +477,59 @@ void NodeSelectorProxyModelSync::applyProxyModelFlags(Qt::ItemFlags& flags,
     }
 }
 
+QVariant NodeSelectorProxyModelSync::data(const QModelIndex& index, int role) const
+{
+    // Whole-row tooltip for incoming-share folders that cannot be synced because the user does not
+    // have full access. Overrides the base per-cell ToolTipRole on every column so the styled
+    // tooltip covers the whole row (owner/takedown tooltips still apply to full-access folders).
+    if (role == Qt::ToolTipRole && index.isValid())
+    {
+        if (auto* item = NodeSelectorModel::getItemByIndex(index))
+        {
+            const auto node = item->getNode();
+            const int access = item->getNodeAccess();
+            if (node && node->isFolder() && access < mega::MegaShare::ACCESS_FULL)
+            {
+                return access == mega::MegaShare::ACCESS_READWRITE ?
+                           QCoreApplication::translate(
+                               "NodeSelectorTreeViewWidget",
+                               "This folder is read and write. Ask for full access to sync") :
+                           QCoreApplication::translate(
+                               "NodeSelectorTreeViewWidget",
+                               "This folder is read-only. Ask for full access to sync");
+            }
+        }
+    }
+
+    return NodeSelectorProxyModel::data(index, role);
+}
+
 NodeSelectorProxyModelSearch::NodeSelectorProxyModelSearch(
     std::shared_ptr<NodeSelectorProxyModel> mainProxyModel,
     QObject* parent):
     NodeSelectorProxyModel(parent),
-    mMode(NodeSelectorModelItemSearch::Type::NONE),
+    mMode(TabType::NONE),
     mMainProxyModel(mainProxyModel)
 {}
 
-void NodeSelectorProxyModelSearch::setMode(NodeSelectorModelItemSearch::Types mode,
-                                           bool forceFilter)
+void NodeSelectorProxyModelSearch::setMode(TabTypes mode, bool forceFilter)
 {
     if (mMode == mode)
     {
         return;
     }
 
-    getMegaModel()->sendBlockUiSignal(true);
     mMode = mode;
+    // Only block/invalidate when actually re-filtering. Doing it unconditionally emitted a
+    // blockUi(false) during the initial-mode setup (forceFilter=false), which reached the view
+    // before its model/header were attached and crashed. Invalidate first so rowCount() below
+    // reflects the new mode when deciding whether the result set is empty.
     if (forceFilter)
     {
+        getMegaModel()->sendBlockUiSignal(true);
         invalidateFilter();
+        getMegaModel()->sendBlockUiSignal(false);
     }
-    getMegaModel()->sendBlockUiSignal(false);
     if (rowCount() == 0)
     {
         emit modeEmpty();
@@ -434,7 +538,7 @@ void NodeSelectorProxyModelSearch::setMode(NodeSelectorModelItemSearch::Types mo
 
 bool NodeSelectorProxyModelSearch::canBeDeleted() const
 {
-    if (mMode & NodeSelectorModelItemSearch::Type::BACKUP)
+    if (mMode & TabType::BACKUP)
     {
         return false;
     }
@@ -456,7 +560,7 @@ Qt::ItemFlags NodeSelectorProxyModelSearch::flags(const QModelIndex& index) cons
 bool NodeSelectorProxyModelSearch::filterAcceptsRow(int sourceRow,
                                                     const QModelIndex& sourceParent) const
 {
-    if (mMode == static_cast<int>(NodeSelectorModelItemSearch::Type::NONE))
+    if (!mMode)
     {
         return true;
     }

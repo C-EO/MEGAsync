@@ -2,25 +2,34 @@
 #define NODESELECTORTREEVIEWWIDGET_H
 
 #include "ButtonIconManager.h"
+#include "IncomingShareHeaderWidget.h"
 #include "megaapi.h"
+#include "NodeSelectorBreadcrumbSegment.h"
 #include "NodeSelectorModel.h"
+#include "NodeSelectorModelUpdateCoordinator.h"
+#include "NodeSelectorNodeActions.h"
+#include "NodeSelectorSelectionCoordinator.h"
+#include "NodeSelectorSelectTypes.h"
+#include "NodeSelectorTabTypes.h"
 #include "QTMegaListener.h"
 
 #include <QDebug>
 #include <QItemSelectionModel>
+#include <QMap>
 #include <QPersistentModelIndex>
-#include <QPushButton>
+#include <QSet>
+#include <QStringList>
 #include <QTimer>
 #include <QWidget>
 
 #include <memory>
+#include <optional>
 
 class NodeSelectorProxyModel;
 class NodeSelectorModel;
 class NodeSelectorModelItem;
 class NodeSelectorTreeView;
-class SelectType;
-typedef std::shared_ptr<SelectType> SelectTypeSPtr;
+class NodeSelectorDelegate;
 
 struct MessageInfo;
 
@@ -33,33 +42,40 @@ class NodeSelectorTreeViewWidget: public QWidget
 {
     Q_OBJECT
 
-    struct Navigation
-    {
-        QList<mega::MegaHandle> forwardHandles = QList<mega::MegaHandle>();
-        QList<mega::MegaHandle> backwardHandles = QList<mega::MegaHandle>();
-
-        void removeFromForward(const mega::MegaHandle& handle);
-        void remove(const mega::MegaHandle& handle);
-
-        void appendToBackward(const mega::MegaHandle& handle);
-        void appendToForward(const mega::MegaHandle& handle);
-        void clear();
-    };
-
 public:
     static const int LOADING_VIEW_THRESSHOLD;
     static const int LABEL_ELIDE_MARGIN;
     static const char* FULL_NAME_PROPERTY;
 
-    explicit NodeSelectorTreeViewWidget(SelectTypeSPtr mode, QWidget* parent = nullptr);
+    enum TabItem
+    {
+        CLOUD_DRIVE = 0,
+        SHARES,
+        BACKUPS,
+        RUBBISH,
+        SEARCH
+    };
+    Q_ENUM(TabItem)
+
+    enum class ViewType
+    {
+        VIEW,
+        ROOT_EMPTY,
+        FOLDER_EMPTY
+    };
+    Q_ENUM(ViewType)
+
+    explicit NodeSelectorTreeViewWidget(SelectTypeSPtr mode,
+                                        TabItem tabType,
+                                        QWidget* parent = nullptr);
     ~NodeSelectorTreeViewWidget();
 
     void init();
 
-    mega::MegaHandle getSelectedNodeHandle();
     QList<mega::MegaHandle> getMultiSelectionNodeHandle();
     QModelIndexList getSelectedIndexes() const;
     bool containsTakenDownSelected() const;
+    mega::MegaHandle getSelectedNodeHandle() const;
     void navigateToItem(const mega::MegaHandle& handle);
     void setSelectedNodeHandle(const mega::MegaHandle& selectedHandle);
 
@@ -72,18 +88,21 @@ public:
 
     void selectPendingIndexes();
 
-    virtual void setTitleText(const QString& nodeName);
-
-    virtual void treeViewWidgetSelected() {}
-
-    void clearSelection();
-    bool isSelectionCorrect();
+    bool clearSelection();
 
     void abort();
+    void moveToTopRootIndex();
     NodeSelectorModelItem* rootItem();
+    QModelIndex getCurrentRootIndex() const;
     NodeSelectorProxyModel* getProxyModel();
+    void showCurrentRootContextMenu(const QPoint& globalPos);
+    QList<NodeSelectorBreadcrumbSegment> navigationBreadcrumbSegments() const;
+    bool navigateToBreadcrumbSegment(int segmentIndex);
+    bool isShowingEmptyPage() const;
+    ViewType currentViewPage() const;
     bool isInRootView() const;
-    bool isEmpty() const;
+    bool isTopRootEmpty() const;
+    bool isAtTopRoot() const;
 
     bool onNodesUpdate(mega::MegaApi*, mega::MegaNodeList* nodes);
 
@@ -91,9 +110,10 @@ public:
 
     bool increaseMovingNodes(int number);
     bool decreaseMovingNodes(int number);
+    void finishMovingNodes();
     bool areItemsAboutToBeMovedFromHere(mega::MegaHandle firstHandleMoved);
 
-    mega::MegaHandle getHandleByIndex(const QModelIndex& idx);
+    mega::MegaHandle getHandleByIndex(const QModelIndex& idx) const;
 
     void addHandleToBeReplaced(mega::MegaHandle handle);
     void setParentOfRestoredNodes(const QSet<mega::MegaHandle>& parentOfRestoredNodes);
@@ -104,27 +124,74 @@ public:
     void resetMergeFolderHandles(const QMultiHash<SourceHandle, TargetHandle>& handles);
 
     bool isUiBlocked();
-
     void dropIntoRootIndex(QDropEvent* event);
+
+    using NewFolderInfo = NodeSelectorSelectionCoordinator::NewFolderInfo;
+
+    void setNewFolderInfo(const NewFolderInfo& newNewFolderInfo);
+    void expandNodeByHandle(mega::MegaHandle handle);
+
+    virtual std::optional<IncomingShareHeaderData> incomingShareHeaderData() const
+    {
+        return std::nullopt;
+    }
+
+    virtual QString getRootText() const = 0;
+
+    void setColumnHidden(int column, bool hidden);
+    void setNonInteractiveColumns(const QSet<int>& columns);
+    void setInitialShowLabelText(bool show);
+    void resetAutoColumnWidths();
+
+    virtual bool isCurrentRootIndexReadOnly() const
+    {
+        return false;
+    }
+
+    // Whether a new folder can be created right now. File pickers (which cannot navigate into
+    // folders) rely on this selection-driven check instead of the navigation root.
+    virtual bool isNewFolderAllowed()
+    {
+        return !isCurrentRootIndexReadOnly() && !isCurrentSelectionReadOnly();
+    }
+
+    TabItem getTabType() const
+    {
+        return mTabType;
+    }
+
+    bool isLoading() const;
 
 public slots:
     virtual void checkViewOnModelChange();
+    // Only forwards to checkViewOnModelChange when the current root toggles empty<->non-empty.
+    void onModelRowsChanged();
     void setLoadingSceneVisible(bool visible);
+    void notifyViewStateChanged();
+    void notifyButtonsStateChanged();
 
 signals:
     void enterKeyPressed();
     void onCustomButtonClicked(uint id);
-    void viewReady();
+    void newFolderRequested();
+    void viewReady(NodeSelectorTreeViewWidget*);
+    // Emitted once the proxy model has been reattached to the view after a loading cycle, so the
+    // owner can re-apply column visibility (which is no longer buffered in the loading scene).
+    void modelReattached(NodeSelectorTreeViewWidget*);
     void uiIsBlocked(bool state);
-    void selectionIsCorrect(bool state);
+    void selectionHasChanged();
+    void viewStateChanged();
+    void currentViewPageChanged(ViewType type);
+    void viewButtonsStateChanged();
+    void modelModified();
+    void rootIndexChanged();
+    void nodesRenamed(const QList<mega::MegaHandle>& handles);
 
 protected:
-    void mousePressEvent(QMouseEvent* event) override;
     bool event(QEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
-    void setTitle(const QString& title);
     void selectionChanged(const QModelIndexList& selected);
-    QModelIndex getParentIncomingShareByIndex(QModelIndex idx);
+    QModelIndex getParentIncomingShareByIndex(QModelIndex idx) const;
 
     SelectTypeSPtr getSelectType()
     {
@@ -138,14 +205,13 @@ protected:
         return true;
     }
 
-    virtual void makeCustomConnections() {}
+    virtual void makeViewConnections() {}
 
     virtual bool isNodeCompatibleWithModel(mega::MegaNode*)
     {
         return false;
     }
 
-    virtual void onRootIndexChanged(const QModelIndex& source_idx);
     virtual QModelIndex getAddedNodeParent(mega::MegaHandle parentHandle);
     QModelIndex getRootIndexFromIndex(const QModelIndex& index);
     void selectIndex(const QModelIndex& index, bool setCurrent, bool exclusiveSelect = false);
@@ -165,30 +231,32 @@ protected:
 
     virtual NodeState getNodeOnModelState(const QModelIndex& index, mega::MegaNode* node);
 
-    struct EmptyLabelInfo
-    {
-        QString title;
-        QString description;
-    };
+    virtual SelectType::EmptyPageInfo getEmptyRootPageInfo();
+    SelectType::EmptyPageInfo getEmptyFolderPageInfo() const;
+    void showRootEmptyState();
+    void setCurrentPage(ViewType type);
+    bool showLabelText() const;
 
-    virtual EmptyLabelInfo getEmptyLabel();
+    virtual NodeSelectorDelegate* createItemDelegate(QObject* parent);
+    virtual NodeSelectorDelegate* createLabelDelegate(QObject* parent);
 
     Ui::NodeSelectorTreeViewWidget* ui;
     std::shared_ptr<NodeSelectorProxyModel> mProxyModel;
     std::unique_ptr<NodeSelectorModel> mModel;
-    Navigation mNavigationInfo;
+    // Containers used to ignore specific nodes updates. Declared before the coordinators
+    // because mModelUpdateCoordinator holds a reference to it and must be destroyed first.
+    QSet<mega::MegaHandle> mNodesToBeReplaced;
+    std::unique_ptr<NodeSelectorSelectionCoordinator> mSelectionCoordinator;
+    std::unique_ptr<NodeSelectorModelUpdateCoordinator> mModelUpdateCoordinator;
+    NodeSelectorNodeActions mNodeActions;
     mega::MegaApi* mMegaApi;
     SelectTypeSPtr mSelectType;
 
 protected slots:
-    // Title
-    void updateRootTitle();
-
     // Invoked after the proxy finishes processing a level load
     virtual void onLevelLoaded();
 
 private slots:
-    void onbNewFolderClicked();
     void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
     void onModelModified();
     void onDeleteClicked(const QList<mega::MegaHandle>& handles,
@@ -198,276 +266,90 @@ private slots:
     void onRenameClicked();
     void onGenMEGALinkClicked(const QList<mega::MegaHandle>& handles);
     virtual void onItemDoubleClick(const QModelIndex& index);
-    void onGoForwardClicked();
-    void onGoBackClicked();
-    void onRemoveIndexFromGoBack(const QModelIndex& index);
+    void onRemovedIndexAffectsCurrentRoot(const QModelIndex& index);
     void onSectionResized();
     void onUiBlocked(bool state);
     void processCachedNodesUpdated();
-    void removeItemByHandle(mega::MegaHandle handle);
-    void onItemsMoved();
-    void onNodesAdded(const QList<QPointer<NodeSelectorModelItem>>& itemsAdded);
 
 private:
     bool mManuallyResizedColumn;
+    bool mShowLabelText;
     int mResizeEventsReceived;
     QTimer mResizeEventsTimer;
+    // Coalesces view-state refresh requests (see checkViewOnModelChange).
+    QTimer mCheckViewOnModelChangeDebounce;
 
     virtual bool isAllowedToEnterInIndex(const QModelIndex& idx);
-    void checkBackForwardButtons();
+    virtual bool isDownloadAllowed() const;
     void setRootIndex(const QModelIndex& proxy_idx);
-    virtual QIcon getEmptyIcon();
-    void setEmptyFolderPage();
+    void setCurrentViewWidget();
+    void executeCheckViewOnModelChange();
+    void showFolderEmptyState();
+    void applyEmptyState(const SelectType::EmptyPageInfo& info, ViewType type);
+    void setEmptyStateButtonsVisibility(const SelectType::EmptyPageInfo& info);
+    void updateEmptyStateButtonsVisibility();
+    QModelIndex currentFolderIndex() const;
+    QModelIndex indexForBreadcrumbSegment(int segmentIndex) const;
 
     QModelIndex getIndexFromHandle(const mega::MegaHandle& handle);
-    void checkButtonsVisibility();
-    void addCustomButtons(NodeSelectorTreeViewWidget* wdg);
-    virtual QString getRootText() = 0;
     virtual std::shared_ptr<NodeSelectorProxyModel> createProxyModel();
     virtual std::unique_ptr<NodeSelectorModel> createModel() = 0;
-
-    virtual bool isCurrentRootIndexReadOnly()
-    {
-        return false;
-    }
-
-    virtual bool newFolderBtnCanBeVisisble()
-    {
-        return true;
-    }
-
-    void setNewFolderButtonVisibility(bool state);
 
     virtual bool isSelectionReadOnly(const QModelIndexList&)
     {
         return false;
     }
 
-    void selectionHasChanged(const QModelIndexList& selected);
-
     virtual bool isCurrentSelectionReadOnly()
     {
         return false;
     }
 
-    void checkOkButton(const QModelIndexList& selected);
-    bool shouldUpdateImmediately();
-    bool areThereNodesToUpdate();
+    void onSelectionHasChanged();
 
-    // Expand and select
-    void expandPendingIndexes();
-    void resetMoveNodesToSelect();
+    void checkOkButton(const QModelIndexList& selected);
 
     // Empty messages
-    void initEmptyMessages();
+    void initEmptyRootPageMessages();
+    void initEmptyFolderMessages();
 
     // Column width
     QList<int> mVisibleColumns;
     void updateColumnsWidth(bool updateVisibleColumnCounter);
+    // Rebuilds mVisibleColumns from the header. No-op while the model is detached (header
+    // has 0 columns); widths are recomputed on the next real viewport resize / reattach.
+    void rebuildVisibleColumns();
+    void updateColumnResizeModes();
+    // True when the tree view has a model attached and its header has columns. The loading
+    // scene detaches the model, leaving the header with 0 columns; column computations must
+    // be skipped until it is reattached.
+    bool isTreeViewReady() const;
+
+    // Full-width separator under the tree view column header (declared in the .ui as
+    // headerDivider; positioned at runtime).
+    void setupHeaderDivider();
+    void updateHeaderDividerGeometry();
 
     ButtonIconManager mButtonIconManager;
     bool first;
     bool mUiBlocked;
-
-    struct UpdateNodesInfo
-    {
-        UpdateNodesInfo(mega::MegaNode* node, const QModelIndex& index):
-            parentHandle(node->getParentHandle()),
-            handle(node->getHandle()),
-            node(std::shared_ptr<mega::MegaNode>(node->copy())),
-            index(index)
-        {}
-
-        UpdateNodesInfo() {}
-
-        mega::MegaHandle parentHandle = mega::INVALID_HANDLE;
-        mega::MegaHandle handle = mega::INVALID_HANDLE;
-        std::shared_ptr<mega::MegaNode> node;
-        QModelIndex index;
-    };
-
-    void updateNode(const UpdateNodesInfo& info, bool scrollTo = false);
-
-    // Update Containers
-    QList<UpdateNodesInfo> mRenamedNodesByHandle;
-    QList<UpdateNodesInfo> mUpdatedNodes;
-    QMultiMap<mega::MegaHandle, UpdateNodesInfo> mAddedNodesByParentHandle;
-    QMap<mega::MegaHandle, UpdateNodesInfo> mUpdatedNodesBeforeAdded;
-    QList<UpdateNodesInfo> mRemovedNodes;
-    QList<UpdateNodesInfo> mRemoveMovedNodes;
-    QList<UpdateNodesInfo> mUpdatedButInvisibleNodes;
-    QList<UpdateNodesInfo> mMergeSourceFolderRemoved;
-
-    // Select when moving finished
-    QSet<mega::MegaHandle> mMovedHandlesToSelect;
-
-    // Containers used to ignore specific nodes updates
-    QSet<mega::MegaHandle> mParentOfRestoredNodes;
-    QMultiHash<SourceHandle, TargetHandle> mMergeTargetFolders;
-    QSet<mega::MegaHandle> mNodesToBeReplaced;
+    bool mWasEmpty;
+    bool mRootWasEmpty = true;
+    bool mNewFolderButtonVisible = true;
+    bool mViewInitialized = false;
+    ViewType mCurrentViewType = ViewType::VIEW;
 
     QTimer mNodesUpdateTimer;
 
-    void checkNewFolderAdded(QPointer<NodeSelectorModelItem> item);
-    mega::MegaHandle mNewFolderHandle;
-    bool mNewFolderAdded;
+    TabItem mTabType;
 
     friend class DownloadType;
     friend class SyncType;
     friend class UploadType;
     friend class StreamType;
     friend class CloudDriveType;
+    friend class MoveBackupType;
     friend class SelectType;
-};
-
-class SelectType
-{
-public:
-    explicit SelectType() = default;
-    virtual ~SelectType() = default;
-
-    virtual bool isContextMenuAllowed()
-    {
-        return false;
-    }
-
-    virtual bool isAllowedToNavigateInside(const QModelIndex& index);
-    virtual void init(NodeSelectorTreeViewWidget* wdg) = 0;
-    virtual bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected);
-
-    virtual void selectionHasChanged(NodeSelectorTreeViewWidget*) {}
-
-    virtual void newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg);
-
-    virtual QMap<uint, QPushButton*> addCustomButtons(NodeSelectorTreeViewWidget*)
-    {
-        return QMap<uint, QPushButton*>();
-    }
-
-    virtual void updateCustomButtonsText(NodeSelectorTreeViewWidget*) {}
-
-    virtual NodeSelectorModelItemSearch::Types allowedTypes() = 0;
-
-    virtual bool footerVisible() const
-    {
-        return true;
-    }
-
-    virtual void makeViewCustomConnections(NodeSelectorTreeView*, NodeSelectorTreeViewWidget*) {}
-
-    struct EmptyFolderPageInfo
-    {
-        QString title;
-        QString description;
-        QIcon icon;
-        bool iconTokenized = true;
-        QString descriptionLabelFontSize;
-
-        bool isValid()
-        {
-            return !title.isEmpty() && !description.isEmpty() && !icon.isNull() &&
-                   !descriptionLabelFontSize.isEmpty();
-        }
-    };
-
-    virtual EmptyFolderPageInfo getEmptyFolderPageInfo()
-    {
-        return EmptyFolderPageInfo();
-    }
-
-    virtual std::shared_ptr<NodeSelectorProxyModel> createProxyModel();
-
-protected:
-    bool cloudDriveIsCurrentRootIndex(NodeSelectorTreeViewWidget* wdg);
-
-    QPushButton* createCustomButton(const QString& type,
-                                    const QString& text,
-                                    const QString& iconFile);
-};
-
-class DownloadType: public SelectType
-{
-public:
-    explicit DownloadType() = default;
-    void init(NodeSelectorTreeViewWidget* wdg) override;
-    void newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg) override;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
-    NodeSelectorModelItemSearch::Types allowedTypes() override;
-};
-
-class SyncType: public SelectType
-{
-public:
-    explicit SyncType() = default;
-    bool isAllowedToNavigateInside(const QModelIndex& index) override;
-    void init(NodeSelectorTreeViewWidget* wdg) override;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected) override;
-    NodeSelectorModelItemSearch::Types allowedTypes() override;
-    EmptyFolderPageInfo getEmptyFolderPageInfo() override;
-    std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
-};
-
-class StreamType: public SelectType
-{
-public:
-    explicit StreamType() = default;
-    void init(NodeSelectorTreeViewWidget* wdg) override;
-    void newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg) override;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
-    NodeSelectorModelItemSearch::Types allowedTypes() override;
-    std::shared_ptr<NodeSelectorProxyModel> createProxyModel() override;
-};
-
-class UploadType: public SelectType
-{
-public:
-    explicit UploadType() = default;
-    void init(NodeSelectorTreeViewWidget* wdg) override;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected) override;
-    NodeSelectorModelItemSearch::Types allowedTypes() override;
-};
-
-class CloudDriveType: public SelectType
-{
-public:
-    enum ButtonId : uint
-    {
-        Upload,
-        ClearRubbish
-    };
-
-    explicit CloudDriveType() = default;
-
-    bool isContextMenuAllowed() override
-    {
-        return true;
-    }
-
-    void init(NodeSelectorTreeViewWidget* wdg) override;
-    void selectionHasChanged(NodeSelectorTreeViewWidget* wdg) override;
-    QMap<uint, QPushButton*> addCustomButtons(NodeSelectorTreeViewWidget* wdg) override;
-    void updateCustomButtonsText(NodeSelectorTreeViewWidget* wdg) override;
-    void newFolderButtonVisibility(NodeSelectorTreeViewWidget* wdg) override;
-
-    bool okButtonEnabled(NodeSelectorTreeViewWidget*, const QModelIndexList& selected) override;
-    NodeSelectorModelItemSearch::Types allowedTypes() override;
-    bool footerVisible() const override;
-
-    void makeViewCustomConnections(NodeSelectorTreeView* view,
-                                   NodeSelectorTreeViewWidget* wdg) override;
-
-private:
-    QString getCustomButtonText(uint buttonId) const;
-
-    QMap<QWidget*, QMap<uint, QPushButton*>> mCustomButtons;
-};
-
-class MoveBackupType: public UploadType
-{
-public:
-    explicit MoveBackupType() = default;
-    bool okButtonEnabled(NodeSelectorTreeViewWidget* wdg, const QModelIndexList& selected) override;
-    NodeSelectorModelItemSearch::Types allowedTypes() override;
 };
 
 #endif // NODESELECTORTREEVIEWWIDGET_H

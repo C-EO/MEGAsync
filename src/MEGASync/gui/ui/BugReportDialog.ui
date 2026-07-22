@@ -201,6 +201,9 @@ padding-right: 32px;
          </property>
          <item row="0" column="0">
           <widget class="QTextEdit" name="teDescribeBug">
+           <property name="acceptRichText">
+            <bool>false</bool>
+           </property>
            <property name="cursor" stdset="0">
             <cursorShape>IBeamCursor</cursorShape>
            </property>

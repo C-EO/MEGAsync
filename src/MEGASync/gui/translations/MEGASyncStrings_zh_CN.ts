@@ -592,9 +592,14 @@
         <translation>报告问题</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>由于错误，您的问题无法提交。请稍后再试，或在问题仍然存在时联系 [A]技术支持[/A]。</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
-        <translation>由于发生错误，您的问题无法上传。如果问题仍然存在，请稍后再试或联系我们的客服团队[A]support@mega.io[/A]获取帮助。</translation>
+        <translation>由于发生错误，您的问题无法上传。请稍后再试，或在问题仍然存在时通过 [A]https://mega.nz/support[/A] 联系我们的支持团队。</translation>
     </message>
     <message>
         <source>Bug report is uploading, it may take a few minutes</source>
@@ -647,9 +652,14 @@
         <translation>请详细描述您的问题，字数不少于30个字符（15个汉字）。</translation>
     </message>
     <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>请稍后再试，若问题仍然存在，请联系 [A]技术支持[/A]。</translation>
+    </message>
+    <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
         <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
-        <translation>如果问题仍然存在，请稍后重试或通过[A]support@mega.io[/A]联系我们的客服团队。</translation>
+        <translation>请稍后再试，若问题仍然存在，请通过 https://mega.nz/support 联系我们的支持团队。</translation>
     </message>
     <message>
         <source>Please wait until the current upload is completed.</source>
@@ -1349,6 +1359,19 @@
     </message>
 </context>
 <context>
+    <name>DestinationBreadcrumb</name>
+    <message>
+        <source>Always upload to this destination</source>
+        <translatorcomment>Checkbox label in the node selector destination breadcrumb to set the current folder as the default upload destination. SNC-6420</translatorcomment>
+        <translation>始终上传到此位置</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translatorcomment>Label/title of the destination breadcrumb in the node selector, showing the folder files will be uploaded to. SNC-6420</translatorcomment>
+        <translation>目标位置</translation>
+    </message>
+</context>
+<context>
     <name>DownloadFromMegaDialog</name>
     <message>
         <source>Always download to this destination</source>
@@ -1518,6 +1541,11 @@
         <source>The folder at this destination will be maintained.</source>
         <translatorcomment>Text explaining the result of the folder skip action</translatorcomment>
         <translation>将保留此位置的文件夹。</translation>
+    </message>
+    <message>
+        <source>The folder will be renamed as:</source>
+        <translatorcomment>Text explaining the result of the folder rename action. SNC-6420</translatorcomment>
+        <translation>该文件夹将被重命名为：</translation>
     </message>
     <message>
         <source>The new folder will be merged with the folder at this destination.</source>
@@ -2005,6 +2033,36 @@
         <source>Can´t sync [B]%1[/B]</source>
         <translatorcomment>Title for the header widget of sync stall shown when there&apos;s an issue with a file or folder which requires user&apos;s intervention, [B] is for bold.SNC-2565</translatorcomment>
         <translation>无法同步[B]%1[/B]</translation>
+    </message>
+</context>
+<context>
+    <name>FileManagerNodeSelector</name>
+    <message numerus="yes">
+        <source>%n result</source>
+        <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
+        <translation>
+            <numerusform>%n 条结果</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
+        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>所有项目将被永久删除。此操作 [B]无法[/B] 被撤销。</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>清空</translation>
+    </message>
+    <message>
+        <source>Empty Rubbish bin?</source>
+        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>是否清空回收站？</translation>
     </message>
 </context>
 <context>
@@ -3083,9 +3141,14 @@ Please wait for the upload to complete.</source>
         <translation>您已从其它位置登出此设备</translation>
     </message>
     <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>您已退出登录。若此问题仍然存在，请联系 [A]技术支持[/A]。</translation>
+    </message>
+    <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
         <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. CON-541</translatorcomment>
-        <translation>您已登出。如果此问题仍然存在，请联系[A]support@mega.io[/A] 。</translation>
+        <translation>您已退出登录。若此问题无法解决，请联系支持，访问 [A]https://mega.nz/support[/A]。</translation>
     </message>
 </context>
 <context>
@@ -4666,6 +4729,11 @@ Enter a different name</source>
         <translation>搜索</translation>
     </message>
     <message>
+        <source>Searching…</source>
+        <translatorcomment>Loading text shown in the node selector while a search for nodes is in progress. SNC-6420</translatorcomment>
+        <translation>正在搜索…</translation>
+    </message>
+    <message>
         <source>Select a MEGA folder</source>
         <translatorcomment>Node selector dialog title</translatorcomment>
         <translation>选择一个MEGA文件夹</translation>
@@ -4674,6 +4742,44 @@ Enter a different name</source>
         <source>The item you selected has been removed. To reselect, close this window and try again.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>您选择的项目已被移除。要重新选择，请关闭此窗口，然后重试。</translation>
+    </message>
+</context>
+<context>
+    <name>NodeSelectorLabelColors</name>
+    <message>
+        <source>Blue</source>
+        <translatorcomment>Color name for the &quot;Blue&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>蓝色</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translatorcomment>Color name for the &quot;Green&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>绿色</translation>
+    </message>
+    <message>
+        <source>Grey</source>
+        <translatorcomment>Color name for the &quot;Grey&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>灰色</translation>
+    </message>
+    <message>
+        <source>Orange</source>
+        <translatorcomment>Color name for the &quot;Orange&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>橙色</translation>
+    </message>
+    <message>
+        <source>Purple</source>
+        <translatorcomment>Color name for the &quot;Purple&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>紫色</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translatorcomment>Color name for the &quot;Red&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>红色</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translatorcomment>Color name for the &quot;Yellow&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>黄色</translation>
     </message>
 </context>
 <context>
@@ -4804,6 +4910,11 @@ Enter a different name</source>
         <translation>文件夹内容已同步。</translation>
     </message>
     <message>
+        <source>Label</source>
+        <translatorcomment>Column header for the node label in the node selector. SNC-6420</translatorcomment>
+        <translation>标签</translation>
+    </message>
+    <message>
         <source>Last modified</source>
         <translatorcomment>Table header title for node last modified date info. SNC.5804</translatorcomment>
         <translation>上次修改</translation>
@@ -4827,6 +4938,11 @@ Enter a different name</source>
         <source>Sort by date added</source>
         <translatorcomment>Table header tooltip for Date added column. SNC.5804</translatorcomment>
         <translation>按添加日期排序</translation>
+    </message>
+    <message>
+        <source>Sort by label</source>
+        <translatorcomment>Sort option to order nodes by their label in the node selector. SNC-6420</translatorcomment>
+        <translation>按标签排序</translation>
     </message>
     <message>
         <source>Sort by last modified date</source>
@@ -4944,6 +5060,11 @@ Enter a different name</source>
         <translation>这些项目无法恢复。稍后再试。</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>该文件已成为下架通知的对象</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>此文件夹已成为下架通知的对象</translation>
@@ -5025,6 +5146,11 @@ Enter a different name</source>
 <context>
     <name>NodeSelectorTreeViewWidget</name>
     <message>
+        <source>Add backup</source>
+        <translatorcomment>Empty-state button in the node selector to start adding a backup. SNC-6420</translatorcomment>
+        <translation>添加备份</translation>
+    </message>
+    <message>
         <source>Any shared files or folders will no longer be accessible to the people you shared them with. You can still access these items in the Rubbish bin, restore, and share them.</source>
         <translatorcomment>Informative text about the potential issues of removing the nodes. CON-334</translatorcomment>
         <translation>与您共享的人将无法再访问任何共享的文件或文件夹。您仍然可以在回收站中访问这些项目，并恢复和共享它们。</translation>
@@ -5033,6 +5159,11 @@ Enter a different name</source>
         <source>Cancel</source>
         <translatorcomment>Label for cancel button.</translatorcomment>
         <translation>取消</translation>
+    </message>
+    <message>
+        <source>Create a folder to move your content here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
+        <translation>创建一个文件夹，将您的内容移到这里</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -5050,9 +5181,24 @@ Enter a different name</source>
         <translation>不移动</translation>
     </message>
     <message>
+        <source>Download</source>
+        <translatorcomment>Action button in the node selector to download the selected folder. SNC-6420</translatorcomment>
+        <translation>下载</translation>
+    </message>
+    <message>
+        <source>Drag and drop your files here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to drag and drop files. SNC-6420</translatorcomment>
+        <translation>将您的文件拖放到此处</translation>
+    </message>
+    <message>
         <source>Empty Rubbish bin</source>
         <translatorcomment>Button text to empty the rubbish bin. SAT-426</translatorcomment>
         <translation>清空回收站</translation>
+    </message>
+    <message>
+        <source>Empty folder</source>
+        <translatorcomment>Empty state label shown in the node selector view when the selected folder has no items. SNC-6420</translatorcomment>
+        <translation>空文件夹</translation>
     </message>
     <message>
         <source>Folder is empty</source>
@@ -5101,9 +5247,19 @@ Enter a different name</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
+        <source>No folders in Cloud drive</source>
+        <translatorcomment>Empty-state message shown in the node selector when the Cloud drive has no folders. SNC-6420</translatorcomment>
+        <translation>云盘中无文件夹</translation>
+    </message>
+    <message>
         <source>No folders to select</source>
         <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>没有可选的文件夹</translation>
+    </message>
+    <message>
+        <source>Nothing in your private vault yet</source>
+        <translatorcomment>Empty-state message shown in the node selector when the private vault has no items yet. SNC-6420</translatorcomment>
+        <translation>您的私密保管库里还什么都没有</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -5114,6 +5270,31 @@ Enter a different name</source>
         <source>Only folders can be synced</source>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>仅文件夹可同步</translation>
+    </message>
+    <message>
+        <source>Sync</source>
+        <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
+        <translation>同步</translation>
+    </message>
+    <message>
+        <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
+        <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
+        <translation>此文件夹为空。使用零知识加密来保护文件安全。</translation>
+    </message>
+    <message>
+        <source>This folder is read and write. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-and-write shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>此文件夹具有读写权限。请申请完全访问权限以同步</translation>
+    </message>
+    <message>
+        <source>This folder is read-only. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>此文件夹为只读。请申请完整的访问权限以进行同步</translation>
+    </message>
+    <message>
+        <source>Upload</source>
+        <translatorcomment>Action button in the node selector to upload to the selected folder. SNC-6420</translatorcomment>
+        <translation>上传</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -5161,6 +5342,11 @@ Enter a different name</source>
 <context>
     <name>NodeSelectorTreeViewWidgetIncomingShares</name>
     <message>
+        <source>Folders shared with you will appear here</source>
+        <translatorcomment>Empty-state message in the node selector incoming shares view, shown when there are no shared folders. SNC-6420</translatorcomment>
+        <translation>已共享给您的文件夹将显示在此处</translation>
+    </message>
+    <message>
         <source>No incoming shares</source>
         <translatorcomment>Title message on the view when there are no items in the normal view. SNC-5804</translatorcomment>
         <translation>无传入的共享</translation>
@@ -5179,6 +5365,11 @@ Enter a different name</source>
 <context>
     <name>NodeSelectorTreeViewWidgetRubbish</name>
     <message>
+        <source>Rubbish bin is empty</source>
+        <translatorcomment>Empty-state message in the node selector rubbish bin view, shown when the rubbish bin has no items. SNC-6420</translatorcomment>
+        <translation>回收站为空</translation>
+    </message>
+    <message>
         <source>The Rubbish bin is empty</source>
         <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
         <translation>回收站为空</translation>
@@ -5194,9 +5385,19 @@ Enter a different name</source>
         </translation>
     </message>
     <message>
+        <source>No results found</source>
+        <translatorcomment>Empty-state title in the node selector search view, shown when the search returns no matches. SNC-6420</translatorcomment>
+        <translation>无结果</translation>
+    </message>
+    <message>
         <source>No search results</source>
         <translatorcomment>Message on the view when the search did not find any coincidence. SNC-5804</translatorcomment>
         <translation>无搜索结果</translation>
+    </message>
+    <message>
+        <source>Try a different name or check the spelling</source>
+        <translatorcomment>Empty-state hint in the node selector search view, suggesting the user refine their search. SNC-6420</translatorcomment>
+        <translation>尝试一个不同的名字，或检查拼写错误</translation>
     </message>
 </context>
 <context>
@@ -6230,6 +6431,18 @@ Enter a different name</source>
 - 云盘、同步、备份和设置对话框更加清晰且更一致。
 - 错误修复和性能提升。</translation>
     </message>
+    <message>
+        <source>- Revamped and improved File Manager.
+- Revamped Syncs and Backups tabs in the Settings dialog.
+- Improved Wayland support.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.5.0. SNC-6656</translatorcomment>
+        <translation>- 重新设计并改进的文件管理器。
+- 在设置对话框中重新设计了同步和备份选项卡。
+- Wayland 支持得到提升。
+- 错误修复及性能提升。</translation>
+    </message>
 </context>
 <context>
     <name>ProgressIndicatorDialog</name>
@@ -6814,6 +7027,11 @@ Do you want to delete it anyway?</source>
         <translation>更改</translation>
     </message>
     <message>
+        <source>Delete folder from MEGA</source>
+        <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
+        <translation>从MEGA中删除文件夹</translation>
+    </message>
+    <message>
         <source>Delete folder permanently</source>
         <translatorcomment>Radio button option text</translatorcomment>
         <translation>从 MEGA 中删除文件夹</translation>
@@ -6829,9 +7047,19 @@ Do you want to delete it anyway?</source>
         <translation>将文件夹移至云盘</translation>
     </message>
     <message>
+        <source>Move folder to Cloud drive</source>
+        <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
+        <translation>将文件夹移至云盘</translation>
+    </message>
+    <message>
         <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
         <translatorcomment>Radio button description</translatorcomment>
         <translation>将此文件夹移至您的云盘即可完全访问您的数据。它将不再被备份。</translation>
+    </message>
+    <message>
+        <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
+        <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
+        <translation>将此文件夹移动到云盘，以便全面访问您的数据。该文件夹将不再被备份。</translation>
     </message>
     <message>
         <source>Move to:</source>
@@ -6849,8 +7077,18 @@ Do you want to delete it anyway?</source>
         <translation>停止备份</translation>
     </message>
     <message>
+        <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
+        <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
+        <translation>该文件夹将从 MEGA 中删除，但不会从您的设备中删除。此操作无法撤消。</translation>
+    </message>
+    <message>
         <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
         <translatorcomment>Backup removal title description. SNC-6067</translatorcomment>
+        <translation>要停止备份此文件夹，您需要将其移动或删除</translation>
+    </message>
+    <message>
+        <source>To stop backing up this folder, you need to either move it or delete it</source>
+        <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
         <translation>要停止备份此文件夹，您需要将其移动或删除</translation>
     </message>
 </context>
@@ -7505,11 +7743,54 @@ Do you want to delete it anyway?</source>
     </message>
 </context>
 <context>
+    <name>SettingsQuickWidgetBase</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
+        <translation>打开.megaignore文件时出错</translation>
+    </message>
+</context>
+<context>
     <name>SettingsStrings</name>
+    <message>
+        <source>Add a backup to protect your folders automatically</source>
+        <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>添加备份以自动保护您的文件夹</translation>
+    </message>
+    <message>
+        <source>Add a sync to keep folders up to date</source>
+        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
+        <translation>在各设备上保持文件夹的最新状态</translation>
+    </message>
+    <message>
+        <source>Add backup</source>
+        <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
+        <translation>添加备份</translation>
+    </message>
+    <message>
+        <source>Add sync</source>
+        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
+        <translation>设置同步</translation>
+    </message>
+    <message>
+        <source>Automatic sync issue resolution</source>
+        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>自动解决同步问题</translation>
+    </message>
     <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
         <translation>可用[BR]%1</translation>
+    </message>
+    <message>
+        <source>Backed up</source>
+        <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
+        <translation>已备份</translation>
+    </message>
+    <message>
+        <source>Backup folder</source>
+        <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
+        <translation>备份文件夹</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -7542,6 +7823,21 @@ Do you want to delete it anyway?</source>
         <translation>请考虑升级，以避免上传和同步中断。</translation>
     </message>
     <message>
+        <source>Disabled</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>已禁用</translation>
+    </message>
+    <message>
+        <source>Enable backup</source>
+        <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
+        <translation>启用备份</translation>
+    </message>
+    <message>
+        <source>Enable sync</source>
+        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
+        <translation>开启同步</translation>
+    </message>
+    <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
         <translation>文件历史版本</translation>
@@ -7550,6 +7846,91 @@ Do you want to delete it anyway?</source>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
         <translation>文件历史版本</translation>
+    </message>
+    <message>
+        <source>Get more storage</source>
+        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
+        <translation>获取更多存储空间</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>加载中</translation>
+    </message>
+    <message>
+        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
+        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>MEGA 会自动为您检测并解决同步问题。若您更愿意手动查看和处理它们，请将其关闭。 [A]了解更多[/A]</translation>
+    </message>
+    <message>
+        <source>Manage exclusions</source>
+        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>管理排除项</translation>
+    </message>
+    <message>
+        <source>No backups</source>
+        <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>没有备份</translation>
+    </message>
+    <message>
+        <source>No syncs set up</source>
+        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
+        <translation>未设置同步</translation>
+    </message>
+    <message>
+        <source>Open in MEGA</source>
+        <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
+        <translation>在MEGA中打开</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
+        <translation>暂停</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>已暂停</translation>
+    </message>
+    <message>
+        <source>Reboot backup</source>
+        <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
+        <translation>重启备份</translation>
+    </message>
+    <message>
+        <source>Reboot sync</source>
+        <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
+        <translation>重启同步</translation>
+    </message>
+    <message>
+        <source>Remove synced folder</source>
+        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
+        <translation>移除同步文件夹</translation>
+    </message>
+    <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>正在移除</translation>
+    </message>
+    <message>
+        <source>Rescan</source>
+        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
+        <translation>重新扫描</translation>
+    </message>
+    <message>
+        <source>Restore folder</source>
+        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
+        <translation>还原文件夹</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
+        <translation>恢复</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
+        <translation>重试</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7562,9 +7943,64 @@ Do you want to delete it anyway?</source>
         <translation>回收站[BR]%1</translation>
     </message>
     <message>
+        <source>Scanning</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>正在扫描</translation>
+    </message>
+    <message>
+        <source>Show in File Explorer</source>
+        <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
+        <translation>在文件管理器中显示</translation>
+    </message>
+    <message>
+        <source>Show in Finder</source>
+        <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
+        <translation>在访达中显示</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
+        <translation>在文件夹中显示</translation>
+    </message>
+    <message>
+        <source>Start new backup</source>
+        <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
+        <translation>开始新备份</translation>
+    </message>
+    <message>
+        <source>Start new sync</source>
+        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
+        <translation>开始新的同步</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <source>Stop backup</source>
+        <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
+        <translation>停止备份</translation>
+    </message>
+    <message>
         <source>Storage Space</source>
         <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
         <translation>存储空间</translation>
+    </message>
+    <message>
+        <source>Synced</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>已同步</translation>
+    </message>
+    <message>
+        <source>Synced folders</source>
+        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>已同步的文件夹</translation>
+    </message>
+    <message>
+        <source>Transferring</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>正在传输</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7580,6 +8016,11 @@ Do you want to delete it anyway?</source>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>上传功能已禁用，文件夹同步已暂停。</translation>
+    </message>
+    <message>
+        <source>View in MEGA</source>
+        <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
+        <translation>在MEGA中查看</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -8169,6 +8610,11 @@ Please, refresh the list.</source>
         <translatorcomment>Warning message when users try to select a folder for streaming</translatorcomment>
         <translation>您无法串流文件夹。请选择一个文件进行串流。</translation>
     </message>
+    <message>
+        <source>Select a file to stream</source>
+        <translatorcomment>Guidance message in the streaming node selector prompting the user to pick a file to stream. SNC-6420</translatorcomment>
+        <translation>选择要流式传输的文件</translation>
+    </message>
 </context>
 <context>
     <name>StreamingFromMegaDialog</name>
@@ -8665,8 +9111,8 @@ Please, refresh the list.</source>
         <source>Target is too deep on your folder structure.
 Please move it to a location that is less than 64 folders deep.</source>
         <translatorcomment>Title for the header widget of sync stall that occurs when the file is more than 64 folders deep.SNC-2565</translatorcomment>
-        <translation>目标在您的文件夹结构中太深。停止同步，将文件夹移至深度少于64个文件夹的位置，然后重新创建同步。
-如果这不能解决问题，请联系support@mega.io。</translation>
+        <translation>目标在您的文件夹结构中深度过深。停止同步，将该文件夹移动到深度不超过64层的位置，并重新创建同步。
+如果问题仍未解决，请联系支持，网址为 https://mega.nz/support</translation>
     </message>
     <message>
         <source>Unable to sync [B]%1[/B]</source>
@@ -8785,10 +9231,35 @@ Please move it to a location that is less than 64 folders deep.</source>
 <context>
     <name>SyncNodeSelector</name>
     <message>
+        <source>Choose a different folder. This folder is already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected folder is already synced. SNC-6420</translatorcomment>
+        <translation>请选择一个不同的文件夹。此文件夹已同步。</translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This location contains a folder that&apos;s already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected location contains a folder that is already synced. SNC-6420</translatorcomment>
+        <translation>请选择其他文件夹。此位置包含一个已同步的文件夹。</translation>
+    </message>
+    <message>
+        <source>Folder to sync</source>
+        <translatorcomment>Label in the sync node selector for the folder that will be synced. SNC-6420</translatorcomment>
+        <translation>待同步的文件夹</translation>
+    </message>
+    <message>
         <source>Invalid folder for synchronization.
 Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apos; or &apos;:&apos; in your folder names.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>无法同步文件夹。请确保文件夹名称中未使用“\”，“/”或“:”字符。</translation>
+    </message>
+    <message>
+        <source>Only shared folders with full access can be synced</source>
+        <translatorcomment>Informational message in the sync node selector indicating only full-access shared folders can be synced. SNC-6420</translatorcomment>
+        <translation>只有具有完全访问权限的共享文件夹才能同步</translation>
+    </message>
+    <message>
+        <source>Select a full access shared folder to sync</source>
+        <translatorcomment>Guidance message in the sync node selector prompting the user to choose a full-access shared folder to sync. SNC-6420</translatorcomment>
+        <translation>选择一个具有完全访问权限的共享文件夹以进行同步</translation>
     </message>
     <message>
         <source>You need Full access right to be able to sync the selected folder.</source>
@@ -8798,6 +9269,29 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
 </context>
 <context>
     <name>SyncSettingsElements</name>
+</context>
+<context>
+    <name>SyncSettingsQuickWidget</name>
+    <message>
+        <source>Can&apos;t restore %1 mega folder</source>
+        <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
+        <translation>无法恢复 MEGA 文件夹 %1</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>打开.megaignore文件时出错</translation>
+    </message>
+    <message>
+        <source>Remove sync</source>
+        <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
+        <translation>移除同步</translation>
+    </message>
 </context>
 <context>
     <name>SyncSettingsUI</name>
@@ -9880,6 +10374,11 @@ Please delete the folder sync from settings to cancel them.</source>
 </context>
 <context>
     <name>UploadNodeSelector</name>
+    <message>
+        <source>Select a shared folder to upload your items to</source>
+        <translatorcomment>Guidance banner in the upload node selector, shown in Incoming Shares when no folder is selected, prompting the user to pick a shared folder as the upload destination. SNC-6420</translatorcomment>
+        <translation>选择要上传到的共享文件夹</translation>
+    </message>
     <message>
         <source>You need Read &amp; Write or Full access rights to be able to upload to the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying upload files to a non compatible folder</translatorcomment>

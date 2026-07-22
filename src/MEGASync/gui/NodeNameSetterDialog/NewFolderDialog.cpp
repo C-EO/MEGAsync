@@ -17,6 +17,7 @@ void NewFolderDialog::onDialogAccepted()
     if(!checkAlreadyExistingNode(newFolderName, mParentNode))
     {
         setEnabled(false);
+        emit creatingFolder(mParentNode ? mParentNode->getHandle() : mega::INVALID_HANDLE);
         MegaSyncApp->getMegaApi()->createFolder(newFolderName.toUtf8().constData(), mParentNode.get(), mDelegateListener.get());
     }
 }

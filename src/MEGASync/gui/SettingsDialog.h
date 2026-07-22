@@ -62,8 +62,6 @@ public:
     void updateUploadFolder();
     void updateDownloadFolder();
 
-    void setSyncAddButtonEnabled(bool enabled,
-                                 SettingsDialog::Tabs tab = SettingsDialog::Tabs::SYNCS_TAB);
     void setChangePasswordEnabled(bool enabled);
 
 signals:
@@ -112,7 +110,6 @@ private slots:
     void on_lAccountType_clicked();
     void on_bUpgrade_clicked();
     void on_bMyAccount_clicked();
-    void onStorageDetailsClicked();
     void on_bLogout_clicked();
 
     // Security
@@ -165,6 +162,8 @@ private:
     void startRequestTaskbarPinningTimer();
     void initColorTheme();
     void onEmailClicked();
+    void updateSyncTabToolbarIcon();
+    void updateBackupTabToolbarIcon();
 
     Ui::SettingsDialog* mUi;
     MegaApplication* mApp;

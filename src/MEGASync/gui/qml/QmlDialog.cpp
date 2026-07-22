@@ -1,6 +1,7 @@
 #include "QmlDialog.h"
 
 #include "DialogOpener.h"
+#include "Platform.h"
 #include "QmlDialogWrapperUtilities.h"
 
 #include <QEvent>
@@ -19,8 +20,7 @@ const int RESTORE_OPACITY_DELAY_MS(60);
 
 QmlDialog::QmlDialog(QWindow* parent):
     QQuickWindow(parent),
-    mIconSrc(DEFAULT_RES_MEGA_ICON),
-    mInstancesManager(new QmlInstancesManager())
+    mIconSrc(DEFAULT_RES_MEGA_ICON)
 {
     setFlags(flags() | Qt::Dialog);
     setIcon(QIcon(mIconSrc));
@@ -33,10 +33,9 @@ QmlDialog::QmlDialog(QWindow* parent):
             &QmlDialog::onRequestPageFocus,
             Qt::QueuedConnection);
 
-    connect(mInstancesManager,
-            &QmlInstancesManager::instancesChanged,
-            this,
-            &QmlDialog::instancesManagerChanged);
+    // SNC-6567 (Phase 4): QmlInstancesManager removed. Data is exposed to QML
+    // directly via child QQmlContext properties registered in QmlDialogWrapper
+    // before qmlComponent.create() runs.
 
     mShowWhenCreatedFallbackTimer.setInterval(SHOW_WHEN_CREATED_FALLBACK_DELAY_MS);
     mShowWhenCreatedFallbackTimer.setSingleShot(true);
@@ -62,8 +61,19 @@ QmlDialog::QmlDialog(QWindow* parent):
                 setOpacity(mPreviousOpacity > HIDDEN_OPACITY ? mPreviousOpacity :
                                                                DEFAULT_VISIBLE_OPACITY);
 
-                // The following two lines are required by Windows (activate) and macOS (raise)
-                requestActivate();
+                // requestActivate() is required by Windows; raise() by macOS.
+                // Qt5-ONLY Wayland branch: on Qt5 a client cannot activate itself — the call
+                // logs a warning and can crash — so we request attention via alert() instead.
+                // TODO Qt6: remove the Wayland branch and call requestActivate()
+                // unconditionally; Qt6 activates via xdg-activation without crashing.
+                if (Platform::getInstance()->isWayland())
+                {
+                    alert(0);
+                }
+                else
+                {
+                    requestActivate();
+                }
                 raise();
 
                 if (!mInitialLayoutComplete)
@@ -89,11 +99,6 @@ void QmlDialog::setIconSrc(const QString& iconSrc)
     }
 }
 
-QmlInstancesManager* QmlDialog::getInstancesManager()
-{
-    return mInstancesManager;
-}
-
 void QmlDialog::readyToBeShow()
 {
     mCenterAndRaiseAfterFirstHeightChangeEvent = true;
@@ -109,7 +114,28 @@ void QmlDialog::readyToBeShow()
     // Set the opacity to 0.0 to hide the window even if it is shown
     // The opacity will be set again to the real opacity
     mPreviousOpacity = opacity() > HIDDEN_OPACITY ? opacity() : DEFAULT_VISIBLE_OPACITY;
-    setOpacity(HIDDEN_OPACITY);
+
+    // Qt5-ONLY Wayland branch: the opacity-hide trick is unreliable on Qt5
+    // Wayland. The qtwayland QPA plugin does not implement window opacity
+    // (every setOpacity() call logs "This plugin does not support setting
+    // window opacity" and is ignored), so on most compositors the hide is a
+    // no-op that only spams warnings; on plugins/compositors that DO honor it,
+    // the later restore in mRestoreOpacityTimer is not re-presented (no forced
+    // surface commit), leaving the dialog mapped-but-invisible. A Wayland
+    // client also cannot position its own window, so there is nothing to hide
+    // *for*: placeAndRaise()'s setFramePosition() is a no-op there. Keep the
+    // window opaque; the fallback timer still drives the subsequent
+    // raise/activate. TODO Qt6: remove this branch — Qt6 Wayland honors live
+    // opacity changes, so the cross-platform opacity path below works there.
+    if (Platform::getInstance()->isWayland())
+    {
+        setOpacity(mPreviousOpacity);
+    }
+    else
+    {
+        setOpacity(HIDDEN_OPACITY);
+    }
+
     show();
     mShowWhenCreatedFallbackTimer.start();
 }
@@ -145,21 +171,31 @@ void QmlDialog::attachToParentWindow(QWindow* parentWindow, bool embedded)
         // Embedded dialogs should not show maximize/minimize affordances.
         // Keep Qt::Dialog (set by the constructor) and the close button.
         //
-        // NOTE: this is intentionally skipped on Windows. Calling setFlags()
-        // on a QQuickWindow whose native HWND already exists triggers a
-        // window recreation that loses the QML width/height bindings — the
-        // dialog flashes frameless and then collapses to a tiny pixel-sized
-        // window. transientParent + WindowModal above are enough to give us
-        // the embedded modal behavior on Windows; the fixed size is already
-        // guaranteed by the QML's minimumWidth/maximumWidth declarations,
-        // and the native dialog frame from Qt::Dialog (set in the
-        // constructor) is preserved untouched.
-        Qt::WindowFlags wflags = flags();
-        wflags |= Qt::Dialog;
-        wflags &= ~(Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
-        if (wflags != flags())
+        // NOTE: this is intentionally skipped on Windows and on the native
+        // Wayland QPA. Calling setFlags() on a QQuickWindow whose native
+        // window already exists triggers a window recreation that loses the
+        // QML width/height bindings — the dialog flashes frameless and then
+        // collapses to a tiny / very narrow window. On Windows the native
+        // HWND is recreated; on Wayland the wl_surface/xdg_toplevel is
+        // recreated and comes back unconfigured (the compositor proposes a
+        // 0-width size), so the dialog reappears collapsed. transientParent +
+        // WindowModal above are enough to give us the embedded modal behavior;
+        // the fixed size is already guaranteed by the QML's
+        // minimumWidth/maximumWidth declarations, and the native dialog frame
+        // from Qt::Dialog (set in the constructor) is preserved untouched.
+        // REVIEW(Qt6): cross-version fix, not a pure Qt5 workaround — do NOT
+        // blindly revert. The setFlags() surface-recreation collapse is not
+        // Qt5-specific; the Qt6 tree carries the same guard. Verify it is still
+        // needed on Qt6 before changing.
+        if (!Platform::getInstance()->isWayland())
         {
-            setFlags(wflags);
+            Qt::WindowFlags wflags = flags();
+            wflags |= Qt::Dialog;
+            wflags &= ~(Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
+            if (wflags != flags())
+            {
+                setFlags(wflags);
+            }
         }
 #endif
     }
@@ -241,8 +277,17 @@ void QmlDialog::placeAndRaise()
     mCenterAndRaiseAfterFirstHeightChangeEvent = false;
 
     QSize dialogSize = geometry().size();
-    auto parentGeometry = QmlDialogWrapperUtilities::getParentGeometry(this);
-    QmlDialog::setFramePosition(DialogOpener::initialDialogPosition(dialogSize, parentGeometry));
+    auto parentGeometry = DialogOpener::getParentGeometry(this);
+    const QPoint targetPos = DialogOpener::initialDialogPosition(dialogSize, parentGeometry);
+
+    // Multi-monitor (Qt5): a freshly created QQuickWindow is associated with the
+    // primary screen, so setFramePosition() converts the global coordinates with
+    // the primary screen's DPI and the dialog lands off-position on secondary
+    // monitors. Bind it to the target screen first so the conversion is correct.
+    const QPoint screenRef = parentGeometry.isValid() ? parentGeometry.center() : targetPos;
+    QmlDialogWrapperUtilities::bindToScreenForPositioning(this, screenRef, targetPos);
+
+    QmlDialog::setFramePosition(targetPos);
 
     mRestoreOpacityTimer.start();
 }

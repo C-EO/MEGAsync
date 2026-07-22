@@ -16,6 +16,12 @@ public:
 
     std::unique_ptr<mega::MegaNode> getNewNode();
 
+signals:
+    // Emitted when the folder creation request is actually sent (the user confirmed). Lets the
+    // node selector initialise the parent's children in the model in time, so the new node later
+    // arrives via the visible add path and is selected through checkNewFolderAdded.
+    void creatingFolder(mega::MegaHandle parentHandle);
+
 protected:
     void onDialogAccepted() override;
     void onRequestFinish(mega::MegaApi* api, mega::MegaRequest *request, mega::MegaError* e) override;

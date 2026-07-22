@@ -31,14 +31,13 @@ public:
 
     Q_INVOKABLE bool isDataReady(bool emitSignal = false);
 
-    static QUrl getSupportEmail();
-
     QUrl getBaseUrl() const;
     Q_INVOKABLE QUrl getRecoveryUrl(const QString& email = QString()) const;
     QUrl getLinkBaseUrl() const;
     QUrl getRemoteNodeLinkUrl(const QString& handle, const QString& key) const;
     QUrl getRemoteSetLinkUrl(const QString& handle, const QString& key) const;
 
+    QUrl getSupportFormUrl() const;
     Q_INVOKABLE static QUrl getContactSupportUrl();
     static QUrl getDesktopAppUrl();
     Q_INVOKABLE static QUrl getServiceTermsUrl();
@@ -48,7 +47,7 @@ public:
     Q_INVOKABLE static QUrl getDesktopAppHelpUrl();
     static QUrl getDesktopSyncHelpUrl();
     static QUrl getDesktopBackupsHelpUrl();
-    static QUrl getSyncHelpUrl();
+    Q_INVOKABLE static QUrl getSyncHelpUrl();
     static QUrl getSyncFat32HelpUrl();
     static QUrl getFileVersionHistoryHelpUrl();
     static QUrl getTransferQuotaHelpUrl();

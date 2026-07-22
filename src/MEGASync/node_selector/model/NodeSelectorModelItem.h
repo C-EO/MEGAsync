@@ -2,12 +2,14 @@
 #define MODELSELECTORMODELITEM_H
 
 #include "megaapi.h"
+#include "NodeSelectorTabTypes.h"
 
 #include <QIcon>
 #include <QList>
 #include <QObject>
 #include <QPointer>
 
+#include <atomic>
 #include <memory>
 
 namespace UserAttributes
@@ -67,8 +69,10 @@ public:
     virtual bool isMyBackupsFolder() const;
     virtual bool isDeviceFolder() const;
     bool isFile() const;
+    virtual bool isBackupFolder() const;
     bool isInShare() const;
     bool isInVault() const;
+    bool isS4Container() const;
     bool isCloudDrive() const;
     bool isRubbishBin() const;
     bool isInRubbishBin() const;
@@ -95,14 +99,25 @@ signals:
     void infoUpdated(int role);
 
 protected:
+    // Resolves the access level through the SDK and caches it. Only inshare root nodes
+    // (isInShare() == true) need it, and only from the NodeRequester worker thread: resolving
+    // it from the GUI thread would block on the SDK mutex while a children fetch is in flight.
+    // Nested items inherit the cached level from their parent instead (see the base
+    // constructor); hot consumers (sync flags/tooltip) read the cache with no SDK call.
+    void primeNodeAccess();
+    // Copies this item's cached access level to all descendants (share access is uniform
+    // across an inshare subtree). Called after re-priming an inshare root.
+    void propagateNodeAccessToChildren();
+
     QString mOwnerEmail;
     Status mStatus;
     bool mRequestingChildren;
     int mChildrenCounter;
     bool mShowFiles;
     bool mChildrenAreInit;
-    mutable int mNodeAccess;
-    mutable qint64 mNodeAccessLastUpdate;
+    // Atomic: read from the proxy's concurrent sort/filter job (pool thread) while the GUI
+    // thread may re-prime it on a share permission change (see updateNode).
+    std::atomic<int> mNodeAccess;
 
     mega::MegaApi* mMegaApi;
     std::shared_ptr<mega::MegaNode> mNode;
@@ -162,7 +177,7 @@ public:
     bool isSyncable() override;
     bool isMyBackupsFolder() const override;
     bool isDeviceFolder() const override;
-    bool isBackupFolder() const;
+    bool isBackupFolder() const override;
 
 private:
     NodeSelectorModelItem* createModelItem(std::unique_ptr<mega::MegaNode> node,
@@ -175,37 +190,30 @@ class NodeSelectorModelItemSearch: public NodeSelectorModelItem
     Q_OBJECT
 
 public:
-    enum class Type
-    {
-        NONE = 0x0,
-        BACKUP = 0x01,
-        INCOMING_SHARE = 0x02,
-        CLOUD_DRIVE = 0x04,
-        RUBBISH = 0x08,
-    };
-    Q_DECLARE_FLAGS(Types, Type);
-
     explicit NodeSelectorModelItemSearch(std::unique_ptr<mega::MegaNode> node,
-                                         Types type,
+                                         TabTypes type,
                                          NodeSelectorModelItem* parentItem = 0);
     ~NodeSelectorModelItemSearch();
 
-    Types getType()
+    TabTypes getType()
     {
         return mType;
     }
 
-    void setType(Types type);
+    void setType(TabTypes type);
     int getNumChildren() override;
+    bool isMyBackupsFolder() const override;
+    bool isDeviceFolder() const override;
+    bool isBackupFolder() const override;
 
 signals:
-    void typeChanged(Types type);
+    void tabTypeChanged(TabTypes type);
 
 private:
     NodeSelectorModelItem* createModelItem(std::unique_ptr<mega::MegaNode> node,
                                            bool showFiles,
                                            NodeSelectorModelItem* parentItem = 0) override;
-    Types mType;
+    TabTypes mType;
 };
 
 class NodeSelectorModelItemRubbish: public NodeSelectorModelItem
@@ -221,8 +229,5 @@ private:
                                            bool showFiles,
                                            NodeSelectorModelItem* parentItem = 0) override;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(NodeSelectorModelItemSearch::Types)
-Q_DECLARE_METATYPE(NodeSelectorModelItemSearch::Types)
 
 #endif // MODELSELECTORMODELITEM_H

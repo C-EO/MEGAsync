@@ -60,6 +60,11 @@ qsizetype EncryptedSettings::numChildGroups()
     return QSettings::childGroups().size();
 }
 
+bool EncryptedSettings::contains(const QString& key) const
+{
+    return QSettings::contains(hash(key));
+}
+
 bool EncryptedSettings::containsGroup(QString groupName)
 {
     return QSettings::childGroups().contains(hash(groupName));

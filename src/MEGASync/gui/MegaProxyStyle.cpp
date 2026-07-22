@@ -13,6 +13,8 @@
 #include <QTreeView>
 #include <QWindow>
 
+#include <memory>
+
 const int TOOLTIP_DELAY = 250;
 
 void MegaProxyStyle::drawComplexControl(QStyle::ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const
@@ -232,14 +234,63 @@ void MegaProxyStyle::polish(QWidget *widget)
     }
     else if (auto menu = qobject_cast<QMenu*>(widget))
     {
-        // Left button is the only click allowed in context menus
+        // Only a genuine left-button press+release performed on the menu itself may
+        // activate an entry. QMenu activates on release only while QMenuPrivate's
+        // (static, process-wide) mouseDown still points at the menu; that flag is
+        // cleared only inside mouseReleaseEvent. Because the tray menu pops up next to
+        // the cursor, the popup's mouse grab can deliver an "orphan" release — one
+        // whose press went to another widget (the button/icon that opened the menu) —
+        // straight onto the last entry, triggering it by itself (observed: Exit /
+        // Settings firing without the user choosing them). Block any release that was
+        // not preceded by a press on this same menu since it was shown.
+        auto pressSeen = std::make_shared<bool>(false);
+
         EventManager::addEvent(menu,
-                               QEvent::MouseButtonRelease,
-                               [](QEvent* event)
+                               QEvent::Show,
+                               [pressSeen](QEvent*)
+                               {
+                                   *pressSeen = false;
+                                   return false;
+                               });
+
+        EventManager::addEvent(menu,
+                               QEvent::MouseButtonPress,
+                               [pressSeen, menu](QEvent* event)
                                {
                                    if (auto mouseEvent = dynamic_cast<QMouseEvent*>(event))
                                    {
-                                       return mouseEvent->button() != Qt::MouseButton::LeftButton;
+                                       if (mouseEvent->button() != Qt::MouseButton::LeftButton)
+                                       {
+                                           // Block non-left presses only when they land on the
+                                           // menu itself, where they could activate an entry.
+                                           // Presses outside the popup must reach QMenu so it
+                                           // closes itself (e.g. right-clicking another row
+                                           // while a context menu is already open).
+                                           return menu->rect().contains(mouseEvent->pos());
+                                       }
+                                       *pressSeen = true;
+                                   }
+
+                                   return false;
+                               });
+
+        EventManager::addEvent(menu,
+                               QEvent::MouseButtonRelease,
+                               [pressSeen](QEvent* event)
+                               {
+                                   if (auto mouseEvent = dynamic_cast<QMouseEvent*>(event))
+                                   {
+                                       if (mouseEvent->button() != Qt::MouseButton::LeftButton)
+                                       {
+                                           return true;
+                                       }
+                                       if (!*pressSeen)
+                                       {
+                                           // Orphan release (no matching press on this
+                                           // menu since it was shown) — ignore it.
+                                           return true;
+                                       }
+                                       *pressSeen = false;
                                    }
 
                                    return false;

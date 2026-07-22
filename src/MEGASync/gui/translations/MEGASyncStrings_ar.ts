@@ -627,9 +627,14 @@
         <translation>بلغ عن مشكلة</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>تعذر إرسال مشكلتك بسبب وجود خطأ. حاول مرة أخرى لاحقاً أو اتصل [A]الدعم[/A] إذا استمرت المشكلة.</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
-        <translation>تعذّر تحميل مشكلتك بسبب خطأ ما. حاول مرة أخرى لاحقًا أو تواصل مع فريق الدعم على [A]support@mega.io[/A] إذا استمرت المشكلة.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Bug report is uploading, it may take a few minutes</source>
@@ -682,9 +687,14 @@
         <translation>يرجى وصف المشكلة التي تواجهها بمزيد من التفاصيل. يجب ألا يقل طولها عن 30 محرفاً.</translation>
     </message>
     <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>يرجى المحاولة مرة أخرى لاحقاً أو اتصل [A]الدعم[/A] إذا استمرت المشكلة.</translation>
+    </message>
+    <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
         <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
-        <translation>يرجى المحاولة مرة أخرى لاحقًا أو التواصل مع فريق الدعم عبر [A]support@mega.io[/A] إذا استمرت المشكلة.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Please wait until the current upload is completed.</source>
@@ -1424,6 +1434,19 @@
     </message>
 </context>
 <context>
+    <name>DestinationBreadcrumb</name>
+    <message>
+        <source>Always upload to this destination</source>
+        <translatorcomment>Checkbox label in the node selector destination breadcrumb to set the current folder as the default upload destination. SNC-6420</translatorcomment>
+        <translation>الرفع دائما الي هذه الوجهة</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translatorcomment>Label/title of the destination breadcrumb in the node selector, showing the folder files will be uploaded to. SNC-6420</translatorcomment>
+        <translation>الوجهة</translation>
+    </message>
+</context>
+<context>
     <name>DownloadFromMegaDialog</name>
     <message>
         <source>Always download to this destination</source>
@@ -1618,6 +1641,11 @@
         <source>The folder at this destination will be maintained.</source>
         <translatorcomment>Text explaining the result of the folder skip action</translatorcomment>
         <translation>سيتم الاحتفاظ بالمجلد في هذه الوجهة.</translation>
+    </message>
+    <message>
+        <source>The folder will be renamed as:</source>
+        <translatorcomment>Text explaining the result of the folder rename action. SNC-6420</translatorcomment>
+        <translation>سيتم إعادة تسمية المجلد إلى:</translation>
     </message>
     <message>
         <source>The new folder will be merged with the folder at this destination.</source>
@@ -2105,6 +2133,41 @@
         <source>Can´t sync [B]%1[/B]</source>
         <translatorcomment>Title for the header widget of sync stall shown when there&apos;s an issue with a file or folder which requires user&apos;s intervention, [B] is for bold.SNC-2565</translatorcomment>
         <translation>لا يمكن مزامنة [B]%1[/B]</translation>
+    </message>
+</context>
+<context>
+    <name>FileManagerNodeSelector</name>
+    <message numerus="yes">
+        <source>%n result</source>
+        <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
+        <translation>
+            <numerusform>%n نتائج</numerusform>
+            <numerusform>%n نتيجة</numerusform>
+            <numerusform>%n نتائج</numerusform>
+            <numerusform>%n نتائج</numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
+        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>سيتم حذف جميع العناصر بشكل دائم. هذا الإجراء [B]لا يمكن[/B] التراجع عنه.</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>الغاء</translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>إفراغ</translation>
+    </message>
+    <message>
+        <source>Empty Rubbish bin?</source>
+        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>إفراغ سلة المحذوفات؟</translation>
     </message>
 </context>
 <context>
@@ -3223,9 +3286,14 @@ Please wait for the upload to complete.</source>
         <translation>لقد تم تسجيل خروجك من هذا الجهاز من موقع آخر</translation>
     </message>
     <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>تم تسجيل خروجك. اتصل [A]الدعم[/A] إذا استمرت المشكلة.</translation>
+    </message>
+    <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
         <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. CON-541</translatorcomment>
-        <translation>لقد تم تسجيل خروجك. تواصل مع [A]support@mega.io [/A] إذا استمرت هذه المشكلة.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3294,6 +3362,11 @@ Please wait for the upload to complete.</source>
         <translation>البرنامج يحتاج الي اعادة التشغيل لاتمام التحديث</translation>
     </message>
     <message>
+        <source>Cancel</source>
+        <translatorcomment>Label for cancel button. SNC-6678</translatorcomment>
+        <translation>الغاء</translation>
+    </message>
+    <message>
         <source>Checking for updates...</source>
         <translatorcomment>Notification message launched when the user wants to check if there are any available update at the moment.</translatorcomment>
         <translation>جاري التحقق من وجود تحديث…</translation>
@@ -3317,6 +3390,18 @@ Please wait for the upload to complete.</source>
         <source>Dismiss</source>
         <translatorcomment>Button text to discard a notification or message box</translatorcomment>
         <translation>رفض</translation>
+    </message>
+    <message numerus="yes">
+        <source>Do you want to upload %n file to MEGA?</source>
+        <translatorcomment>Label to ask for confirmation about a file(s) to be uploade to your account. SNC-6678</translatorcomment>
+        <translation>
+            <numerusform>هل تريد ترفيع %n ملف إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملف إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملفين إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملفات إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملف إلى ميغا MEGA؟</numerusform>
+            <numerusform>هل تريد ترفيع %n ملف إلى ميغا MEGA؟</numerusform>
+        </translation>
     </message>
     <message>
         <source>Don’t show me again</source>
@@ -3662,6 +3747,11 @@ https://mega.co.nz/#sync</source>
         <source>Upload</source>
         <translatorcomment>Label for the menu item that opens the dialog to upload files to MEGA</translatorcomment>
         <translation>ترفيع</translation>
+    </message>
+    <message>
+        <source>Upload to MEGA</source>
+        <translatorcomment>Title shown at dialog when the user is trying to upload a file to MEGA from Finder explorer context menu option.SNC-6678.</translatorcomment>
+        <translation>الترفيع الى ميغا MEGA</translation>
     </message>
     <message>
         <source>Waiting</source>
@@ -4846,6 +4936,11 @@ Enter a different name</source>
         <translation>بحث</translation>
     </message>
     <message>
+        <source>Searching…</source>
+        <translatorcomment>Loading text shown in the node selector while a search for nodes is in progress. SNC-6420</translatorcomment>
+        <translation>جارِ البحث…</translation>
+    </message>
+    <message>
         <source>Select a MEGA folder</source>
         <translatorcomment>Node selector dialog title</translatorcomment>
         <translation>اختر مجلد في ميغا MEGA</translation>
@@ -4854,6 +4949,44 @@ Enter a different name</source>
         <source>The item you selected has been removed. To reselect, close this window and try again.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>تمت إزالة التحديد عن العنصر الذي قمت بتحديده. لإعادة التحديد، أغلق هذه النافذة وحاول مرة أخرى.</translation>
+    </message>
+</context>
+<context>
+    <name>NodeSelectorLabelColors</name>
+    <message>
+        <source>Blue</source>
+        <translatorcomment>Color name for the &quot;Blue&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>أزرق</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translatorcomment>Color name for the &quot;Green&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>أخضر</translation>
+    </message>
+    <message>
+        <source>Grey</source>
+        <translatorcomment>Color name for the &quot;Grey&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>رصاصي</translation>
+    </message>
+    <message>
+        <source>Orange</source>
+        <translatorcomment>Color name for the &quot;Orange&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>برتقالي</translation>
+    </message>
+    <message>
+        <source>Purple</source>
+        <translatorcomment>Color name for the &quot;Purple&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>بنفسجي</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translatorcomment>Color name for the &quot;Red&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>أحمر</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translatorcomment>Color name for the &quot;Yellow&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>أصفر</translation>
     </message>
 </context>
 <context>
@@ -4984,6 +5117,11 @@ Enter a different name</source>
         <translation>تمت مزامنة محتويات المجلد بالفعل</translation>
     </message>
     <message>
+        <source>Label</source>
+        <translatorcomment>Column header for the node label in the node selector. SNC-6420</translatorcomment>
+        <translation>وسم</translation>
+    </message>
+    <message>
         <source>Last modified</source>
         <translatorcomment>Table header title for node last modified date info. SNC.5804</translatorcomment>
         <translation>آخر تعديل</translation>
@@ -5007,6 +5145,11 @@ Enter a different name</source>
         <source>Sort by date added</source>
         <translatorcomment>Table header tooltip for Date added column. SNC.5804</translatorcomment>
         <translation>فرز حسب تاريخ الإضافة  </translation>
+    </message>
+    <message>
+        <source>Sort by label</source>
+        <translatorcomment>Sort option to order nodes by their label in the node selector. SNC-6420</translatorcomment>
+        <translation>فرز حسب التسمية</translation>
     </message>
     <message>
         <source>Sort by last modified date</source>
@@ -5210,6 +5353,11 @@ Enter a different name</source>
 <context>
     <name>NodeSelectorTreeViewWidget</name>
     <message>
+        <source>Add backup</source>
+        <translatorcomment>Empty-state button in the node selector to start adding a backup. SNC-6420</translatorcomment>
+        <translation>إضافة نسخة احتياطية</translation>
+    </message>
+    <message>
         <source>Any shared files or folders will no longer be accessible to the people you shared them with. You can still access these items in the Rubbish bin, restore, and share them.</source>
         <translatorcomment>Informative text about the potential issues of removing the nodes. CON-334</translatorcomment>
         <translation>لن يتمكن الأشخاص الذين شاركتها معهم من الوصول إلى أي ملفات أو مجلدات مشاركة. لا يزال بإمكانك الوصول إلى هذه العناصر في سلة المحذوفات واستعادتها ومشاركتها.</translation>
@@ -5218,6 +5366,11 @@ Enter a different name</source>
         <source>Cancel</source>
         <translatorcomment>Label for cancel button.</translatorcomment>
         <translation>إلغاء</translation>
+    </message>
+    <message>
+        <source>Create a folder to move your content here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
+        <translation>قم بإنشاء مجلد لنقل المحتوى الخاص بك هنا</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -5235,9 +5388,24 @@ Enter a different name</source>
         <translation>لا تقم بالنقل</translation>
     </message>
     <message>
+        <source>Download</source>
+        <translatorcomment>Action button in the node selector to download the selected folder. SNC-6420</translatorcomment>
+        <translation>تنزيل</translation>
+    </message>
+    <message>
+        <source>Drag and drop your files here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to drag and drop files. SNC-6420</translatorcomment>
+        <translation>قم بسحب وإسقاط ملفاتك هنا</translation>
+    </message>
+    <message>
         <source>Empty Rubbish bin</source>
         <translatorcomment>Button text to empty the rubbish bin. SAT-426</translatorcomment>
         <translation>إفراغ سلة المحذوفات</translation>
+    </message>
+    <message>
+        <source>Empty folder</source>
+        <translatorcomment>Empty state label shown in the node selector view when the selected folder has no items. SNC-6420</translatorcomment>
+        <translation>مجلد فارغ</translation>
     </message>
     <message>
         <source>Folder is empty</source>
@@ -5301,9 +5469,19 @@ Enter a different name</source>
         <translation>مجلّد جديد</translation>
     </message>
     <message>
+        <source>No folders in Cloud drive</source>
+        <translatorcomment>Empty-state message shown in the node selector when the Cloud drive has no folders. SNC-6420</translatorcomment>
+        <translation>لا توجد مجلدات بالسواقة السحابية</translation>
+    </message>
+    <message>
         <source>No folders to select</source>
         <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>لا توجد مجلدات للاختيار</translation>
+    </message>
+    <message>
+        <source>Nothing in your private vault yet</source>
+        <translatorcomment>Empty-state message shown in the node selector when the private vault has no items yet. SNC-6420</translatorcomment>
+        <translation>لا شيء في خزينتك الخاصة حتى الآن</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -5314,6 +5492,31 @@ Enter a different name</source>
         <source>Only folders can be synced</source>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>يمكن مزامنة المجلدات فقط</translation>
+    </message>
+    <message>
+        <source>Sync</source>
+        <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
+        <translation>تزامن</translation>
+    </message>
+    <message>
+        <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
+        <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
+        <translation>هذا المجلد فارغ. احمِ الملفات بتشفير بلا معرفة طرف ثالث.</translation>
+    </message>
+    <message>
+        <source>This folder is read and write. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-and-write shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>هذا المجلد للقراءة والكتابة. اطلب الوصول الكامل للمزامنة</translation>
+    </message>
+    <message>
+        <source>This folder is read-only. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>هذا المجلد للقراءة فقط. اطلب الوصول الكامل للمزامنة</translation>
+    </message>
+    <message>
+        <source>Upload</source>
+        <translatorcomment>Action button in the node selector to upload to the selected folder. SNC-6420</translatorcomment>
+        <translation>ترفيع</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -5376,6 +5579,11 @@ Enter a different name</source>
 <context>
     <name>NodeSelectorTreeViewWidgetIncomingShares</name>
     <message>
+        <source>Folders shared with you will appear here</source>
+        <translatorcomment>Empty-state message in the node selector incoming shares view, shown when there are no shared folders. SNC-6420</translatorcomment>
+        <translation>ستظهر المجلدات التي تمت مشاركتها معك هنا</translation>
+    </message>
+    <message>
         <source>No incoming shares</source>
         <translatorcomment>Title message on the view when there are no items in the normal view. SNC-5804</translatorcomment>
         <translation>لا توجد مشاركات واردة</translation>
@@ -5393,6 +5601,11 @@ Enter a different name</source>
 </context>
 <context>
     <name>NodeSelectorTreeViewWidgetRubbish</name>
+    <message>
+        <source>Rubbish bin is empty</source>
+        <translatorcomment>Empty-state message in the node selector rubbish bin view, shown when the rubbish bin has no items. SNC-6420</translatorcomment>
+        <translation>سلة المحذوفات فارغة</translation>
+    </message>
     <message>
         <source>The Rubbish bin is empty</source>
         <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
@@ -5414,9 +5627,19 @@ Enter a different name</source>
         </translation>
     </message>
     <message>
+        <source>No results found</source>
+        <translatorcomment>Empty-state title in the node selector search view, shown when the search returns no matches. SNC-6420</translatorcomment>
+        <translation>لم يتم العثور على أية نتائج</translation>
+    </message>
+    <message>
         <source>No search results</source>
         <translatorcomment>Message on the view when the search did not find any coincidence. SNC-5804</translatorcomment>
         <translation>لم يتم إيجاد أي نتائج للبحث</translation>
+    </message>
+    <message>
+        <source>Try a different name or check the spelling</source>
+        <translatorcomment>Empty-state hint in the node selector search view, suggesting the user refine their search. SNC-6420</translatorcomment>
+        <translation>جرّب اسمًا مختلفًا أو تحقق من الإملاء</translation>
     </message>
 </context>
 <context>
@@ -6495,6 +6718,18 @@ Enter a different name</source>
 - مربعات حوار التخزين السحابي والمزامنة والنسخ الاحتياطي والإعدادات أصبحت أوضح وأكثر اتساقاً.
 - إصلاحات أخطاء وتحسينات على الأداء.</translation>
     </message>
+    <message>
+        <source>- Revamped and improved File Manager.
+- Revamped Syncs and Backups tabs in the Settings dialog.
+- Improved Wayland support.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.5.0. SNC-6656</translatorcomment>
+        <translation>- تمت إعادة تصميم مدير الملفات وتحسينه.
+- تمت إعادة تصميم علامات تبويب المزامنة والنسخ الاحتياطي في مربع الحوار الإعدادات.
+- تم تحسين دعم Wayland.
+- إصلاحات للأخطاء وتحسينات في الأداء.</translation>
+    </message>
 </context>
 <context>
     <name>ProgressIndicatorDialog</name>
@@ -7079,6 +7314,11 @@ Do you want to delete it anyway?</source>
         <translation>تغيير</translation>
     </message>
     <message>
+        <source>Delete folder from MEGA</source>
+        <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
+        <translation>حذف المجلد من ميغا MEGA</translation>
+    </message>
+    <message>
         <source>Delete folder permanently</source>
         <translatorcomment>Radio button option text</translatorcomment>
         <translation>حذف المجلد من ميغا MEGA</translation>
@@ -7094,9 +7334,19 @@ Do you want to delete it anyway?</source>
         <translation>نقل المجلد إلى السواقة السحابية</translation>
     </message>
     <message>
+        <source>Move folder to Cloud drive</source>
+        <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
+        <translation>نقل المجلد إلى السواقة السحابية</translation>
+    </message>
+    <message>
         <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
         <translatorcomment>Radio button description</translatorcomment>
         <translation>انقل هذا المجلد إلى السواقة السحابية الخاصة بك للوصول الكامل إلى بياناتك. لن يتم نسخها احتياطيًا بعد الآن.</translation>
+    </message>
+    <message>
+        <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
+        <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
+        <translation>انقل هذا المجلد إلى محركك السحابي للوصول الكامل إلى بياناتك. لن يتم نسخه احتياطيًا بعد الآن.</translation>
     </message>
     <message>
         <source>Move to:</source>
@@ -7114,8 +7364,18 @@ Do you want to delete it anyway?</source>
         <translation>أوقف النسخ الاحتياطي</translation>
     </message>
     <message>
+        <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
+        <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
+        <translation>سيتم حذف المجلد من MEGA، لكنه لن يُحذف من جهازك. [B]لا يمكن التراجع عن هذا الإجراء.[/B]</translation>
+    </message>
+    <message>
         <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
         <translatorcomment>Backup removal title description. SNC-6067</translatorcomment>
+        <translation>لإيقاف النسخ الاحتياطي لهذا المجلد، تحتاج إما إلى نقله أو حذفه</translation>
+    </message>
+    <message>
+        <source>To stop backing up this folder, you need to either move it or delete it</source>
+        <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
         <translation>لإيقاف النسخ الاحتياطي لهذا المجلد، تحتاج إما إلى نقله أو حذفه</translation>
     </message>
 </context>
@@ -7790,11 +8050,54 @@ Do you want to delete it anyway?</source>
     </message>
 </context>
 <context>
+    <name>SettingsQuickWidgetBase</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
+        <translation>حدث خطأ أثناء فتح ملف .megaignore</translation>
+    </message>
+</context>
+<context>
     <name>SettingsStrings</name>
+    <message>
+        <source>Add a backup to protect your folders automatically</source>
+        <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>إضافة نسخة احتياطية لحماية مجلداتك تلقائيًا</translation>
+    </message>
+    <message>
+        <source>Add a sync to keep folders up to date</source>
+        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
+        <translation>حافظ على تحديث المجلدات عبر الأجهزة</translation>
+    </message>
+    <message>
+        <source>Add backup</source>
+        <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
+        <translation>إضافة نسخة احتياطية</translation>
+    </message>
+    <message>
+        <source>Add sync</source>
+        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
+        <translation>إعداد المزامنة</translation>
+    </message>
+    <message>
+        <source>Automatic sync issue resolution</source>
+        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>حل مشكلات المزامنة تلقائيًا</translation>
+    </message>
     <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
         <translation>متاح[BR]%1</translation>
+    </message>
+    <message>
+        <source>Backed up</source>
+        <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
+        <translation>تم النسخ الاحتياطي</translation>
+    </message>
+    <message>
+        <source>Backup folder</source>
+        <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
+        <translation>مجلد النسخ الاحتياطي</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -7827,6 +8130,21 @@ Do you want to delete it anyway?</source>
         <translation>فكّر في الترقية لتجنب الانقطاعات في الترفيع والمزامنة.</translation>
     </message>
     <message>
+        <source>Disabled</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>تعطيل</translation>
+    </message>
+    <message>
+        <source>Enable backup</source>
+        <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
+        <translation>تمكين النسخ الاحتياطي</translation>
+    </message>
+    <message>
+        <source>Enable sync</source>
+        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
+        <translation>تمكين المزامنة</translation>
+    </message>
+    <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
         <translation>نسخ الملف</translation>
@@ -7835,6 +8153,91 @@ Do you want to delete it anyway?</source>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
         <translation>نسخ الملف[BR]%1</translation>
+    </message>
+    <message>
+        <source>Get more storage</source>
+        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
+        <translation>احصل على المزيد من مساحة التخزين</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>جاري التحميل</translation>
+    </message>
+    <message>
+        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
+        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>MEGA يكتشف تلقائيًا مشكلات المزامنة ويحلها من أجلك. قم بإيقافها إذا فضلت مراجعتها والتعامل معها يدويًا. [A]اعرف المزيد[/A]</translation>
+    </message>
+    <message>
+        <source>Manage exclusions</source>
+        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>إدارة الاستبعادات</translation>
+    </message>
+    <message>
+        <source>No backups</source>
+        <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>لا يوجد نسخ احتياطية</translation>
+    </message>
+    <message>
+        <source>No syncs set up</source>
+        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
+        <translation>لم يتم إعداد عمليات المزامنة</translation>
+    </message>
+    <message>
+        <source>Open in MEGA</source>
+        <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
+        <translation>فتح في ميغا MEGA</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
+        <translation>توقيف مؤقتاً</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>متوقف مؤقتاً</translation>
+    </message>
+    <message>
+        <source>Reboot backup</source>
+        <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
+        <translation>النسخ الاحتياطي لإعادة التشغيل Reboot</translation>
+    </message>
+    <message>
+        <source>Reboot sync</source>
+        <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
+        <translation>مزامنة إعادة التشغيل Reboot</translation>
+    </message>
+    <message>
+        <source>Remove synced folder</source>
+        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
+        <translation>قم بإزالة المجلد المتزامن</translation>
+    </message>
+    <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>إزالة</translation>
+    </message>
+    <message>
+        <source>Rescan</source>
+        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
+        <translation>إعادة المسح</translation>
+    </message>
+    <message>
+        <source>Restore folder</source>
+        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
+        <translation>استعادة المجلد</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
+        <translation>استئناف</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
+        <translation>اعادة المحاولة</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7847,9 +8250,64 @@ Do you want to delete it anyway?</source>
         <translation>سلة القمامة[BR]%1</translation>
     </message>
     <message>
+        <source>Scanning</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>جاري الفحص</translation>
+    </message>
+    <message>
+        <source>Show in File Explorer</source>
+        <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
+        <translation>عرض في مستكشف الملفات File Explorer</translation>
+    </message>
+    <message>
+        <source>Show in Finder</source>
+        <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
+        <translation>عرض في Finder</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
+        <translation>العرض في المجلد</translation>
+    </message>
+    <message>
+        <source>Start new backup</source>
+        <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
+        <translation>ابدأ نسخة احتياطية جديدة</translation>
+    </message>
+    <message>
+        <source>Start new sync</source>
+        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
+        <translation>ابدأ مزامنة جديدة</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>الحالة</translation>
+    </message>
+    <message>
+        <source>Stop backup</source>
+        <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
+        <translation>أوقف النسخ الاحتياطي</translation>
+    </message>
+    <message>
         <source>Storage Space</source>
         <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
         <translation>مساحة التخزين</translation>
+    </message>
+    <message>
+        <source>Synced</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>تمت المزامنة</translation>
+    </message>
+    <message>
+        <source>Synced folders</source>
+        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>مجلدات متزامنة</translation>
+    </message>
+    <message>
+        <source>Transferring</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>قيد التراسل</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7865,6 +8323,11 @@ Do you want to delete it anyway?</source>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>تم تعطيل الترفيع وتوقّفت مزامنة المجلدات.</translation>
+    </message>
+    <message>
+        <source>View in MEGA</source>
+        <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
+        <translation>عرض في ميغا MEGA</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -8514,6 +8977,11 @@ Please, refresh the list.</source>
         <translatorcomment>Warning message when users try to select a folder for streaming</translatorcomment>
         <translation>لا يمكنك بث المجلدات. حدد ملفًا للبث.</translation>
     </message>
+    <message>
+        <source>Select a file to stream</source>
+        <translatorcomment>Guidance message in the streaming node selector prompting the user to pick a file to stream. SNC-6420</translatorcomment>
+        <translation>اختر ملفًا للبث</translation>
+    </message>
 </context>
 <context>
     <name>StreamingFromMegaDialog</name>
@@ -9010,8 +9478,7 @@ Please, refresh the list.</source>
         <source>Target is too deep on your folder structure.
 Please move it to a location that is less than 64 folders deep.</source>
         <translatorcomment>Title for the header widget of sync stall that occurs when the file is more than 64 folders deep.SNC-2565</translatorcomment>
-        <translation>الهدف عميق جدًا في بنية المجلد. أوقف المزامنة وانقل المجلد إلى موقع يقل عمقه عن 64 مجلدًا وأعد إنشاء المزامنة.
-إذا لم يؤد ذلك إلى حل المشكلة، فتواصل مع support@mega.io.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unable to sync [B]%1[/B]</source>
@@ -9130,10 +9597,35 @@ Please move it to a location that is less than 64 folders deep.</source>
 <context>
     <name>SyncNodeSelector</name>
     <message>
+        <source>Choose a different folder. This folder is already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected folder is already synced. SNC-6420</translatorcomment>
+        <translation>اختر مجلدًا مختلفًا. هذا المجلد مُزامن بالفعل.</translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This location contains a folder that&apos;s already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected location contains a folder that is already synced. SNC-6420</translatorcomment>
+        <translation>اختر مجلدًا مختلفًا. هذا الموقع يحتوي على مجلد تم مزامنته بالفعل.</translation>
+    </message>
+    <message>
+        <source>Folder to sync</source>
+        <translatorcomment>Label in the sync node selector for the folder that will be synced. SNC-6420</translatorcomment>
+        <translation>مجلد للمزامنة</translation>
+    </message>
+    <message>
         <source>Invalid folder for synchronization.
 Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apos; or &apos;:&apos; in your folder names.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>لا يمكن مزامنة المجلد. تأكد من عدم استخدام «\» أو «/» أو «:» في أسماء المجلدات.</translation>
+    </message>
+    <message>
+        <source>Only shared folders with full access can be synced</source>
+        <translatorcomment>Informational message in the sync node selector indicating only full-access shared folders can be synced. SNC-6420</translatorcomment>
+        <translation>يمكن مزامنة فقط المجلدات المشتركة التي تمتلك وصولاً كاملاً.</translation>
+    </message>
+    <message>
+        <source>Select a full access shared folder to sync</source>
+        <translatorcomment>Guidance message in the sync node selector prompting the user to choose a full-access shared folder to sync. SNC-6420</translatorcomment>
+        <translation>اختر مجلدًا مشتركًا يمتلك وصولاً كاملاً للمزامنة</translation>
     </message>
     <message>
         <source>You need Full access right to be able to sync the selected folder.</source>
@@ -9143,6 +9635,29 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
 </context>
 <context>
     <name>SyncSettingsElements</name>
+</context>
+<context>
+    <name>SyncSettingsQuickWidget</name>
+    <message>
+        <source>Can&apos;t restore %1 mega folder</source>
+        <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
+        <translation>لا يمكن استعادة مجلد MEGA %1</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
+        <translation>إغلاق</translation>
+    </message>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>حدث خطأ أثناء فتح ملف .megaignore</translation>
+    </message>
+    <message>
+        <source>Remove sync</source>
+        <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
+        <translation>إزالة المزامنة</translation>
+    </message>
 </context>
 <context>
     <name>SyncSettingsUI</name>
@@ -9998,7 +10513,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Cancel all downloads</source>
         <translatorcomment>Tooltip for cancel button when the user is in the downloads category</translatorcomment>
-        <translation>إلغاء كل عمليات تراسل المعطيات في التنزيلات</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel all failed</source>
@@ -10300,6 +10815,11 @@ Please delete the folder sync from settings to cancel them.</source>
 </context>
 <context>
     <name>UploadNodeSelector</name>
+    <message>
+        <source>Select a shared folder to upload your items to</source>
+        <translatorcomment>Guidance banner in the upload node selector, shown in Incoming Shares when no folder is selected, prompting the user to pick a shared folder as the upload destination. SNC-6420</translatorcomment>
+        <translation>اختر مجلدًا مشتركًا لرفع عناصرِك إليه</translation>
+    </message>
     <message>
         <source>You need Read &amp; Write or Full access rights to be able to upload to the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying upload files to a non compatible folder</translatorcomment>

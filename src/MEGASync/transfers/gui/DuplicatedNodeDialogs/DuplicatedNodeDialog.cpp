@@ -375,11 +375,21 @@ bool DuplicatedNodeDialog::eventFilter(QObject* watched, QEvent* event)
 
 void DuplicatedNodeDialog::resizeEvent(QResizeEvent *)
 {
-    if(auto screen = QGuiApplication::screenAt(this->pos()))
+    QRect targetGeo;
+    if (QWidget* parent = parentWidget())
     {
-        QRect rect = screen->geometry();
+        // Keep centered on the parent window as the dialog grows
+        targetGeo = parent->window()->frameGeometry();
+    }
+    else if (auto screen = QGuiApplication::screenAt(this->pos()))
+    {
+        targetGeo = screen->geometry();
+    }
+
+    if (targetGeo.isValid())
+    {
         QRect geo = geometry();
-        geo.moveCenter(rect.center());
+        geo.moveCenter(targetGeo.center());
         move(geo.topLeft());
     }
 }
@@ -396,4 +406,43 @@ bool DuplicatedNodeDialog::event(QEvent *event)
     }
 
     return QDialog::event(event);
+}
+
+void DuplicatedNodeDialog::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+
+        // The dialog's visible strings (header, option titles/buttons, descriptions and
+        // "Learn more") are set programmatically, so retranslateUi() alone is not enough:
+        // the content has to be rebuilt. Defer it to the next event loop, because deleting
+        // the item widgets while the LanguageChange event is still being delivered to them
+        // would be unsafe.
+        QTimer::singleShot(0,
+                           this,
+                           [this]()
+                           {
+                               retranslateContent();
+                           });
+    }
+
+    QDialog::changeEvent(event);
+}
+
+void DuplicatedNodeDialog::retranslateContent()
+{
+    if (mConflictsBeingProcessed.isEmpty())
+    {
+        return;
+    }
+
+    const bool showingFile = (mChecker == mConflicts->mFileCheck);
+    setDialogTitle(showingFile ? tr("File already exists") : tr("Folder already exists"));
+    setConflictItems(mConflictsBeingProcessed.size());
+
+    // Rebuild the current conflict so its programmatically set strings are produced with the
+    // freshly installed translations.
+    cleanUi();
+    processConflict(mConflictsBeingProcessed.first());
 }

@@ -12,6 +12,11 @@
 
 using namespace mega;
 
+// Coalescing window for the search re-sort on searchPathItemsAdded bursts. Keep in sync
+// with VIEW_REFRESH_DEBOUNCE_MS (NodeSelectorTreeViewWidget.cpp): both coalesce the two
+// halves of the same node-update storm.
+const int SEARCH_PATH_ITEMS_RESORT_DEBOUNCE_MS = 100;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 NodeSelectorModelCloudDrive::NodeSelectorModelCloudDrive(QObject* parent):
     NodeSelectorModel(parent)
@@ -151,10 +156,15 @@ bool NodeSelectorModelIncomingShares::rootNodeUpdated(mega::MegaNode* node)
             {
                 if (mNodeRequesterWorker->isIncomingShareCompatible(node))
                 {
-                    updateRow(folderIndex);
+                    // A permission change must reach the item: updateItemNode re-primes the
+                    // cached access and propagates it to the child subtree (updateRow alone
+                    // repaints with the stale cached value).
+                    updateItemNode(folderIndex, std::shared_ptr<mega::MegaNode>(node->copy()));
+                    emit incomingShareInfoChanged(node->getHandle());
                 }
                 else
                 {
+                    emit rootNodeAboutToBeRemoved(folderIndex);
                     beginRemoveRowsAsync(node->getHandle());
                     return true;
                 }
@@ -170,6 +180,7 @@ bool NodeSelectorModelIncomingShares::rootNodeUpdated(mega::MegaNode* node)
             auto index = findIndexByNodeHandle(node->getHandle(), QModelIndex());
             if (index.isValid())
             {
+                emit rootNodeAboutToBeRemoved(index);
                 beginRemoveRowsAsync(node->getHandle());
                 return true;
             }
@@ -179,6 +190,11 @@ bool NodeSelectorModelIncomingShares::rootNodeUpdated(mega::MegaNode* node)
         if (folderIndex.isValid())
         {
             updateItemNode(folderIndex, std::shared_ptr<mega::MegaNode>(node->copy()));
+            // updateItemNode refreshes the list row via dataChanged, but the navigation
+            // breadcrumb and the incoming-share header resolve the share name from the current
+            // root / its parent share and are not driven by dataChanged. Reuse the share-info
+            // signal so both refresh when the renamed share is the current root or an ancestor.
+            emit incomingShareInfoChanged(node->getHandle());
             return true;
         }
     }
@@ -192,35 +208,52 @@ bool NodeSelectorModelIncomingShares::canDropMimeData(const QMimeData* data,
                                                       int column,
                                                       const QModelIndex& parent) const
 {
-    if (action == Qt::CopyAction || action == Qt::MoveAction)
+    if (action != Qt::CopyAction && action != Qt::MoveAction)
     {
-        if (parent.isValid())
-        {
-            auto item = getItemByIndex(parent);
-            if (item)
-            {
-                auto node = item->getNode();
-                if (node && node->isFolder())
-                {
-                    auto access = Utilities::getNodeAccess(node->getHandle());
-                    if (access >= MegaShare::ACCESS_READWRITE)
-                    {
-                        if (action == Qt::CopyAction)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            auto dropIndex(index(row, column));
-                            return checkDraggedMimeData(data, dropIndex);
-                        }
-                    }
-                }
-            }
-        }
+        return false;
     }
 
-    return false;
+    // The drop target is the hovered folder itself (the view passes its row/col/parent),
+    // including top-level shares whose parent is the invalid root.
+    auto dropIndex(index(row, column, parent));
+
+    // The paste path (canPasteNodes -> canDropMimeData with row/col = -1) passes the target
+    // folder directly as 'parent', so index(row, column, parent) is invalid. Fall back to
+    // 'parent', which is the actual drop target in that case.
+    if (!dropIndex.isValid())
+    {
+        dropIndex = parent;
+    }
+
+    auto item = getItemByIndex(dropIndex);
+    if (!item)
+    {
+        return false;
+    }
+
+    auto node = item->getNode();
+    if (!node)
+    {
+        return false;
+    }
+
+    // When the hovered item is a file, the real drop target is its parent folder
+    // (the move is resolved to the parent in startProcessingNodes). Resolve to the
+    // parent here too so dropping onto a file is accepted, as it was before.
+    if (!node->isFolder())
+    {
+        dropIndex = dropIndex.parent();
+        item = getItemByIndex(dropIndex);
+        node = item ? item->getNode() : nullptr;
+    }
+
+    if (!node || !node->isFolder() ||
+        Utilities::getNodeAccess(node->getHandle()) < MegaShare::ACCESS_READWRITE)
+    {
+        return false;
+    }
+
+    return action == Qt::CopyAction ? true : checkDraggedMimeData(data, dropIndex);
 }
 
 QModelIndex NodeSelectorModelIncomingShares::getTopRootIndex() const
@@ -407,6 +440,25 @@ void NodeSelectorModelBackups::onDeviceNamesUpdated()
         emit dataChanged(index(0, NodeSelectorModel::Column::NODE, rootIndex),
                          index(rowcount - 1, NodeSelectorModel::Column::NODE, rootIndex),
                          {Qt::DisplayRole});
+
+        QList<mega::MegaHandle> deviceHandles;
+        deviceHandles.reserve(rowcount);
+        for (int row = 0; row < rowcount; ++row)
+        {
+            const auto deviceIndex = index(row, NodeSelectorModel::Column::NODE, rootIndex);
+            if (auto* item = getItemByIndex(deviceIndex))
+            {
+                if (auto node = item->getNode())
+                {
+                    deviceHandles.append(node->getHandle());
+                }
+            }
+        }
+
+        if (!deviceHandles.isEmpty())
+        {
+            emit nodesRenamed(deviceHandles);
+        }
     }
 }
 
@@ -467,12 +519,39 @@ void NodeSelectorModelBackups::onRootItemCreated()
     }
 }
 
-NodeSelectorModelSearch::NodeSelectorModelSearch(NodeSelectorModelItemSearch::Types allowedTypes,
+NodeSelectorModelSearch::NodeSelectorModelSearch(TabTypes allowedTabTypes,
+                                                 bool flattenResults,
                                                  QObject* parent):
     NodeSelectorModel(parent),
-    mAllowedTypes(allowedTypes)
+    mAllowedTabTypes(allowedTabTypes),
+    mFlattenSearchResults(flattenResults),
+    mDeviceNamesRequest(UserAttributes::DeviceNames::requestDeviceNames())
 {
-    qRegisterMetaType<NodeSelectorModelItemSearch::Types>("NodeSelectorModelItemSearch::Types");
+    qRegisterMetaType<TabTypes>("TabTypes");
+
+    // Deleting/moving nodes visible in the search tab re-adds their paths one node-update at
+    // a time: the worker emits searchPathItemsAdded per pass, and re-sorting on every
+    // emission runs one full concurrent sort (with its blockUi/detach/reattach cycle) per
+    // node. Coalesce each burst into a single re-sort at the end of the window.
+    mSearchPathItemsAddedDebounce.setSingleShot(true);
+    mSearchPathItemsAddedDebounce.setInterval(SEARCH_PATH_ITEMS_RESORT_DEBOUNCE_MS);
+    connect(&mSearchPathItemsAddedDebounce,
+            &QTimer::timeout,
+            this,
+            [this]()
+            {
+                // A structural change is open (the blocking begin was delivered but the
+                // queued end is still pending) or the model is mid-reset: emitting now
+                // would launch the concurrent sort against a mapping that is being
+                // rebuilt. Retry once the model is idle.
+                if (isBeingModified())
+                {
+                    mSearchPathItemsAddedDebounce.start();
+                    return;
+                }
+
+                emit levelsAdded({}, false);
+            });
 }
 
 void NodeSelectorModelSearch::firstLoad()
@@ -485,6 +564,15 @@ void NodeSelectorModelSearch::firstLoad()
             &NodeSelectorModelSearch::requestAddSearchRootItem,
             mNodeRequesterWorker,
             &NodeRequester::addSearchRootItem);
+    connect(this,
+            &NodeSelectorModelSearch::requestAddSearchPathItems,
+            mNodeRequesterWorker,
+            &NodeRequester::addSearchPathItems);
+    connect(mNodeRequesterWorker,
+            &NodeRequester::searchPathItemsAdded,
+            this,
+            &NodeSelectorModelSearch::onSearchPathItemsAdded,
+            Qt::QueuedConnection);
     connect(mNodeRequesterWorker,
             &NodeRequester::searchItemsCreated,
             this,
@@ -500,14 +588,35 @@ void NodeSelectorModelSearch::createRootNodes()
 
 void NodeSelectorModelSearch::searchByText(const QString& text)
 {
+    // A deferred re-sort scheduled by the previous results must never fire against the
+    // new search's model generation.
+    mSearchPathItemsAddedDebounce.stop();
     mNodeRequesterWorker->restartSearch();
+    mLastSearchText = text;
+    mSearchInFlight = true;
     addRootItems();
-    emit searchNodes(text, mAllowedTypes);
+    emit searchNodes(text, mAllowedTabTypes, mFlattenSearchResults);
 }
 
 void NodeSelectorModelSearch::stopSearch()
 {
+    mSearchPathItemsAddedDebounce.stop();
     mNodeRequesterWorker->restartSearch();
+
+    // A canceled search never reports back (the worker skips searchItemsCreated), so the
+    // reset opened by addRootItems() and the UI block would stay pending forever. Close
+    // both here so the header is re-enabled when the search is dismissed mid-flight.
+    if (mSearchInFlight)
+    {
+        mSearchInFlight = false;
+        rootItemsLoaded();
+        sendBlockUiSignal(false);
+    }
+}
+
+void NodeSelectorModelSearch::setAllowedTabTypes(TabTypes allowedTypes)
+{
+    mAllowedTabTypes = allowedTypes;
 }
 
 int NodeSelectorModelSearch::rootItemsCount() const
@@ -535,11 +644,40 @@ QVariant NodeSelectorModelSearch::data(const QModelIndex& index, int role) const
     return NodeSelectorModel::data(index, role);
 }
 
+QVariant NodeSelectorModelSearch::getDisplayText(NodeSelectorModelItem* item) const
+{
+    if (item->isMyBackupsFolder())
+    {
+        return MegaNodeNames::getBackupsName();
+    }
+    if (item->isDeviceFolder())
+    {
+        const auto deviceId = QString::fromUtf8(item->getNode()->getDeviceId());
+        const auto deviceName = mDeviceNamesRequest->getDeviceName(deviceId);
+        if (!deviceName.isEmpty())
+        {
+            return deviceName;
+        }
+    }
+
+    return NodeSelectorModel::getDisplayText(item);
+}
+
 bool NodeSelectorModelSearch::addNodes(QList<std::shared_ptr<mega::MegaNode>> nodes,
                                        const QModelIndex& parent)
 {
-    Q_UNUSED(parent)
-    emit requestAddSearchRootItem(nodes, mAllowedTypes);
+    if (mFlattenSearchResults)
+    {
+        emit requestAddSearchRootItem(nodes, mAllowedTabTypes);
+        return true;
+    }
+
+    if (parent.isValid())
+    {
+        return NodeSelectorModel::addNodes(nodes, parent);
+    }
+
+    emit requestAddSearchPathItems(nodes, mAllowedTabTypes);
     return true;
 }
 
@@ -555,11 +693,13 @@ bool NodeSelectorModelSearch::rootNodeUpdated(mega::MegaNode* node)
                 QList<std::shared_ptr<mega::MegaNode>> nodes;
                 emit requestAddSearchRootItem(nodes
                                                   << std::shared_ptr<mega::MegaNode>(node->copy()),
-                                              mAllowedTypes);
+                                              mAllowedTabTypes);
             }
             else
             {
-                updateRow(index);
+                // See NodeSelectorModelIncomingShares::rootNodeUpdated: the item (and its
+                // subtree) must receive the permission change, not just repaint.
+                updateItemNode(index, std::shared_ptr<mega::MegaNode>(node->copy()));
             }
         }
 
@@ -567,10 +707,10 @@ bool NodeSelectorModelSearch::rootNodeUpdated(mega::MegaNode* node)
     }
     else if (node->getChanges() & (MegaNode::CHANGE_TYPE_PARENT))
     {
-        auto index = findIndexByNodeHandle(node->getHandle(), QModelIndex());
-        if (index.isValid())
+        auto indexToChangeParent = findIndexByNodeHandle(node->getHandle(), QModelIndex());
+        if (indexToChangeParent.isValid())
         {
-            auto item = getItemByIndex(index);
+            auto item = getItemByIndex(indexToChangeParent);
             if (auto searchItem = dynamic_cast<NodeSelectorModelItemSearch*>(item))
             {
                 auto newType(calculateSearchType(node));
@@ -579,13 +719,53 @@ bool NodeSelectorModelSearch::rootNodeUpdated(mega::MegaNode* node)
                 if (newType != oldType)
                 {
                     searchItem->setType(newType);
-                    updateRow(index);
+                    updateRow(indexToChangeParent);
                     emit nodeTypeHasChanged();
                     if (isMovingNodes())
                     {
                         // The loading view is set, so reduce by one the processed move
                         moveProcessedByNumber(1);
                     }
+
+                    // Remove parents if needed
+                    if (!mFlattenSearchResults)
+                    {
+                        // Collect search-matching descendants BEFORE removing the subtree
+                        QList<std::shared_ptr<mega::MegaNode>> nodesToReadd;
+                        collectSearchMatchesInSubtree(indexToChangeParent, nodesToReadd);
+
+                        if (matchesCurrentSearch(node))
+                        {
+                            nodesToReadd.prepend(std::shared_ptr<mega::MegaNode>(node->copy()));
+                        }
+
+                        QList<mega::MegaHandle> handlesToRemove;
+                        handlesToRemove.append(node->getHandle());
+
+                        auto ancestorIndex = indexToChangeParent.parent();
+                        while (ancestorIndex.isValid())
+                        {
+                            auto ancestorItem = getItemByIndex(ancestorIndex);
+                            if (!ancestorItem || ancestorItem->getNumChildren() != 1 ||
+                                matchesCurrentSearch(ancestorItem->getNode().get()))
+                            {
+                                break;
+                            }
+                            handlesToRemove.append(ancestorItem->getNode()->getHandle());
+                            ancestorIndex = ancestorIndex.parent();
+                        }
+
+                        foreach(auto handle, handlesToRemove)
+                        {
+                            beginRemoveRowsAsync(handle);
+                        }
+
+                        if (!nodesToReadd.isEmpty())
+                        {
+                            emit requestAddSearchPathItems(nodesToReadd, mAllowedTabTypes);
+                        }
+                    }
+
                     return true;
                 }
             }
@@ -635,50 +815,95 @@ void NodeSelectorModelSearch::proxyInvalidateFinished()
     mNodeRequesterWorker->lockSearchMutex(false);
 }
 
-bool NodeSelectorModelSearch::showAccess(mega::MegaNode* node) const
-{
-    if (node->isInShare())
-    {
-        return true;
-    }
-    auto access = Utilities::getNodeAccess(node);
-    return access < mega::MegaShare::ACCESS_OWNER && access > mega::MegaShare::ACCESS_UNKNOWN;
-}
-
 void NodeSelectorModelSearch::onRootItemsCreated()
 {
+    // Results from a search stopped after the worker had already finished: the pending
+    // reset was closed in stopSearch(), so discard them instead of double-ending it.
+    if (!mSearchInFlight)
+    {
+        return;
+    }
+
     if (mNodeRequesterWorker->trySearchLock())
     {
+        mSearchInFlight = false;
         rootItemsLoaded();
         emit levelsAdded(mIndexesToBeExpanded, true);
     }
 }
 
-const NodeSelectorModelItemSearch::Types& NodeSelectorModelSearch::searchedTypes() const
+void NodeSelectorModelSearch::onSearchPathItemsAdded()
+{
+    if (!mSearchPathItemsAddedDebounce.isActive())
+    {
+        mSearchPathItemsAddedDebounce.start();
+    }
+}
+
+bool NodeSelectorModelSearch::matchesCurrentSearch(mega::MegaNode* node) const
+{
+    if (!node || mLastSearchText.isEmpty())
+    {
+        return false;
+    }
+    return QString::fromUtf8(node->getName()).contains(mLastSearchText, Qt::CaseInsensitive);
+}
+
+void NodeSelectorModelSearch::collectSearchMatchesInSubtree(
+    const QModelIndex& parent,
+    QList<std::shared_ptr<mega::MegaNode>>& matches) const
+{
+    const auto rows = rowCount(parent);
+    for (int i = 0; i < rows; ++i)
+    {
+        const auto childIndex = index(i, 0, parent);
+        if (!childIndex.isValid())
+        {
+            continue;
+        }
+        auto childItem = getItemByIndex(childIndex);
+        if (!childItem)
+        {
+            continue;
+        }
+        auto childNode = childItem->getNode();
+        if (childNode && matchesCurrentSearch(childNode.get()))
+        {
+            matches.append(std::shared_ptr<mega::MegaNode>(childNode->copy()));
+        }
+        collectSearchMatchesInSubtree(childIndex, matches);
+    }
+}
+
+const TabTypes& NodeSelectorModelSearch::searchedTypes() const
 {
     return mNodeRequesterWorker->searchedTypes();
 }
 
-NodeSelectorModelItemSearch::Types
-    NodeSelectorModelSearch::calculateSearchType(mega::MegaNode* node)
+int NodeSelectorModelSearch::searchResultCount() const
 {
-    NodeSelectorModelItemSearch::Types type;
+    return mNodeRequesterWorker->lastSearchResultCount();
+}
+
+TabTypes NodeSelectorModelSearch::calculateSearchType(mega::MegaNode* node)
+{
+    TabTypes type;
 
     if (MegaSyncApp->getMegaApi()->isInCloud(node))
     {
-        type = NodeSelectorModelItemSearch::Type::CLOUD_DRIVE;
+        type = TabType::CLOUD_DRIVE;
     }
     else if (MegaSyncApp->getMegaApi()->isInVault(node))
     {
-        type = NodeSelectorModelItemSearch::Type::BACKUP;
+        type = TabType::BACKUP;
     }
     else if (MegaSyncApp->getMegaApi()->isInRubbish(node))
     {
-        type = NodeSelectorModelItemSearch::Type::RUBBISH;
+        type = TabType::RUBBISH;
     }
     else
     {
-        type = NodeSelectorModelItemSearch::Type::INCOMING_SHARE;
+        type = TabType::INCOMING_SHARE;
     }
 
     return type;

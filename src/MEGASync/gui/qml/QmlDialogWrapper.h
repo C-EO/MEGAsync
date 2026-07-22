@@ -181,8 +181,8 @@ public:
             const auto parentGeometry = parent->geometry();
 
             // Set on QmlDialog to use for showWhenCreatedQMLs
-            QmlDialogWrapperUtilities::setParentGeometry(mWindow, parentGeometry);
-            QmlDialogWrapperUtilities::setParentGeometry(this, parentGeometry);
+            DialogOpener::setParentGeometry(mWindow, parentGeometry);
+            DialogOpener::setParentGeometry(this, parentGeometry);
         }
     }
 
@@ -228,6 +228,41 @@ public:
         {
             QQmlContext* context = new QQmlContext(engine->rootContext(), this);
             QmlManager::instance()->setRootContextProperty(mWrapper);
+
+            // SNC-6567 (Phases 1+4): Bind this dialog's wrapper and the data
+            // instances it declares to the CHILD QQmlContext BEFORE the QML
+            // tree is built. This is the only delivery channel for per-dialog
+            // data into QML now that QmlInstancesManager has been removed
+            // (Phase 4). The first binding evaluation inside
+            // qmlComponent.create() sees real (non-null) values for the
+            // identifiers QML uses to reach the C++ side.
+            //
+            // Child-context properties also give correct per-dialog isolation
+            // when multiple QML dialogs are open simultaneously — unlike
+            // setRootContextProperty() (kept above for some legacy globals)
+            // which writes to the engine's shared root context.
+            {
+                auto qmlManager = QmlManager::instance();
+                const QString wrapperName = qmlManager->getObjectRootContextName(mWrapper.data());
+                if (!wrapperName.isEmpty())
+                {
+                    context->setContextProperty(wrapperName, mWrapper.data());
+                }
+                const QList<QObject*> instances = mWrapper->getInstancesFromContext();
+                for (QObject* instance: instances)
+                {
+                    if (!instance)
+                    {
+                        continue;
+                    }
+                    const QString instanceName = qmlManager->getObjectRootContextName(instance);
+                    if (!instanceName.isEmpty())
+                    {
+                        context->setContextProperty(instanceName, instance);
+                    }
+                }
+            }
+
             mWindow = dynamic_cast<QmlDialog*>(qmlComponent.create(context));
             Q_ASSERT(mWindow);
 
@@ -267,17 +302,21 @@ public:
                 }
 
                 mWrapper->setParent(mWindow);
-                mWindow->getInstancesManager()->initInstances(mWrapper);
+
+                // SNC-6567 (Phase 4): The previous call to
+                //     mWindow->getInstancesManager()->initInstances(mWrapper);
+                // has been removed. The QmlInstancesManager class no longer
+                // exists — data delivery to QML happens via the child
+                // QQmlContext properties registered above (Phase 1) BEFORE
+                // qmlComponent.create() runs. Bindings see real values on the
+                // first evaluation.
 
                 if (parent)
                 {
-                    const auto parentGeometry = parent->frameGeometry();
                     // Set on QmlDialog to use for showWhenCreatedQMLs
-                    QmlDialogWrapperUtilities::setParentGeometry(mWindow, parentGeometry);
-                    QmlDialogWrapperUtilities::setParentGeometry(this, parentGeometry);
+                    DialogOpener::setVisualParent(mWindow, parent);
+                    DialogOpener::setVisualParent(this, parent);
                 }
-
-                QmlDialogWrapperUtilities::setIsQML(this);
             }
 
             connect(mWindow, &QmlDialog::finished, this, [this]()
@@ -350,7 +389,10 @@ public:
                     mWindow->readyToBeShow();
                 });
 
-        QmlDialogWrapperUtilities::setShowWhenCreated(mWindow, true);
+        // DialogOpener checks this flag on the wrapper widget (the object it
+        // handles), so it is set on the wrapper only; nothing reads it on the
+        // inner window.
+        QmlDialogWrapperUtilities::setShowWhenCreated(this, true);
     }
 
 private:

@@ -1,5 +1,6 @@
 #include "QmlDialogWrapper.h"
 
+#include "Platform.h"
 #include "QmlDialogWrapperUtilities.h"
 
 #include <QQmlProperty>
@@ -106,7 +107,18 @@ void QmlDialogWrapperBase::setWindowState(Qt::WindowState state)
         }
         case Qt::WindowState::WindowActive:
         {
-            mWindow->requestActivate();
+            // Qt5-ONLY Wayland branch: a client cannot activate itself (the call
+            // can crash), so request attention via alert() instead.
+            // TODO Qt6: call requestActivate() unconditionally — Qt6 activates
+            // via xdg-activation without crashing.
+            if (Platform::getInstance()->isWayland())
+            {
+                mWindow->alert(0);
+            }
+            else
+            {
+                mWindow->requestActivate();
+            }
             break;
         }
         default:
@@ -189,7 +201,18 @@ void QmlDialogWrapperBase::showSync()
 
 void QmlDialogWrapperBase::activateWindow()
 {
-   mWindow->requestActivate();
+    // Qt5-ONLY Wayland branch: a client cannot activate itself (the call can
+    // crash), so request attention via alert() instead.
+    // TODO Qt6: call requestActivate() unconditionally — Qt6 activates via
+    // xdg-activation without crashing.
+    if (Platform::getInstance()->isWayland())
+    {
+        mWindow->alert(0);
+    }
+    else
+    {
+        mWindow->requestActivate();
+    }
 }
 
 QWindow* QmlDialogWrapperBase::windowHandle()

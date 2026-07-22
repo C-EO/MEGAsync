@@ -84,6 +84,7 @@ QtObject {
 	readonly property color surface3: "#3A3B3D"
 	readonly property color surfaceInverseAccent: "#BDC0C4"
 	readonly property color surfaceTransparent: "#B3000000"
+	readonly property color surfaceTransparentSubtle: "#CC000000"
 	readonly property color textAccent: "#FAFAFB"
 	readonly property color textBrand: "#F23433"
 	readonly property color textDisabled: "#797C80"

@@ -94,6 +94,18 @@
 {
 	qproperty-icon: url(:/check-circle-indicator-green.svg);
 }
+
+/* message */
+
+#wContent[type=&quot;message&quot;]
+{
+	background-color: #F7F7F7; /*colorToken.surface-1*/
+}
+
+#wContent[type=&quot;message&quot;] #lIcon
+{
+	qproperty-icon: url(:/help-circle);
+}
 </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -303,14 +315,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>WordWrapLabel</class>
-   <extends>QLabel</extends>
-   <header>WordWrapLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>IconLabel</class>
    <extends>QToolButton</extends>
    <header>tokenizer/TokenizableItems/IconLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WordWrapLabel</class>
+   <extends>QLabel</extends>
+   <header>WordWrapLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

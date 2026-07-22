@@ -218,7 +218,7 @@
     <message>
         <source>Your payment for the [A] plan was unsuccessful</source>
         <translatorcomment>Label to indicate that the the payment for a [A] PRO plan has failed. Placeholder will be replaced by the PRO plan name</translatorcomment>
-        <translation>Não recebemos o pagamento do plano [A]</translation>
+        <translation>Não recebemos o pagamento do plano [A].</translation>
     </message>
     <message>
         <source>Your publicly shared file ([A]) has been reinstated</source>
@@ -599,9 +599,14 @@
         <translation>Informar sobre um problema</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>Não foi possível enviar a solicitação devido a um erro - tente novamente mais tarde. Se o problema persistir, entre em contato com o [A]Suporte[/A].</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
-        <translation>Não foi possível notificar o problema - tente novamente mais tarde. Se o problema persistir, entre em contato com a nossa equipe de suporte em [A]support@mega.io[/A].</translation>
+        <translation>Não foi possível notificar o problema - tente novamente mais tarde. Se o problema persistir, entre em contato com a nossa equipe de Suporte em [A]https://mega.nz/support[/A].</translation>
     </message>
     <message>
         <source>Bug report is uploading, it may take a few minutes</source>
@@ -654,9 +659,14 @@
         <translation>Proporcione uma descrição detalhada do problema, com pelo menos 30 caracteres.</translation>
     </message>
     <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>Tente novamente mais tarde. Se o problema persistir, entre em contato com o [A]Suporte[/A].</translation>
+    </message>
+    <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
         <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
-        <translation>Se o problema persistir, tente novamente mais tarde ou entre em contato com a nossa equipe de suporte em [A]support@mega.io[/A]. </translation>
+        <translation>Se o problema persistir, tente novamente mais tarde ou entre em contato com a nossa equipe de suporte em [A]https://mega.nz/support[/A].</translation>
     </message>
     <message>
         <source>Please wait until the current upload is completed.</source>
@@ -1364,6 +1374,19 @@
     </message>
 </context>
 <context>
+    <name>DestinationBreadcrumb</name>
+    <message>
+        <source>Always upload to this destination</source>
+        <translatorcomment>Checkbox label in the node selector destination breadcrumb to set the current folder as the default upload destination. SNC-6420</translatorcomment>
+        <translation>Sempre fazer o upload neste destino</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translatorcomment>Label/title of the destination breadcrumb in the node selector, showing the folder files will be uploaded to. SNC-6420</translatorcomment>
+        <translation>Destino</translation>
+    </message>
+</context>
+<context>
     <name>DownloadFromMegaDialog</name>
     <message>
         <source>Always download to this destination</source>
@@ -1431,8 +1454,8 @@
         <translatorcomment>Error message shown while the user is trying to download an file or folder but some of the selected nodes were removed. 
         First part of string for multi plural support. Full string looks like: 5 items selected. 2 have been removed. To reselect, close this window and try again. </translatorcomment>
         <translation>
-            <numerusform>%1 item selecionado</numerusform>
-            <numerusform>%1 itens selecionados</numerusform>
+            <numerusform>%1 item selecionado.</numerusform>
+            <numerusform>%1 itens selecionados.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -1538,6 +1561,11 @@
         <source>The folder at this destination will be maintained.</source>
         <translatorcomment>Text explaining the result of the folder skip action</translatorcomment>
         <translation>A pasta neste destino será mantida.</translation>
+    </message>
+    <message>
+        <source>The folder will be renamed as:</source>
+        <translatorcomment>Text explaining the result of the folder rename action. SNC-6420</translatorcomment>
+        <translation>A pasta será renomeada como:</translation>
     </message>
     <message>
         <source>The new folder will be merged with the folder at this destination.</source>
@@ -2025,6 +2053,37 @@
         <source>Can´t sync [B]%1[/B]</source>
         <translatorcomment>Title for the header widget of sync stall shown when there&apos;s an issue with a file or folder which requires user&apos;s intervention, [B] is for bold.SNC-2565</translatorcomment>
         <translation>Não foi possível sincronizar [B]%1[/B]</translation>
+    </message>
+</context>
+<context>
+    <name>FileManagerNodeSelector</name>
+    <message numerus="yes">
+        <source>%n result</source>
+        <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
+        <translation>
+            <numerusform>%n resultado</numerusform>
+            <numerusform>%n resultados</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
+        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Todos os itens serão permanentemente deletados. Esta ação [B]não pode[/B] ser desfeita.</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Esvaziar</translation>
+    </message>
+    <message>
+        <source>Empty Rubbish bin?</source>
+        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Esvaziar a Lixeira?</translation>
     </message>
 </context>
 <context>
@@ -2530,16 +2589,16 @@ Acesse o seu email para saber como desbloquear a sua conta e obter informações
         <source>You have %n day left to upgrade. After that, your data is subject to deletion.</source>
         <translatorcomment>Label to inform about the deadline time to upgrade. Otherwise, data is subject to deletion. %n- number of days left to upgrade.</translatorcomment>
         <translation>
-            <numerusform>Você tem %n dia para fazer o upgrade ou seus arquivos serão deletados.</numerusform>
-            <numerusform>Você tem %n dias para fazer o upgrade ou seus arquivos serão deletados.</numerusform>
+            <numerusform>Você tem %n dia para fazer o upgrade ou seus arquivos serão deletados</numerusform>
+            <numerusform>Você tem %n dias para fazer o upgrade ou seus arquivos serão deletados</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>You have %n hour left to upgrade. After that, your data is subject to deletion.</source>
         <translatorcomment>Label to inform about the deadline time to upgrade. Otherwise, data is subject to deletion. Placeholder info: %n- number of hours left to upgrade.</translatorcomment>
         <translation>
-            <numerusform>Você tem %n hora para fazer o upgrade ou seus arquivos serão deletados.</numerusform>
-            <numerusform>Você tem %n horas para fazer o upgrade ou seus arquivos serão deletados.</numerusform>
+            <numerusform>Você tem %n hora para fazer o upgrade ou seus arquivos serão deletados</numerusform>
+            <numerusform>Você tem %n horas para fazer o upgrade ou seus arquivos serão deletados</numerusform>
         </translation>
     </message>
     <message>
@@ -3111,9 +3170,14 @@ Espere que o upload seja finalizado.</translation>
         <translation>Você foi desconectado deste dispositivo a partir de outro local</translation>
     </message>
     <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>Você foi desconectado. Entre em contato com o [A]Suporte[/A] se o problema persistir.</translation>
+    </message>
+    <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
         <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. CON-541</translatorcomment>
-        <translation>Você foi desconectado. Se o problema persistir, entre em contato com [A]support@mega.io[/A].</translation>
+        <translation>Você foi desconectado. Se o problema persistir, entre em contato com o Suporte em [A]https://mega.nz/support[/A].</translation>
     </message>
 </context>
 <context>
@@ -3182,6 +3246,11 @@ Espere que o upload seja finalizado.</translation>
         <translation>Uma atualização será aplicada na próxima reinicialização</translation>
     </message>
     <message>
+        <source>Cancel</source>
+        <translatorcomment>Label for cancel button. SNC-6678</translatorcomment>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
         <source>Checking for updates...</source>
         <translatorcomment>Notification message launched when the user wants to check if there are any available update at the moment.</translatorcomment>
         <translation>Procurando atualizações…</translation>
@@ -3205,6 +3274,14 @@ Espere que o upload seja finalizado.</translation>
         <source>Dismiss</source>
         <translatorcomment>Button text to discard a notification or message box</translatorcomment>
         <translation>Fechar</translation>
+    </message>
+    <message numerus="yes">
+        <source>Do you want to upload %n file to MEGA?</source>
+        <translatorcomment>Label to ask for confirmation about a file(s) to be uploade to your account. SNC-6678</translatorcomment>
+        <translation>
+            <numerusform>Você quer fazer upload de %n arquivo para o MEGA?</numerusform>
+            <numerusform>Você quer fazer upload de %n arquivos para o MEGA?</numerusform>
+        </translation>
     </message>
     <message>
         <source>Don’t show me again</source>
@@ -3542,6 +3619,11 @@ https://mega.co.nz/#sync</source>
         <source>Upload</source>
         <translatorcomment>Label for the menu item that opens the dialog to upload files to MEGA</translatorcomment>
         <translation>Fazer upload</translation>
+    </message>
+    <message>
+        <source>Upload to MEGA</source>
+        <translatorcomment>Title shown at dialog when the user is trying to upload a file to MEGA from Finder explorer context menu option.SNC-6678.</translatorcomment>
+        <translation>Fazer upload no MEGA</translation>
     </message>
     <message>
         <source>Waiting</source>
@@ -4205,7 +4287,7 @@ Você não poderá recuperar o acesso aos seus dados armazenados, nem estará au
     <message>
         <source>All your selected transfers will be cancelled.</source>
         <translatorcomment>Messagebox text to confirm if the user wants to cancel all the selected transfers</translatorcomment>
-        <translation>As transferências selecionadas serão canceladas.</translation>
+        <translation>As transferências selecionadas serão canceladas</translation>
     </message>
     <message>
         <source>All your transfers in this category will be cancelled and cleared.</source>
@@ -4590,19 +4672,19 @@ Atualize a visualização.</translation>
         <source>These files contain multiple names on one side, that would all become the same single name on the other side.
 This may be due to syncing to case insensitive local filesystems, or the effects of escaped characters.</source>
         <translatorcomment>Title description for the header widget in a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Há vários itens com o mesmo nome em um lado da sincronização que se converteriam no mesmo item no outro lado da sincronização.</translation>
+        <translation>Há vários itens com o mesmo nome em um lado da sincronização que se converteriam no mesmo item no outro lado da sincronização</translation>
     </message>
     <message>
         <source>These folders contain multiple names on one side, that would all become the same single name on the other side.
 This may be due to syncing to case insensitive local filesystems, or the effects of escaped characters.</source>
         <translatorcomment>Title description for the header widget in a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Há vários itens com o mesmo nome em um lado da sincronização que se converteriam no mesmo item no outro lado da sincronização.</translation>
+        <translation>Há vários itens com o mesmo nome em um lado da sincronização que se converteriam no mesmo item no outro lado da sincronização</translation>
     </message>
     <message>
         <source>These items contain multiple names on one side, that would all become the same single name on the other side.
 This may be due to syncing to case insensitive local filesystems, or the effects of escaped characters.</source>
         <translatorcomment>Title description for the header widget in a name conflict sync stall.SNC-2565</translatorcomment>
-        <translation>Há vários itens com o mesmo nome em um lado da sincronização que se converteriam no mesmo item no outro lado da sincronização.</translation>
+        <translation>Há vários itens com o mesmo nome em um lado da sincronização que se converteriam no mesmo item no outro lado da sincronização</translation>
     </message>
     <message>
         <source>This action will delete the duplicate files and rename the remaining items in case of name conflict (adding a suffix like (1)).</source>
@@ -4671,8 +4753,7 @@ Digite um nome diferente.</translation>
 Enter a different name</source>
         <translatorcomment>Message shown when the user has entered a name which already exists on the folder</translatorcomment>
         <translation>Já existe uma pasta com este nome neste local.
-Digite um nome diferente.
-&#xa0;</translation>
+Digite um nome diferente.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -4703,6 +4784,11 @@ Digite um nome diferente.
         <translation>Pesquisar</translation>
     </message>
     <message>
+        <source>Searching…</source>
+        <translatorcomment>Loading text shown in the node selector while a search for nodes is in progress. SNC-6420</translatorcomment>
+        <translation>Pesquisando…</translation>
+    </message>
+    <message>
         <source>Select a MEGA folder</source>
         <translatorcomment>Node selector dialog title</translatorcomment>
         <translation>Selecione uma pasta no MEGA</translation>
@@ -4711,6 +4797,44 @@ Digite um nome diferente.
         <source>The item you selected has been removed. To reselect, close this window and try again.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>O item que você selecionou foi eliminado. Para selecionar outra vez, feche esta janela e tente novamente.</translation>
+    </message>
+</context>
+<context>
+    <name>NodeSelectorLabelColors</name>
+    <message>
+        <source>Blue</source>
+        <translatorcomment>Color name for the &quot;Blue&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Azul</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translatorcomment>Color name for the &quot;Green&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Verde</translation>
+    </message>
+    <message>
+        <source>Grey</source>
+        <translatorcomment>Color name for the &quot;Grey&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Cinza</translation>
+    </message>
+    <message>
+        <source>Orange</source>
+        <translatorcomment>Color name for the &quot;Orange&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Laranja</translation>
+    </message>
+    <message>
+        <source>Purple</source>
+        <translatorcomment>Color name for the &quot;Purple&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Roxa</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translatorcomment>Color name for the &quot;Red&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Vermelha</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translatorcomment>Color name for the &quot;Yellow&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Amarela</translation>
     </message>
 </context>
 <context>
@@ -4833,12 +4957,17 @@ Digite um nome diferente.
     <message>
         <source>Folder already synced</source>
         <translatorcomment>Tooltip text to notify the user that this folder is already synced.</translatorcomment>
-        <translation>Esta pasta já está sincronizada.</translation>
+        <translation>Esta pasta já está sincronizada</translation>
     </message>
     <message>
         <source>Folder contents already synced</source>
         <translatorcomment>Tooltip text to notify the user that some folder inside the folder that he is hovering with mouse is already synced.</translatorcomment>
-        <translation>O conteúdo desta pasta já está sincronizado.</translation>
+        <translation>O conteúdo desta pasta já está sincronizado</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translatorcomment>Column header for the node label in the node selector. SNC-6420</translatorcomment>
+        <translation>Etiqueta</translation>
     </message>
     <message>
         <source>Last modified</source>
@@ -4864,6 +4993,11 @@ Digite um nome diferente.
         <source>Sort by date added</source>
         <translatorcomment>Table header tooltip for Date added column. SNC.5804</translatorcomment>
         <translation>Ordenar por data de inclusão</translation>
+    </message>
+    <message>
+        <source>Sort by label</source>
+        <translatorcomment>Sort option to order nodes by their label in the node selector. SNC-6420</translatorcomment>
+        <translation>Ordenar por etiqueta</translation>
     </message>
     <message>
         <source>Sort by last modified date</source>
@@ -5067,6 +5201,11 @@ Digite um nome diferente.
 <context>
     <name>NodeSelectorTreeViewWidget</name>
     <message>
+        <source>Add backup</source>
+        <translatorcomment>Empty-state button in the node selector to start adding a backup. SNC-6420</translatorcomment>
+        <translation>Adicionar backup</translation>
+    </message>
+    <message>
         <source>Any shared files or folders will no longer be accessible to the people you shared them with. You can still access these items in the Rubbish bin, restore, and share them.</source>
         <translatorcomment>Informative text about the potential issues of removing the nodes. CON-334</translatorcomment>
         <translation>Os arquivos e pastas compartilhados já não estarão acessíveis às pessoas com as quais você tiver compartilhado. Você ainda pode acessar esses itens na Lixeira, restaurá-los e compartilhá-los.</translation>
@@ -5075,6 +5214,11 @@ Digite um nome diferente.
         <source>Cancel</source>
         <translatorcomment>Label for cancel button.</translatorcomment>
         <translation>Cancelar</translation>
+    </message>
+    <message>
+        <source>Create a folder to move your content here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
+        <translation>Crie uma pasta para mover o seu conteúdo aqui</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -5092,9 +5236,24 @@ Digite um nome diferente.
         <translation>Não mover</translation>
     </message>
     <message>
+        <source>Download</source>
+        <translatorcomment>Action button in the node selector to download the selected folder. SNC-6420</translatorcomment>
+        <translation>Fazer download</translation>
+    </message>
+    <message>
+        <source>Drag and drop your files here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to drag and drop files. SNC-6420</translatorcomment>
+        <translation>Arraste e solte os seus arquivos aqui</translation>
+    </message>
+    <message>
         <source>Empty Rubbish bin</source>
         <translatorcomment>Button text to empty the rubbish bin. SAT-426</translatorcomment>
         <translation>Esvaziar a Lixeira</translation>
+    </message>
+    <message>
+        <source>Empty folder</source>
+        <translatorcomment>Empty state label shown in the node selector view when the selected folder has no items. SNC-6420</translatorcomment>
+        <translation>Pasta vazia</translation>
     </message>
     <message>
         <source>Folder is empty</source>
@@ -5146,9 +5305,19 @@ Digite um nome diferente.
         <translation>Nova Pasta</translation>
     </message>
     <message>
+        <source>No folders in Cloud drive</source>
+        <translatorcomment>Empty-state message shown in the node selector when the Cloud drive has no folders. SNC-6420</translatorcomment>
+        <translation>Não há pastas na sua Nuvem de arquivos</translation>
+    </message>
+    <message>
         <source>No folders to select</source>
         <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>Não há pastas para selecionar</translation>
+    </message>
+    <message>
+        <source>Nothing in your private vault yet</source>
+        <translatorcomment>Empty-state message shown in the node selector when the private vault has no items yet. SNC-6420</translatorcomment>
+        <translation>Ainda não há nada no seu cofre privado</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -5159,6 +5328,31 @@ Digite um nome diferente.
         <source>Only folders can be synced</source>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>Somente é possível sincronizar pastas</translation>
+    </message>
+    <message>
+        <source>Sync</source>
+        <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
+        <translation>Sincronizar</translation>
+    </message>
+    <message>
+        <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
+        <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
+        <translation>Esta pasta está vazia. Mantenha os seus arquivos seguros com criptografia de conhecimento zero.</translation>
+    </message>
+    <message>
+        <source>This folder is read and write. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-and-write shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>Esta pasta tem permissão de leitura e escrita. Solicite acesso total para poder sincronizar</translation>
+    </message>
+    <message>
+        <source>This folder is read-only. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>Esta pasta tem permissão de somente leitura. Solicite acesso total para poder sincronizar</translation>
+    </message>
+    <message>
+        <source>Upload</source>
+        <translatorcomment>Action button in the node selector to upload to the selected folder. SNC-6420</translatorcomment>
+        <translation>Fazer upload</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -5209,6 +5403,11 @@ Digite um nome diferente.
 <context>
     <name>NodeSelectorTreeViewWidgetIncomingShares</name>
     <message>
+        <source>Folders shared with you will appear here</source>
+        <translatorcomment>Empty-state message in the node selector incoming shares view, shown when there are no shared folders. SNC-6420</translatorcomment>
+        <translation>As pastas compartilhadas com você aparecerão aqui</translation>
+    </message>
+    <message>
         <source>No incoming shares</source>
         <translatorcomment>Title message on the view when there are no items in the normal view. SNC-5804</translatorcomment>
         <translation>Não há pastas compartilhadas comigo</translation>
@@ -5227,6 +5426,11 @@ Digite um nome diferente.
 <context>
     <name>NodeSelectorTreeViewWidgetRubbish</name>
     <message>
+        <source>Rubbish bin is empty</source>
+        <translatorcomment>Empty-state message in the node selector rubbish bin view, shown when the rubbish bin has no items. SNC-6420</translatorcomment>
+        <translation>Lixeira vazia</translation>
+    </message>
+    <message>
         <source>The Rubbish bin is empty</source>
         <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
         <translation>Lixeira vazia</translation>
@@ -5243,9 +5447,19 @@ Digite um nome diferente.
         </translation>
     </message>
     <message>
+        <source>No results found</source>
+        <translatorcomment>Empty-state title in the node selector search view, shown when the search returns no matches. SNC-6420</translatorcomment>
+        <translation>Não há resultados</translation>
+    </message>
+    <message>
         <source>No search results</source>
         <translatorcomment>Message on the view when the search did not find any coincidence. SNC-5804</translatorcomment>
         <translation>Não há resultados</translation>
+    </message>
+    <message>
+        <source>Try a different name or check the spelling</source>
+        <translatorcomment>Empty-state hint in the node selector search view, suggesting the user refine their search. SNC-6420</translatorcomment>
+        <translation>Tente outro nome ou verifique a ortografia</translation>
     </message>
 </context>
 <context>
@@ -5531,7 +5745,7 @@ Digite um nome diferente.
     <message>
         <source>Backup to:</source>
         <translatorcomment>Text indicating where the selected folders are going to be backed up CON-468</translatorcomment>
-        <translation>Salvar backup em:</translation>
+        <translation>Salvar o backup em:</translation>
     </message>
     <message>
         <source>Backup: Confirm</source>
@@ -5826,7 +6040,7 @@ Digite um nome diferente.
     <message>
         <source>Selected folders will automatically back up to the cloud when the desktop app is running.</source>
         <translatorcomment>Descriptive text in backups CON-466</translatorcomment>
-        <translation>O backup das pastas selecionadas será feito automaticamente no MEGA com permissão de somente leitura quando o aplicativo para desktop estiver em execução. As alterações só podem ser feitas nos backups no seu dispositivo local.</translation>
+        <translation>O backup das pastas selecionadas será feito automaticamente no MEGA com permissão de somente leitura quando o aplicativo para desktop estiver em execução. As alterações só podem ser feitas nos backups no seu dispositivo local. </translation>
     </message>
     <message>
         <source>Selective sync</source>
@@ -6288,6 +6502,18 @@ Digite um nome diferente.
 - As janelas de diálogo mais claras e consistentes na nuvem de arquivos, sincronização, backup e configurações.
 - Correção de bugs e melhorias de desempenho.</translation>
     </message>
+    <message>
+        <source>- Revamped and improved File Manager.
+- Revamped Syncs and Backups tabs in the Settings dialog.
+- Improved Wayland support.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.5.0. SNC-6656</translatorcomment>
+        <translation>- Gerenciador de arquivos redesenhado e aprimorado.
+- Abas de Sincronização e Backup redesenhadas no diálogo de Configurações.
+- Suporte ao Wayland aprimorado.
+- Correção de bugs e melhorias de desempenho.</translation>
+    </message>
 </context>
 <context>
     <name>ProgressIndicatorDialog</name>
@@ -6678,7 +6904,7 @@ Você quer deletá-lo mesmo assim?</translation>
     <message>
         <source>Show </source>
         <translatorcomment>Contextual menu from file list headers that allow to enable or disable diferent columns (size, type, data modified)</translatorcomment>
-        <translation>Mostrar</translation>
+        <translation>Mostrar </translation>
     </message>
     <message>
         <source>Show &amp;hidden files</source>
@@ -6872,6 +7098,11 @@ Você quer deletá-lo mesmo assim?</translation>
         <translation>Alterar</translation>
     </message>
     <message>
+        <source>Delete folder from MEGA</source>
+        <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
+        <translation>Deletar a pasta do MEGA</translation>
+    </message>
+    <message>
         <source>Delete folder permanently</source>
         <translatorcomment>Radio button option text</translatorcomment>
         <translation>Deletar a pasta do MEGA</translation>
@@ -6887,9 +7118,19 @@ Você quer deletá-lo mesmo assim?</translation>
         <translation>Mover a pasta para a Nuvem de arquivos</translation>
     </message>
     <message>
+        <source>Move folder to Cloud drive</source>
+        <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
+        <translation>Mover a pasta para a Nuvem de arquivos</translation>
+    </message>
+    <message>
         <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
         <translatorcomment>Radio button description</translatorcomment>
         <translation>Mova essa pasta para a sua Nuvem de arquivos para obter acesso total aos seus dados. O backup já não será feito.</translation>
+    </message>
+    <message>
+        <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
+        <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
+        <translation>Mova esta pasta para a sua Nuvem de arquivos para obter acesso total aos seus dados. O backup já não será feito.</translation>
     </message>
     <message>
         <source>Move to:</source>
@@ -6907,9 +7148,19 @@ Você quer deletá-lo mesmo assim?</translation>
         <translation>Interromper o backup</translation>
     </message>
     <message>
+        <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
+        <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
+        <translation>A pasta será deletada do MEGA, mas não do seu dispositivo. [B]Esta ação não pode ser desfeita.[/B]</translation>
+    </message>
+    <message>
         <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
         <translatorcomment>Backup removal title description. SNC-6067</translatorcomment>
-        <translation>Para parar de fazer backup desta pasta, você precisa movê-la ou excluí-la</translation>
+        <translation>Para parar de fazer backup desta pasta, você precisa movê-la ou deletá-la</translation>
+    </message>
+    <message>
+        <source>To stop backing up this folder, you need to either move it or delete it</source>
+        <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
+        <translation>Para parar de fazer backup desta pasta, você precisa movê-la ou deletá-la</translation>
     </message>
 </context>
 <context>
@@ -7567,11 +7818,54 @@ Você quer deletá-lo mesmo assim?</translation>
     </message>
 </context>
 <context>
+    <name>SettingsQuickWidgetBase</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
+        <translation>Erro ao abrir o arquivo .megaignore</translation>
+    </message>
+</context>
+<context>
     <name>SettingsStrings</name>
+    <message>
+        <source>Add a backup to protect your folders automatically</source>
+        <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>Adicione um backup para proteger as suas pastas de forma automática</translation>
+    </message>
+    <message>
+        <source>Add a sync to keep folders up to date</source>
+        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
+        <translation>Mantenha as pastas atualizadas em todos os dispositivos</translation>
+    </message>
+    <message>
+        <source>Add backup</source>
+        <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
+        <translation>Adicionar backup</translation>
+    </message>
+    <message>
+        <source>Add sync</source>
+        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
+        <translation>Configurar sincronização</translation>
+    </message>
+    <message>
+        <source>Automatic sync issue resolution</source>
+        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>Resolver automaticamente os problemas de sincronização</translation>
+    </message>
     <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
         <translation>Disponível[BR]%1</translation>
+    </message>
+    <message>
+        <source>Backed up</source>
+        <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
+        <translation>Backup concluído</translation>
+    </message>
+    <message>
+        <source>Backup folder</source>
+        <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
+        <translation>Pasta de backup</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -7604,6 +7898,21 @@ Você quer deletá-lo mesmo assim?</translation>
         <translation>Considere fazer um upgrade para evitar interrupções nos uploads e na sincronização.</translation>
     </message>
     <message>
+        <source>Disabled</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Desativado</translation>
+    </message>
+    <message>
+        <source>Enable backup</source>
+        <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
+        <translation>Ativar backup</translation>
+    </message>
+    <message>
+        <source>Enable sync</source>
+        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
+        <translation>Ativar sincronização</translation>
+    </message>
+    <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
         <translation>Versões de arquivos</translation>
@@ -7612,6 +7921,91 @@ Você quer deletá-lo mesmo assim?</translation>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
         <translation>Versões do arquivo[BR]%1</translation>
+    </message>
+    <message>
+        <source>Get more storage</source>
+        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
+        <translation>Obter mais armazenamento</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Carregando</translation>
+    </message>
+    <message>
+        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
+        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>O MEGA detecta e resolve automaticamente problemas de sincronização para você. Desative-o se preferir revisar e lidar com eles manualmente. [A]Mais informações[/A]</translation>
+    </message>
+    <message>
+        <source>Manage exclusions</source>
+        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Gerenciar exclusões</translation>
+    </message>
+    <message>
+        <source>No backups</source>
+        <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>Não há backups</translation>
+    </message>
+    <message>
+        <source>No syncs set up</source>
+        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
+        <translation>Não há sincronizações configuradas</translation>
+    </message>
+    <message>
+        <source>Open in MEGA</source>
+        <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
+        <translation>Abrir no MEGA</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
+        <translation>Pausar</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Pausado</translation>
+    </message>
+    <message>
+        <source>Reboot backup</source>
+        <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
+        <translation>Reiniciar o backup</translation>
+    </message>
+    <message>
+        <source>Reboot sync</source>
+        <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
+        <translation>Reiniciar a sincronização</translation>
+    </message>
+    <message>
+        <source>Remove synced folder</source>
+        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
+        <translation>Remover sincronização</translation>
+    </message>
+    <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Removendo</translation>
+    </message>
+    <message>
+        <source>Rescan</source>
+        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
+        <translation>Analisar novamente</translation>
+    </message>
+    <message>
+        <source>Restore folder</source>
+        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
+        <translation>Restaurar pasta</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
+        <translation>Continuar</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
+        <translation>Tentar novamente</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7624,9 +8018,64 @@ Você quer deletá-lo mesmo assim?</translation>
         <translation>Lixeira[BR]%1</translation>
     </message>
     <message>
+        <source>Scanning</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Analisando</translation>
+    </message>
+    <message>
+        <source>Show in File Explorer</source>
+        <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
+        <translation>Mostrar no Explorador de arquivos</translation>
+    </message>
+    <message>
+        <source>Show in Finder</source>
+        <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
+        <translation>Mostrar no Finder</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
+        <translation>Mostrar na pasta</translation>
+    </message>
+    <message>
+        <source>Start new backup</source>
+        <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
+        <translation>Criar um novo backup</translation>
+    </message>
+    <message>
+        <source>Start new sync</source>
+        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
+        <translation>Criar uma nova sincronização</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <source>Stop backup</source>
+        <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
+        <translation>Interromper o backup</translation>
+    </message>
+    <message>
         <source>Storage Space</source>
         <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
         <translation>Espaço de armazenamento</translation>
+    </message>
+    <message>
+        <source>Synced</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Sincronizada</translation>
+    </message>
+    <message>
+        <source>Synced folders</source>
+        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Pastas sincronizadas</translation>
+    </message>
+    <message>
+        <source>Transferring</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Transferências em andamento</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7642,6 +8091,11 @@ Você quer deletá-lo mesmo assim?</translation>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>Os uploads estão desativados e a sincronização de pastas está pausada.</translation>
+    </message>
+    <message>
+        <source>View in MEGA</source>
+        <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
+        <translation>Ver no MEGA</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -8243,6 +8697,11 @@ Atualize a lista.</translation>
         <translatorcomment>Warning message when users try to select a folder for streaming</translatorcomment>
         <translation>Não é possível fazer streaming de pastas. Selecione um arquivo para fazer streaming.</translation>
     </message>
+    <message>
+        <source>Select a file to stream</source>
+        <translatorcomment>Guidance message in the streaming node selector prompting the user to pick a file to stream. SNC-6420</translatorcomment>
+        <translation>Selecione um arquivo para fazer streaming</translation>
+    </message>
 </context>
 <context>
     <name>StreamingFromMegaDialog</name>
@@ -8740,7 +9199,7 @@ Atualize a lista.</translation>
 Please move it to a location that is less than 64 folders deep.</source>
         <translatorcomment>Title for the header widget of sync stall that occurs when the file is more than 64 folders deep.SNC-2565</translatorcomment>
         <translation>O objetivo está em uma localização muito profunda na sua estrutura de pastas. Interrompa a sincronização, mova a pasta para uma localização com menos de 64 pastas e recrie a sincronização.
-Se isso não resolver o problema, entre em contato com support@mega.io.</translation>
+Se isso não resolver o problema,entre em contato com o Suporte em https://mega.nz/support</translation>
     </message>
     <message>
         <source>Unable to sync [B]%1[/B]</source>
@@ -8859,10 +9318,35 @@ Se isso não resolver o problema, entre em contato com support@mega.io.</transla
 <context>
     <name>SyncNodeSelector</name>
     <message>
+        <source>Choose a different folder. This folder is already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected folder is already synced. SNC-6420</translatorcomment>
+        <translation>Esta pasta já está sincronizada. Escolha outra pasta.</translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This location contains a folder that&apos;s already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected location contains a folder that is already synced. SNC-6420</translatorcomment>
+        <translation>Este local contém uma pasta que já está sincronizada. Escolha outra pasta.</translation>
+    </message>
+    <message>
+        <source>Folder to sync</source>
+        <translatorcomment>Label in the sync node selector for the folder that will be synced. SNC-6420</translatorcomment>
+        <translation>Pasta a ser sincronizada</translation>
+    </message>
+    <message>
         <source>Invalid folder for synchronization.
 Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apos; or &apos;:&apos; in your folder names.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>Não é possível sincronizar esta pasta. Certifique-se de que você não usa caracteres como “\”, “/” ou “:” nos nomes das pastas.</translation>
+    </message>
+    <message>
+        <source>Only shared folders with full access can be synced</source>
+        <translatorcomment>Informational message in the sync node selector indicating only full-access shared folders can be synced. SNC-6420</translatorcomment>
+        <translation>Apenas pastas compartilhadas com acesso total podem ser sincronizadas</translation>
+    </message>
+    <message>
+        <source>Select a full access shared folder to sync</source>
+        <translatorcomment>Guidance message in the sync node selector prompting the user to choose a full-access shared folder to sync. SNC-6420</translatorcomment>
+        <translation>Selecione uma pasta compartilhada com acesso total para poder sincronizar</translation>
     </message>
     <message>
         <source>You need Full access right to be able to sync the selected folder.</source>
@@ -8872,6 +9356,29 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
 </context>
 <context>
     <name>SyncSettingsElements</name>
+</context>
+<context>
+    <name>SyncSettingsQuickWidget</name>
+    <message>
+        <source>Can&apos;t restore %1 mega folder</source>
+        <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
+        <translation>Não é possível restaurar a pasta no MEGA %1</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
+        <translation>Fechar</translation>
+    </message>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Erro ao abrir o arquivo .megaignore</translation>
+    </message>
+    <message>
+        <source>Remove sync</source>
+        <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
+        <translation>Remover sincronização</translation>
+    </message>
 </context>
 <context>
     <name>SyncSettingsUI</name>
@@ -9153,7 +9660,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Retrying</source>
         <translatorcomment>Transfer is starting again after failure</translatorcomment>
-        <translation>Tentando novamente</translation>
+        <translation>Tentando novamente…</translation>
     </message>
     <message>
         <source>Starting…</source>
@@ -9443,8 +9950,8 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
         <source>%n item no longer exist.</source>
         <translatorcomment>Body text of a system notification shown when %n items no longer exist or were renamed during a download operation. %n will be replaced with the number of items. Singular version will not be used, but we include it as a reference. CON-223</translatorcomment>
         <translation>
-            <numerusform>%n item já não existe. </numerusform>
-            <numerusform>%n itens já não existem. </numerusform>
+            <numerusform>%n item já não existe.</numerusform>
+            <numerusform>%n itens já não existem.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -9797,7 +10304,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Pause all documents</source>
         <translatorcomment>Tooltip for Pause button when the user is in the documents category</translatorcomment>
-        <translation>Pausar os  documentos</translation>
+        <translation>Pausar todos os documentos</translation>
     </message>
     <message>
         <source>Pause all downloads</source>
@@ -9807,7 +10314,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Pause all images</source>
         <translatorcomment>Tooltip for Pause button when the user is in the images category</translatorcomment>
-        <translation>Pausar as imagens </translation>
+        <translation>Pausar todas as imagens</translation>
     </message>
     <message>
         <source>Pause all search results</source>
@@ -9842,7 +10349,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Resume all documents</source>
         <translatorcomment>Tooltip for Resume button when the user is in the documents category</translatorcomment>
-        <translation>Retomar os  documentos</translation>
+        <translation>Retomar todos os documentos</translation>
     </message>
     <message>
         <source>Resume all downloads</source>
@@ -9852,7 +10359,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Resume all images</source>
         <translatorcomment>Tooltip for Resume button when the user is in the images category</translatorcomment>
-        <translation>Retomar as imagens </translation>
+        <translation>Retomar todas as imagens</translation>
     </message>
     <message>
         <source>Resume all search results</source>
@@ -9969,6 +10476,11 @@ Please delete the folder sync from settings to cancel them.</source>
 </context>
 <context>
     <name>UploadNodeSelector</name>
+    <message>
+        <source>Select a shared folder to upload your items to</source>
+        <translatorcomment>Guidance banner in the upload node selector, shown in Incoming Shares when no folder is selected, prompting the user to pick a shared folder as the upload destination. SNC-6420</translatorcomment>
+        <translation>Selecione uma pasta compartilhada para fazer o upload</translation>
+    </message>
     <message>
         <source>You need Read &amp; Write or Full access rights to be able to upload to the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying upload files to a non compatible folder</translatorcomment>
@@ -10153,8 +10665,8 @@ Please delete the folder sync from settings to cancel them.</source>
         <source>%1 (%2%) of %3 used</source>
         <translatorcomment>Label to indicate the amount and percentage of used and total space available. Keep %1 (%2%) and %3 substitution placeholders because they will be filled with the required amounts of storage space dynamically. SNC-3429</translatorcomment>
         <translation>
-            <numerusform>%1 (%2%) usado de %3 </numerusform>
-            <numerusform>%1 (%2%) usados de %3 </numerusform>
+            <numerusform>%1 (%2%) usado de %3</numerusform>
+            <numerusform>%1 (%2%) usados de %3</numerusform>
         </translation>
     </message>
     <message>

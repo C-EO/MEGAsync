@@ -127,6 +127,24 @@ subcontrol-position: center right;
 padding-right: 6px;
 }
 
+/*
+    Temporary rules. It will apply to all headers in a short future
+*/
+QHeaderView[class="new-design"]::section
+{
+padding-left: 6px;
+}
+
+QHeaderView[class="new-design"]::up-arrow,
+QHeaderView[class="new-design"]::down-arrow
+{
+subcontrol-origin: padding;
+subcontrol-position: center left;
+padding-left: 2px;
+width: 14px;
+height: 14px;
+}
+
 
 /*
     QComboBox
@@ -591,8 +609,27 @@ font-weight: 700;
 TabSelector.sidebar
 {
 border-radius:6px;
-min-height: 32px;
-max-height: 32px;
+min-height: 40px;
+max-height: 40px;
+}
+
+TabSelector[selected = true] #lTitle
+{
+font-weight: 700;
+}
+
+TabSelector.chip[selected = true] #lTitle
+{
+font-weight: 400;
+}
+
+TabSelector.sidebar-icononly
+{
+border-radius:6px;
+min-height: 36px;
+max-height: 36px;
+min-width: 36px;
+max-width: 36px;
 }
 
 TabSelector.chip

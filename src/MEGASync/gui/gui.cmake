@@ -41,21 +41,21 @@ set(DESKTOP_APP_GUI_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/BugReportDialog.h
     ${CMAKE_CURRENT_LIST_DIR}/ProgressIndicatorDialog.h
     ${CMAKE_CURRENT_LIST_DIR}/VerifyLockMessage.h
+    ${CMAKE_CURRENT_LIST_DIR}/LoadingView/ILoadingViewModel.h
     ${CMAKE_CURRENT_LIST_DIR}/LoadingView/ViewLoadingScene.h
     ${CMAKE_CURRENT_LIST_DIR}/LoadingView/ViewLoadingMessage.h
     ${CMAKE_CURRENT_LIST_DIR}/WaitingSpinnerWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/ProxySettings.h
-    ${CMAKE_CURRENT_LIST_DIR}/BandwidthSettings.h
     ${CMAKE_CURRENT_LIST_DIR}/SwitchButton.h
     ${CMAKE_CURRENT_LIST_DIR}/GuiUtilities.h
     ${CMAKE_CURRENT_LIST_DIR}/CancelConfirmWidget.h
-    ${CMAKE_CURRENT_LIST_DIR}/RemoteItemUi.h
     ${CMAKE_CURRENT_LIST_DIR}/WordWrapLabel.h
     ${CMAKE_CURRENT_LIST_DIR}/ThemeManager.h
     ${CMAKE_CURRENT_LIST_DIR}/AccountTypeWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/BannerWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/ApiImageLabel.h
     ${CMAKE_CURRENT_LIST_DIR}/TabSelector.h
+    ${CMAKE_CURRENT_LIST_DIR}/ArrowTooltip.h
     ${CMAKE_CURRENT_LIST_DIR}/SearchLineEdit.h
     ${CMAKE_CURRENT_LIST_DIR}/TrayIconManager.h
     ${CMAKE_CURRENT_LIST_DIR}/NodeNameSetterDialog/NodeNameSetterDialog.h
@@ -66,12 +66,11 @@ set(DESKTOP_APP_GUI_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogWrapper.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogWrapperUtilities.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlWidgetWrapper.h
-    ${CMAKE_CURRENT_LIST_DIR}/qml/QmlInstancesManager.h
-    ${CMAKE_CURRENT_LIST_DIR}/qml/QmlItem.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogManager.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlManager.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlTheme.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/ApiEnums.h
+    ${CMAKE_CURRENT_LIST_DIR}/qml/SyncErrors.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/StandardIconProvider.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/ChooseFolder.h
     ${CMAKE_CURRENT_LIST_DIR}/qml/ChooseFile.h
@@ -109,6 +108,12 @@ set(DESKTOP_APP_GUI_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncsQmlDialog.h
     ${CMAKE_CURRENT_LIST_DIR}/syncs/Syncs.h
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncsData.h
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/SettingsQuickWidgetBase.h
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsModelBase.h
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsQuickWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsModel.h
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/BackupSettingsQuickWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/BackupSettingsModel.h
     ${CMAKE_CURRENT_LIST_DIR}/surveys/SurveyWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/surveys/SurveyComponent.h
     ${CMAKE_CURRENT_LIST_DIR}/surveys/Surveys.h
@@ -190,17 +195,16 @@ set(DESKTOP_APP_GUI_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/LoadingView/ViewLoadingMessage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/WaitingSpinnerWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ProxySettings.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/BandwidthSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/SwitchButton.cpp
     ${CMAKE_CURRENT_LIST_DIR}/GuiUtilities.cpp
     ${CMAKE_CURRENT_LIST_DIR}/CancelConfirmWidget.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/RemoteItemUi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/WordWrapLabel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ThemeManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/AccountTypeWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/BannerWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ApiImageLabel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/TabSelector.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ArrowTooltip.cpp
     ${CMAKE_CURRENT_LIST_DIR}/SearchLineEdit.cpp
     ${CMAKE_CURRENT_LIST_DIR}/TrayIconManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/NodeNameSetterDialog/NodeNameSetterDialog.cpp
@@ -210,8 +214,6 @@ set(DESKTOP_APP_GUI_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogWrapper.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlWidgetWrapper.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/qml/QmlInstancesManager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/qml/QmlItem.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlDialogManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/qml/QmlTheme.cpp
@@ -250,6 +252,10 @@ set(DESKTOP_APP_GUI_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncsQmlDialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/syncs/Syncs.cpp
     ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncsData.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/SettingsQuickWidgetBase.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsModelBase.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/SyncSettingsQuickWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/syncs/BackupSettingsQuickWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/surveys/SurveyWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/surveys/SurveyComponent.cpp
     ${CMAKE_CURRENT_LIST_DIR}/surveys/Surveys.cpp
@@ -416,7 +422,6 @@ set (DESKTOP_APP_GUI_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/ui/AccountDetailsDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/BugReportDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/RemoveSyncConfirmationDialog.ui
-    ${CMAKE_CURRENT_LIST_DIR}/ui/BandwidthSettings.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/DownloadFromMegaDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/UploadToMegaDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/PermissionsDialog.ui
@@ -426,7 +431,6 @@ set (DESKTOP_APP_GUI_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/ui/CrashReportDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/NotificationsSettings.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/ProgressIndicatorDialog.ui
-    ${CMAKE_CURRENT_LIST_DIR}/ui/RemoteItemUi.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/BannerWidget.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/LowDiskSpaceDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/StreamingFromMegaDialog.ui
@@ -437,6 +441,7 @@ set (DESKTOP_APP_GUI_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/ui/PasteMegaLinksDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/SearchLineEdit.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/TabSelector.ui
+    ${CMAKE_CURRENT_LIST_DIR}/ui/ArrowTooltip.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/InfoDialog.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/StatusInfo.ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/PSAwidget.ui

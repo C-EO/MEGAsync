@@ -89,8 +89,11 @@ public:
 
     Preferences::SystemColorScheme getCurrentThemeAppearance() const override;
     void applyCurrentThemeOnCurrentDialogFrame(QWindow* window) override;
+    void raiseToForeground(QWidget* widget) override;
 
     void setRenderingBackend() const override;
+
+    void disconnectAccessibilityClients() override;
 
 private:
     void removeSyncFromLeftPane(QString syncPath, QString syncName, QString uuid);

@@ -1,6 +1,7 @@
 #include "BannerWidget.h"
 
 #include "Preferences.h"
+#include "TokenizableItems/TokenPropertyNames.h"
 #include "TokenParserWidgetManager.h"
 #include "ui_BannerWidget.h"
 
@@ -12,7 +13,8 @@ const std::map<BannerWidget::Type, QLatin1String> TYPE_MAP{
     {BannerWidget::Type::BANNER_WARNING, QLatin1String{"warning"}},
     {BannerWidget::Type::BANNER_ERROR, QLatin1String{"error"}},
     {BannerWidget::Type::BANNER_INFO, QLatin1String{"info"}},
-    {BannerWidget::Type::BANNER_SUCCESS, QLatin1String{"success"}}};
+    {BannerWidget::Type::BANNER_SUCCESS, QLatin1String{"success"}},
+    {BannerWidget::Type::BANNER_MESSAGE, QLatin1String{"message"}}};
 constexpr int MINIMU_BANNER_HEIGHT = 44;
 }
 
@@ -61,6 +63,8 @@ void BannerWidget::setType(Type type, bool showIcon)
     QLatin1String typeString(it->second);
     mUi->wContent->setProperty(TYPE_PROPERTY_NAME, typeString);
 
+    setLabelToken();
+
     // Force update the style of all child widgets.
     mUi->wContent->setStyleSheet(this->styleSheet());
 }
@@ -70,7 +74,6 @@ void BannerWidget::setDescription(const QString& text)
     mUi->lText->setText(text);
     mUi->lText->show();
     updateTitleWeight();
-    mUi->lText->adjustSize();
     updateGeometry();
 }
 
@@ -104,14 +107,17 @@ void BannerWidget::setTitle(const QString& text)
     mUi->lTitle->setText(text);
     mUi->lTitle->show();
     updateTitleWeight();
-    mUi->lText->adjustSize();
     updateGeometry();
 }
 
 void BannerWidget::updateTitleWeight()
 {
-    mUi->lTitle->setProperty("semibold", mUi->lText->isVisible() ? QVariant(true) : QVariant());
-    TokenParserWidgetManager::instance()->polish(mUi->lTitle);
+    const QVariant semibold(mUi->lText->toPlainText().isEmpty() ? QVariant() : QVariant(true));
+    if (mUi->lTitle->property("semibold") != semibold)
+    {
+        mUi->lTitle->setProperty("semibold", semibold);
+        TokenParserWidgetManager::instance()->polish(mUi->lTitle);
+    }
 }
 
 void BannerWidget::checkLayoutOrientation()
@@ -134,6 +140,42 @@ void BannerWidget::checkLayoutOrientation()
 
         // Move button to the right
         mUi->contentLayout->insertWidget(1, mUi->wLinkContainer);
+    }
+}
+
+void BannerWidget::setLabelToken()
+{
+    switch (mType)
+    {
+        case Type::BANNER_WARNING:
+        {
+            mUi->lIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-warning"));
+            break;
+        }
+        case Type::BANNER_ERROR:
+        {
+            mUi->lIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-error"));
+            break;
+        }
+        case Type::BANNER_INFO:
+        {
+            mUi->lIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-info"));
+            break;
+        }
+        case Type::BANNER_SUCCESS:
+        {
+            mUi->lIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("text-success"));
+            break;
+        }
+        case Type::BANNER_MESSAGE:
+        {
+            mUi->lIcon->setProperty(TOKEN_PROPERTIES::normalOff, QLatin1String("icon-primary"));
+            break;
+        }
+        default:
+        {
+            mUi->lIcon->setProperty(TOKEN_PROPERTIES::normalOff, QString());
+        }
     }
 }
 

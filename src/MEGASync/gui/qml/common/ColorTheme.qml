@@ -92,6 +92,7 @@ Item {
 	readonly property color surface3: loader.item.surface3
 	readonly property color surfaceInverseAccent: loader.item.surfaceInverseAccent
 	readonly property color surfaceTransparent: loader.item.surfaceTransparent
+	readonly property color surfaceTransparentSubtle: loader.item.surfaceTransparentSubtle
 	readonly property color textAccent: loader.item.textAccent
 	readonly property color textBrand: loader.item.textBrand
 	readonly property color textDisabled: loader.item.textDisabled

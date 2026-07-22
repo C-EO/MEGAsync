@@ -20,13 +20,13 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Select a MEGA folder</string>
+   <string>Files</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">#wStorage, #wSearch
+   <string notr="true">#wStorage
 {
 border:none;
 }
@@ -39,6 +39,17 @@ background-color: #F7F7F7; /*colorToken.surface-1*/
 #wRightPaneNS, #footer
 {
 background-color: #FFFFFF; /*colorToken.page-background*/
+}
+
+#footerDivider
+{
+background-color: #F6F6F7; /*colorToken.border-subtle*/
+}
+
+TabSelector.sidebar[selected = false] QLabel,
+TabSelector.sidebar[selected = true] QLabel
+{
+color: #303233; /*colorToken.text-primary*/
 }</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,0">
@@ -67,13 +78,13 @@ background-color: #FFFFFF; /*colorToken.page-background*/
      </property>
      <property name="minimumSize">
       <size>
-       <width>256</width>
+       <width>64</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>256</width>
+       <width>64</width>
        <height>16777215</height>
       </size>
      </property>
@@ -82,87 +93,203 @@ background-color: #FFFFFF; /*colorToken.page-background*/
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
-       <number>16</number>
+       <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>13</number>
+       <number>0</number>
       </property>
       <property name="topMargin">
-       <number>24</number>
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>24</number>
+       <number>0</number>
       </property>
       <item>
-       <widget class="QWidget" name="wTop" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>32</height>
-         </size>
+       <widget class="QWidget" name="wLeftPaneContent" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>32</height>
-         </size>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+        <layout class="QVBoxLayout" name="wLeftPaneContentLayout">
          <property name="spacing">
-          <number>0</number>
+          <number>16</number>
          </property>
          <property name="leftMargin">
-          <number>0</number>
+          <number>12</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>28</number>
          </property>
          <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
           <number>0</number>
          </property>
+         <property name="bottomMargin">
+          <number>24</number>
+         </property>
          <item>
-          <widget class="QWidget" name="wTitleContainer" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <widget class="QGroupBox" name="wStorage">
+           <property name="title">
+            <string notr="true"/>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QVBoxLayout" name="TabsLayout">
             <property name="spacing">
-             <number>0</number>
+             <number>12</number>
             </property>
             <property name="leftMargin">
-             <number>16</number>
+             <number>0</number>
             </property>
             <property name="topMargin">
              <number>0</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="bottomMargin">
-             <number>0</number>
+             <number>4</number>
             </property>
             <item>
-             <widget class="QLabel" name="title">
+             <widget class="TabSelector" name="fCloudDrive" native="true">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="text">
-               <string>Files</string>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>36</height>
+               </size>
               </property>
-              <property name="font-size" stdset="0">
-               <string notr="true">subtitle</string>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>36</height>
+               </size>
               </property>
-              <property name="regular" stdset="0">
+              <property name="acceptDrops">
                <bool>true</bool>
+              </property>
+              <property name="icon" stdset="0">
+               <iconset resource="../../../gui/Resources_common.qrc">
+                <normaloff>:/cloud_medium_thin_outline</normaloff>
+                <normalon>:/cloud_medium_thin_solid</normalon>:/cloud_medium_thin_outline</iconset>
+              </property>
+              <property name="normal_off" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+              <property name="normal_on" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="TabSelector" name="fIncomingShares" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="acceptDrops">
+               <bool>true</bool>
+              </property>
+              <property name="icon" stdset="0">
+               <iconset resource="../../../gui/Resources_common.qrc">
+                <normaloff>:/folder-users_medium_thin_outline</normaloff>
+                <normalon>:/folder-users_medium_thin_solid</normalon>:/folder-users_medium_thin_outline</iconset>
+              </property>
+              <property name="normal_off" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+              <property name="normal_on" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="TabSelector" name="fBackups" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="icon" stdset="0">
+               <iconset resource="../../../gui/Resources_common.qrc">
+                <normaloff>:/backups_medium_thin_outline</normaloff>
+                <normalon>:/backups_medium_thin_solid</normalon>:/backups_medium_thin_outline</iconset>
+              </property>
+              <property name="normal_off" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+              <property name="normal_on" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="TabSelector" name="fRubbish" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="acceptDrops">
+               <bool>true</bool>
+              </property>
+              <property name="icon" stdset="0">
+               <iconset resource="../../../gui/Resources_common.qrc">
+                <normaloff>:/rubbish-bin_medium_thin_outline</normaloff>
+                <normalon>:/rubbish-bin_medium_thin_solid</normalon>:/rubbish-bin_medium_thin_outline</iconset>
+              </property>
+              <property name="normal_off" stdset="0">
+               <string notr="true">icon-primary</string>
+              </property>
+              <property name="normal_on" stdset="0">
+               <string notr="true">icon-primary</string>
               </property>
              </widget>
             </item>
@@ -170,230 +297,62 @@ background-color: #FFFFFF; /*colorToken.page-background*/
           </widget>
          </item>
          <item>
-          <widget class="SearchLineEdit" name="leSearch">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QWidget" name="cbContainer" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+           </layout>
           </widget>
          </item>
         </layout>
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="wStorage">
-        <property name="title">
-         <string notr="true"/>
+       <widget class="TransfersAccountInfoWidget" name="wAccountInfo" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <layout class="QVBoxLayout" name="wSearchLayout_2">
-         <property name="spacing">
-          <number>8</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>4</number>
-         </property>
-         <item>
-          <widget class="TabSelector" name="fCloudDrive" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/cloud_small_thin_outline</normaloff>
-             <normalon>:/cloud_small_thin_solid</normalon>:/cloud_small_thin_outline</iconset>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="TabSelector" name="fIncomingShares" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/folder-users_small_thin_outline</normaloff>
-             <normalon>:/folder-users_small_thin_solid</normalon>:/folder-users_small_thin_outline</iconset>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="TabSelector" name="fBackups" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/devices_small_thin_outline</normaloff>
-             <normalon>:/devices_small_thin_solid</normalon>:/devices_small_thin_outline</iconset>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="TabSelector" name="fRubbish" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/trash_small_thin_outline</normaloff>
-             <normalon>:/trash_small_thin_solid</normalon>:/trash_small_thin_outline</iconset>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="wSearch">
-        <property name="title">
-         <string>Search</string>
-        </property>
-        <property name="type" stdset="0">
-         <string notr="true">mega</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>4</number>
-         </property>
-         <item>
-          <widget class="TabSelector" name="fSearch" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="icon" stdset="0">
-            <iconset resource="../../../gui/Resources_common.qrc">
-             <normaloff>:/search_small_thin_outline</normaloff>
-             <normalon>:/search_small_thin_solid</normalon>:/search_small_thin_outline</iconset>
-           </property>
-           <property name="closeButtonVisible" stdset="0">
-            <bool>true</bool>
-           </property>
-           <property name="class" stdset="0">
-            <string notr="true">sidebar</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
+        <property name="minimumSize">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>0</width>
+          <height>96</height>
          </size>
         </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QWidget" name="cbContainer" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-        </layout>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>96</height>
+         </size>
+        </property>
        </widget>
       </item>
      </layout>
@@ -418,6 +377,249 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        <number>0</number>
       </property>
       <item>
+       <widget class="QWidget" name="header" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="headerContainerLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QWidget" name="headerTopRow" native="true">
+           <layout class="QVBoxLayout" name="headerTopRowLayout">
+            <property name="spacing">
+             <number>16</number>
+            </property>
+            <property name="leftMargin">
+             <number>20</number>
+            </property>
+            <property name="topMargin">
+             <number>20</number>
+            </property>
+            <property name="rightMargin">
+             <number>20</number>
+            </property>
+            <property name="bottomMargin">
+             <number>8</number>
+            </property>
+            <item>
+             <widget class="QWidget" name="searchRow" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>40</height>
+               </size>
+              </property>
+              <layout class="QHBoxLayout" name="headerLayout" stretch="1,0,0">
+               <property name="spacing">
+                <number>4</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QWidget" name="actionButtonsContainer" native="true">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <layout class="QHBoxLayout" name="actionButtonsLayout">
+                  <property name="spacing">
+                   <number>12</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <spacer name="headerSearchSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="SearchLineEdit" name="leSearchTool">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="incomingShareContainer" native="true">
+           <layout class="QVBoxLayout" name="incomingShareContainerLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>20</number>
+            </property>
+            <property name="topMargin">
+             <number>8</number>
+            </property>
+            <property name="rightMargin">
+             <number>20</number>
+            </property>
+            <property name="bottomMargin">
+             <number>8</number>
+            </property>
+            <item>
+             <widget class="IncomingShareHeaderWidget" name="incomingShareHeaderWidget" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="navigationRow" native="true">
+           <layout class="QVBoxLayout" name="navigationRowLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>12</number>
+            </property>
+            <property name="topMargin">
+             <number>12</number>
+            </property>
+            <property name="rightMargin">
+             <number>20</number>
+            </property>
+            <property name="bottomMargin">
+             <number>8</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="lSearchResultCount">
+              <property name="visible">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string notr="true"/>
+              </property>
+              <property name="indent">
+               <number>8</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="NavigationBreadcrumb" name="navigationBreadcrumb" native="true">
+              <property name="visible">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lNavigationRoot">
+              <property name="visible">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string notr="true"/>
+              </property>
+              <property name="indent">
+               <number>8</number>
+              </property>
+              <property name="font-size" stdset="0">
+               <string notr="true">body-1</string>
+              </property>
+              <property name="bold" stdset="0">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="minimumSize">
          <size>
@@ -431,6 +633,28 @@ background-color: #FFFFFF; /*colorToken.page-background*/
        </widget>
       </item>
       <item>
+       <widget class="QWidget" name="footerDivider" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>1</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>1</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QWidget" name="footer" native="true">
         <property name="minimumSize">
          <size>
@@ -440,13 +664,13 @@ background-color: #FFFFFF; /*colorToken.page-background*/
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <property name="spacing">
-          <number>23</number>
+          <number>16</number>
          </property>
          <property name="leftMargin">
           <number>20</number>
          </property>
          <property name="topMargin">
-          <number>21</number>
+          <number>24</number>
          </property>
          <property name="rightMargin">
           <number>20</number>
@@ -454,6 +678,34 @@ background-color: #FFFFFF; /*colorToken.page-background*/
          <property name="bottomMargin">
           <number>21</number>
          </property>
+         <item>
+          <widget class="BannerWidget" name="destinationBanner" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>42</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>42</height>
+            </size>
+           </property>
+           <property name="visible">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="DestinationBreadcrumb" name="destinationBreadcrumb" native="true"/>
+         </item>
          <item>
           <widget class="QWidget" name="bLayout" native="true">
            <property name="maximumSize">
@@ -479,13 +731,173 @@ background-color: #FFFFFF; /*colorToken.page-background*/
              <number>0</number>
             </property>
             <item>
-             <widget class="QCheckBox" name="cbAlwaysUploadToLocation">
-              <property name="text">
-               <string>Always upload to this destination</string>
+             <widget class="QWidget" name="customButtonsContainer" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-              <property name="type" stdset="0">
-               <string notr="true">mega</string>
-              </property>
+              <layout class="QHBoxLayout" name="customButtonsLayout">
+               <property name="spacing">
+                <number>8</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="TokenizableButton" name="bUpload">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string notr="true">Upload</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../gui/Resources_common.qrc">
+                   <normaloff>:/arrow-up_small_thin_outline</normaloff>:/arrow-up_small_thin_outline</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="type" stdset="0">
+                  <string notr="true">outline</string>
+                 </property>
+                 <property name="dimension" stdset="0">
+                  <string notr="true">medium</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="TokenizableButton" name="bNewFolder">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string notr="true">New Folder</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../gui/Resources_common.qrc">
+                   <normaloff>:/folder-plus-01_small_thin_outline</normaloff>:/folder-plus-01_small_thin_outline</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="type" stdset="0">
+                  <string notr="true">outline</string>
+                 </property>
+                 <property name="dimension" stdset="0">
+                  <string notr="true">medium</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="TokenizableButton" name="bClearRubbish">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string notr="true">Empty rubbish bin</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../gui/Resources_common.qrc">
+                   <normaloff>:/x_small_thin_outline</normaloff>:/x_small_thin_outline</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="type" stdset="0">
+                  <string notr="true">outline</string>
+                 </property>
+                 <property name="dimension" stdset="0">
+                  <string notr="true">medium</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="TokenizableButton" name="bAddBackup">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="visible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string notr="true">Add backup</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../gui/Resources_common.qrc">
+                   <normaloff>:/database-plus_small_thin_outline</normaloff>:/database-plus_small_thin_outline</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="type" stdset="0">
+                  <string notr="true">primary</string>
+                 </property>
+                 <property name="dimension" stdset="0">
+                  <string notr="true">medium</string>
+                 </property>
+                 <property name="normal_off" stdset="0">
+                  <string notr="true">icon-inverse-accent</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -519,7 +931,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                <string notr="true">secondary</string>
               </property>
               <property name="dimension" stdset="0">
-               <string notr="true">small</string>
+               <string notr="true">medium</string>
               </property>
              </widget>
             </item>
@@ -541,7 +953,7 @@ background-color: #FFFFFF; /*colorToken.page-background*/
                <string notr="true">primary</string>
               </property>
               <property name="dimension" stdset="0">
-               <string notr="true">small</string>
+               <string notr="true">medium</string>
               </property>
              </widget>
             </item>
@@ -558,6 +970,11 @@ background-color: #FFFFFF; /*colorToken.page-background*/
  </widget>
  <customwidgets>
   <customwidget>
+   <class>TokenizableButton</class>
+   <extends>QPushButton</extends>
+   <header>tokenizer/TokenizableItems/TokenizableButtons.h</header>
+  </customwidget>
+  <customwidget>
    <class>TabSelector</class>
    <extends>QWidget</extends>
    <header>TabSelector.h</header>
@@ -567,6 +984,34 @@ background-color: #FFFFFF; /*colorToken.page-background*/
    <class>SearchLineEdit</class>
    <extends>QFrame</extends>
    <header>SearchLineEdit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>IncomingShareHeaderWidget</class>
+   <extends>QWidget</extends>
+   <header>IncomingShareHeaderWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>BannerWidget</class>
+   <extends>QWidget</extends>
+   <header>BannerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NavigationBreadcrumb</class>
+   <extends>QWidget</extends>
+   <header>NavigationBreadcrumb.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DestinationBreadcrumb</class>
+   <extends>QWidget</extends>
+   <header>DestinationBreadcrumb.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TransfersAccountInfoWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">TransfersAccountInfoWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

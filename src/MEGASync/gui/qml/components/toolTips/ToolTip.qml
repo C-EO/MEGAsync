@@ -10,6 +10,7 @@ Qml.ToolTip {
     id: root
 
     property url leftIconSource: ""
+    property int maxWidth: 778 - leftIcon.width - 2 * root.padding
 
     z: 10
     padding: 4
@@ -44,14 +45,13 @@ Qml.ToolTip {
         Texts.Text {
             id: textToolTip
 
-            property int maxWidth: 778 - leftIcon.width - root.padding
-
             anchors {
                 left: parent.left
                 top: parent.top
                 leftMargin: leftIcon.width + root.padding
+                rightMargin: root.padding
             }
-            width: Math.min(textMetrics.width + root.padding, maxWidth)
+            width: Math.min(textMetrics.width + root.padding, root.maxWidth)
             text: root.text
             color: ColorTheme.textInverse
             wrapMode: Text.Wrap

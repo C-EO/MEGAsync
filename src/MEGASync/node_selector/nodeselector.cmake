@@ -4,13 +4,33 @@ set(DESKTOP_APP_NODE_SELECTOR_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/model/NodeSelectorModel.h
     ${CMAKE_CURRENT_LIST_DIR}/model/NodeSelectorModelSpecialised.h
     ${CMAKE_CURRENT_LIST_DIR}/model/NodeSelectorModelItem.h
+    ${CMAKE_CURRENT_LIST_DIR}/model/NodeSelectorOperationTracker.h
     ${CMAKE_CURRENT_LIST_DIR}/model/RestoreNodeManager.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeView.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorViewStyle.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorModelUpdateCoordinator.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorMergeTargetUtils.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/IncomingShareHeaderWidget.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorBreadcrumbSegment.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/Breadcrumb.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/BreadcrumbSegment.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NavigationBreadcrumb.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NavigationBreadcrumbLastSegment.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/DestinationBreadcrumb.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorDestinationOverflowPopup.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNodeActions.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSearchController.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSelectionCoordinator.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeViewWidget.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeViewWidgetSpecializations.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelector.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorLoadingDelegate.h
-    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSpecializations.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/FileManagerNodeSelector.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/FilePickerNodeSelector.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/FilePickerNodeSelectorSpecializations.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSelectTypes.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTabTypes.h
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorLabelColors.h
 )
 
 set(DESKTOP_APP_NODE_SELECTOR_SOURCES
@@ -19,19 +39,42 @@ set(DESKTOP_APP_NODE_SELECTOR_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/model/NodeSelectorModel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/model/NodeSelectorModelSpecialised.cpp
     ${CMAKE_CURRENT_LIST_DIR}/model/NodeSelectorModelItem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/model/NodeSelectorOperationTracker.cpp
     ${CMAKE_CURRENT_LIST_DIR}/model/RestoreNodeManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeView.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorViewStyle.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorModelUpdateCoordinator.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/IncomingShareHeaderWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/Breadcrumb.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/BreadcrumbSegment.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NavigationBreadcrumb.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NavigationBreadcrumbLastSegment.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/DestinationBreadcrumb.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorDestinationOverflowPopup.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorNodeActions.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSearchController.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSelectionCoordinator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeViewWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorTreeViewWidgetSpecializations.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelector.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorLoadingDelegate.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSpecializations.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/FileManagerNodeSelector.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/FilePickerNodeSelector.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/FilePickerNodeSelectorSpecializations.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorSelectTypes.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/gui/NodeSelectorLabelColors.cpp
 )
 
 set(DESKTOP_APP_NODE_SELECTOR_UI_FILES
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelectorTreeViewWidget.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelectorLoadingDelegate.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/IncomingShareHeaderWidget.ui
     ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelector.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/Breadcrumb.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NavigationBreadcrumb.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NavigationBreadcrumbLastSegment.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/DestinationBreadcrumb.ui
+    ${CMAKE_CURRENT_LIST_DIR}/gui/ui/NodeSelectorDestinationOverflowPopup.ui
 )
 
 set_property(TARGET ${ExecutableTarget}

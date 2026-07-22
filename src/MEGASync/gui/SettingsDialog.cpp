@@ -1,23 +1,24 @@
 #include "SettingsDialog.h"
 
-#include "AccountDetailsDialog.h"
 #include "AccountDetailsManager.h"
 #include "BugReportDialog.h"
 #include "ChangePasswordComponent.h"
 #include "CommonMessages.h"
 #include "DialogOpener.h"
+#include "FilePickerNodeSelectorSpecializations.h"
 #include "FullName.h"
 #include "MegaApplication.h"
-#include "NodeSelectorSpecializations.h"
+#include "MessageDialogOpener.h"
 #include "ParallelConnectionsValues.h"
 #include "PermissionsDialog.h"
 #include "Platform.h"
 #include "PowerOptions.h"
 #include "ProxySettings.h"
 #include "qml/AccountStateQuickWidget.h"
+#include "RequestListenerManager.h"
+#include "ServiceUrls.h"
 #include "StatsEventHandler.h"
 #include "ThemeManager.h"
-#include "TransferQuota.h"
 #include "ui_SettingsDialog.h"
 #include "Utilities.h"
 
@@ -30,6 +31,7 @@
 #include <QMouseEvent>
 #include <QRect>
 #include <QShortcut>
+#include <QSignalBlocker>
 #include <QtConcurrent/QtConcurrent>
 #include <QTranslator>
 #include <QUrl>
@@ -167,6 +169,14 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
 
     connect(mUi->bLearnMore, &QPushButton::clicked, this, &SettingsDialog::onBLearnMore);
     connect(mUi->bAboutMega, &QPushButton::clicked, this, &SettingsDialog::onBAboutMega);
+    connect(mModel,
+            &SyncInfo::syncDisabledListUpdated,
+            this,
+            &SettingsDialog::updateSyncTabToolbarIcon);
+    connect(mModel,
+            &SyncInfo::syncDisabledListUpdated,
+            this,
+            &SettingsDialog::updateBackupTabToolbarIcon);
 
     // React to AppState changes
     connect(AppState::instance().get(),
@@ -175,6 +185,42 @@ SettingsDialog::SettingsDialog(MegaApplication* app, bool proxyOnly, QWidget* pa
             &SettingsDialog::onAppStateChanged);
 
     startRequestTaskbarPinningTimer();
+    updateSyncTabToolbarIcon();
+    updateBackupTabToolbarIcon();
+}
+
+void SettingsDialog::updateSyncTabToolbarIcon()
+{
+    QString iconName;
+    if (mModel->syncWithErrorExist(MegaSync::TYPE_TWOWAY))
+    {
+        iconName = Utilities::getPixmapName(QLatin1String("settings-sync-warn"),
+                                            Utilities::AttributeType::NONE);
+    }
+    else
+    {
+        iconName = Utilities::getPixmapName(QLatin1String("settings-sync"),
+                                            Utilities::AttributeType::NONE);
+    }
+
+    mUi->bSyncs->setIcon(QIcon(iconName));
+}
+
+void SettingsDialog::updateBackupTabToolbarIcon()
+{
+    QString iconName;
+    if (mModel->syncWithErrorExist(MegaSync::TYPE_BACKUP))
+    {
+        iconName = Utilities::getPixmapName(QLatin1String("settings-backup-warn"),
+                                            Utilities::AttributeType::NONE);
+    }
+    else
+    {
+        iconName = Utilities::getPixmapName(QLatin1String("settings-backup"),
+                                            Utilities::AttributeType::NONE);
+    }
+
+    mUi->bBackup->setIcon(QIcon(iconName));
 }
 
 SettingsDialog::~SettingsDialog()
@@ -433,14 +479,6 @@ void SettingsDialog::loadSettings()
     initNetworkTab();
     updateNetworkTab();
 
-    // File management tab
-    mUi->syncSettings->setParentDialog(this);
-    mUi->backupSettings->setParentDialog(this);
-
-    // Syncs and backups
-    mUi->syncSettings->setToolBarItem(mUi->bSyncs);
-    mUi->backupSettings->setToolBarItem(mUi->bBackup);
-
     mLoadingSettings--;
 }
 
@@ -491,12 +529,12 @@ bool SettingsDialog::event(QEvent* event)
     {
         mUi->retranslateUi(this);
 
+        mUi->lCacheTitle->setText(
+            mUi->lCacheTitle->text().arg(QString::fromUtf8(MEGA_DEBRIS_FOLDER)));
+
 #ifdef Q_OS_MACOS
         mUi->cStartOnStartup->setText(tr("Launch at login"));
         this->setWindowTitle(tr("Settings"));
-#else
-        mUi->lCacheTitle->setText(
-            mUi->lCacheTitle->text().arg(QString::fromUtf8(MEGA_DEBRIS_FOLDER)));
 #endif
 
         onCacheSizeAvailable();
@@ -893,6 +931,10 @@ void SettingsDialog::on_bSendBug_clicked()
         AppStatsEvents::EventType::SETTINGS_REPORT_ISSUE_CLICKED);
 
     QPointer<BugReportDialog> dialog = new BugReportDialog(nullptr, mApp->getLogger());
+    // Center on Settings without parenting it: a Qt parent would make the dialog
+    // modal and tie its visibility/lifetime to Settings. We only want the initial
+    // position centered on this window.
+    DialogOpener::setVisualParent(dialog, this);
     DialogOpener::showDialog(dialog);
 }
 
@@ -1019,14 +1061,6 @@ void SettingsDialog::on_bMyAccount_clicked()
     Utilities::openUrl(ServiceUrls::getAccountUrl());
 }
 
-void SettingsDialog::onStorageDetailsClicked()
-{
-    MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
-        AppStatsEvents::EventType::SETTINGS_DETAILS_CLICKED);
-    auto accountDetailsDialog = new AccountDetailsDialog(this);
-    DialogOpener::showNonModalDialog<AccountDetailsDialog>(accountDetailsDialog);
-}
-
 void SettingsDialog::on_bLogout_clicked()
 {
     MegaSyncApp->getStatsEventHandler()->sendTrackedEvent(
@@ -1099,32 +1133,6 @@ void SettingsDialog::setEnabledAllControls(const bool enabled)
 void SettingsDialog::setChangePasswordEnabled(bool enabled)
 {
     mUi->bChangePassword->setEnabled(enabled);
-}
-
-void SettingsDialog::setSyncAddButtonEnabled(const bool enabled, SettingsDialog::Tabs tab)
-{
-    SyncSettingsUIBase* syncSettings = nullptr;
-
-    switch (tab)
-    {
-        case SYNCS_TAB:
-            syncSettings = mUi->syncSettings;
-            break;
-        case BACKUP_TAB:
-            syncSettings = mUi->backupSettings;
-            break;
-        default:
-            MegaApi::log(MegaApi::LOG_LEVEL_WARNING,
-                         QString::fromUtf8("Unexpected tab when setting add button enabled state")
-                             .toUtf8()
-                             .constData());
-            break;
-    }
-
-    if (syncSettings != nullptr)
-    {
-        syncSettings->setAddButtonEnabled(enabled);
-    }
 }
 
 void SettingsDialog::setGeneralTabEnabled(const bool enabled)
@@ -1643,9 +1651,41 @@ void SettingsDialog::updateNetworkTab()
                                                        QString::fromUtf8("0"));
     mUi->eDownloadLimit->setEnabled(downloadLimitKB > 0);
 
-    // Connections
-    mUi->eMaxDownloadConnections->setValue(mPreferences->parallelDownloadConnections());
-    mUi->eMaxUploadConnections->setValue(mPreferences->parallelUploadConnections());
+    // Connections are owned by the SDK now (persisted per base path). Fetch the
+    // live values asynchronously so the dialog is not blocked. The spin boxes are
+    // disabled until the reply lands, so the user never sees or edits a stale
+    // placeholder value (and cannot write back a misleading default). Signals are
+    // blocked while applying a reply so seeding does not trigger a write to the
+    // SDK, and the box is re-enabled on both success and error.
+    mUi->eMaxUploadConnections->setEnabled(false);
+    mUi->eMaxDownloadConnections->setEnabled(false);
+
+    auto uploadConnListener = RequestListenerManager::instance().registerAndGetCustomFinishListener(
+        this,
+        [this](MegaRequest* request, MegaError* e)
+        {
+            if (e->getErrorCode() == MegaError::API_OK)
+            {
+                const QSignalBlocker blocker(mUi->eMaxUploadConnections);
+                mUi->eMaxUploadConnections->setValue(static_cast<int>(request->getNumber()));
+            }
+            mUi->eMaxUploadConnections->setEnabled(true);
+        });
+    mMegaApi->getMaxUploadConnections(uploadConnListener.get());
+
+    auto downloadConnListener =
+        RequestListenerManager::instance().registerAndGetCustomFinishListener(
+            this,
+            [this](MegaRequest* request, MegaError* e)
+            {
+                if (e->getErrorCode() == MegaError::API_OK)
+                {
+                    const QSignalBlocker blocker(mUi->eMaxDownloadConnections);
+                    mUi->eMaxDownloadConnections->setValue(static_cast<int>(request->getNumber()));
+                }
+                mUi->eMaxDownloadConnections->setEnabled(true);
+            });
+    mMegaApi->getMaxDownloadConnections(downloadConnListener.get());
 
     // Proxy
     switch (mPreferences->proxyType())
@@ -1746,8 +1786,7 @@ void SettingsDialog::onMaxDownloadConnectionsChanged(int value)
     if (mLoadingSettings)
         return;
 
-    mPreferences->setParallelDownloadConnections(value);
-    mApp->setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, value);
+    mMegaApi->setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, value);
 }
 
 void SettingsDialog::onMaxUploadConnectionsChanged(int value)
@@ -1755,8 +1794,7 @@ void SettingsDialog::onMaxUploadConnectionsChanged(int value)
     if (mLoadingSettings)
         return;
 
-    mPreferences->setParallelUploadConnections(value);
-    mApp->setMaxConnections(MegaTransfer::TYPE_UPLOAD, value);
+    mMegaApi->setMaxConnections(MegaTransfer::TYPE_UPLOAD, value);
 }
 
 void SettingsDialog::setShortCutsForToolBarItems()

@@ -1824,7 +1824,7 @@ const QString Utilities::getPlatformProps(const QString sourceStyleSheet)
     QString prefix;
 #if defined(Q_OS_MACOS)
     prefix = QStringLiteral("/* macOS */\n"
-                            "* { font-family: Inter; font-size: 36px;}\n");
+                            "* { font-family: Inter;}\n");
 #elif defined(Q_OS_WIN)
     prefix = QStringLiteral("/* Windows */\n"
                             "* { font-family: Lato; }\n");
@@ -1867,15 +1867,8 @@ int Utilities::getNodeAccess(MegaNode* node)
     }
 }
 
-QString Utilities::getNodeStringAccess(MegaHandle handle)
+QString Utilities::getNodeStringAccess(int access)
 {
-    auto node = std::unique_ptr<MegaNode>(MegaSyncApp->getMegaApi()->getNodeByHandle(handle));
-    return getNodeStringAccess(node.get());
-}
-
-QString Utilities::getNodeStringAccess(MegaNode* node)
-{
-    auto access(getNodeAccess(node));
     switch (access)
     {
         case MegaShare::ACCESS_READ:
@@ -1901,15 +1894,8 @@ QString Utilities::getNodeStringAccess(MegaNode* node)
     }
 }
 
-QIcon Utilities::getNodeAccessIcon(MegaHandle handle)
+QIcon Utilities::getNodeAccessIcon(int access)
 {
-    auto node = std::unique_ptr<MegaNode>(MegaSyncApp->getMegaApi()->getNodeByHandle(handle));
-    return getNodeAccessIcon(node.get());
-}
-
-QIcon Utilities::getNodeAccessIcon(MegaNode* node)
-{
-    auto access(getNodeAccess(node));
     switch (access)
     {
         case MegaShare::ACCESS_READ:
@@ -1919,7 +1905,7 @@ QIcon Utilities::getNodeAccessIcon(MegaNode* node)
         }
         case MegaShare::ACCESS_READWRITE:
         {
-            return getIcon(QLatin1String("edit"),
+            return getIcon(QLatin1String("pen-1"),
                            AttributeType::SMALL | AttributeType::THIN | AttributeType::OUTLINE);
         }
         case MegaShare::ACCESS_FULL:
@@ -2362,22 +2348,26 @@ void MegaListenerFuncExecuter::onRequestFinish(MegaApi *api, MegaRequest *reques
 {
     if (mExecuteInAppThread)
     {
-        MegaRequest *requestCopy = request->copy();
-        MegaError *errorCopy = e->copy();
+        std::unique_ptr<MegaRequest> requestCopy(request->copy());
+        std::unique_ptr<MegaError> errorCopy(e->copy());
         QObject temporary;
-        QObject::connect(&temporary, &QObject::destroyed, qApp, [this, api, requestCopy, errorCopy](){
-
-            if (onRequestFinishCallback)
+        QObject::connect(
+            &temporary,
+            &QObject::destroyed,
+            qApp,
+            [this, api, requestCopy = std::move(requestCopy), errorCopy = std::move(errorCopy)]()
             {
-                onRequestFinishCallback(api, requestCopy, errorCopy);
-            }
+                if (onRequestFinishCallback)
+                {
+                    onRequestFinishCallback(api, requestCopy.get(), errorCopy.get());
+                }
 
-            if (mAutoremove)
-            {
-                delete this;
-            }
-
-        }, Qt::QueuedConnection);
+                if (mAutoremove)
+                {
+                    delete this;
+                }
+            },
+            Qt::QueuedConnection);
     }
     else
     {

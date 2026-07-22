@@ -44,6 +44,7 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
     bool event(QEvent *event) override;
     void resizeEvent(QResizeEvent *) override;
+    void changeEvent(QEvent* event) override;
 
 private:
     void setConflictItems(qsizetype count);
@@ -64,11 +65,12 @@ private:
     void startWithNewCategoryOfConflicts();
 
     void updateHeader();
+    void retranslateContent();
 
     Ui::DuplicatedNodeDialog *ui;
 
     QList<std::shared_ptr<DuplicatedNodeInfo>> mConflictsBeingProcessed;
-    DuplicatedUploadBase* mChecker;
+    DuplicatedUploadBase* mChecker = nullptr;
     std::shared_ptr<ConflictTypes>  mConflicts;
 
     static QSet<int> mIgnoreConflictTypes;

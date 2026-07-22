@@ -477,12 +477,33 @@ bool StalledIssueDelegate::event(QEvent *event)
 
 bool StalledIssueDelegate::eventFilter(QObject *object, QEvent *event)
 {
-    if(object == mView && event->type() == QEvent::Resize)
+    if (object == mView)
     {
-        mUpdateSizeHintTimerFromResize.start(UPDATE_SIZE_TIMER);
+        // Only react to geometry changes. Reacting to every event (Paint, Timer,
+        // MetaCall...) turns this into a self-sustaining loop: sizeHintChanged() triggers a
+        // relayout/repaint, whose events re-enter here and restart the timer, and so on.
+        if (event->type() == QEvent::Resize || event->type() == QEvent::Show)
+        {
+            // Throttle instead of debounce: a single-shot timer restarted on every resize event
+            // only fires once the drag stops, so rows keep their stale height during the whole
+            // resize and snap at the end. Not restarting while it is already pending makes it fire
+            // periodically during the drag, so row heights track the width smoothly.
+            if (!mUpdateSizeHintTimerFromResize.isActive())
+            {
+                mUpdateSizeHintTimerFromResize.start(UPDATE_SIZE_TIMER);
+            }
+        }
 
+        // The view is watched only to track resizes. Never forward its events
+        // to the base class filter: QStyledItemDelegate::eventFilter assumes
+        // the watched object is an editor, so a FocusOut on the view (e.g.
+        // when a modal dialog is opened and the view has the focus returned
+        // by a previous closeEditor()) would emit commitData()/closeEditor()
+        // with the view itself as the editor.
+        return false;
     }
-    else if(event->type() == QEvent::MouseButtonRelease)
+
+    if (event->type() == QEvent::MouseButtonRelease)
     {
         if(auto mouseButtonEvent = dynamic_cast<QMouseEvent*>(event))
         {

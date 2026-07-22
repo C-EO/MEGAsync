@@ -138,7 +138,6 @@ public:
     void showNotificationMessage(QString message, QString title = MegaSyncApp->getMEGAString());
     void setMaxUploadSpeed(int limit);
     void setMaxDownloadSpeed(int limit);
-    void setMaxConnections(int direction, int connections);
     void startUpdateTask();
     void stopUpdateTask();
     void applyProxySettings();
@@ -215,10 +214,8 @@ signals:
     void installUpdate();
     void clearAllFinishedTransfers();
     void fetchNodesAfterBlock();
-    void unblocked();
     void nodeMoved(mega::MegaHandle handle);
     void nodeAttributesChanged(mega::MegaHandle handle);
-    void blocked();
     void storageStateChanged(int);
     void pauseStateChanged();
     void addBackup();
@@ -333,8 +330,6 @@ private slots:
     void registerUserActivity();
     void PSAseen(int id);
     void onSyncModelUpdated(std::shared_ptr<SyncSettings> syncSettings);
-    void onBlocked();
-    void onUnblocked();
     void onTransfersModelUpdate();
 
     void startingUpload();
@@ -374,8 +369,7 @@ protected:
 #ifdef _WIN32
     QPointer<QMenu> windowsMenu;
     QAction *windowsExitAction;
-    QAction *windowsUpdateAction;
-    QAction *windowsAboutAction;
+    QAction* windowsUpdateAction;
     QAction *windowsImportLinksAction;
     QAction *windowsFilesAction;
     QAction *windowsUploadAction;
@@ -399,7 +393,6 @@ protected:
     MegaMenuItemAction* MEGAWebAction;
     MenuItemAction* deviceCentreAction;
     MegaMenuItemAction* updateAction = nullptr;
-    MegaMenuItemAction* aboutAction = nullptr;
     QAction *showStatusAction;
     QPointer<SyncsMenu> mSyncs2waysMenu;
     QPointer<SyncsMenu> mBackupsMenu;
@@ -651,6 +644,7 @@ private:
 
     void addFont(const QString& fontPath);
     void addFonts();
+    void enableDisabledSyncs();
 
 private slots:
     void onFolderTransferUpdate(FolderTransferUpdateEvent event);

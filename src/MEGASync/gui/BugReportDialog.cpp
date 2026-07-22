@@ -193,21 +193,19 @@ void BugReportDialog::onReportFailed()
     else if (data.getStatus() == BugReportData::STATUS::REPORT_SUBMIT_FAILED &&
              data.getRequestError() == MegaError::API_ETOOMANY)
     {
-        // URL handled through translations. TODO use placeholder
         msgInfo.titleText = tr("You must wait 10 minutes before submitting another issue");
-        QString text = tr("Please try again later or contact our support team via "
-                          "[A]support@mega.co.nz[/A] if the problem persists.");
-        Text::Link link(ServiceUrls::getSupportEmail().toString());
+        QString text = tr("Please try again later or contact [A]Support[/A] "
+                          "if the problem persists.");
+        Text::Link link(ServiceUrls::instance()->getSupportFormUrl().toString());
         link.process(text);
         msgInfo.descriptionText = text;
         MessageDialogOpener::warning(msgInfo);
     }
     else
     {
-        // URL handled through translations. TODO use placeholder
         QString text = tr("Bug report can't be submitted due to some error. Please try again or "
-                          "contact our support team via [A]support@mega.co.nz[/A]");
-        Text::Link link(ServiceUrls::getSupportEmail().toString());
+                          "contact [A]Support[/A].");
+        Text::Link link(ServiceUrls::instance()->getSupportFormUrl().toString());
         link.process(text);
         msgInfo.descriptionText = text;
         MessageDialogOpener::warning(msgInfo);

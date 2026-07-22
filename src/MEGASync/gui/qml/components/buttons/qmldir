@@ -18,3 +18,4 @@ TextButton 1.0 TextButton.qml
 RadioButton 1.0 RadioButton.qml
 RadioButtonSizes 1.0 RadioButtonSizes.qml
 RadioButtonColors 1.0 RadioButtonColors.qml
+SwitchButton 1.0 SwitchButton.qml

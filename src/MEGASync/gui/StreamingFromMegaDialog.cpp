@@ -1,10 +1,10 @@
 #include "StreamingFromMegaDialog.h"
 
 #include "DialogOpener.h"
+#include "FilePickerNodeSelectorSpecializations.h"
 #include "MegaInputDialog.h"
 #include "MegaNodeNames.h"
 #include "MessageDialogOpener.h"
-#include "NodeSelectorSpecializations.h"
 #include "Platform.h"
 #include "QTMegaApiManager.h"
 #include "ServiceUrls.h"
@@ -440,7 +440,7 @@ void StreamingFromMegaDialog::onTransferTemporaryError(mega::MegaApi*, mega::Meg
 
         show();
         raise();
-        activateWindow();
+        activateWidgetWaylandSafe(this);
     }
 }
 

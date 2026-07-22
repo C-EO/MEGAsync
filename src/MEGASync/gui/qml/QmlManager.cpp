@@ -11,9 +11,9 @@
 #include "QmlDeviceName.h"
 #include "QmlDialog.h"
 #include "QmlDialogManager.h"
-#include "QmlItem.h"
 #include "QmlTheme.h"
 #include "QmlUtils.h"
+#include "SyncErrors.h"
 #include "SyncInfo.h"
 
 #include <QDataStream>
@@ -56,6 +56,13 @@ void QmlManager::registerCommonQmlElements()
     qmlRegisterUncreatableMetaObject(ApiEnums::staticMetaObject, "ApiEnums", 1, 0, "ApiEnums",
                                      QString::fromUtf8("Cannot create ApiEnums in QML"));
 
+    qmlRegisterUncreatableMetaObject(SyncErrors::staticMetaObject,
+                                     "SyncErrors",
+                                     1,
+                                     0,
+                                     "SyncErrors",
+                                     QString::fromUtf8("Cannot create SyncErrors in QML"));
+
     qmlRegisterUncreatableType<LoginController>("LoginController", 1, 0, "LoginController",
                                                 QString::fromUtf8("Cannot create WarningLevel in QML"));
     qmlRegisterUncreatableType<AccountStateQuickWidget>(
@@ -89,7 +96,9 @@ void QmlManager::registerCommonQmlElements()
                                                QmlDialogManager::getQmlInstance);
 
     qmlRegisterType<QmlDialog>("QmlDialog", 1, 0, "QmlDialog");
-    qmlRegisterType<QmlItem>("QmlItem", 1, 0, "QmlItem");
+    // SNC-6567: QmlItem removed — empty wrapper around QQuickItem after the
+    // QmlInstancesManager cleanup. QML uses the standard `Item` from QtQuick
+    // (e.g. surveys/SurveyItem.qml) instead.
     qmlRegisterType<QmlDeviceName>("QmlDeviceName", 1, 0, "QmlDeviceName");
     qmlRegisterType<ChooseLocalFolder>("ChooseLocalFolder", 1, 0, "ChooseLocalFolder");
     qmlRegisterType<ChooseRemoteFolder>("ChooseRemoteFolder", 1, 0, "ChooseRemoteFolder");

@@ -4,11 +4,11 @@
 // These numbers are used in different build project scripts. Keep this in
 // mind if you want to change the format.
 #define VER_MAJOR 6
-#define VER_MINOR 4
+#define VER_MINOR 5
 #define VER_MICRO 0
 #define VER_RC 2
 // Format: "VER_MAJOR.VER_MINOR.VER_MICRO.VER_RC\0"
-#define VER_PRODUCTVERSION_STR "6.4.0.2\0"
+#define VER_PRODUCTVERSION_STR "6.5.0.2\0"
 #define VER_PRODUCTVERSION VER_MAJOR, VER_MINOR, VER_MICRO, VER_RC
 #define VER_FILEVERSION VER_MAJOR, VER_MINOR, VER_MICRO, VER_RC
 #define VER_FILEVERSION_CODE (VER_MAJOR * 10000 + VER_MINOR * 100 + VER_MICRO)
@@ -26,7 +26,7 @@
 #define VER_PRODUCTNAME_STR         "MEGAsync\0"
 
 /* SDK commit hash, 7 chars */
-#define VER_SDK_ID "88a1ba0" // v10.14.0
+#define VER_SDK_ID "cf5d5e9" // v10.16.0
 
 // clang-format off
 // Update scrips relying on this value if you move it
@@ -37,10 +37,11 @@
 // [...]
 //"- item n\n"
 //)
-#define VER_CHANGES_NOTES QT_TRANSLATE_NOOP("Preferences", \
-"- Rename upload conflicts and duplicate same-folder items more easily.\n"                         \
-"- Cloud Drive, sync, backup, and settings dialogs are clearer and more consistent.\n"                        \
-"- Bug fixes and performance improvements.\n"              \
+#define VER_CHANGES_NOTES QT_TRANSLATE_NOOP("Preferences",                                         \
+"- Revamped and improved File Manager.\n"                                                          \
+"- Revamped Syncs and Backups tabs in the Settings dialog.\n"                                      \
+"- Improved Wayland support.\n"                                                                    \
+"- Bug fixes and performance improvements.\n"                                                      \
 )
 // clang-format on
 

@@ -44,6 +44,7 @@ private:
 protected:
     bool event(QEvent* event) override;
     bool eventFilter(QObject* o, QEvent* e) override;
+    void hideEvent(QHideEvent* event) override;
 };
 
 #endif // FILTERALERTWIDGET_H

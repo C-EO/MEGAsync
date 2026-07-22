@@ -4,6 +4,8 @@
 #include "DeviceNames.h"
 #include "NodeSelectorModel.h"
 
+#include <QTimer>
+
 #include <memory>
 
 namespace UserAttributes
@@ -87,6 +89,7 @@ signals:
     void requestIncomingSharesRootCreation(std::shared_ptr<mega::MegaNodeList> nodes);
     void addIncomingSharesRoot(std::shared_ptr<mega::MegaNode> node);
     void deleteIncomingSharesRoot(std::shared_ptr<mega::MegaNode> node);
+    void incomingShareInfoChanged(mega::MegaHandle handle);
 
 private slots:
     void onRootItemsCreated();
@@ -144,7 +147,8 @@ class NodeSelectorModelSearch: public NodeSelectorModel
     Q_OBJECT
 
 public:
-    explicit NodeSelectorModelSearch(NodeSelectorModelItemSearch::Types allowedType,
+    explicit NodeSelectorModelSearch(TabTypes allowedType,
+                                     bool flattenResults,
                                      QObject* parent = 0);
     ~NodeSelectorModelSearch() = default;
 
@@ -152,10 +156,12 @@ public:
     void createRootNodes() override;
     void searchByText(const QString& text);
     void stopSearch();
+    void setAllowedTabTypes(TabTypes allowedTypes);
     int rootItemsCount() const override;
     QModelIndex getTopRootIndex() const override;
     bool canFetchMore(const QModelIndex& parent) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant getDisplayText(NodeSelectorModelItem* item) const override;
     bool addNodes(QList<std::shared_ptr<mega::MegaNode>> nodes, const QModelIndex& parent) override;
     bool rootNodeUpdated(mega::MegaNode* node) override;
     bool canDropMimeData(const QMimeData*,
@@ -166,8 +172,9 @@ public:
     bool canDropMimeData() const override;
     bool canCopyNodes() const override;
 
-    const NodeSelectorModelItemSearch::Types& searchedTypes() const;
-    static NodeSelectorModelItemSearch::Types calculateSearchType(mega::MegaNode* node);
+    const TabTypes& searchedTypes() const;
+    int searchResultCount() const;
+    static TabTypes calculateSearchType(mega::MegaNode* node);
 
     bool hasTopRootIndex() override
     {
@@ -176,20 +183,31 @@ public:
 
 protected:
     void proxyInvalidateFinished() override;
-    bool showAccess(mega::MegaNode* node) const override;
 
 signals:
-    void searchNodes(const QString& text, NodeSelectorModelItemSearch::Types);
+    void searchNodes(const QString& text, TabTypes, bool flatten);
     void nodeTypeHasChanged();
     void requestAddSearchRootItem(QList<std::shared_ptr<mega::MegaNode>> nodes,
-                                  NodeSelectorModelItemSearch::Types typesAllowed);
+                                  TabTypes typesAllowed);
+    void requestAddSearchPathItems(QList<std::shared_ptr<mega::MegaNode>> nodes,
+                                   TabTypes typesAllowed);
     void requestDeleteSearchRootItem(std::shared_ptr<mega::MegaNode> node);
 
 private slots:
     void onRootItemsCreated();
+    void onSearchPathItemsAdded();
 
 private:
-    NodeSelectorModelItemSearch::Types mAllowedTypes;
+    bool matchesCurrentSearch(mega::MegaNode* node) const;
+    void collectSearchMatchesInSubtree(const QModelIndex& parent,
+                                       QList<std::shared_ptr<mega::MegaNode>>& matches) const;
+
+    TabTypes mAllowedTabTypes;
+    bool mFlattenSearchResults;
+    bool mSearchInFlight = false;
+    QString mLastSearchText;
+    std::shared_ptr<const UserAttributes::DeviceNames> mDeviceNamesRequest;
+    QTimer mSearchPathItemsAddedDebounce;
 };
 
 class NodeSelectorModelRubbish: public NodeSelectorModel

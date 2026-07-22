@@ -5,8 +5,6 @@ import common 1.0
 ResumeSyncsPageForm {
     id: root
 
-    image.sourceSize: Qt.size(128, 128)
-
     footerButtons {
 
         rightSecondary.onClicked: {

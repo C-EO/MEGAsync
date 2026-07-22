@@ -16,8 +16,13 @@
 #include <QRect>
 #include <QWindow>
 
+#include <algorithm>
 #include <functional>
 #include <memory>
+
+// Needed to store a QPointer<QWidget> in a dynamic property (QVariant) so the
+// visual-parent reference nulls automatically when the parent is destroyed.
+Q_DECLARE_METATYPE(QPointer<QWidget>)
 
 template<typename T>
 class QmlDialogWrapper;
@@ -45,6 +50,31 @@ public:
     ~DialogBlocker();
 };
 
+// Wayland-safe activation for plain QWidget dialogs. QWidget::activateWindow()
+// forwards to QWindow::requestActivate(), which Wayland does not support: it
+// only logs "Wayland does not support QWindow::requestActivate()". Request user
+// attention via alert() there instead. QmlDialogWrapper already does this
+// internally (see QmlDialogWrapperBase::activateWindow()), so callers must skip
+// this helper for QML dialogs and let the wrapper's own override run.
+// TODO Qt6: call activateWindow() unconditionally — Qt6 activates via
+// xdg-activation without warning.
+inline void activateWidgetWaylandSafe(QWidget* widget)
+{
+    if (!widget)
+    {
+        return;
+    }
+
+    if (Platform::getInstance()->isWayland())
+    {
+        QApplication::alert(widget);
+    }
+    else
+    {
+        widget->activateWindow();
+    }
+}
+
 class DialogOpener
 {
 private:
@@ -64,6 +94,7 @@ private:
         virtual bool isVisible() = 0;
         virtual bool isActive() = 0;
         virtual bool isParent(QObject* parent) = 0;
+        virtual bool ownsWindow(QWindow* window) const = 0;
         virtual QRect frameGeometry() const = 0;
         virtual void applyCurrentTheme() = 0;
 
@@ -104,13 +135,32 @@ private:
             if(!mDialog->isMinimized())
             {
                 mDialog->raise();
-                mDialog->activateWindow();
+                if (QmlDialogWrapperUtilities::isQML(mDialog->windowHandle()))
+                {
+                    // QmlDialogWrapper::activateWindow() is already Wayland-safe.
+                    mDialog->activateWindow();
+                }
+                else
+                {
+                    activateWidgetWaylandSafe(mDialog.data());
+                }
             }
         }
 
         void show() override
         {
-            mDialog->setWindowState(Qt::WindowActive);
+            if (!QmlDialogWrapperUtilities::isQML(mDialog->windowHandle()) &&
+                Platform::getInstance()->isWayland())
+            {
+                // Plain QWidget dialog on Wayland: setWindowState(WindowActive)
+                // triggers the unsupported QWindow::requestActivate(). QML
+                // dialogs use the wrapper's own Wayland-safe setWindowState().
+                QApplication::alert(mDialog.data());
+            }
+            else
+            {
+                mDialog->setWindowState(Qt::WindowActive);
+            }
         }
 
         bool isVisible() override
@@ -139,6 +189,11 @@ private:
             return mDialog->parent() == parent;
         }
 
+        bool ownsWindow(QWindow* window) const override
+        {
+            return mDialog && mDialog->windowHandle() == window;
+        }
+
         QRect frameGeometry() const override
         {
             return mDialog->frameGeometry();
@@ -165,6 +220,9 @@ private:
         bool isEmpty() const {return geometry.isEmpty();}
     };
 
+    static constexpr const char* PARENT_GEOMETRY_PROPERTY = "ParentGeometry";
+    static constexpr const char* VISUAL_PARENT_PROPERTY = "VisualParent";
+
 public:
     static QPoint initialDialogPosition(const QSize& dialogSize)
     {
@@ -174,6 +232,59 @@ public:
     static QPoint initialDialogPosition(const QSize& dialogSize, const QRect& parentGeometry)
     {
         return Platform::getInstance()->initialDialogPosition(dialogSize, parentGeometry);
+    }
+
+    // Remembers, on a dialog, the geometry of the window it should be centered
+    // on. Stored as a dynamic property so it works for any dialog type (QML
+    // wrappers and plain QWidget/QDialog alike) and, crucially, lets a dialog be
+    // centered on a window WITHOUT making that window its Qt parent (which would
+    // couple modality and lifetime). Read back when positioning the dialog.
+    // For plain QWidget dialogs, prefer setVisualParent() instead — it derives
+    // the geometry live and also supplies the QWindow* needed on Wayland.
+    static void setParentGeometry(QObject* dialog, const QRect& parentGeometry)
+    {
+        if (dialog)
+        {
+            dialog->setProperty(PARENT_GEOMETRY_PROPERTY, parentGeometry);
+        }
+    }
+
+    static QRect getParentGeometry(const QObject* dialog)
+    {
+        if (!dialog)
+        {
+            return QRect();
+        }
+
+        const auto value(dialog->property(PARENT_GEOMETRY_PROPERTY));
+        return value.isValid() ? value.toRect() : QRect();
+    }
+
+    // Stores the visual parent widget so showDialogImpl() can derive both the
+    // centering geometry and (on Wayland) the transient-parent window handle
+    // from a single source — without adding Wayland-specific storage.
+    // Use this instead of setParentGeometry() whenever a QWidget* is available.
+    static void setVisualParent(QObject* dialog, QWidget* parentWidget)
+    {
+        if (dialog && parentWidget)
+        {
+            // Stored as a QPointer so it nulls automatically if the parent window
+            // is destroyed before the dialog is shown. The dialog is deliberately
+            // NOT Qt-parented to the visual parent (see setParentGeometry's note on
+            // decoupling lifetime), so their lifetimes are independent; a raw
+            // pointer would dangle and crash getVisualParent()/showDialogImpl().
+            dialog->setProperty(VISUAL_PARENT_PROPERTY,
+                                QVariant::fromValue(QPointer<QWidget>(parentWidget->window())));
+        }
+    }
+
+    static QWidget* getVisualParent(const QObject* dialog)
+    {
+        if (!dialog)
+        {
+            return nullptr;
+        }
+        return dialog->property(VISUAL_PARENT_PROPERTY).value<QPointer<QWidget>>().data();
     }
 
     template <class DialogType>
@@ -396,8 +507,13 @@ public:
 
             if(dialog->parent())
             {
-                dialog->parentWidget()->activateWindow();
+                activateWidgetWaylandSafe(dialog->parentWidget());
             }
+
+            // End any attached transient child (e.g. macOS sheet) while this
+            // dialog's native window is still alive, to avoid an orphaned sheet
+            // crashing on its own teardown.
+            detachTransientChildren(dialog->windowHandle());
 
             dialog->deleteLater();
         }
@@ -460,12 +576,85 @@ public:
                            });
     }
 
+    // True if any currently-open dialog is parented to the given object.
+    // Qt5-ONLY: added solely for the InfoDialog Wayland anchoring workaround —
+    // keep the InfoDialog mapped only while it parents a child dialog (add
+    // sync, add backup, ...), not for unrelated top-level dialogs.
+    // TODO Qt6: remove — Qt6's Wayland backend makes the workaround unnecessary.
+    static bool isAnyDialogChildOf(QObject* parent)
+    {
+        return std::any_of(mOpenedDialogs.cbegin(),
+                           mOpenedDialogs.cend(),
+                           [parent](const std::shared_ptr<DialogInfoBase>& info)
+                           {
+                               return info->isParent(parent);
+                           });
+    }
+
     static QList<QPointer<QWidget>> getAllOpenedDialogs();
+
+    // When a QQuickWindow is closed or destroyed while other QML windows are
+    // visible, the remaining windows can stay blank until the next input
+    // event forces a frame (reproduced on macOS with both Qt5 and Qt6).
+    // Schedule an update on the opened QML dialogs so they repaint
+    // immediately.
+    static void refreshOtherQmlWindows(QWindow* excludedWindow = nullptr);
 
 private:
     static QList<std::shared_ptr<DialogInfoBase>> mOpenedDialogs;
     static QQueue<std::shared_ptr<DialogInfoBase>> mDialogsQueue;
     static QMap<QString, GeometryInfo> mSavedGeometries;
+
+    // Before a dialog's window is destroyed or recreated, end any transient
+    // child windows (e.g. macOS sheets) while this parent is still alive.
+    // A WindowModal QML dialog attached as a macOS sheet keeps a transient-parent
+    // link to this window; if the parent goes away first, Qt silently nulls the
+    // link but the native NSWindow stays a sheet, so the child's later teardown
+    // calls endSheet on a null parent (QCocoaWindow::setVisible) and crashes.
+    // Hiding the child now ends the sheet cleanly; clearing the link drops the
+    // dangling reference.
+    static void detachTransientChildren(QWindow* parentWindow)
+    {
+        if (!parentWindow)
+        {
+            return;
+        }
+
+        const auto windows = QGuiApplication::topLevelWindows();
+        for (QWindow* window: windows)
+        {
+            if (window == parentWindow || window->transientParent() != parentWindow)
+            {
+                continue;
+            }
+
+            // A transient child backed by a dialog tracked in mOpenedDialogs
+            // (e.g. a WindowModal child opened through DialogOpener) must be
+            // closed through its dialog: finished() then drives the usual
+            // cleanup (removeWhenClose -> deleteLater -> tracking removal) and
+            // delivers any pending result callbacks. A bare hide would leave
+            // it tracked forever, invisible but still "open". Closing also
+            // ends a macOS sheet cleanly, so the crash this sweep prevents
+            // stays prevented.
+            const auto it = std::find_if(mOpenedDialogs.cbegin(),
+                                         mOpenedDialogs.cend(),
+                                         [window](const std::shared_ptr<DialogInfoBase>& info)
+                                         {
+                                             return info->ownsWindow(window);
+                                         });
+            if (it != mOpenedDialogs.cend())
+            {
+                // Keep the info alive across close(); the call can trigger
+                // cleanup of this very list entry.
+                const auto childInfo = *it;
+                childInfo->close();
+                continue;
+            }
+
+            window->setVisible(false);
+            window->setTransientParent(nullptr);
+        }
+    }
 
     template <class DialogType>
     static void removeWhenClose(QPointer<DialogType> dialog)
@@ -484,7 +673,7 @@ private:
             QString classType = className<DialogType>();
             auto info = findSiblingDialogInfo<DialogType>(classType);
 
-            bool isQML(QmlDialogWrapperUtilities::isQML(dialog));
+            bool isQML(QmlDialogWrapperUtilities::isQML(dialog->windowHandle()));
 
             bool ignoreGeometry(isQML && QmlDialogWrapperUtilities::isShowWhenCreated(dialog));
             QRect geometry;
@@ -538,6 +727,10 @@ private:
                 TokenParserWidgetManager::instance()->applyCurrentTheme(dialog);
             }
 
+            // setParent() below can recreate the native window; detach attached
+            // transient children first so they don't end up orphaned sheets.
+            detachTransientChildren(dialog->windowHandle());
+
             // Use to reload the widget stylesheet. Without this line, the new stylesheet is not
             // correctly applied.
             dialog->setParent(dialog->parentWidget(), dialog->windowFlags());
@@ -562,16 +755,69 @@ private:
             else
             {
                 QRect parentGeo;
-                // QML dialogs with parent are centered on its parent
-                if (isQML)
+                QWindow* visualParentWindow = nullptr;
+                // Prefer a stored visual parent (setVisualParent): derives the
+                // centering geometry live and — for non-QML dialogs on Wayland —
+                // also supplies the transient-parent window handle so the
+                // compositor can centre the dialog itself.
+                // Falls back to an explicit QRect (setParentGeometry, used by the
+                // QML→QML path where only a QQuickWindow* is available) or the
+                // Qt parent's top-level frame. Geometry-retaining dialogs
+                // (NodeSelector, TransferManager, StalledIssuesDialog) have none
+                // of the above and keep restoring their saved geometry.
+                if (QWidget* visualParent = getVisualParent(dialog))
                 {
-                    parentGeo = QmlDialogWrapperUtilities::getParentGeometry(dialog);
+                    parentGeo = visualParent->frameGeometry();
+                    if (!isQML)
+                    {
+                        visualParentWindow = visualParent->windowHandle();
+                    }
+                }
+                else if (isQML)
+                {
+                    parentGeo = getParentGeometry(dialog);
+                }
+                else
+                {
+                    // Non-QML without visual parent
+                    parentGeo = getParentGeometry(dialog);
+                    if (!parentGeo.isValid())
+                    {
+                        if (QWidget* parentWidget = dialog->parentWidget())
+                        {
+                            parentGeo = parentWidget->window()->frameGeometry();
+                        }
+                    }
                 }
 
                 if (parentGeo.isValid())
                 {
-                    dialog->move(initialDialogPosition(dialog->geometry().size(), parentGeo));
-                    dialog->show();
+                    QWindow* qmlWindow = isQML ? dialog->windowHandle() : nullptr;
+                    if (qmlWindow)
+                    {
+                        // QML dialogs: the visible window is the inner QQuickWindow,
+                        // not the wrapper QWidget. Moving the wrapper mis-converts
+                        // the coordinates on high-DPI secondary monitors (the wrapper
+                        // and the QML window can be bound to different screens/DPR, so
+                        // the logical->native conversion lands the window off-screen).
+                        // Position the QML window directly, binding it to the target
+                        // screen first so the conversion uses the right DPI.
+                        const QPoint targetPos =
+                            initialDialogPosition(qmlWindow->size(), parentGeo);
+                        QmlDialogWrapperUtilities::bindToScreenForPositioning(qmlWindow,
+                                                                              parentGeo.center(),
+                                                                              targetPos);
+                        qmlWindow->setFramePosition(targetPos);
+                        dialog->show();
+                    }
+                    else
+                    {
+                        Platform::getInstance()->moveDialog(
+                            dialog,
+                            initialDialogPosition(dialog->geometry().size(), parentGeo),
+                            visualParentWindow);
+                        dialog->show();
+                    }
                 }
                 else
                 {
@@ -627,6 +873,18 @@ private:
 
             info->raise(true);
 
+            // A QML dialog shown through the "ignoreGeometry" path (registered via
+            // addDialog() before showDialog(), e.g. the guest dialog) never has a
+            // geometry committed, so its freshly created QQuickWindow can stay at
+            // its initial 1x1 size (the QML-declared width/height are not flushed
+            // to the native window until a geometry is set). Make sure the window
+            // is never shown smaller than its own minimum size.
+            if (isQML && (dialog->geometry().width() < dialog->minimumWidth() ||
+                          dialog->geometry().height() < dialog->minimumHeight()))
+            {
+                dialog->resize(dialog->minimumWidth(), dialog->minimumHeight());
+            }
+
             Platform::getInstance()->applyCurrentThemeOnCurrentDialogFrame(dialog->windowHandle());
 
             return info;
@@ -638,13 +896,47 @@ private:
     template <class DialogType>
     static void initDialog(QPointer<DialogType> dialog)
     {
-        dialog->connect(dialog.data(), &QObject::destroyed, [dialog](){
-            auto info = findDialogInfo<DialogType>(dialog);
-            if(info)
-            {
-                mOpenedDialogs.removeOne(info);
-            }
-        });
+        // Evaluated now: inside the destroyed lambda the QPointer is already
+        // null, so the dialog type cannot be queried there.
+        const bool isQML(QmlDialogWrapperUtilities::isQML(dialog->windowHandle()));
+
+        if (isQML)
+        {
+            // Repaint the remaining QML windows when this one leaves the
+            // screen: that is the moment their content can get invalidated
+            // and stay blank until the next input event.
+            QWindow* window = dialog->windowHandle();
+            QObject::connect(window,
+                             &QWindow::visibleChanged,
+                             window,
+                             [window](bool visible)
+                             {
+                                 if (!visible)
+                                 {
+                                     refreshOtherQmlWindows(window);
+                                 }
+                             });
+        }
+
+        dialog->connect(dialog.data(),
+                        &QObject::destroyed,
+                        [dialog, isQML]()
+                        {
+                            auto info = findDialogInfo<DialogType>(dialog);
+                            if (info)
+                            {
+                                mOpenedDialogs.removeOne(info);
+                            }
+
+                            if (isQML)
+                            {
+                                // The wrapper's inner QQuickWindow is deleted right after
+                                // this (deleteLater from the wrapper's destructor): refresh
+                                // the remaining QML dialogs so they repaint. No window to
+                                // exclude; this dialog's entry was just removed.
+                                refreshOtherQmlWindows();
+                            }
+                        });
         auto dpiResize = new HighDpiResize<DialogType>(dialog);
         Q_UNUSED(dpiResize);
     }

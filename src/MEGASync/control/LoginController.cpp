@@ -146,7 +146,7 @@ void LoginController::setState(State state)
         else if (mForceOnboarding || showOnboarding)
         {
             mOnboardingShown = true;
-            QmlDialogManager::instance()->openOnboardingDialog(mForceOnboarding);
+            QmlDialogManager::instance()->openOnboardingDialog(mForceOnboarding || showOnboarding);
             state = State::FETCH_NODES_FINISHED_ONBOARDING;
             mPreferences->setOneTimeActionUserDone(Preferences::ONE_TIME_ACTION_ONBOARDING_SHOWN,
                                                    true);
@@ -582,12 +582,22 @@ void LoginController::onWhyAmIBlocked(mega::MegaRequest* request, mega::MegaErro
     if (e->getErrorCode() == mega::MegaError::API_OK
         && request->getNumber() == mega::MegaApi::ACCOUNT_NOT_BLOCKED)
     {
-        // if we received a block before nodes were fetch,
-        // we want to try again now that we are no longer blocked
-        if (mState != FETCHING_NODES && !MegaSyncApp->getRootNode())
+        mega::MegaApi::log(
+            mega::MegaApi::LOG_LEVEL_DEBUG,
+            QString::fromUtf8("onWhyAmIBlocked recovery check: state=%1 !getRootNode()=%2")
+                .arg(QVariant::fromValue<State>(mState).toString())
+                .arg(!MegaSyncApp->getRootNode())
+                .toUtf8()
+                .constData());
+
+        // If the original login was interrupted by the block, drive the state machine
+        // back to FETCH_NODES_FINISHED. Checking getRootNode() is not reliable because
+        // the SDK hydrates nodes from local cache even when the in-session fetchNodes
+        // failed (state ended up in LOGGED_OUT but getRootNode() still returns non-null).
+        if (mState != FETCHING_NODES && mState != FETCHING_NODES_2FA &&
+            mState != FETCH_NODES_FINISHED && mState != FETCH_NODES_FINISHED_ONBOARDING)
         {
             fetchNodes();
-            //show fetchnodes page in new guestwidget
         }
     }
 }
@@ -913,10 +923,9 @@ void LogoutController::onRequestFinish(mega::MegaRequest* request, mega::MegaErr
             }
             else
             {
-                // URL handled through translations. TODO use placeholder
-                QString text = tr("You have been logged out. Please contact [A]support@mega.nz[/A] "
+                QString text = tr("You have been logged out. Please contact [A]Support[/A] "
                                   "if this issue persists.");
-                Text::Link link(ServiceUrls::getSupportEmail().toString());
+                Text::Link link(ServiceUrls::instance()->getSupportFormUrl().toString());
                 link.process(text);
                 msgInfo.descriptionText = text;
                 msgInfo.textFormat = Qt::RichText;

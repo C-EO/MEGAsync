@@ -51,9 +51,18 @@ public:
     virtual bool startOnStartup(bool value) = 0;
     virtual bool isStartOnStartupActive() = 0;
     virtual bool isTilingWindowManager();
+    // Are we running on the Wayland platform? Default uses the live
+    // QGuiApplication's platform name (authoritative once the app exists). The
+    // Linux override additionally handles the pre-QApplication case (e.g. the
+    // scale-factor setup) via environment detection.
+    virtual bool isWayland();
     virtual QPoint initialDialogPosition(const QSize& dialogSize) const;
     virtual QPoint initialDialogPosition(const QSize& dialogSize,
                                          const QRect& parentGeometry) const;
+    // Moves a plain QWidget dialog to `pos`. On Wayland, move() is ignored by
+    // the compositor, so the override uses `visualParent` to set the transient
+    // parent instead, letting the compositor centre the dialog itself.
+    virtual void moveDialog(QWidget* dialog, const QPoint& pos, QWindow* visualParent = nullptr);
     virtual bool showInFolder(QString pathIn) = 0;
     virtual void startShellDispatcher(MegaApplication *receiver) = 0;
     virtual void stopShellDispatcher() = 0;
@@ -129,7 +138,16 @@ public:
     virtual Preferences::ThemeAppeareance getPanelTheme() const;
     virtual void applyCurrentThemeOnCurrentDialogFrame(QWindow* window);
 
+    // Brings a top-level widget to the foreground even when MEGAsync is not the active
+    // process (e.g. a download request triggered from the browser). Default is a no-op;
+    // platforms that need OS-specific handling override it.
+    virtual void raiseToForeground(QWidget* widget) {}
+
     virtual void setRenderingBackend() const {}
+
+    // Severs connections with assistive-technology clients before UI teardown.
+    // Only needed on Windows; see PlatformImplementation::disconnectAccessibilityClients().
+    virtual void disconnectAccessibilityClients() {}
 
 signals:
     void themeChanged(Preferences::SystemColorScheme theme);

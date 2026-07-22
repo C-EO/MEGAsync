@@ -24,6 +24,7 @@ FocusScope {
     property Sizes sizes: Sizes {}
 
     signal buttonClicked
+    signal pressed
 
     height: folderItem.height
     Layout.preferredHeight: folderItem.height
@@ -45,6 +46,10 @@ FocusScope {
         toolTip {
             leftIconSource: leftIconSource
             timeout: 5000
+        }
+
+        onPressed: {
+            root.pressed()
         }
     }
 

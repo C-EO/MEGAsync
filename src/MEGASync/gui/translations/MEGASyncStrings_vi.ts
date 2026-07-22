@@ -16,7 +16,7 @@
     <message>
         <source>Backups</source>
         <translatorcomment>Label for Backups storage space used. Maintain capital letter in first word.(Max 18 characters)</translatorcomment>
-        <translation>Sao lưu dự phòng</translation>
+        <translation>Sao lưu</translation>
     </message>
     <message>
         <source>Cloud drive</source>
@@ -592,9 +592,14 @@
         <translation>Báo cáo lỗi</translation>
     </message>
     <message>
+        <source>Bug report can&apos;t be submitted due to some error. Please try again or contact [A]Support[/A].</source>
+        <translatorcomment>Warning message shown when some error occurs during uploading a bug report. [A][/A] is a hyperlink placeholder linking to the support form.</translatorcomment>
+        <translation>Báo&#xa0;cáo lỗi đã không&#xa0;thể gửi đi được do có trục&#xa0;trặc. Hãy thử&#xa0;lại sau hoặc liên&#xa0;hệ [A]Hỗ&#xa0;trợ[/A] nếu vấn&#xa0;đề vẫn tiếp&#xa0;diễn.</translation>
+    </message>
+    <message>
         <source>Bug report can&apos;t be submitted due to some error. Please try again or contact our support team via [A]support@mega.co.nz[/A]</source>
         <translatorcomment>Warning message shown when some error occurs during uploading a bug report.</translatorcomment>
-        <translation>Báo&#xa0;cáo lỗi đã không thể gửi đi được do có trục&#xa0;trặc. Hãy thử lại sau hoặc liên&#xa0;hệ với đội trợ&#xa0;giúp qua email [A]support@mega.io[/A] nếu vấn&#xa0;đề vẫn tiếp&#xa0;diễn.</translation>
+        <translation>Báo&#xa0;cáo lỗi đã không thể gửi đi được do có trục&#xa0;trặc. Hãy thử lại sau hoặc liên&#xa0;hệ với đội trợ&#xa0;giúp qua email [A]https://mega.nz/support[/A] nếu vấn&#xa0;đề vẫn tiếp&#xa0;diễn.</translation>
     </message>
     <message>
         <source>Bug report is uploading, it may take a few minutes</source>
@@ -647,9 +652,14 @@
         <translation>Vui&#xa0;lòng mô&#xa0;tả chi&#xa0;tiết vấn&#xa0;đề. Phải có ít nhất 30 ký&#xa0;tự.</translation>
     </message>
     <message>
+        <source>Please try again later or contact [A]Support[/A] if the problem persists.</source>
+        <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins. [A][/A] is a hyperlink placeholder linking to the support form. con-364</translatorcomment>
+        <translation>Vui&#xa0;lòng thử&#xa0;lại sau hoặc liên&#xa0;hệ với chúng&#xa0;tôi qua trang [A]Hỗ&#xa0;trợ[/A] nếu vấn&#xa0;đề vẫn tiếp&#xa0;diễn.</translation>
+    </message>
+    <message>
         <source>Please try again later or contact our support team via [A]support@mega.co.nz[/A] if the problem persists.</source>
         <translatorcomment>Warning informative message shown when the user tries to send two bug reports in under 10 mins.con-364</translatorcomment>
-        <translation>Vui lòng thử lại sau hoặc liên hệ với nhóm hỗ trợ của chúng tôi qua [A]support@mega.io[/A] nếu vấn đề vẫn tiếp diễn.</translation>
+        <translation>Vui lòng thử lại sau hoặc liên&#xa0;hệ với nhóm hỗ&#xa0;trợ của chúng&#xa0;tôi tại trang [A]https://mega.nz/support[/A] nếu vấn&#xa0;đề vẫn tiếp&#xa0;diễn.</translation>
     </message>
     <message>
         <source>Please wait until the current upload is completed.</source>
@@ -923,7 +933,7 @@
     <message>
         <source>The file %1 is unavailable because it was reported to contain content in breach of [A]MEGA’s Terms of Service[/A].</source>
         <translatorcomment>Title for the header widget sync stall that occurs when a file is blocked by ToS infringement. %1 is the file name. [A] is for links.SAT-1209</translatorcomment>
-        <translation>Tệp&#xa0;tin %1 không khả&#xa0;dụng vì đã bị &#xa0;cáo là có chứa nội&#xa0;dung vi&#xa0;phạm [A]Điều&#xa0;Khoản Dịch&#xa0;Vụ của MEGA[/A].</translation>
+        <translation>Tệp&#xa0;tin %1 không khả&#xa0;dụng vì đã bị cáo là có chứa nội&#xa0;dung vi&#xa0;phạm [A]Điều&#xa0;Khoản Dịch&#xa0;Vụ của MEGA[/A].</translation>
     </message>
 </context>
 <context>
@@ -1349,6 +1359,19 @@
     </message>
 </context>
 <context>
+    <name>DestinationBreadcrumb</name>
+    <message>
+        <source>Always upload to this destination</source>
+        <translatorcomment>Checkbox label in the node selector destination breadcrumb to set the current folder as the default upload destination. SNC-6420</translatorcomment>
+        <translation>Luôn tải lên vào điểm&#xa0;đích này</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translatorcomment>Label/title of the destination breadcrumb in the node selector, showing the folder files will be uploaded to. SNC-6420</translatorcomment>
+        <translation>Điểm đích</translation>
+    </message>
+</context>
+<context>
     <name>DownloadFromMegaDialog</name>
     <message>
         <source>Always download to this destination</source>
@@ -1518,6 +1541,11 @@
         <source>The folder at this destination will be maintained.</source>
         <translatorcomment>Text explaining the result of the folder skip action</translatorcomment>
         <translation>Thư mục có sẵn tại chỗ này sẽ được giữ nguyên vẹn.</translation>
+    </message>
+    <message>
+        <source>The folder will be renamed as:</source>
+        <translatorcomment>Text explaining the result of the folder rename action. SNC-6420</translatorcomment>
+        <translation>Thư&#xa0;mục sẽ được đổi tên thành:</translation>
     </message>
     <message>
         <source>The new folder will be merged with the folder at this destination.</source>
@@ -2005,6 +2033,36 @@
         <source>Can´t sync [B]%1[/B]</source>
         <translatorcomment>Title for the header widget of sync stall shown when there&apos;s an issue with a file or folder which requires user&apos;s intervention, [B] is for bold.SNC-2565</translatorcomment>
         <translation>Không thể đồng&#xa0;bộ [B]%1[/B] được</translation>
+    </message>
+</context>
+<context>
+    <name>FileManagerNodeSelector</name>
+    <message numerus="yes">
+        <source>%n result</source>
+        <translatorcomment>Label showing the number of search results in the File Manager node selector. %n is the number of results. SNC-6420</translatorcomment>
+        <translation>
+            <numerusform>%n kết&#xa0;quả</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>All items will be permanently deleted. This action can [B]not[/B] be undone</source>
+        <translatorcomment>Messagebox secondary string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Tất&#xa0;cả các mục sẽ bị xóa vĩnh&#xa0;viễn. Hành&#xa0;động này sẽ [B]không thể[/B] hồi lại được.</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translatorcomment>Messagebox cancel button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Hủy</translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translatorcomment>Messagebox accept button string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Dọn</translation>
+    </message>
+    <message>
+        <source>Empty Rubbish bin?</source>
+        <translatorcomment>Messagebox main string to empty the rubbish bin. SAT-426</translatorcomment>
+        <translation>Muốn dọn Thùng&#xa0;Rác?</translation>
     </message>
 </context>
 <context>
@@ -2530,7 +2588,7 @@ Kiểm&#xa0;tra hộp thư email của bạn để xem hướng&#xa0;dẫn mở 
     <message>
         <source>Your MEGA account is full.</source>
         <translatorcomment>Label shown to inform the user that the actual account is over storage.</translatorcomment>
-        <translation>Tài khoản MEGA đã bị đầy.</translation>
+        <translation>Tài&#xa0;khoản MEGA đã bị đầy.</translation>
     </message>
     <message>
         <source>Your data is at risk</source>
@@ -3083,9 +3141,14 @@ Hãy chờ cho phiên tải lên được hoàn&#xa0;tất.</translation>
         <translation>Bạn đã bị đăng&#xa0;xuất ra thiết&#xa0;bị này bởi một phiên đăng&#xa0;nhập từ chỗ khác</translation>
     </message>
     <message>
+        <source>You have been logged out. Please contact [A]Support[/A] if this issue persists.</source>
+        <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. [A][/A] is a hyperlink placeholder linking to the support form. CON-541</translatorcomment>
+        <translation>Đã đăng&#xa0;xuất. Xin liên&#xa0;hệ với [A]Hỗ&#xa0;trợ[/A] nếu vấn&#xa0;đề này vẫn tiếp&#xa0;diễn.</translation>
+    </message>
+    <message>
         <source>You have been logged out. Please contact [A]support@mega.nz[/A] if this issue persists.</source>
         <translatorcomment>Message displayed when the current account has been logged out due to an unknown error. CON-541</translatorcomment>
-        <translation>Bạn đã đăng&#xa0;xuất. Liên&#xa0;hệ [A]support@mega.io[/A] nếu vấn&#xa0;đề này vẫn tiếp&#xa0;diễn.</translation>
+        <translation>Bạn đã đăng&#xa0;xuất. Liên&#xa0;hệ tại trang [A]https://mega.nz/support[/A] nếu vấn&#xa0;đề này vẫn tiếp&#xa0;diễn.</translation>
     </message>
 </context>
 <context>
@@ -3533,7 +3596,7 @@ https://mega.co.nz/#sync</source>
     <message>
         <source>Your account is currently [A]suspended[/A]. You can only browse your data.</source>
         <translatorcomment>Informative message shown when a business account is expired and the user can only browse data and none operation (upload, download, creation..) is allowed.</translatorcomment>
-        <translation>Tài khoản của quý &#xa0;khách hiện đã [A]bị vô&#xa0;hiệu hóa[/A]. Quý&#xa0;khách chỉ có thể xem và duyệt dữ&#xa0;liệu của&#xa0;mình.</translation>
+        <translation>Tài khoản của quý&#xa0;khách hiện đã [A]bị vô&#xa0;hiệu hóa[/A]. Quý&#xa0;khách chỉ có thể xem và duyệt dữ&#xa0;liệu của&#xa0;mình.</translation>
     </message>
     <message>
         <source>Your account&apos;s security is now being upgraded. This will happen only once. If you have seen this message for this account before, press Cancel.</source>
@@ -3828,7 +3891,7 @@ Kiểm&#xa0;tra hộp&#xa0;thư email của quý&#xa0;vị để biết thêm th
     <message>
         <source>Your account has expired</source>
         <translatorcomment>Used when a business account has expired, but this could also be a Pro-Flexi account. Max. 27 characters. SNC-4190 and CON-556</translatorcomment>
-        <translation>Gói tài&#xa0;khoản của bạn đã hết hạn</translation>
+        <translation>Tài&#xa0;khoản của quý&#xa0;khách đã hết hạn</translation>
     </message>
     <message>
         <source>Your account was terminated due to a breach of MEGA&apos;s Terms of Service, such as abuse of rights of others; sharing and/or importing illegal data; or system abuse.</source>
@@ -4061,7 +4124,7 @@ Bạn sẽ không thể lấy lại quyền truy&#xa0;cập vào dữ&#xa0;liệ
     <message>
         <source>Share without full access</source>
         <translatorcomment>SDK error label shown when trying to sync into a shared folder without full access.</translatorcomment>
-        <translation>Bạn không có toàn quyền truy&#xa0;cập vào thư&#xa0;mục được chia&#xa0;sẻ trên MEGA</translation>
+        <translation>Bạn không có quyền truy&#xa0;cập toàn&#xa0;diện vào thư&#xa0;mục được chia&#xa0;sẻ trên MEGA</translation>
     </message>
     <message>
         <source>Syncing of exFAT, FAT32, FUSE and LIFS file systems is not supported by MEGA on macOS.</source>
@@ -4136,12 +4199,12 @@ Bạn sẽ không thể lấy lại quyền truy&#xa0;cập vào dữ&#xa0;liệ
     <message>
         <source>You can&apos;t run MEGA Desktop App from this location. Move it into the Applications folder then run it.</source>
         <translatorcomment>Error message shown when the user is trying to run MEGA Desktop App from a path different than Applications. Only affects to macOS.</translatorcomment>
-        <translation>Bạn không thể chạy ứng&#xa0;dụng MEGA từ vị&#xa0;trí này. Di&#xa0;chuyển vào thư&#xa0;mục Ứng&#xa0;Dụng rồi chạy lại.</translation>
+        <translation>Bạn không thể chạy app từ vị&#xa0;trí này. Di&#xa0;chuyển vào thư&#xa0;mục Ứng&#xa0;Dụng rồi chạy lại.</translation>
     </message>
     <message>
         <source>Your account is blocked</source>
         <translatorcomment>SDK error shown when your account is blocked</translatorcomment>
-        <translation>Tài khoản bị khóa</translation>
+        <translation>Tài&#xa0;khoản bị khóa</translation>
     </message>
     <message>
         <source>Your plan has expired</source>
@@ -4666,6 +4729,11 @@ Nhập một tên khác.</translation>
         <translation>Tìm kiếm</translation>
     </message>
     <message>
+        <source>Searching…</source>
+        <translatorcomment>Loading text shown in the node selector while a search for nodes is in progress. SNC-6420</translatorcomment>
+        <translation>Đang&#xa0;tìm…</translation>
+    </message>
+    <message>
         <source>Select a MEGA folder</source>
         <translatorcomment>Node selector dialog title</translatorcomment>
         <translation>Chọn một thư mục trên MEGA</translation>
@@ -4674,6 +4742,44 @@ Nhập một tên khác.</translation>
         <source>The item you selected has been removed. To reselect, close this window and try again.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>Mục bạn chọn đã bị xóa. Để chọn lại, hãy đóng cửa&#xa0;sổ này và thử lại.</translation>
+    </message>
+</context>
+<context>
+    <name>NodeSelectorLabelColors</name>
+    <message>
+        <source>Blue</source>
+        <translatorcomment>Color name for the &quot;Blue&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Lam</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translatorcomment>Color name for the &quot;Green&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Lục</translation>
+    </message>
+    <message>
+        <source>Grey</source>
+        <translatorcomment>Color name for the &quot;Grey&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Xám</translation>
+    </message>
+    <message>
+        <source>Orange</source>
+        <translatorcomment>Color name for the &quot;Orange&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Cam</translation>
+    </message>
+    <message>
+        <source>Purple</source>
+        <translatorcomment>Color name for the &quot;Purple&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Tím</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translatorcomment>Color name for the &quot;Red&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Đỏ</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translatorcomment>Color name for the &quot;Yellow&quot; node label option in the node selector. SNC-6420</translatorcomment>
+        <translation>Vàng</translation>
     </message>
 </context>
 <context>
@@ -4804,6 +4910,11 @@ Nhập một tên khác.</translation>
         <translation>Nội dung của thư mục được đồng bộ rồi</translation>
     </message>
     <message>
+        <source>Label</source>
+        <translatorcomment>Column header for the node label in the node selector. SNC-6420</translatorcomment>
+        <translation>Nhãn</translation>
+    </message>
+    <message>
         <source>Last modified</source>
         <translatorcomment>Table header title for node last modified date info. SNC.5804</translatorcomment>
         <translation>Lần sửa cuối</translation>
@@ -4827,6 +4938,11 @@ Nhập một tên khác.</translation>
         <source>Sort by date added</source>
         <translatorcomment>Table header tooltip for Date added column. SNC.5804</translatorcomment>
         <translation>Xếp theo ngày thêm vào</translation>
+    </message>
+    <message>
+        <source>Sort by label</source>
+        <translatorcomment>Sort option to order nodes by their label in the node selector. SNC-6420</translatorcomment>
+        <translation>Xếp theo màu&#xa0;nhãn</translation>
     </message>
     <message>
         <source>Sort by last modified date</source>
@@ -4944,6 +5060,11 @@ Nhập một tên khác.</translation>
         <translation>Các mục đã không thể khôi&#xa0;phục được. Thử lại sau.</translation>
     </message>
     <message>
+        <source>This file has been the subject of a takedown notice</source>
+        <translatorcomment>Tooltip to explain the user that the node (file) has been blocked due to a takedown notice. SNC-5350</translatorcomment>
+        <translation>Thư&#xa0;mục này đã bị nhận cáo&#xa0;thị phải gỡ xuống</translation>
+    </message>
+    <message>
         <source>This folder has been the subject of a takedown notice</source>
         <translatorcomment>Tooltip to explain the user that the node has been blocked due to a takedown notice. SNC-5350</translatorcomment>
         <translation>Thư&#xa0;mục này đã nhận cáo&#xa0;thị phải gỡ xuống</translation>
@@ -5025,6 +5146,11 @@ Nhập một tên khác.</translation>
 <context>
     <name>NodeSelectorTreeViewWidget</name>
     <message>
+        <source>Add backup</source>
+        <translatorcomment>Empty-state button in the node selector to start adding a backup. SNC-6420</translatorcomment>
+        <translation>Thêm sao lưu</translation>
+    </message>
+    <message>
         <source>Any shared files or folders will no longer be accessible to the people you shared them with. You can still access these items in the Rubbish bin, restore, and share them.</source>
         <translatorcomment>Informative text about the potential issues of removing the nodes. CON-334</translatorcomment>
         <translation>Bất kỳ tệp&#xa0;tin hoặc thư&#xa0;mục bên trong mà bạn đã chia&#xa0;sẻ cho người khác, họ sẽ không thể truy&#xa0;cập được nữa. Bạn vẫn có thể truy&#xa0;cập các mục này trong Thùng&#xa0;Rác, và khôi&#xa0;phục để chia&#xa0;sẻ lại nếu cần.</translation>
@@ -5033,6 +5159,11 @@ Nhập một tên khác.</translation>
         <source>Cancel</source>
         <translatorcomment>Label for cancel button.</translatorcomment>
         <translation>Hủy</translation>
+    </message>
+    <message>
+        <source>Create a folder to move your content here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to create a folder. SNC-6420</translatorcomment>
+        <translation>Tạo một thư&#xa0;mục mới để chuyển nội&#xa0;dung vào&#xa0;đây</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -5050,9 +5181,24 @@ Nhập một tên khác.</translation>
         <translation>Đừng di chuyển</translation>
     </message>
     <message>
+        <source>Download</source>
+        <translatorcomment>Action button in the node selector to download the selected folder. SNC-6420</translatorcomment>
+        <translation>Tải&#xa0;xuống</translation>
+    </message>
+    <message>
+        <source>Drag and drop your files here</source>
+        <translatorcomment>Empty-state hint in the node selector inviting the user to drag and drop files. SNC-6420</translatorcomment>
+        <translation>Kéo và thả các tệp&#xa0;tin vào&#xa0;đây</translation>
+    </message>
+    <message>
         <source>Empty Rubbish bin</source>
         <translatorcomment>Button text to empty the rubbish bin. SAT-426</translatorcomment>
         <translation>Dọn Thùng Rác</translation>
+    </message>
+    <message>
+        <source>Empty folder</source>
+        <translatorcomment>Empty state label shown in the node selector view when the selected folder has no items. SNC-6420</translatorcomment>
+        <translation>Thư mục rỗng</translation>
     </message>
     <message>
         <source>Folder is empty</source>
@@ -5101,9 +5247,19 @@ Nhập một tên khác.</translation>
         <translation>Thư Mục Mới</translation>
     </message>
     <message>
+        <source>No folders in Cloud drive</source>
+        <translatorcomment>Empty-state message shown in the node selector when the Cloud drive has no folders. SNC-6420</translatorcomment>
+        <translation>Không có thư&#xa0;mục nào trong Ổ&#xa0;Mây</translation>
+    </message>
+    <message>
         <source>No folders to select</source>
         <translatorcomment>Title on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>Không có thư&#xa0;mục nào để chọn</translation>
+    </message>
+    <message>
+        <source>Nothing in your private vault yet</source>
+        <translatorcomment>Empty-state message shown in the node selector when the private vault has no items yet. SNC-6420</translatorcomment>
+        <translation>Chưa có gì ở trong két&#xa0;sắt riêng của bạn</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -5114,6 +5270,31 @@ Nhập một tên khác.</translation>
         <source>Only folders can be synced</source>
         <translatorcomment>Message on the view when there are no syncable folders in a folder. SNC-6358</translatorcomment>
         <translation>Chỉ có thư&#xa0;mục mới đồng&#xa0;bộ được</translation>
+    </message>
+    <message>
+        <source>Sync</source>
+        <translatorcomment>Action button in the node selector to sync the selected folder. SNC-6420</translatorcomment>
+        <translation>Đồng&#xa0;bộ</translation>
+    </message>
+    <message>
+        <source>This folder is empty. Keep something safe with zero-knowledge encryption.</source>
+        <translatorcomment>Empty-state message shown in the node selector when the current folder has no items. SNC-6420</translatorcomment>
+        <translation>Thư&#xa0;mục này rỗng. Hãy giữ mọi&#xa0;thứ an&#xa0;toàn với mô&#xa0;hình mã&#xa0;hóa vô&#xa0;kiến&#xa0;thức.</translation>
+    </message>
+    <message>
+        <source>This folder is read and write. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-and-write shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>Thư&#xa0;mục này xem&#xa0;và&#xa0;ghi được. Hãy cho phép quyền truy&#xa0;cập toàn&#xa0;diện để đồng&#xa0;bộ&#xa0;hóa</translation>
+    </message>
+    <message>
+        <source>This folder is read-only. Ask for full access to sync</source>
+        <translatorcomment>Informational message in the node selector shown for a read-only shared folder, indicating full access is needed to sync it. SNC-6420</translatorcomment>
+        <translation>Thư&#xa0;mục này là chỉ-được-xem. Hãy cho phép quyền truy&#xa0;cập toàn&#xa0;diện để đồng&#xa0;bộ&#xa0;hóa</translation>
+    </message>
+    <message>
+        <source>Upload</source>
+        <translatorcomment>Action button in the node selector to upload to the selected folder. SNC-6420</translatorcomment>
+        <translation>Tải lên</translation>
     </message>
     <message numerus="yes">
         <source>You are about to permanently delete %n file. Would you like to proceed?</source>
@@ -5161,6 +5342,11 @@ Nhập một tên khác.</translation>
 <context>
     <name>NodeSelectorTreeViewWidgetIncomingShares</name>
     <message>
+        <source>Folders shared with you will appear here</source>
+        <translatorcomment>Empty-state message in the node selector incoming shares view, shown when there are no shared folders. SNC-6420</translatorcomment>
+        <translation>Các thư&#xa0;mục đã được chia&#xa0;sẻ với bạn sẽ xuất&#xa0;hiện ở&#xa0;đây</translation>
+    </message>
+    <message>
         <source>No incoming shares</source>
         <translatorcomment>Title message on the view when there are no items in the normal view. SNC-5804</translatorcomment>
         <translation>Không&#xa0;có mục chia&#xa0;sẻ nhận&#xa0;được nào</translation>
@@ -5173,11 +5359,16 @@ Nhập một tên khác.</translation>
     <message>
         <source>You can only sync a shared folder if you’ve been given full access</source>
         <translatorcomment>Description message on the view when there are no items in the sync view. It says you don´t have shared folders with the needed rights. SNC-5804</translatorcomment>
-        <translation>Bạn chỉ có thể đồng&#xa0;bộ thư&#xa0;mục chia&#xa0;sẻ khi bạn được cấp phép toàn&#xa0;quyền</translation>
+        <translation>Bạn chỉ có thể đồng&#xa0;bộ thư&#xa0;mục chia&#xa0;sẻ khi bạn được cấp phép toàn&#xa0;diện</translation>
     </message>
 </context>
 <context>
     <name>NodeSelectorTreeViewWidgetRubbish</name>
+    <message>
+        <source>Rubbish bin is empty</source>
+        <translatorcomment>Empty-state message in the node selector rubbish bin view, shown when the rubbish bin has no items. SNC-6420</translatorcomment>
+        <translation>Thùng&#xa0;Rác rỗng</translation>
+    </message>
     <message>
         <source>The Rubbish bin is empty</source>
         <translatorcomment>Message on the view when there are no items. SNC-5804</translatorcomment>
@@ -5194,9 +5385,19 @@ Nhập một tên khác.</translation>
         </translation>
     </message>
     <message>
+        <source>No results found</source>
+        <translatorcomment>Empty-state title in the node selector search view, shown when the search returns no matches. SNC-6420</translatorcomment>
+        <translation>Không có kết&#xa0;quả</translation>
+    </message>
+    <message>
         <source>No search results</source>
         <translatorcomment>Message on the view when the search did not find any coincidence. SNC-5804</translatorcomment>
         <translation>Không tìm được kết&#xa0;quả nào</translation>
+    </message>
+    <message>
+        <source>Try a different name or check the spelling</source>
+        <translatorcomment>Empty-state hint in the node selector search view, suggesting the user refine their search. SNC-6420</translatorcomment>
+        <translation>Thử một tên khác hoặc kiểm&#xa0;tra lại chính&#xa0;tả</translation>
     </message>
 </context>
 <context>
@@ -5679,7 +5880,7 @@ Nhập một tên khác.</translation>
     <message>
         <source>Log in to your [B]MEGA account[/B]</source>
         <translatorcomment>Login window title [B] is for bold CON-465</translatorcomment>
-        <translation>Đăng&#xa0;nhập vào [B]tài&#xa0;khoản MEGA[/B] của bạn</translation>
+        <translation>Đăng&#xa0;nhập vào [B]tài&#xa0;khoản MEGA[/B] của&#xa0;bạn</translation>
     </message>
     <message>
         <source>Logging in…</source>
@@ -6207,9 +6408,9 @@ Nhập một tên khác.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.3.0. SNC-6330</translatorcomment>
-        <translation>- Giải quyết xung đột được cải&#xa0;tiến.
+        <translation>- Giải&#xa0;quyết xung&#xa0;đột được cải&#xa0;tiến.
 - Xử lý tên thiết bị được cải&#xa0;tiến.
-- Sửa lỗi và cải thiện hiệu&#xa0;suất.</translation>
+- Sửa lỗi và cải&#xa0;thiện hiệu&#xa0;suất.</translation>
     </message>
     <message>
         <source>- Improved reliability for problematic graphics drivers on Windows.
@@ -6226,9 +6427,21 @@ Nhập một tên khác.</translation>
 - Bug fixes and performance improvements.
 </source>
         <translatorcomment>Change log for version 6.4.0. SNC-6468</translatorcomment>
-        <translation>- Đặt lại tên cho xung đột tải&#xa0;lên và các mục trùng trong cùng thư&#xa0;mục&#xa0;được dễ hơn.
+        <translation>- Xung đột tải&#xa0;lên&#xa0;khi có các mục bị trùng tên sẽ được giải&#xa0;quyết tự&#xa0;động.
 - Các hộp thoại Ổ&#xa0;Mây, đồng&#xa0;bộ, sao&#xa0;lưu và cài&#xa0;đặt được rõ ràng, nhất&#xa0;quán hơn.
 - Sửa lỗi và cải thiện hiệu&#xa0;suất.</translation>
+    </message>
+    <message>
+        <source>- Revamped and improved File Manager.
+- Revamped Syncs and Backups tabs in the Settings dialog.
+- Improved Wayland support.
+- Bug fixes and performance improvements.
+</source>
+        <translatorcomment>Change log for version 6.5.0. SNC-6656</translatorcomment>
+        <translation>- Cải&#xa0;tiến và nâng&#xa0;cấp Trình&#xa0;Quản&#xa0;Lý Tệp.
+- Cải&#xa0;tiến các tab Đồng&#xa0;Bộ và Sao&#xa0;Lưu trong Thiết&#xa0;Đặt.
+- Cải&#xa0;thiện hỗ&#xa0;trợ Wayland.
+- Sửa lỗi và cải&#xa0;thiện hiệu&#xa0;suất.</translation>
     </message>
 </context>
 <context>
@@ -6445,7 +6658,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>Alt+Up</source>
         <translatorcomment>Shortcut for Parent Directory button.It is shown in the button tooltip.</translatorcomment>
-        <translation>Alt + mũi tên Lên</translation>
+        <translation>Alt + mũi&#xa0;tên Lên</translation>
     </message>
     <message>
         <source>Are you sure you want to delete &apos;%1&apos;?</source>
@@ -6520,7 +6733,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>File Folder</source>
         <translatorcomment>Label to desing a folder matching Windows Explorer case</translatorcomment>
-        <translation>Thư mục</translation>
+        <translation>Thư&#xa0;mục</translation>
     </message>
     <message>
         <source>Files</source>
@@ -6663,7 +6876,7 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     <message>
         <source>%1 bytes</source>
         <translatorcomment>File size measured in bytes</translatorcomment>
-        <translation>%1&#xa0;bytes</translation>
+        <translation>%1&#xa0;bytеs</translation>
     </message>
     <message>
         <source>&lt;b&gt;The name &quot;%1&quot; cannot be used.&lt;/b&gt;&lt;p&gt;Try using another name, with fewer characters or no punctuation marks.</source>
@@ -6814,6 +7027,11 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <translation>Thay đổi</translation>
     </message>
     <message>
+        <source>Delete folder from MEGA</source>
+        <translatorcomment>Option in the stop-backup dialog to delete the backup folder from MEGA. SNC-6588</translatorcomment>
+        <translation>Xóa thư&#xa0;mục khỏi MEGA</translation>
+    </message>
+    <message>
         <source>Delete folder permanently</source>
         <translatorcomment>Radio button option text</translatorcomment>
         <translation>Xóa thư mục khỏi MEGA</translation>
@@ -6829,9 +7047,19 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <translation>Chuyển thư mục vào Ổ&#xa0;Mây</translation>
     </message>
     <message>
+        <source>Move folder to Cloud drive</source>
+        <translatorcomment>Option in the stop-backup dialog to move the backup folder to Cloud drive. SNC-6588</translatorcomment>
+        <translation>Chuyển thư mục vào Ổ&#xa0;Mây</translation>
+    </message>
+    <message>
         <source>Move this folder from backups to another location in your cloud drive to get full access to your data. This folder will stop being backed up.</source>
         <translatorcomment>Radio button description</translatorcomment>
         <translation>Di chuyển thư mục này vào Ổ Mây của bạn để có được toàn quyền truy cập vào dữ liệu của mình nhưng thư mục sẽ không còn được sao lưu.</translation>
+    </message>
+    <message>
+        <source>Move this folder to your Cloud drive to get full access to your data. It will no longer be backed up.</source>
+        <translatorcomment>Description of the move-to-Cloud-drive option in the stop-backup dialog. SNC-6588</translatorcomment>
+        <translation>Di&#xa0;chuyển thư&#xa0;mục này vào Ổ&#xa0;Mây của bạn để có được quyền truy&#xa0;cập toàn&#xa0;diện vào dữ&#xa0;liệu của mình nhưng thư&#xa0;mục sẽ không được sao&#xa0;lưu nữa.</translation>
     </message>
     <message>
         <source>Move to:</source>
@@ -6849,9 +7077,19 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <translation>Ngừng sao lưu</translation>
     </message>
     <message>
+        <source>The folder will be deleted from MEGA, but it won&apos;t be deleted from your device. [B]This action can&apos;t be undone.[/B]</source>
+        <translatorcomment>Description of the delete-from-MEGA option in the stop-backup dialog. [B] tags make text bold. SNC-6588</translatorcomment>
+        <translation>Thư&#xa0;mục sẽ bị xóa khỏi MEGA, nhưng sẽ không&#xa0;bị xóa khỏi thiết&#xa0;bị của&#xa0;bạn. [B]Hành&#xa0;động này không&#xa0;thể hoàn&#xa0;tác.[/B]</translation>
+    </message>
+    <message>
         <source>To stop backing up this folder, you need to either [B]move it[/B] or [B]delete it[/B].</source>
         <translatorcomment>Backup removal title description. SNC-6067</translatorcomment>
         <translation>Để chấm dứt sao lưu thư mục này, bạn phải di chuyển hoặc xóa nó đi</translation>
+    </message>
+    <message>
+        <source>To stop backing up this folder, you need to either move it or delete it</source>
+        <translatorcomment>Instruction shown in the stop-backup dialog explaining the two available options. SNC-6588</translatorcomment>
+        <translation>Để chấm dứt sao&#xa0;lưu thư&#xa0;mục này, bạn phải di&#xa0;chuyển hoặc xóa nó đi</translation>
     </message>
 </context>
 <context>
@@ -7505,11 +7743,54 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
     </message>
 </context>
 <context>
+    <name>SettingsQuickWidgetBase</name>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error message shown when the .megaignore file cannot be opened. SNC-6404</translatorcomment>
+        <translation>Lỗi khi mở tệp .megaignore</translation>
+    </message>
+</context>
+<context>
     <name>SettingsStrings</name>
+    <message>
+        <source>Add a backup to protect your folders automatically</source>
+        <translatorcomment>Description for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>Thêm mục&#xa0;sao&#xa0;lưu để tự&#xa0;động bảo&#xa0;vệ các thư&#xa0;mục của&#xa0;bạn</translation>
+    </message>
+    <message>
+        <source>Add a sync to keep folders up to date</source>
+        <translatorcomment>Description for the no syncs page. SNC-6404</translatorcomment>
+        <translation>Giữ các thư&#xa0;mục đồng&#xa0;bộ trên mọi thiết&#xa0;bị</translation>
+    </message>
+    <message>
+        <source>Add backup</source>
+        <translatorcomment>Button label to add a new backup in the Backups settings tab. SNC-6588</translatorcomment>
+        <translation>Thêm mục sao lưu</translation>
+    </message>
+    <message>
+        <source>Add sync</source>
+        <translatorcomment>Button label to add more strings. SNC-6404</translatorcomment>
+        <translation>Thiết&#xa0;lập đồng&#xa0;bộ</translation>
+    </message>
+    <message>
+        <source>Automatic sync issue resolution</source>
+        <translatorcomment>Title of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>Tự&#xa0;động giải&#xa0;quyết các sự&#xa0;cố đồng&#xa0;bộ</translation>
+    </message>
     <message>
         <source>Available[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the remaining available area in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the available storage or transfer amount. DSN-2975</translatorcomment>
         <translation>Khả&#xa0;dụng còn lại[BR]%1</translation>
+    </message>
+    <message>
+        <source>Backed up</source>
+        <translatorcomment>Identifier of a backup state when the backup is up to date. SNC-6588</translatorcomment>
+        <translation>Đã được sao&#xa0;lưu</translation>
+    </message>
+    <message>
+        <source>Backup folder</source>
+        <translatorcomment>Label identifying the local folder path in a backup row. SNC-6588</translatorcomment>
+        <translation>Thư&#xa0;mục sao lưu</translation>
     </message>
     <message>
         <source>Backups</source>
@@ -7542,6 +7823,21 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <translation>Xin cân nhắc nâng&#xa0;cấp để tránh gián&#xa0;đoạn khi tải&#xa0;lên và đồng&#xa0;bộ.</translation>
     </message>
     <message>
+        <source>Disabled</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Đã vô&#xa0;hiệu</translation>
+    </message>
+    <message>
+        <source>Enable backup</source>
+        <translatorcomment>Solve issue button to re-enable a disabled backup. SNC-6588</translatorcomment>
+        <translation>Bật sao&#xa0;lưu</translation>
+    </message>
+    <message>
+        <source>Enable sync</source>
+        <translatorcomment>Solve issue button to resume the sync. SNC-6404</translatorcomment>
+        <translation>Bật đồng&#xa0;bộ</translation>
+    </message>
+    <message>
         <source>File versions</source>
         <translatorcomment>Legend label shown in the Account pane usage bar for the Versions segment. Keep as short as possible. DSN-2975</translatorcomment>
         <translation>Các phiên&#xa0;bản tệp&#xa0;tin</translation>
@@ -7550,6 +7846,91 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <source>File versions[BR]%1</source>
         <translatorcomment>Tooltip text shown when hovering the Versions segment in the Account pane usage bar. Keep the [BR] line break tag. %1 will be replaced with the storage amount. DSN-2975</translatorcomment>
         <translation>Phiên&#xa0;bản tệp đang chiếm[BR]%1</translation>
+    </message>
+    <message>
+        <source>Get more storage</source>
+        <translatorcomment>Solve issue button to open the get more storage dialog. SNC-6404</translatorcomment>
+        <translation>Nhận thêm không gian</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Đang tải</translation>
+    </message>
+    <message>
+        <source>MEGA automatically detects and resolves sync issues for you. Turn it off if you prefer to review and handle them manually. [A]Learn more[/A]</source>
+        <translatorcomment>Description of the switch button region to automatically solve sync issues. SNC-6404</translatorcomment>
+        <translation>MEGA tự&#xa0;động phát&#xa0;hiện và giải&#xa0;quyết các sự&#xa0;cố đồng&#xa0;bộ cho&#xa0;bạn. Tắt tính&#xa0;năng này nếu bạn muốn tự xem&#xa0;xét và xử&#xa0;lý thủ&#xa0;công. [A]Tìm&#xa0;hiểu thêm[/A]</translation>
+    </message>
+    <message>
+        <source>Manage exclusions</source>
+        <translatorcomment>Sync menu command to open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Quản lý quy&#xa0;tắc loại&#xa0;trừ</translation>
+    </message>
+    <message>
+        <source>No backups</source>
+        <translatorcomment>Title for the empty-state page shown when no backups are configured. SNC-6588</translatorcomment>
+        <translation>Không có bản sao&#xa0;lưu</translation>
+    </message>
+    <message>
+        <source>No syncs set up</source>
+        <translatorcomment>Title for the no syncs page. SNC-6404</translatorcomment>
+        <translation>Chưa thiết&#xa0;lập đồng&#xa0;bộ nào</translation>
+    </message>
+    <message>
+        <source>Open in MEGA</source>
+        <translatorcomment>Context menu command to open the sync folder in the MEGA web client. SNC-6404</translatorcomment>
+        <translation>Mở trong MEGA</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translatorcomment>Sync menu command to pause the sync. SNC-6404</translatorcomment>
+        <translation>Tạm dừng</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Đã tạm dừng</translation>
+    </message>
+    <message>
+        <source>Reboot backup</source>
+        <translatorcomment>Backup context menu command to restart the backup engine for this item. SNC-6588</translatorcomment>
+        <translation>Khởi&#xa0;động lại phiên sao&#xa0;lưu</translation>
+    </message>
+    <message>
+        <source>Reboot sync</source>
+        <translatorcomment>Sync context menu command to restart the sync engine for this item. SNC-6404</translatorcomment>
+        <translation>Khởi&#xa0;động lại phiên đồng&#xa0;bộ</translation>
+    </message>
+    <message>
+        <source>Remove synced folder</source>
+        <translatorcomment>Solve issue button to open the remove sync dialog. SNC-6404</translatorcomment>
+        <translation>Loại bỏ thư&#xa0;mục đồng&#xa0;bộ</translation>
+    </message>
+    <message>
+        <source>Removing</source>
+        <translatorcomment>Status description for the removal of a sync or backup state. SNC-6404</translatorcomment>
+        <translation>Đang loại&#xa0;bỏ</translation>
+    </message>
+    <message>
+        <source>Rescan</source>
+        <translatorcomment>Sync menu command to rescan the sync. SNC-6404</translatorcomment>
+        <translation>Quét lại</translation>
+    </message>
+    <message>
+        <source>Restore folder</source>
+        <translatorcomment>Solve issue button to restore the mega folder (placed in rubbish bin) and resume the sync. SNC-6404</translatorcomment>
+        <translation>Khôi&#xa0;phục thư&#xa0;mục</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translatorcomment>Sync menu command to resume the sync. SNC-6404</translatorcomment>
+        <translation>Tiếp tục</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translatorcomment>Solve issue button to resume a sync. SNC-6404</translatorcomment>
+        <translation>Thử lại</translation>
     </message>
     <message>
         <source>Rubbish Bin</source>
@@ -7562,9 +7943,64 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <translation>Thùng&#xa0;Rác đang chiếm[BR]%1</translation>
     </message>
     <message>
+        <source>Scanning</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Đang quét</translation>
+    </message>
+    <message>
+        <source>Show in File Explorer</source>
+        <translatorcomment>Label to indicate the &quot;Show in File Explorer&quot; option to open local folder of a sync/backup (Windows). Keep File Explorer name as it is the app name of file explorer on Windows. SNC-6404</translatorcomment>
+        <translation>Hiện chỗ chứa trong File Explorer</translation>
+    </message>
+    <message>
+        <source>Show in Finder</source>
+        <translatorcomment>Label to indicate the &quot;Show in Finder&quot; option to open local folder of a sync/backup (macOS). Keep Finder name as it is the app name of file explorer on macOS. SNC-6404</translatorcomment>
+        <translation>Hiện chỗ chứa trong Finder</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translatorcomment>Sync menu command to open the local sync folder in the file explorer. SNC-6404</translatorcomment>
+        <translation>Hiện trong thư&#xa0;mục chứa</translation>
+    </message>
+    <message>
+        <source>Start new backup</source>
+        <translatorcomment>Solve issue button to start a new backup when the local path has changed. SNC-6588</translatorcomment>
+        <translation>Bắt&#xa0;đầu sao&#xa0;lưu mới</translation>
+    </message>
+    <message>
+        <source>Start new sync</source>
+        <translatorcomment>Solve issue button to open the add new sync dialog. SNC-6404</translatorcomment>
+        <translation>Bắt&#xa0;đầu đồng&#xa0;bộ mới</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translatorcomment>Title for the state column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Trạng thái</translation>
+    </message>
+    <message>
+        <source>Stop backup</source>
+        <translatorcomment>Backup context menu command to stop and remove a backup. SNC-6588</translatorcomment>
+        <translation>Ngừng sao lưu</translation>
+    </message>
+    <message>
         <source>Storage Space</source>
         <translatorcomment>Section title for account storage details in the Account pane. DSN-2975</translatorcomment>
         <translation>Không&#xa0;gian lưu&#xa0;trữ</translation>
+    </message>
+    <message>
+        <source>Synced</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Đã đồng&#xa0;bộ</translation>
+    </message>
+    <message>
+        <source>Synced folders</source>
+        <translatorcomment>Title for the local folder column of the current created syncs. SNC-6404</translatorcomment>
+        <translation>Các thư&#xa0;mục được đồng&#xa0;bộ</translation>
+    </message>
+    <message>
+        <source>Transferring</source>
+        <translatorcomment>Identifier of a sync state. SNC-6404</translatorcomment>
+        <translation>Đang truyền</translation>
     </message>
     <message>
         <source>Transfers</source>
@@ -7580,6 +8016,11 @@ Bạn có vẫn muốn xóa nó đi không?</translation>
         <source>Uploads are disabled and folder synchronisation is paused.</source>
         <translatorcomment>Warning description shown in the Account pane when the account storage is full. DSN-2975</translatorcomment>
         <translation>Tính năng tải&#xa0;lên đã bị tắt và đồng&#xa0;bộ thư&#xa0;mục đã tạm&#xa0;dừng.</translation>
+    </message>
+    <message>
+        <source>View in MEGA</source>
+        <translatorcomment>Backup context menu command to open the backup destination folder in the MEGA web client. SNC-6588</translatorcomment>
+        <translation>Xem trên MEGA</translation>
     </message>
     <message>
         <source>Your MEGA account is full</source>
@@ -8169,6 +8610,11 @@ Làm mới danh&#xa0;sách.</translation>
         <translatorcomment>Warning message when users try to select a folder for streaming</translatorcomment>
         <translation>Không&#xa0;thể truyền&#xa0;phát cả thư&#xa0;mục được. Chọn ra một tệp&#xa0;tin để phát.</translation>
     </message>
+    <message>
+        <source>Select a file to stream</source>
+        <translatorcomment>Guidance message in the streaming node selector prompting the user to pick a file to stream. SNC-6420</translatorcomment>
+        <translation>Chọn một tệp&#xa0;tin để truyền&#xa0;phát</translation>
+    </message>
 </context>
 <context>
     <name>StreamingFromMegaDialog</name>
@@ -8371,7 +8817,7 @@ Làm mới danh&#xa0;sách.</translation>
     <message>
         <source>Thank you for your feedback</source>
         <translatorcomment>Title text of the final view after sending the survey responses thanking the user for his/her participation. CON-942</translatorcomment>
-        <translation>Cảm ơn lời phản&#xa0;hồi của bạn</translation>
+        <translation>Cảm&#xa0;ơn lời phản &#xa0;hồi của quý &#xa0;khách</translation>
     </message>
     <message>
         <source>You’re helping to improve MEGA for you and everyone who uses it</source>
@@ -8553,7 +8999,7 @@ Làm mới danh&#xa0;sách.</translation>
     <message>
         <source>You don&apos;t have enough permissions for this remote folder.</source>
         <translatorcomment>Warning message indicating that a folder can´t be synced as it the remote folder is an incoming share and the current user doesn´t have enought permisions</translatorcomment>
-        <translation>Bạn không&#xa0;có được cấp&#xa0;phép toàn quyền sử&#xa0;dụng thư&#xa0;mục chia&#xa0;sẻ này và không&#xa0;thể đồng&#xa0;bộ được. </translation>
+        <translation>Bạn không&#xa0;có quyền toàn&#xa0;diện để sử&#xa0;dụng thư&#xa0;mục chia&#xa0;sẻ này và không&#xa0;thể đồng&#xa0;bộ được. </translation>
     </message>
 </context>
 <context>
@@ -8601,7 +9047,7 @@ Làm mới danh&#xa0;sách.</translation>
     <message>
         <source>Your backup &quot;%1&quot; has been disabled. The remote folder (or part of it) doesn&apos;t have full access</source>
         <translatorcomment>Warning message shown when a backup is being disabled due to an error. Placeholder displays backup name;SNC-3654</translatorcomment>
-        <translation>Việc sao lưu “%1” đã bị tắt. Bạn không có quyền truy&#xa0;cập toàn quyền vào thư&#xa0;mục MEGA (toàn&#xa0;bộ hoặc một phần).</translation>
+        <translation>Việc sao lưu “%1” đã bị tắt. Bạn không có quyền truy&#xa0;cập toàn&#xa0;diện vào thư&#xa0;mục MEGA (toàn&#xa0;bộ hoặc một phần).</translation>
     </message>
     <message>
         <source>Your backup &quot;%1&quot; has been temporarily disabled: %2</source>
@@ -8666,7 +9112,7 @@ Làm mới danh&#xa0;sách.</translation>
 Please move it to a location that is less than 64 folders deep.</source>
         <translatorcomment>Title for the header widget of sync stall that occurs when the file is more than 64 folders deep.SNC-2565</translatorcomment>
         <translation>Vị&#xa0;trí mục&#xa0;tiêu nằm quá sâu trong cấu&#xa0;trúc thư&#xa0;mục. Hãy dừng đồng&#xa0;bộ hóa, và di&#xa0;chuyển thư&#xa0;mục đến vị&#xa0;trí sâu ít hơn 64 thư&#xa0;mục và sau đó tạo lại việc đồng&#xa0;bộ hóa.
-Nếu điều này không giải&#xa0;quyết được vấn&#xa0;đề, hãy liên&#xa0;hệ support@mega.io.</translation>
+Nếu điều này không giải&#xa0;quyết được vấn&#xa0;đề, hãy liên&#xa0;hệ https://mega.nz/support</translation>
     </message>
     <message>
         <source>Unable to sync [B]%1[/B]</source>
@@ -8785,19 +9231,67 @@ Nếu điều này không giải&#xa0;quyết được vấn&#xa0;đề, hãy li
 <context>
     <name>SyncNodeSelector</name>
     <message>
+        <source>Choose a different folder. This folder is already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected folder is already synced. SNC-6420</translatorcomment>
+        <translation>Hãy chọn thư&#xa0;mục khác. Thư&#xa0;mục này đã được đồng&#xa0;bộ rồi.</translation>
+    </message>
+    <message>
+        <source>Choose a different folder. This location contains a folder that&apos;s already synced</source>
+        <translatorcomment>Validation message in the sync node selector shown when the selected location contains a folder that is already synced. SNC-6420</translatorcomment>
+        <translation>Hãy chọn thư&#xa0;mục khác. Vị&#xa0;trí này chứa một thư&#xa0;mục đã được đồng&#xa0;bộ rồi.</translation>
+    </message>
+    <message>
+        <source>Folder to sync</source>
+        <translatorcomment>Label in the sync node selector for the folder that will be synced. SNC-6420</translatorcomment>
+        <translation>Thư&#xa0;mục để đồng&#xa0;bộ</translation>
+    </message>
+    <message>
         <source>Invalid folder for synchronization.
 Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apos; or &apos;:&apos; in your folder names.</source>
         <translatorcomment>Error message shown while the user is trying to download an file or folder but all selected nodes were removed</translatorcomment>
         <translation>Không thể đồng&#xa0;bộ thư&#xa0;mục. Nên chắc là không có sử&#xa0;dụng “\”, “/” hoặc “:” trong tên thư&#xa0;mục.</translation>
     </message>
     <message>
+        <source>Only shared folders with full access can be synced</source>
+        <translatorcomment>Informational message in the sync node selector indicating only full-access shared folders can be synced. SNC-6420</translatorcomment>
+        <translation>Chỉ có các thư&#xa0;mục được chia&#xa0;sẻ với quyền truy cập đầy đủ mới có thể được đồng bộ hóa</translation>
+    </message>
+    <message>
+        <source>Select a full access shared folder to sync</source>
+        <translatorcomment>Guidance message in the sync node selector prompting the user to choose a full-access shared folder to sync. SNC-6420</translatorcomment>
+        <translation>Chọn thư&#xa0;mục chia&#xa0;sẻ có quyền toàn&#xa0;diện để đồng&#xa0;bộ</translation>
+    </message>
+    <message>
         <source>You need Full access right to be able to sync the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying sync a non compatible folder</translatorcomment>
-        <translation>Để đồng&#xa0;bộ thư&#xa0;mục này, bạn cần có toàn quyền truy&#xa0;cập vào thư&#xa0;mục đó.</translation>
+        <translation>Để đồng&#xa0;bộ thư&#xa0;mục này, bạn cần có quyền toàn-diện vào thư&#xa0;mục đó.</translation>
     </message>
 </context>
 <context>
     <name>SyncSettingsElements</name>
+</context>
+<context>
+    <name>SyncSettingsQuickWidget</name>
+    <message>
+        <source>Can&apos;t restore %1 mega folder</source>
+        <translatorcomment>MessageBox error description, after we failed to recover the deleted mega folder. SNC-6404</translatorcomment>
+        <translation>Không&#xa0;thể khôi&#xa0;phục thư&#xa0;mục MEGA %1</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translatorcomment>MessageBox button title to close the dialog. SNC-6404</translatorcomment>
+        <translation>Đóng</translation>
+    </message>
+    <message>
+        <source>Error opening megaignore file</source>
+        <translatorcomment>Error description in case we can&apos;t open the exclusions dialog. SNC-6404</translatorcomment>
+        <translation>Lỗi khi mở tệp .megaignore</translation>
+    </message>
+    <message>
+        <source>Remove sync</source>
+        <translatorcomment>MessageBox button title to delete the current sync with error. SNC-6404</translatorcomment>
+        <translation>Xóa đồng·bộ</translation>
+    </message>
 </context>
 <context>
     <name>SyncSettingsUI</name>
@@ -9243,7 +9737,7 @@ Please, ensure that you don&apos;t use characters like &apos;\&apos; &apos;/&apo
     <message>
         <source>Videos</source>
         <translatorcomment>Categories for video type transfers</translatorcomment>
-        <translation>Videos</translation>
+        <translation>Vidеos</translation>
     </message>
     <message>
         <source>View</source>
@@ -9881,9 +10375,14 @@ Please delete the folder sync from settings to cancel them.</source>
 <context>
     <name>UploadNodeSelector</name>
     <message>
+        <source>Select a shared folder to upload your items to</source>
+        <translatorcomment>Guidance banner in the upload node selector, shown in Incoming Shares when no folder is selected, prompting the user to pick a shared folder as the upload destination. SNC-6420</translatorcomment>
+        <translation>Chọn một thư&#xa0;mục chia&#xa0;sẻ để tải các mục của bạn lên</translation>
+    </message>
+    <message>
         <source>You need Read &amp; Write or Full access rights to be able to upload to the selected folder.</source>
         <translatorcomment>Error message shown when an user is trying upload files to a non compatible folder</translatorcomment>
-        <translation>Để tải thư&#xa0;mục này lên, bạn cần có quyền xem và ghi hoặc toàn quyền truy&#xa0;cập vào thư&#xa0;mục đó.</translation>
+        <translation>Để tải thư&#xa0;mục này lên, bạn cần có quyền xem&#xa0;và&#xa0;ghi hoặc toàn&#xa0;diện truy&#xa0;cập vào thư&#xa0;mục đó.</translation>
     </message>
 </context>
 <context>
@@ -10198,7 +10697,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>MEGA Basic</source>
         <translatorcomment>Label to refer to MEGA Basic account type CON-719</translatorcomment>
-        <translation>MEGA&#xa0;Basic</translation>
+        <translation>MEGΑ&#xa0;Basic</translation>
     </message>
     <message>
         <source>MEGA Essential</source>
@@ -10208,7 +10707,7 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>MEGA Starter</source>
         <translatorcomment>Label to refer to MEGA Starter account type CON-719</translatorcomment>
-        <translation>MEGA&#xa0;Starter</translation>
+        <translation>MEGΑ&#xa0;Starter</translation>
     </message>
     <message>
         <source>Pro Flexi</source>
@@ -10218,22 +10717,22 @@ Please delete the folder sync from settings to cancel them.</source>
     <message>
         <source>Pro I</source>
         <translatorcomment>Label to refer Pro I tier</translatorcomment>
-        <translation>Pro&#xa0;I</translation>
+        <translation>Pro I</translation>
     </message>
     <message>
         <source>Pro II</source>
         <translatorcomment>Label to refer Pro II tier</translatorcomment>
-        <translation>Pro&#xa0;II</translation>
+        <translation>Pro II</translation>
     </message>
     <message>
         <source>Pro III</source>
         <translatorcomment>Label to refer Pro III tier</translatorcomment>
-        <translation>Pro&#xa0;III</translation>
+        <translation>Pro III</translation>
     </message>
     <message>
         <source>Pro Lite</source>
         <translatorcomment>Label to refer Pro Lite tier</translatorcomment>
-        <translation>Pro&#xa0;Lite</translation>
+        <translation>Pro Lite</translation>
     </message>
     <message>
         <source>Starter</source>

@@ -9,6 +9,7 @@
 #include <QtConcurrent/QtConcurrent>
 
 #include <algorithm>
+#include <cstring>
 
 using namespace mega;
 
@@ -617,14 +618,33 @@ void HTTPServer::externalDownloadSetRequest(QString &response, const HTTPRequest
     const auto e = Utilities::extractJSONStringList(request.data, QLatin1String("e"));
 
     QList<mega::MegaHandle> handleList;
+    const auto expectedSize = static_cast<size_t>(mega::MegaApi::getSetElementHandleSize());
     for (const auto& eId: e)
     {
-        auto size = static_cast<size_t>(mega::MegaApi::getSetElementHandleSize());
+        size_t size = 0;
         unsigned char* result = nullptr;
         mega::MegaApi::base64ToBinary(eId.toUtf8().constData(), &result, &size);
-        const auto* myHandlePtr = reinterpret_cast<mega::MegaHandle*>(result);
-        handleList.append(*myHandlePtr);
+
+        // base64ToBinary sizes the allocation to the actual decoded length, which a
+        // web-supplied id can make shorter than a handle. Only accept an id that decodes
+        // to exactly one Set element handle, and copy it out with the correct width
+        // (avoids both an out-of-bounds read and an unaligned reinterpret_cast deref).
+        const bool valid = (result != nullptr) && (size == expectedSize);
+        mega::MegaHandle handle = mega::INVALID_HANDLE;
+        if (valid)
+        {
+            std::memcpy(&handle, result, expectedSize);
+        }
         delete[] result;
+
+        if (!valid)
+        {
+            mega::MegaApi::log(mega::MegaApi::LOG_LEVEL_WARNING,
+                               "ExternalDownloadSet: skipping malformed Set element id");
+            continue;
+        }
+
+        handleList.append(handle);
     }
 
     emit onExternalDownloadSetRequested(publicLink, handleList);

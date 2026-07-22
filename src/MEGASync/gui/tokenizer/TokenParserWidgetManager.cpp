@@ -1,7 +1,6 @@
 #include "TokenParserWidgetManager.h"
 
 #include "DialogOpener.h"
-#include "IconTokenizer.h"
 #include "MegaApplication.h"
 #include "ThemeManager.h"
 
@@ -12,6 +11,7 @@
 #include <QLineEdit>
 #include <QtConcurrent/QtConcurrent>
 #include <QToolButton>
+#include <QVariant>
 
 #include <utility>
 
@@ -19,35 +19,24 @@ namespace // anonymous namespace to hide names from other translation units
 {
 static QRegularExpression
     COLOR_TOKEN_REGULAR_EXPRESSION(QLatin1String("(#.*) *; *\\/\\* *colorToken\\.(.*)\\*\\/"));
-static QRegularExpression ICON_COLOR_TOKEN_REGULAR_EXPRESSION(
-    QLatin1String(" *\\/\\* *ColorTokenIcon;(.*);(.*);(.*);(.*);colorToken\\.(.*) *\\*\\/"));
 
 static const QString JSON_THEMED_COLOR_TOKEN_FILE =
     QLatin1String(":/colors/ColorThemedTokens.json");
 static const QString CSS_STANDARD_WIDGETS_COMPONENTS_FILE =
     QLatin1String(":/style/WidgetsComponentsStyleSheetsTokens.css");
 
+// Dynamic property where each widget keeps its pristine (untouched) stylesheet,
+// i.e. the one defined in the .ui before the standard-components block is prepended.
+// We must always re-tokenize from this base: widget->styleSheet() returns the live
+// sheet, which already contains the prepended standard block, so reading it back as
+// input would prepend another copy on every theme change (unbounded growth).
+static const char* BASE_STYLESHEET_PROPERTY = "tokenizerBaseStyleSheet";
+
 enum COLOR_TOKEN_CAPTURE_INDEX
 {
     COLOR_WHOLE_MATCH,
     COLOR_HEX_COLOR_VALUE,
     COLOR_DESIGN_TOKEN_NAME
-};
-
-enum ICON_TOKEN_CAPTURE_INDEX
-{
-    ICON_TOKEN_WHOLE_MATCH,
-    ICON_TOKEN_TARGET_PROPERTY,
-    ICON_TOKEN_TARGET_ELEMENT_ID,
-    ICON_TOKEN_TARGET_MODE,
-    ICON_TOKEN_TARGET_STATE,
-    ICON_TOKEN_DESIGN_TOKEN_NAME
-};
-
-enum REPLACE_THEME_TOKEN_CAPTURE_INDEX
-{
-    REPLACE_THEME_TOKEN_WHOLE_MATCH,
-    REPLACE_THEME_TOKEN_THEME
 };
 }
 
@@ -65,7 +54,6 @@ TokenParserWidgetManager::TokenParserWidgetManager(QObject* parent):
             Qt::QueuedConnection);
 
     COLOR_TOKEN_REGULAR_EXPRESSION.optimize();
-    ICON_COLOR_TOKEN_REGULAR_EXPRESSION.optimize();
 
     loadColorThemeJson();
     loadStandardStyleSheetComponents();
@@ -158,8 +146,8 @@ void TokenParserWidgetManager::applyCurrentTheme(QWidget* dialog)
     std::chrono::duration<float> elapsed = end - start;
 
     qDebug() << "Time used to apply the theme : "
-             << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << " ms";
-    qDebug() << "to the following dialog : " << dialog->objectName();
+             << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() << " µs"
+             << "to the following dialog : " << dialog->objectName();
 #endif
 }
 
@@ -270,17 +258,23 @@ void TokenParserWidgetManager::styleQFileDialog(QPointer<QFileDialog> dialog)
 
 void TokenParserWidgetManager::applyTheme(QWidget* widget, bool prependStandardComponents)
 {
+    if (!widget)
+    {
+        return;
+    }
+
     auto currentTheme = ThemeManager::instance()->getSelectedColorSchemaString();
 
+    QVariant baseStyleSheet = widget->property(BASE_STYLESHEET_PROPERTY);
     QString widgetStyleSheet;
-    if (mWidgetsStyleSheets.contains(widget->objectName()))
+    if (baseStyleSheet.isValid())
     {
-        widgetStyleSheet = mWidgetsStyleSheets[widget->objectName()];
+        widgetStyleSheet = baseStyleSheet.toString();
     }
     else
     {
         widgetStyleSheet = widget->styleSheet();
-        mWidgetsStyleSheets[widget->objectName()] = widgetStyleSheet;
+        widget->setProperty(BASE_STYLESHEET_PROPERTY, widgetStyleSheet);
     }
 
     if (!mColorThemedTokens.contains(currentTheme))
@@ -291,8 +285,15 @@ void TokenParserWidgetManager::applyTheme(QWidget* widget, bool prependStandardC
 
     const auto& colorTokens = mColorThemedTokens.value(currentTheme);
 
-    replaceColorTokens(widgetStyleSheet, colorTokens);
-    replaceIconColorTokens(widget, widgetStyleSheet);
+    // Skip the expensive regex pass for stylesheets that contain no color
+    // tokens — QString::contains is much cheaper than QRegularExpression
+    // globalMatch, and many widgets carry rules like "border: none;" with
+    // nothing to tokenize.
+    if (widgetStyleSheet.contains(QLatin1String("colorToken.")))
+    {
+        replaceColorTokens(widgetStyleSheet, colorTokens);
+    }
+
     tokenizeChildStyleSheets(widget);
     removeFrameOnDialogCombos(widget);
 
@@ -350,36 +351,6 @@ void TokenParserWidgetManager::replaceColorTokens(QString& styleSheet,
                 match->capturedStart(COLOR_TOKEN_CAPTURE_INDEX::COLOR_HEX_COLOR_VALUE);
             auto endIndex = match->capturedEnd(COLOR_TOKEN_CAPTURE_INDEX::COLOR_HEX_COLOR_VALUE);
             styleSheet.replace(startIndex, endIndex - startIndex, tokenValue);
-        }
-    }
-}
-
-void TokenParserWidgetManager::replaceIconColorTokens(QWidget* widget, QString& styleSheet)
-{
-    QRegularExpressionMatchIterator matchIterator =
-        ICON_COLOR_TOKEN_REGULAR_EXPRESSION.globalMatch(styleSheet);
-    while (matchIterator.hasNext())
-    {
-        QRegularExpressionMatch match = matchIterator.next();
-
-        if (match.lastCapturedIndex() == ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_DESIGN_TOKEN_NAME)
-        {
-            const QString& targetElementProperty =
-                match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_TARGET_PROPERTY);
-            const QString& targetElementId =
-                match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_TARGET_ELEMENT_ID);
-            const QString& mode = match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_TARGET_MODE);
-            const QString& state =
-                match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_TARGET_STATE);
-            const QString& tokenId =
-                match.captured(ICON_TOKEN_CAPTURE_INDEX::ICON_TOKEN_DESIGN_TOKEN_NAME);
-
-            IconTokenizer::process(widget,
-                                   mode,
-                                   state,
-                                   targetElementId,
-                                   targetElementProperty,
-                                   tokenId);
         }
     }
 }

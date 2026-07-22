@@ -18,8 +18,14 @@ FocusScope {
                             + digit4.text + digit5.text + digit6.text
     property bool hasError: false
     property bool hasAllDigitsFilled: (key.length === 6)
+    property bool waitingForRecoveryUrl: false
 
     signal allDigitsFilled
+
+    function openRecoveryUrl() {
+        var urlToOpen = serviceUrlsAccess.getRecoveryUrl();
+        Qt.openUrlExternally(urlToOpen);
+    }
 
     function pastePin() {
         const regex = RegexExpressions.allDigits2FA;
@@ -129,8 +135,8 @@ FocusScope {
         Texts.NotificationText {
             id: notification
 
-            Layout.leftMargin: Constants.focusAdjustment
-            Layout.preferredWidth: root.width + Constants.focusAdjustment
+            Layout.leftMargin: Constants.focusBorderWidth
+            Layout.preferredWidth: mainLayout.width + 2 * Constants.focusAdjustment
             Layout.preferredHeight: notification.height
             title: qsTranslate("OnboardingStrings", "Incorrect 2FA code")
             text: Strings.tryAgain
@@ -157,14 +163,10 @@ FocusScope {
             Layout.leftMargin: -sizes.horizontalPadding
             text: qsTranslate("OnboardingStrings", "Problem with two-factor authentication?")
             onClicked: {
-                if (serviceUrlsAccess.isDataReady()) {
-                    serviceUrlsAccess.dataReady.disconnect(helpButtonItem.onClicked);
-                    var urlToOpen = serviceUrlsAccess.getRecoveryUrl();
-                    Qt.openUrlExternally(urlToOpen);
-                } else {
-                    serviceUrlsAccess.dataReady.connect(helpButtonItem.onClicked);
-                    serviceUrlsAccess.isDataReady(true);
-                }
+                // isDataReady(true) emits dataReady now if ready, or later once fetched;
+                // either way the opening happens in onDataReady, guarded by this flag.
+                root.waitingForRecoveryUrl = true;
+                serviceUrlsAccess.isDataReady(true);
             }
 
             icons {
@@ -181,6 +183,17 @@ FocusScope {
             sequence: [ StandardKey.Paste ]
             onActivated: {
                 pastePin();
+            }
+        }
+
+        Connections {
+            target: serviceUrlsAccess
+
+            function onDataReady() {
+                if (root.waitingForRecoveryUrl) {
+                    root.waitingForRecoveryUrl = false;
+                    root.openRecoveryUrl();
+                }
             }
         }
 

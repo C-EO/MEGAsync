@@ -20,6 +20,7 @@
 #include <QProgressDialog>
 #include <QQueue>
 #include <QString>
+#include <QStyle>
 #include <QTimer>
 #include <sys/stat.h>
 
@@ -294,6 +295,19 @@ public:
 
     ~ClickableLabel() {}
 
+    void setEnterCursorOverride(bool enabled)
+    {
+        mEnterCursorOverride = enabled;
+    }
+
+    // Opt-in: toggles a dynamic "hovered" property on enter/leave so a stylesheet can highlight
+    // the label via ClickableLabel[hovered="true"]. QLabel does NOT support the :hover
+    // pseudo-state, so this is the supported way to get a hover effect on a label.
+    void setHoverHighlightEnabled(bool enabled)
+    {
+        mHoverHighlightEnabled = enabled;
+    }
+
 signals:
     void clicked();
 
@@ -302,17 +316,44 @@ protected:
     {
         emit clicked();
     }
-#ifndef __APPLE__
+
     void enterEvent(QEvent*)
     {
-        setCursor(Qt::PointingHandCursor);
+#ifndef __APPLE__
+        if (mEnterCursorOverride)
+        {
+            setCursor(Qt::PointingHandCursor);
+        }
+#endif
+        setHovered(true);
     }
 
     void leaveEvent(QEvent*)
     {
-        setCursor(Qt::ArrowCursor);
-    }
+#ifndef __APPLE__
+        if (mEnterCursorOverride)
+        {
+            setCursor(Qt::ArrowCursor);
+        }
 #endif
+        setHovered(false);
+    }
+
+private:
+    void setHovered(bool hovered)
+    {
+        if (!mHoverHighlightEnabled)
+        {
+            return;
+        }
+
+        setProperty("hovered", hovered);
+        style()->unpolish(this);
+        style()->polish(this);
+    }
+
+    bool mEnterCursorOverride = true;
+    bool mHoverHighlightEnabled = false;
 };
 
 class OverlayWidget: public QWidget
@@ -466,10 +507,8 @@ public:
     static bool isIncommingShare(mega::MegaNode* node);
     static int getNodeAccess(mega::MegaHandle handle);
     static int getNodeAccess(mega::MegaNode* handle);
-    static QString getNodeStringAccess(mega::MegaNode* handle);
-    static QString getNodeStringAccess(mega::MegaHandle handle);
-    static QIcon getNodeAccessIcon(mega::MegaHandle handle);
-    static QIcon getNodeAccessIcon(mega::MegaNode* node);
+    static QString getNodeStringAccess(int access);
+    static QIcon getNodeAccessIcon(int access);
 
     enum HandlesType
     {

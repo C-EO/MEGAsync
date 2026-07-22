@@ -14,10 +14,11 @@
 #include "DeviceCentre.h"
 #include "DialogOpener.h"
 #include "EmailRequester.h"
-#include "EphemeralCredentials.h"
 #include "EventUpdater.h"
 #include "ExportProcessor.h"
 #include "FatalEventHandler.h"
+#include "FileManagerNodeSelector.h"
+#include "FilePickerNodeSelectorSpecializations.h"
 #include "FullName.h"
 #include "gui/TrayIconManager.h"
 #include "GuiUtilities.h"
@@ -26,16 +27,15 @@
 #include "IntervalExecutioner.h"
 #include "LoginController.h"
 #include "mega/types.h"
+#include "MegaApiStartupConfig.h"
 #include "MegaMenuItemAction.h"
 #include "MegaProxyStyle.h"
 #include "MessageDialogOpener.h"
 #include "MyBackupsHandle.h"
 #include "NodeSelector.h"
-#include "NodeSelectorSpecializations.h"
 #include "offer/OfferComponent.h"
 #include "Onboarding.h"
 #include "OverQuotaDialog.h"
-#include "ParallelConnectionsValues.h"
 #include "Platform.h"
 #include "PlatformStrings.h"
 #include "PowerOptions.h"
@@ -70,7 +70,6 @@
 #include <QNetworkProxy>
 #include <QScreen>
 #include <QSettings>
-#include <QToolTip>
 #include <QTranslator>
 
 #include <cassert>
@@ -170,6 +169,11 @@ MegaApplication::MegaApplication(int& argc, char** argv):
 
     appfinished = false;
 
+    // Required for the Qt::QueuedConnection signals/slots that pass a QQueue<QString>
+    // (e.g. shell upload/export queues). Q_DECLARE_METATYPE alone is not enough for
+    // queued connections; the type must also be registered at runtime.
+    qRegisterMetaType<QQueue<QString>>("QQueue<QString>");
+
     bool logToStdout = false;
 
 #if defined(LOG_TO_STDOUT)
@@ -196,22 +200,12 @@ MegaApplication::MegaApplication(int& argc, char** argv):
 
 #endif
 
-    connect(this, SIGNAL(blocked()), this, SLOT(onBlocked()));
-    connect(this, SIGNAL(unblocked()), this, SLOT(onUnblocked()));
-
 #ifdef _WIN32
     connect(this, SIGNAL(screenAdded(QScreen*)), this, SLOT(changeDisplay(QScreen*)));
     connect(this, SIGNAL(screenRemoved(QScreen*)), this, SLOT(changeDisplay(QScreen*)));
 #endif
 
     setQuitOnLastWindowClosed(false);
-
-    // For some reason this doesn't work on Windows (done in stylesheet above)
-    // TODO: re-try with Qt > 5.12.15
-    QPalette palette = QToolTip::palette();
-    palette.setColor(QPalette::ToolTipBase, QColor(0x333333));
-    palette.setColor(QPalette::ToolTipText, QColor(0xFAFAFA));
-    QToolTip::setPalette(palette);
 
     appPath = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
     appDirPath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());
@@ -267,7 +261,6 @@ MegaApplication::MegaApplication(int& argc, char** argv):
     windowsMenu = nullptr;
     windowsExitAction = nullptr;
     windowsUpdateAction = nullptr;
-    windowsAboutAction = nullptr;
     windowsImportLinksAction = nullptr;
     windowsFilesAction = nullptr;
     windowsUploadAction = nullptr;
@@ -588,6 +581,7 @@ void MegaApplication::initialize()
                                     Preferences::USER_AGENT.toUtf8().constData(),
                                     !preferences->SSLcertificateException());
     megaApi->disableGfxFeatures(mDisableGfx);
+    MegaApiStartupConfig::initialConfiguration(megaApi);
 
     QTMegaApiManager::createMegaApi(megaApiFolders,
                                     Preferences::CLIENT_KEY,
@@ -596,8 +590,10 @@ void MegaApplication::initialize()
                                     Preferences::USER_AGENT.toUtf8().constData(),
                                     !preferences->SSLcertificateException());
     megaApiFolders->disableGfxFeatures(true);
+    MegaApiStartupConfig::initialConfiguration(megaApiFolders);
 
     model = SyncInfo::instance();
+    connect(model, &SyncInfo::syncDisabledListUpdated, this, &MegaApplication::enableDisabledSyncs);
     connect(model, &SyncInfo::syncStateChanged, this, &MegaApplication::onSyncModelUpdated);
     connect(model, &SyncInfo::syncRemoved, this, &MegaApplication::onSyncModelUpdated);
     connect(model, &SyncInfo::syncDisabledListUpdated, this, &MegaApplication::updateTrayIcon);
@@ -609,14 +605,6 @@ void MegaApplication::initialize()
 
     // Init the Service Urls instance with the newly created API
     ServiceUrls::instance()->reset(megaApi);
-
-    // Set maximum log line size to 10k (same as SDK default)
-    // Otherwise network logging can cause large glitches when logging hundreds of MB
-    // On Mac it is particularly apparent, causing the beachball to appear often
-    size_t newPayLoadLogSize = 10240;
-    megaApi->log(MegaApi::LOG_LEVEL_INFO, QString::fromUtf8("Establishing max payload log size: %1").arg(newPayLoadLogSize).toUtf8().constData());
-    megaApi->setMaxPayloadLogSize(newPayLoadLogSize);
-    megaApiFolders->setMaxPayloadLogSize(newPayLoadLogSize);
 
     mStatsEventHandler = std::make_unique<ProxyStatsEventHandler>(megaApi);
     QmlManager::instance()->setRootContextProperty(mStatsEventHandler.get());
@@ -661,6 +649,12 @@ void MegaApplication::initialize()
         Preferences::overridePreferences(settings);
         Preferences::SDK_ID.append(QString::fromUtf8(" - STAGING"));
     }
+
+    // Apply FileService reclaim options only after megasync.staging has been parsed, so any
+    // reclaim* overrides in the staging file reach the SDK. On non-staging builds the staging
+    // block is skipped and the compile-time production defaults are applied.
+    MegaApiStartupConfig::applyFileServiceReclaimOptions(megaApi);
+
     mTrayIconManager->show();
 
     megaApi->log(MegaApi::LOG_LEVEL_INFO,
@@ -674,12 +668,15 @@ void MegaApplication::initialize()
                      .toUtf8()
                      .constData());
 
+    MegaApi::log(MegaApi::LOG_LEVEL_INFO,
+                 QString::fromUtf8("Platform: %1")
+                     .arg(QGuiApplication::platformName())
+                     .toUtf8()
+                     .constData());
+
     megaApi->setLanguage(currentLanguageCode.toUtf8().constData());
     megaApiFolders->setLanguage(currentLanguageCode.toUtf8().constData());
 
-    // In case the user has logout and closed the app, we set the default values
-    setMaxConnections(MegaTransfer::TYPE_UPLOAD, preferences->parallelUploadConnections());
-    setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, preferences->parallelDownloadConnections());
     megaApi->setDefaultFilePermissions(preferences->filePermissionsValue());
     megaApi->setDefaultFolderPermissions(preferences->folderPermissionsValue());
 
@@ -1048,7 +1045,8 @@ void MegaApplication::updateTrayIcon()
     if (!networkConnectivity)
     {
         tooltipState = tr("No Internet connection");
-        iconState = QStringLiteral("logging");
+        iconState = QStringLiteral("offline");
+        animation = TrayIconManager::Animation::None;
     }
 
     QString tooltip = QString::fromUtf8("%1 %2\n")
@@ -1539,8 +1537,6 @@ if (!infoDialog)
     mThreadPool->push([=](){
     setMaxUploadSpeed(preferences->uploadLimitKB());
     setMaxDownloadSpeed(preferences->downloadLimitKB());
-    setMaxConnections(MegaTransfer::TYPE_UPLOAD,   preferences->parallelUploadConnections());
-    setMaxConnections(MegaTransfer::TYPE_DOWNLOAD, preferences->parallelDownloadConnections());
 
     megaApi->setDefaultFilePermissions(preferences->filePermissionsValue());
     megaApi->setDefaultFolderPermissions(preferences->folderPermissionsValue());
@@ -2010,7 +2006,13 @@ void MegaApplication::rebootApplication(bool update)
     }
 
     mTrayIconManager->hide();
-    QApplication::exit();
+    // Qt6: see exitApplication() — exit() emits aboutToQuit synchronously.
+    QTimer::singleShot(0,
+                       this,
+                       []()
+                       {
+                           QApplication::exit();
+                       });
 }
 
 int* testCrashPtr = nullptr;
@@ -2081,7 +2083,7 @@ void MegaApplication::checkNetworkInterfaces()
     {
         return;
     }
-
+    const bool oldConnectivityState = networkConnectivity;
     bool disconnect = false;
     const QList<QNetworkInterface> newNetworkInterfaces = findNewNetworkInterfaces();
     if (!newNetworkInterfaces.empty() && !networkConnectivity)
@@ -2110,6 +2112,10 @@ void MegaApplication::checkNetworkInterfaces()
     }
 
     reconnectIfNecessary(disconnect, newNetworkInterfaces);
+    if (oldConnectivityState != networkConnectivity)
+    {
+        updateTrayIcon();
+    }
 }
 
 void MegaApplication::checkMemoryUsage()
@@ -2436,6 +2442,9 @@ void MegaApplication::cleanAll()
     }
     appfinished = true;
 
+    // Must run before any window or dialog is destroyed, while the GUI is still intact
+    Platform::getInstance()->disconnectAccessibilityClients();
+
     emit requestAppState(AppState::FINISHED);
 
     qInstallMessageHandler(0);
@@ -2456,7 +2465,6 @@ void MegaApplication::cleanAll()
 
     DialogOpener::closeAllDialogs();
     QmlDialogManager::instance()->forceCloseOnboardingDialog();
-    QmlManager::instance()->finish();
 
     if(mBlockingBatch.isValid())
     {
@@ -2491,6 +2499,7 @@ void MegaApplication::cleanAll()
     removeSyncsAndBackupsMenus();
 
     preferences->setLastExit(QDateTime::currentMSecsSinceEpoch());
+    preferences->sync();
 
     // Remove models using deleteLater to be sure that they are removed after removing Transfer and
     // Stalled issues dialogs. Otherwise we need to set to null the view models as the views will
@@ -2505,6 +2514,15 @@ void MegaApplication::cleanAll()
     // their deletion
     // Besides that, do not set any preference setting after this line, it won´t be persistent.
     QApplication::processEvents();
+
+    // Delete the shared QML engine only after every QQuickWidget created from it has been
+    // destroyed by the deleteLater()/processEvents() above (e.g. InfoDialog's
+    // TransfersSummaryQuickWidget and SettingsDialog's AccountStateQuickWidget, which are
+    // closed via DialogOpener::closeAllDialogs()). Deleting the engine while one of those
+    // widgets is still alive tears down a live QML scene mid-binding - reproducible during an
+    // active transfer - and crashes with an access violation inside the QML engine (seen on
+    // both Qt5 and Qt6).
+    QmlManager::instance()->finish();
 
     QTMegaApiManager::removeMegaApis();
 
@@ -2563,7 +2581,9 @@ void MegaApplication::onAboutClicked()
     }
 
     mStatsEventHandler->sendTrackedEvent(AppStatsEvents::EventType::MENU_ABOUT_CLICKED,
-                                         sender(), aboutAction, true);
+                                         sender(),
+                                         updateActionGuest,
+                                         true);
 
     showChangeLog();
 }
@@ -2595,7 +2615,7 @@ void MegaApplication::raiseInfoDialog(bool raiseOpenedDialogs)
 
         infoDialog->show();
         infoDialog->raise();
-        infoDialog->activateWindow();
+        activateWidgetWaylandSafe(infoDialog);
         infoDialog->highDpiResize.queueRedraw();
     }
 }
@@ -3211,7 +3231,16 @@ void MegaApplication::exitApplication()
 {
     reboot = false;
     mTrayIconManager->hide();
-    QApplication::exit();
+    // Qt6: QCoreApplication::exit() emits aboutToQuit synchronously, and
+    // cleanAll() deletes the QML engine. Defer the call so the engine is
+    // never destroyed while a QML signal handler is still on the stack
+    // (e.g. the exit-confirmation dialog button that triggers this path).
+    QTimer::singleShot(0,
+                       this,
+                       []()
+                       {
+                           QApplication::exit();
+                       });
 }
 
 QString MegaApplication::getDefaultUploadPath()
@@ -3661,20 +3690,6 @@ void MegaApplication::setMaxDownloadSpeed(int limit)
     }
 }
 
-void MegaApplication::setMaxConnections(int direction, int connections)
-{
-    if (appfinished)
-    {
-        return;
-    }
-
-    if (connections >= ParallelConnectionsValues::getMinValue() &&
-        connections <= ParallelConnectionsValues::getMaxValue())
-    {
-        megaApi->setMaxConnections(direction, connections);
-    }
-}
-
 void MegaApplication::startUpdateTask()
 {
     if (appfinished)
@@ -3987,14 +4002,36 @@ void MegaApplication::onSyncModelUpdated(std::shared_ptr<SyncSettings>)
     }
 }
 
-void MegaApplication::onBlocked()
+void MegaApplication::enableDisabledSyncs()
 {
-    updateTrayIconMenu();
-}
+    if (mStatusController != nullptr && !mStatusController->isAccountBlocked())
+    {
+        auto enableSyncs = [](auto& syncs)
+        {
+            const std::array allowedErrorsToTryToRestart{::mega::MegaSync::LOGGED_OUT,
+                                                         ::mega::MegaSync::ACCOUNT_BLOCKED};
 
-void MegaApplication::onUnblocked()
-{
-    updateTrayIconMenu();
+            for (auto& sync: as_const(syncs))
+            {
+                if (sync->getRunState() == ::mega::MegaSync::RUNSTATE_DISABLED ||
+                    sync->getRunState() == ::mega::MegaSync::RUNSTATE_SUSPENDED)
+                {
+                    if (std::find(allowedErrorsToTryToRestart.begin(),
+                                  allowedErrorsToTryToRestart.end(),
+                                  sync->getError()) != allowedErrorsToTryToRestart.end())
+                    {
+                        SyncController::instance().setSyncToRun(sync);
+                    }
+                }
+            }
+        };
+
+        auto syncs = model->getSyncSettingsByType(MegaSync::SyncType::TYPE_TWOWAY);
+        enableSyncs(syncs);
+
+        auto backups = model->getSyncSettingsByType(MegaSync::SyncType::TYPE_BACKUP);
+        enableSyncs(backups);
+    }
 }
 
 void MegaApplication::onTransfersModelUpdate()
@@ -4288,7 +4325,7 @@ void MegaApplication::goToFiles()
 {
     if (infoDialog)
     {
-        CloudDriveNodeSelector* nodeSelector = new CloudDriveNodeSelector();
+        FileManagerNodeSelector* nodeSelector = new FileManagerNodeSelector();
         nodeSelector->init();
         DialogOpener::showGeometryRetainerDialog<NodeSelector>(nodeSelector);
 
@@ -4460,11 +4497,13 @@ void MegaApplication::runUploadActionWithTargetHandle(const MegaHandle& targetFo
             OverQuotaDialog::createDialogIfNeeded(OverQuotaDialogType::STORAGE_UPLOAD);
         if (overQuotaDialog)
         {
-            overQuotaDialog->setParent(parent);
+            overQuotaDialog->setParent(parent, overQuotaDialog->windowFlags());
             DialogOpener::showDialog<OverQuotaDialog>(overQuotaDialog, [processUpload]()
             {
                 processUpload();
             });
+
+            return;
         }
     }
 
@@ -4857,8 +4896,18 @@ void MegaApplication::processDownloads()
         return;
     }
 
+    // A request coming from the webclient is triggered while the browser owns the foreground.
+    // Unlike Qt5, Qt6 no longer forces the window activation, so the dialog can stay behind;
+    // we force it to the foreground only in that case.
+    const bool fromHTTPServer = qobject_cast<HTTPServer*>(sender()) != nullptr;
+
     auto downloadFolderSelector = new DownloadFromMegaDialog(preferences->downloadFolder());
     DialogOpener::showDialog<DownloadFromMegaDialog, TransferManager>(downloadFolderSelector, false, this, &MegaApplication::onDownloadFromMegaFinished);
+
+    if (fromHTTPServer)
+    {
+        Platform::getInstance()->raiseToForeground(downloadFolderSelector);
+    }
     emit meaningfulInteraction();
 }
 
@@ -4912,7 +4961,7 @@ void MegaApplication::sendPeriodicStats() const
         }
     }
 
-    CloudDriveNodeSelector::sendStats();
+    FileManagerNodeSelector::sendStats();
 }
 
 void MegaApplication::createUserMessageController()
@@ -5308,6 +5357,15 @@ void MegaApplication::uploadFilesToNode(const QList<QUrl>& files,
     for (const auto& file: files)
     {
         auto newUpload = file.toLocalFile();
+
+        // URLs that do not resolve to a local path (web images, iCloud files not downloaded,
+        // promised files from sandboxed apps, etc.). Skip them instead of
+        // enqueuing an empty path, which would start an invalid transfer.
+        if (newUpload.isEmpty())
+        {
+            continue;
+        }
+
         const auto noDuplicates = std::none_of(mUploadQueue.cbegin(),
                                                mUploadQueue.cend(),
                                                [&newUpload](const auto& upload)
@@ -6139,12 +6197,6 @@ void MegaApplication::createInfoDialogMenus()
         windowsUpdateAction = nullptr;
     }
 
-    if(windowsAboutAction)
-    {
-        windowsAboutAction->deleteLater();
-        windowsAboutAction = nullptr;
-    }
-
     if (updateAvailable)
     {
         windowsUpdateAction = new QAction(tr("Install update"), this);
@@ -6153,18 +6205,10 @@ void MegaApplication::createInfoDialogMenus()
         windowsMenu->addAction(windowsUpdateAction);
 
         connect(windowsUpdateAction, &QAction::triggered, this, &MegaApplication::onInstallUpdateClicked);
-    }
-    else
-    {
-        windowsAboutAction = new QAction(tr("About"), this);
-        windowsAboutAction->setIcon(
-            QIcon(QString::fromUtf8(":/images/icons/tray/windows/about.svg")));
 
-        windowsMenu->addAction(windowsAboutAction);
-        connect(windowsAboutAction, &QAction::triggered, this, &MegaApplication::onAboutClicked);
+        windowsMenu->addSeparator();
     }
 
-    windowsMenu->addSeparator();
     windowsMenu->addAction(windowsFilesAction);
     windowsMenu->addAction(windowsImportLinksAction);
     windowsMenu->addAction(windowsUploadAction);
@@ -6174,7 +6218,6 @@ void MegaApplication::createInfoDialogMenus()
     windowsMenu->addAction(windowsSettingsAction);
     windowsMenu->addSeparator();
     windowsMenu->addAction(windowsExitAction);
-
 #endif
 
     // Info Dialog overflow menu
@@ -6245,12 +6288,6 @@ void MegaApplication::createInfoDialogMenus()
                                .toStdString()
                                .c_str(),
                            &MegaApplication::goToFiles);
-
-    // recreateMenuAction(&deviceCentreAction,
-    //                    infoDialogMenu,
-    //                    tr("Device Centre"),
-    //                    "://images/ico-device-centre.svg",
-    //                    &MegaApplication::openDeviceCentre);
 
     if (!mSyncs2waysMenu)
     {
@@ -6330,12 +6367,6 @@ void MegaApplication::createInfoDialogMenus()
         updateAction = nullptr;
     }
 
-    if(aboutAction)
-    {
-        aboutAction->deleteLater();
-        aboutAction = nullptr;
-    }
-
     if (updateAvailable)
     {
         updateAction =
@@ -6352,24 +6383,6 @@ void MegaApplication::createInfoDialogMenus()
                 &MegaApplication::onInstallUpdateClicked,
                 Qt::QueuedConnection);
         infoDialogMenu->addAction(updateAction);
-    }
-    else
-    {
-        aboutAction =
-            new MegaMenuItemAction(tr("About"),
-                                   Utilities::getPixmapName(QLatin1String("MEGA"),
-                                                            Utilities::AttributeType::SMALL |
-                                                                Utilities::AttributeType::THIN |
-                                                                Utilities::AttributeType::OUTLINE,
-                                                            false),
-                                   0);
-        connect(aboutAction,
-                &QAction::triggered,
-                this,
-                &MegaApplication::onAboutClicked,
-                Qt::QueuedConnection);
-
-        infoDialogMenu->addAction(aboutAction);
     }
 
     infoDialogMenu->addAction(MEGAWebAction);
@@ -7290,6 +7303,8 @@ void MegaApplication::onGlobalSyncStateChangedImpl()
 
         updateTrayIcon();
     }
+
+    enableDisabledSyncs();
 }
 
 void MegaApplication::requestFetchSetFromLink(const QString& link)

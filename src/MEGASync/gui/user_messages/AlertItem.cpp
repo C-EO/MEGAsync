@@ -329,11 +329,11 @@ void AlertItem::setAlertHeading(UserAlert* alert)
 
     if(!mAlertData->getEmail().isEmpty())
     {
-        mNotificationHeading.append(QString::fromLatin1(" (")
-                                        + mAlertData->getEmail()
-                                        + QString::fromLatin1(")"));
-        setToolTip(mNotificationHeading);
+        mNotificationHeading.append(QString::fromLatin1(" (") + mAlertData->getEmail() +
+                                    QString::fromLatin1(")"));
     }
+
+    setToolTip(mNotificationHeading);
 }
 
 void AlertItem::setAlertContent(UserAlert *alert)

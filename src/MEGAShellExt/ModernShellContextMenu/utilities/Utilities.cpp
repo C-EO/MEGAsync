@@ -38,18 +38,23 @@ std::wstring getRegisterKeyStringValue(HKEY hKey,
                      nullptr,
                      &dataSize) != ERROR_SUCCESS)
     {
+        RegCloseKey(keyRef);
         return value;
     }
 
-    value = dataSize / sizeof(wchar_t);
+    value.resize(dataSize / sizeof(wchar_t));
 
-    if (RegGetValueW(keyRef,
+    auto result = RegGetValueW(keyRef,
                      nullptr,
                      valueName.empty() ? NULL : valueName.data(),
                      RRF_RT_REG_SZ,
                      nullptr,
                      std::_Bit_cast<BYTE*>(value.data()),
-                     &dataSize) != ERROR_SUCCESS)
+                     &dataSize);
+
+    RegCloseKey(keyRef);
+
+    if (result != ERROR_SUCCESS)
     {
         return value;
     }

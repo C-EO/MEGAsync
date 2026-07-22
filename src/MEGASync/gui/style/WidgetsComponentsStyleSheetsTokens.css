@@ -159,6 +159,19 @@ QHeaderView::down-arrow
 image: url(:/spinbox_down_arrow);
 }
 
+/*
+    Temporary rules. It will apply to all headers in a short future
+*/
+QHeaderView[class="new-design"]::up-arrow
+{
+image: url(:/arrow-up_small_thin_outline_icon_secondary);
+}
+
+QHeaderView[class="new-design"]::down-arrow
+{
+image: url(:/arrow-down_small_thin_outline_icon_secondary);
+}
+
 
 /*
     QComboBox
@@ -697,7 +710,7 @@ color: #ff616366; /*colorToken.text-secondary*/
 */
 QToolTip
 {
-color: #FAFAFA;                 /*colorToken.text-inverse*/
+color: #FAFAFA;                /*colorToken.text-inverse*/
 background-color: #2A2B2C;     /*colorToken.background-inverse*/
 border: 1px solid #2A2B2C;     /*colorToken.background-inverse*/
 }
@@ -772,6 +785,16 @@ background-color: #fff3f4f4; /*colorToken.surface-2*/
 /*
     TabSelector
 */
+
+TabSelector.sidebar-icononly[selected = false]
+{
+background-color:  transparent;
+}
+
+TabSelector.sidebar-icononly[selected = true]
+{
+background-color: #FFFFFF;/*colorToken.page-background*/
+}
 
 TabSelector.sidebar[selected = false]
 {

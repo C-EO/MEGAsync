@@ -18,6 +18,7 @@ public:
     void setMaximumHeight(int maxHeight);
     void resetSizeLimits();
 
+    bool isEmpty() const;
     void setText(const QString& text);
 
     //Try not to use maxLines/maxHeight with rich text strings, as it could potentially remove the hmtl tags when eliding
@@ -25,6 +26,14 @@ public:
 
     void setKeepParentCursor(bool newValue);
     void setAutoManageUrl(bool newValue);
+
+    // The height of this label is a function of its width. Report it through the
+    // height-for-width contract so the layout sizes the label correctly on the very first
+    // pass, instead of having to receive a resize event first and then re-adapt (which made
+    // dialogs briefly appear too tall before shrinking to their final size).
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
+    int heightForWidth(int width) const override;
 
 protected:
     void resizeEvent(QResizeEvent *e) override;
@@ -38,7 +47,9 @@ private slots:
 
 private:
     void setCursor(const QCursor& cursor);
-    void sanitizeHeight(int& height);
+    void sanitizeHeight(int& height) const;
+    void enableHeightForWidth();
+    void requestHeightUpdateIfChanged();
 
     bool mLinkActivated;
     int mMaxHeight;
@@ -48,6 +59,7 @@ private:
     QTimer mAdaptHeightTimer;
     int mParentHeight;
     QTextDocument mTextDocument; // This is only to remove html tags from tooltips
+    mutable QTextDocument mMeasureDoc; // Scratch document used to measure heightForWidth()
     bool mKeepParentCursor;
     bool mAutoManageUrl;
 };

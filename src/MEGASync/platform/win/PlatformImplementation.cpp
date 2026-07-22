@@ -564,6 +564,39 @@ void PlatformImplementation::applyCurrentThemeOnCurrentDialogFrame(QWindow* wind
     }
 }
 
+void PlatformImplementation::raiseToForeground(QWidget* widget)
+{
+    if (widget == nullptr)
+    {
+        return;
+    }
+
+    auto* hwnd = reinterpret_cast<HWND>(widget->winId());
+    if (hwnd == nullptr)
+    {
+        return;
+    }
+
+    // When the foreground process is not MEGAsync (typically the browser, since the download
+    // request comes from the webclient), Windows blocks SetForegroundWindow and only flashes
+    // the taskbar button. Qt5 used to force the activation; Qt6 no longer does. Attaching our
+    // input queue to the current foreground thread makes Windows treat the call as coming from
+    // the active app, so the foreground change is allowed.
+    const DWORD foregroundThread = GetWindowThreadProcessId(GetForegroundWindow(), nullptr);
+    const DWORD currentThread = GetCurrentThreadId();
+    const bool attached = foregroundThread != 0 && foregroundThread != currentThread &&
+                          AttachThreadInput(currentThread, foregroundThread, TRUE);
+
+    BringWindowToTop(hwnd);
+    SetForegroundWindow(hwnd);
+    SetActiveWindow(hwnd);
+
+    if (attached)
+    {
+        AttachThreadInput(currentThread, foregroundThread, FALSE);
+    }
+}
+
 void PlatformImplementation::setRenderingBackend() const
 {
     auto qtOpengl = qEnvironmentVariable("QT_OPENGL");
@@ -996,6 +1029,28 @@ void PlatformImplementation::stopShellDispatcher()
         shellDispatcherTask->wait();
         shellDispatcherTask->deleteLater();
         shellDispatcherTask = nullptr;
+    }
+}
+
+void PlatformImplementation::disconnectAccessibilityClients()
+{
+    // Qt's UI Automation bridge never calls UiaDisconnectAllProviders, so a UIA
+    // client (screen reader, ShareX, ...) still holding element references while
+    // the UI is torn down crashes inside UIAutomationCore (heap free on its
+    // channel thread). Sever the connection before any window is destroyed, as
+    // documented for UIA server shutdown. UiaDisconnectAllProviders may make COM
+    // calls and pump messages, so this must not be called during window
+    // destruction (see Chromium CL 7232383).
+    // UIAutomationCore.dll is only loaded once a UIA client attaches, so resolve
+    // dynamically: module absent means there is nothing to disconnect.
+    using DisconnectAllProvidersFn = HRESULT(WINAPI*)();
+    if (HMODULE uiaCore = GetModuleHandleW(L"UIAutomationCore.dll"))
+    {
+        if (auto disconnectAllProviders = reinterpret_cast<DisconnectAllProvidersFn>(
+                GetProcAddress(uiaCore, "UiaDisconnectAllProviders")))
+        {
+            disconnectAllProviders();
+        }
     }
 }
 

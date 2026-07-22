@@ -2,6 +2,7 @@
 
 #include "DialogOpener.h"
 #include "GuestContent.h"
+#include "LoginController.h"
 #include "MegaApplication.h"
 #include "MessageDialogOpener.h"
 #include "VerifyLockMessage.h"
@@ -103,6 +104,10 @@ void AccountStatusController::onRequestFinish(mega::MegaApi *api, mega::MegaRequ
             if(auto dialog = DialogOpener::findDialog<QmlDialogWrapper<GuestContent>>())
             {
                 dialog->close();
+            }
+            if (auto loginController = MegaSyncApp->getLoginController())
+            {
+                loginController->processOnboardingClosed();
             }
             MegaSyncApp->showInfoDialog();
         }

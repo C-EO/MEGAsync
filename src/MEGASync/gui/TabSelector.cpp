@@ -1,7 +1,7 @@
 #include "TabSelector.h"
 
+#include "ArrowTooltip.h"
 #include "TokenizableItems/TokenPropertySetter.h"
-#include "TokenParserWidgetManager.h"
 #include "ui_TabSelector.h"
 #include "Utilities.h"
 
@@ -22,7 +22,9 @@ const char* TAB_SELECTOR_GROUP = "tabselector_group";
 TabSelector::TabSelector(QWidget* parent):
     QWidget(parent),
     ui(new Ui::TabSelector),
-    mConnectedToDropEvent(false)
+    mConnectedToDropEvent(false),
+    mCloseButtonVisible(false),
+    mIconOnly(false)
 {
     ui->setupUi(this);
 
@@ -64,6 +66,7 @@ TabSelector::TabSelector(QWidget* parent):
 
 TabSelector::~TabSelector()
 {
+    closeCollapsedTooltip();
     delete ui;
 }
 
@@ -75,7 +78,7 @@ void TabSelector::setTitle(const QString& title)
 
 QString TabSelector::getTitle() const
 {
-    return ui->lTitle->text();
+    return mTitle;
 }
 
 void TabSelector::setIcon(const QIcon& icon)
@@ -88,6 +91,12 @@ QIcon TabSelector::getIcon() const
     return ui->lIcon->icon();
 }
 
+void TabSelector::setIconSize(const QSize& size)
+{
+    ui->lIcon->setFixedSize(size);
+    ui->lIcon->setIconSize(size);
+}
+
 QSize TabSelector::getIconSize() const
 {
     return ui->lIcon->iconSize();
@@ -95,12 +104,13 @@ QSize TabSelector::getIconSize() const
 
 void TabSelector::setCloseButtonVisible(bool state)
 {
-    ui->lClose->setVisible(state);
+    mCloseButtonVisible = state;
+    ui->lClose->setVisible(mCloseButtonVisible && !mIconOnly);
 }
 
 bool TabSelector::isCloseButtonVisible() const
 {
-    return ui->lClose->isVisible();
+    return mCloseButtonVisible;
 }
 
 void TabSelector::setCounter(unsigned long long count)
@@ -109,6 +119,13 @@ void TabSelector::setCounter(unsigned long long count)
 
     if (currentValue != count)
     {
+        if (mIconOnly)
+        {
+            ui->lCounter->setText(QString());
+            ui->lCounter->hide();
+            return;
+        }
+
         if (count > 0)
         {
             ui->lCounter->show();
@@ -122,9 +139,10 @@ void TabSelector::setCounter(unsigned long long count)
     }
 }
 
-bool TabSelector::isEmpty()
+bool TabSelector::hasEmptyCount()
 {
-    return !ui->lCounter->isVisible();
+    auto currentValue(ui->lCounter->text().toULongLong());
+    return currentValue <= 0;
 }
 
 void TabSelector::setSelected(bool state)
@@ -143,6 +161,7 @@ void TabSelector::setSelected(bool state)
             }
 
             toggleOffSiblings();
+
             emit clicked();
         }
     }
@@ -151,6 +170,62 @@ void TabSelector::setSelected(bool state)
 bool TabSelector::isSelected() const
 {
     return property(SELECTED).toBool();
+}
+
+bool TabSelector::isIconOnly() const
+{
+    return mIconOnly;
+}
+
+void TabSelector::setIconOnly(bool state)
+{
+    if (mIconOnly == state)
+    {
+        return;
+    }
+
+    mIconOnly = state;
+
+    if (mIconOnly)
+    {
+        layout()->setContentsMargins(0, 0, 0, 0);
+        layout()->setAlignment(ui->lIcon, Qt::AlignCenter);
+
+        ui->lTitle->hide();
+        ui->lCounter->hide();
+        ui->lClose->setVisible(false);
+        ui->lTitle->setText(QString());
+    }
+    else
+    {
+        layout()->setAlignment(ui->lIcon, Qt::AlignVCenter);
+
+        ui->lCounter->setVisible(hasEmptyCount());
+        ui->lTitle->show();
+        closeCollapsedTooltip();
+    }
+}
+
+void TabSelector::setNormalOff(const QString& token)
+{
+    mNormalOff = token;
+    ui->lIcon->setProperty("normal_off", token);
+}
+
+QString TabSelector::getNormalOff() const
+{
+    return mNormalOff;
+}
+
+void TabSelector::setNormalOn(const QString& token)
+{
+    mNormalOn = token;
+    ui->lIcon->setProperty("normal_on", token);
+}
+
+QString TabSelector::getNormalOn() const
+{
+    return mNormalOn;
 }
 
 bool TabSelector::event(QEvent* event)
@@ -163,8 +238,18 @@ bool TabSelector::event(QEvent* event)
         }
         else if (event->type() == QEvent::Enter || event->type() == QEvent::Leave)
         {
-            setProperty(HOVER, event->type() == QEvent::Enter ? true : false);
+            const bool entering = event->type() == QEvent::Enter;
+            setProperty(HOVER, entering);
             setStyleSheet(styleSheet());
+
+            if (mIconOnly && entering && !mTitle.isEmpty())
+            {
+                showCollapsedTooltip();
+            }
+            else
+            {
+                closeCollapsedTooltip();
+            }
         }
     }
 
@@ -262,6 +347,15 @@ void TabSelector::applyActionToTabSelectors(QWidget* parent, std::function<void(
     }
 }
 
+void TabSelector::deselectAll(QWidget* parent)
+{
+    applyActionToTabSelectors(parent,
+                              [](TabSelector* tab)
+                              {
+                                  tab->setSelected(false);
+                              });
+}
+
 void TabSelector::toggleOffSiblings()
 {
     if (!mTabSelectorGroupParent)
@@ -293,8 +387,39 @@ void TabSelector::hideIcon()
 
 void TabSelector::hide()
 {
+    closeCollapsedTooltip();
     setCounter(0);
     QWidget::hide();
+}
+
+void TabSelector::showCollapsedTooltip()
+{
+    if (!mIconOnly || mTitle.isEmpty())
+    {
+        return;
+    }
+
+    closeCollapsedTooltip();
+
+    auto* tooltip = new ArrowTooltip(this);
+    tooltip->setText(mTitle);
+
+    static constexpr int H_GAP = 8;
+    const int x = mapToGlobal(QPoint(width() + H_GAP, 0)).x();
+    const int y = mapToGlobal(QPoint(0, (height() - tooltip->height()) / 2)).y();
+    tooltip->move(x, y);
+    tooltip->show();
+
+    mTooltip = tooltip;
+}
+
+void TabSelector::closeCollapsedTooltip()
+{
+    if (mTooltip)
+    {
+        mTooltip->close();
+        mTooltip = nullptr;
+    }
 }
 
 void TabSelector::connectToDropEvent(std::function<void(std::shared_ptr<QDropEvent>)> slot)

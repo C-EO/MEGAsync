@@ -507,7 +507,9 @@ void NameConflictsHeader::refreshCaseActions(StalledIssueHeader *header)
     {
         if(nameConflict->areAllDuplicatedNodes())
         {
-            actions << StalledIssueHeader::ActionInfo(tr("Remove duplicates"), NameConflictedStalledIssue::RemoveDuplicated);
+            actions << StalledIssueHeader::ActionInfo(tr("Remove duplicates"),
+                                                      NameConflictedStalledIssue::RemoveDuplicated,
+                                                      QLatin1String("duplicate-X"));
         }
         else if(nameConflict->hasDuplicatedNodes())
         {
@@ -522,30 +524,44 @@ void NameConflictsHeader::refreshCaseActions(StalledIssueHeader *header)
             {
                 actionMessage = tr("Remove duplicates and rename the rest");
             }
-            actions << StalledIssueHeader::ActionInfo(actionMessage, selection);
+            actions << StalledIssueHeader::ActionInfo(actionMessage,
+                                                      selection,
+                                                      QLatin1String("duplicate-X"));
         }
         else if(nameConflict->hasFoldersToMerge())
         {
-            actions << StalledIssueHeader::ActionInfo(tr("Merge folders and rename the rest"), NameConflictedStalledIssue::Rename | NameConflictedStalledIssue::MergeFolders);
+            actions << StalledIssueHeader::ActionInfo(tr("Merge folders and rename the rest"),
+                                                      NameConflictedStalledIssue::Rename |
+                                                          NameConflictedStalledIssue::MergeFolders,
+                                                      QLatin1String("arrows-merge"));
         }
 
-        actions << StalledIssueHeader::ActionInfo(tr("Rename all items"), NameConflictedStalledIssue::Rename);
+        actions << StalledIssueHeader::ActionInfo(tr("Rename all items"),
+                                                  NameConflictedStalledIssue::Rename,
+                                                  QLatin1String("duplicate-edit"));
 
         if(nameConflict->getNameConflictCloudData().size() > 1)
         {
-            actions << StalledIssueHeader::ActionInfo(tr("Keep most recently modified file"),
-                NameConflictedStalledIssue::KeepMostRecentlyModifiedNode | NameConflictedStalledIssue::Rename);
+            actions << StalledIssueHeader::ActionInfo(
+                tr("Keep most recently modified file"),
+                NameConflictedStalledIssue::KeepMostRecentlyModifiedNode |
+                    NameConflictedStalledIssue::Rename,
+                QLatin1String("clock-check"));
         }
     }
     else if(header->getData().consultData()->foldersCount() > 1)
     {
         if(nameConflict->hasFoldersToMerge())
         {
-            actions << StalledIssueHeader::ActionInfo(tr("Merge folders"), NameConflictedStalledIssue::MergeFolders);
+            actions << StalledIssueHeader::ActionInfo(tr("Merge folders"),
+                                                      NameConflictedStalledIssue::MergeFolders,
+                                                      QLatin1String("arrows-merge"));
         }
         else
         {
-            actions << StalledIssueHeader::ActionInfo(tr("Rename all items"), NameConflictedStalledIssue::Rename);
+            actions << StalledIssueHeader::ActionInfo(tr("Rename all items"),
+                                                      NameConflictedStalledIssue::Rename,
+                                                      QLatin1String("duplicate-edit"));
         }
     }
 

@@ -101,21 +101,18 @@ void FilterAlertWidget::onBContactsClicked()
 {
     mCurrentFilter = MessageType::ALERT_CONTACTS;
     emit filterClicked(mCurrentFilter);
-    QApplication::postEvent(mUi->bContacts, new QEvent(QEvent::Leave));
 }
 
 void FilterAlertWidget::onBSharesClicked()
 {
     mCurrentFilter = MessageType::ALERT_SHARES;
     emit filterClicked(mCurrentFilter);
-    QApplication::postEvent(mUi->bShares, new QEvent(QEvent::Leave));
 }
 
 void FilterAlertWidget::onBPaymentClicked()
 {
     mCurrentFilter = MessageType::ALERT_PAYMENTS;
     emit filterClicked(mCurrentFilter);
-    QApplication::postEvent(mUi->bPayment, new QEvent(QEvent::Leave));
 }
 
 bool FilterAlertWidget::event(QEvent* event)
@@ -125,6 +122,29 @@ bool FilterAlertWidget::event(QEvent* event)
         mUi->retranslateUi(this);
     }
     return QWidget::event(event);
+}
+
+void FilterAlertWidget::hideEvent(QHideEvent* event)
+{
+    // The popup is dismissed on every selection. Qt drives the QSS :hover background off each
+    // widget's WA_UnderMouse flag, which is only updated during real mouse traversal: when the
+    // popup hides with the cursor still over a row, the flag stays set and that row (and its
+    // inner .menu-style text button) is shown highlighted the next time the popup appears.
+    // Clear the flag explicitly on every dismissal so the popup always reopens clean.
+    const auto widgets = findChildren<QWidget*>();
+    for (QWidget* widget: widgets)
+    {
+        if (!widget->testAttribute(Qt::WA_UnderMouse))
+        {
+            continue;
+        }
+        widget->setAttribute(Qt::WA_UnderMouse, false);
+        widget->setProperty("active", false);
+        widget->style()->unpolish(widget);
+        widget->style()->polish(widget);
+    }
+    update();
+    QWidget::hideEvent(event);
 }
 
 bool FilterAlertWidget::eventFilter(QObject* obj, QEvent* event)

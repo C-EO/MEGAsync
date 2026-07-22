@@ -39,13 +39,15 @@ public:
 
     struct ActionInfo
     {
-        ActionInfo(const QString& text, uint id = 0):
+        ActionInfo(const QString& text, uint id = 0, const QString& icon = QString()):
             actionText(text),
-            id(id)
+            id(id),
+            iconName(icon)
         {}
 
         QString actionText;
         uint id;
+        QString iconName;
     };
 
     void updateHeaderSizes();

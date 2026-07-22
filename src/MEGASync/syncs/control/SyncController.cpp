@@ -182,6 +182,7 @@ void SyncController::removeSync(std::shared_ptr<SyncSettings> syncSetting, const
                  .arg(getSyncTypeString(syncSetting->getType()), syncSetting->name()).toUtf8().constData());
 
     syncOperationBegins();
+    emit syncRemoveBegins(syncSetting->backupId());
 
     bool isBackup = syncSetting->getType() == MegaSync::TYPE_BACKUP;
     MegaHandle backupId = syncSetting->backupId();
@@ -207,6 +208,7 @@ void SyncController::removeSync(std::shared_ptr<SyncSettings> syncSetting, const
 
             syncOperationEnds();
             emit syncRemoveStatus(e->getErrorCode());
+            emit syncRemoveEnds(syncSetting->backupId());
         });
 
     mApi->removeSync(backupId, removeSyncListener.get());

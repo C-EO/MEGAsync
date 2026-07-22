@@ -16,7 +16,7 @@ static constexpr IconEntry ICON_TABLE[] = {
     {"synching", "tray_icon_default.svg"},
     {"uptodate", "tray_icon_default.svg"},
     {"paused", "tray_icon_paused.svg"},
-    {"logging", "tray_icon_default.svg"},
+    {"offline", "tray_icon_offline.svg"},
     {"alert", "tray_icon_blocked.svg"},
     {"someissues", "tray_icon_blocked.svg"},
 };
